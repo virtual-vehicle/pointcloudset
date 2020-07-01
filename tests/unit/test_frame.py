@@ -1,0 +1,123 @@
+import numpy as np
+import pandas as pd
+import pytest_check as check
+from pandas._testing import assert_frame_equal
+import rospy
+import open3d as o3d
+import pyntcloud
+
+
+from lidar import Frame
+import plotly
+
+
+def test_init(testframe_mini_df: pd.DataFrame):
+    frame = Frame(testframe_mini_df, rospy.rostime.Time(50))
+    check.equal(type(frame), Frame)
+
+
+def test_has_data(testframe_mini):
+    check.equal(testframe_mini.has_data(), True)
+
+
+def test_points(testframe_mini):
+    points = testframe_mini.points.points
+    check.equal(type(points), pd.DataFrame)
+    check.equal(list(points.columns), ["x", "y", "z"])
+
+
+def test_get_open3d_points(testframe_mini):
+    pointcloud = testframe_mini.get_open3d_points()
+    check.equal(type(pointcloud), o3d.open3d_pybind.geometry.PointCloud)
+    check.equal(pointcloud.has_points(), True)
+
+
+def test_measurments(testframe_mini):
+    measurements = testframe_mini.measurments
+    check.equal(type(measurements), pd.DataFrame)
+    check.equal(
+        list(measurements.columns),
+        ["intensity", "t", "reflectivity", "ring", "noise", "range"],
+    )
+
+
+def test_timestamp(testframe_mini):
+    check.equal(type(testframe_mini.timestamp), rospy.rostime.Time)
+
+
+def test_len(testframe_mini: Frame):
+    check.equal(type(len(testframe_mini)), int)
+    check.equal(len(testframe_mini), 7)
+
+
+def test_str(testframe_mini: Frame):
+    check.equal(type(str(testframe_mini)), str)
+    check.equal(
+        str(testframe_mini),
+        "pointcloud: with 7 points, data:['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range']",
+    )
+
+
+# test with actual data
+def test_testframe_1(testframe: Frame):
+    check.equal(len(testframe), 131072)
+    check.equal(testframe.has_data(), True)
+    check.equal(testframe.timestamp.to_time(), 1592833242.7559116)
+
+
+def test_testframe_2(testframe_mini: Frame):
+    check.equal(len(testframe_mini), 7)
+    check.equal(testframe_mini.has_data(), True)
+
+
+def test_testframe_data(testframe: Frame, reference_data_dataframe: pd.DataFrame):
+    data = testframe.data
+    check.equal(
+        list(data.columns),
+        ["x", "y", "z", "intensity", "t", "reflectivity", "ring", "noise", "range"],
+    )
+    check.equal(data.shape, (131072, 9))
+    assert_frame_equal(data, reference_data_dataframe)
+
+
+def test_testframe_pointcloud(
+    testframe: Frame, reference_pointcloud_dataframe: pd.DataFrame
+):
+    pointcloud = testframe.get_open3d_points()
+    array = np.asarray(pointcloud.points)
+    pointcloud_df = pd.DataFrame(array)
+    sub_points = pointcloud.select_by_index(list(range(5000, 5550)))
+    sub_array = np.asarray(sub_points.points)
+
+    check.equal(pointcloud.is_empty(), False)
+    check.equal(np.sum(sub_array), 108.0019814982079)
+    check.equal(np.sum(array), 60573.190267673606)
+    assert_frame_equal(pointcloud_df, reference_pointcloud_dataframe)
+
+
+def test_distances_to_origin(testframe_mini):
+    distances = testframe_mini.distances_to_origin()
+    check.equal(type(distances), np.ndarray)
+    check.equal(
+        np.allclose(
+            distances,
+            np.asarray(
+                [
+                    0.0,
+                    1.73205081,
+                    937.15579489,
+                    1058.09727232,
+                    906.10064672,
+                    991.83926827,
+                    475.99837556,
+                ]
+            ),
+        ),
+        True,
+    )
+
+
+def test_plot1(testframe_mini: Frame):
+    check.equal(
+        type(testframe_mini.plot_interactive()), plotly.graph_objs._figure.Figure
+    )

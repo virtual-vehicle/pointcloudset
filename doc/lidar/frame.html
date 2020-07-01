@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.1" />
+<title>lidar.frame API documentation</title>
+<meta name="description" content="Frame Class …" />
+<link href='https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/8.0.0/sanitize.min.css' rel='stylesheet'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+<style>.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>lidar.frame</code></h1>
+</header>
+<section id="section-intro">
+<p>Frame Class.</p>
+<p>For one lidar measurement frame. Typically an automotive lidar records many frames per
+second.</p>
+<p>One Frame consists of open3D pointcloud (.pointcloud)and a pandas dataframe (.data)
+with all the associated data. Open3D can not store associated data, only 3 RGB values
+therefore all associated data is stored in the dataframe.
+All operations have to act on both, pointcloud and data.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+Frame Class.
+
+For one lidar measurement frame. Typically an automotive lidar records many frames per
+second.
+
+One Frame consists of open3D pointcloud (.pointcloud)and a pandas dataframe (.data)
+with all the associated data. Open3D can not store associated data, only 3 RGB values
+therefore all associated data is stored in the dataframe.
+All operations have to act on both, pointcloud and data.
+&#34;&#34;&#34;
+
+import numpy as np
+import open3d as o3d
+import pandas as pd
+import rospy
+from datetime import datetime
+from pyntcloud import PyntCloud
+import pyntcloud
+
+from .convert import convert
+from .plot.frame import plotly_3d, pyntcloud_3d
+
+
+class Frame:
+    &#34;One Frame of lidar measurements.&#34;
+
+    def __init__(
+        self, data: pd.DataFrame, timestamp: rospy.rostime.Time = rospy.rostime.Time()
+    ):
+        self.data = data
+        &#34;&#34;&#34;All the data, x,y.z and intensity, range and more&#34;&#34;&#34;
+        self.timestamp = timestamp
+        &#34;&#34;&#34;ROS timestamp&#34;&#34;&#34;
+        self.points = self.data[[&#34;x&#34;, &#34;y&#34;, &#34;z&#34;]]
+        &#34;&#34;&#34;x,y,z coordinates&#34;&#34;&#34;
+        self.measurments = self.data.drop([&#34;x&#34;, &#34;y&#34;, &#34;z&#34;], axis=1)
+        &#34;&#34;&#34;Measurments aka. sclar field of values at each point&#34;&#34;&#34;
+
+    def __str__(self):
+        return f&#34;pointcloud: with {len(self)} points, data:{list(self.data.columns)}&#34;
+
+    def __len__(self):
+        return len(self.data)
+
+    def get_open3d_points(self) -&gt; o3d.open3d_pybind.geometry.PointCloud:
+        &#34;&#34;&#34;Extract points as open3D PointCloud object. Needed for processing with the
+        open3d package.
+
+        Returns:
+            o3d.open3d_pybind.geometry.PointCloud: the pointcloud
+        &#34;&#34;&#34;
+        return convert.convert_df2pcd(self.points)
+
+    def get_pyntcloud_points(self) -&gt; pyntcloud.core_class.PyntCloud:
+        return PyntCloud.from_instance(&#34;open3d&#34;, self.get_open3d_points())
+
+    def convert_timestamp(self) -&gt; str:
+        &#34;&#34;&#34;Convert ROS timestamp to human readable date and time.
+
+        Returns:
+            str: date time string
+        &#34;&#34;&#34;
+        return datetime.fromtimestamp(self.timestamp.to_sec()).strftime(
+            &#34;%A, %B %d, %Y %I:%M:%S&#34;
+        )
+
+    def has_data(self) -&gt; bool:
+        &#34;&#34;&#34;Check if lidar frame has data. Data here means point coordinates and
+        measruments at each point of the pointcloud.
+
+        Returns:
+            bool: `True`` if the lidar frame contains measurment data.
+        &#34;&#34;&#34;
+        return not self.data.empty
+
+    def distances_to_origin(self) -&gt; np.array:
+        &#34;&#34;&#34;For each point in the pointcloud calculate the euclidian distance
+        to the origin (0,0,0).
+
+        Returns:
+            np.array: List of distances for each point
+        &#34;&#34;&#34;
+        point_a = np.array((0.0, 0.0, 0.0))
+        points = self.points.values
+        dists = [np.linalg.norm(point_a - point) for point in points]
+        return np.array(dists)
+
+    def plot_interactive(self, backend: &#34;str&#34; = &#34;plotly&#34;, color=&#34;intensity&#34;, **kwargs):
+        args = locals()
+        args.update(kwargs)
+        backend = args.pop(&#34;backend&#34;)
+        if backend == &#34;pyntcloud&#34;:
+            return pyntcloud_3d(self, **kwargs)
+        elif backend == &#34;plotly&#34;:
+            return plotly_3d(self, **kwargs)
+        else:
+            raise ValueError(&#34;wrong backend&#34;)
+
+    def crop(self, dim: &#34;str&#34;, minvalue: float, maxvalue: float):
+        &#34;&#34;&#34;Crop lidar Frame. Can be chained together.
+
+        Args:
+            dim (str): dimension to corp (x,y, or z)
+            minvalue (float): min value to crop. (greater equal)
+            maxvalue (float): max value to crop. (smaller equal)
+        Returns:
+            [type]: croped frame.
+        &#34;&#34;&#34;
+        pc_df = self.data
+        if maxvalue &lt; minvalue:
+            raise ValueError(&#34;maxvalue must be greater than minvalue&#34;)
+        if dim in [&#34;x&#34;, &#34;y&#34;, &#34;z&#34;]:
+            pc_df_filter = pc_df[(pc_df[dim] &lt;= maxvalue) &amp; (pc_df[dim] &gt;= minvalue)]
+        else:
+            raise ValueError(&#34;dim is wrong&#34;)
+        return Frame(pc_df_filter, timestamp=self.timestamp)
+
+    def cluster(self, eps: float, min_points: int):
+        labels = np.array(
+            self.get_open3d_points().cluster_dbscan(
+                eps=eps, min_points=min_points, print_progress=True
+            )
+        )
+        return labels</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="lidar.frame.Frame"><code class="flex name class">
+<span>class <span class="ident">Frame</span></span>
+<span>(</span><span>data: pandas.core.frame.DataFrame, timestamp: rospy.rostime.Time = rospy.Time[0])</span>
+</code></dt>
+<dd>
+<div class="desc"><p>One Frame of lidar measurements.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Frame:
+    &#34;One Frame of lidar measurements.&#34;
+
+    def __init__(
+        self, data: pd.DataFrame, timestamp: rospy.rostime.Time = rospy.rostime.Time()
+    ):
+        self.data = data
+        &#34;&#34;&#34;All the data, x,y.z and intensity, range and more&#34;&#34;&#34;
+        self.timestamp = timestamp
+        &#34;&#34;&#34;ROS timestamp&#34;&#34;&#34;
+        self.points = self.data[[&#34;x&#34;, &#34;y&#34;, &#34;z&#34;]]
+        &#34;&#34;&#34;x,y,z coordinates&#34;&#34;&#34;
+        self.measurments = self.data.drop([&#34;x&#34;, &#34;y&#34;, &#34;z&#34;], axis=1)
+        &#34;&#34;&#34;Measurments aka. sclar field of values at each point&#34;&#34;&#34;
+
+    def __str__(self):
+        return f&#34;pointcloud: with {len(self)} points, data:{list(self.data.columns)}&#34;
+
+    def __len__(self):
+        return len(self.data)
+
+    def get_open3d_points(self) -&gt; o3d.open3d_pybind.geometry.PointCloud:
+        &#34;&#34;&#34;Extract points as open3D PointCloud object. Needed for processing with the
+        open3d package.
+
+        Returns:
+            o3d.open3d_pybind.geometry.PointCloud: the pointcloud
+        &#34;&#34;&#34;
+        return convert.convert_df2pcd(self.points)
+
+    def get_pyntcloud_points(self) -&gt; pyntcloud.core_class.PyntCloud:
+        return PyntCloud.from_instance(&#34;open3d&#34;, self.get_open3d_points())
+
+    def convert_timestamp(self) -&gt; str:
+        &#34;&#34;&#34;Convert ROS timestamp to human readable date and time.
+
+        Returns:
+            str: date time string
+        &#34;&#34;&#34;
+        return datetime.fromtimestamp(self.timestamp.to_sec()).strftime(
+            &#34;%A, %B %d, %Y %I:%M:%S&#34;
+        )
+
+    def has_data(self) -&gt; bool:
+        &#34;&#34;&#34;Check if lidar frame has data. Data here means point coordinates and
+        measruments at each point of the pointcloud.
+
+        Returns:
+            bool: `True`` if the lidar frame contains measurment data.
+        &#34;&#34;&#34;
+        return not self.data.empty
+
+    def distances_to_origin(self) -&gt; np.array:
+        &#34;&#34;&#34;For each point in the pointcloud calculate the euclidian distance
+        to the origin (0,0,0).
+
+        Returns:
+            np.array: List of distances for each point
+        &#34;&#34;&#34;
+        point_a = np.array((0.0, 0.0, 0.0))
+        points = self.points.values
+        dists = [np.linalg.norm(point_a - point) for point in points]
+        return np.array(dists)
+
+    def plot_interactive(self, backend: &#34;str&#34; = &#34;plotly&#34;, color=&#34;intensity&#34;, **kwargs):
+        args = locals()
+        args.update(kwargs)
+        backend = args.pop(&#34;backend&#34;)
+        if backend == &#34;pyntcloud&#34;:
+            return pyntcloud_3d(self, **kwargs)
+        elif backend == &#34;plotly&#34;:
+            return plotly_3d(self, **kwargs)
+        else:
+            raise ValueError(&#34;wrong backend&#34;)
+
+    def crop(self, dim: &#34;str&#34;, minvalue: float, maxvalue: float):
+        &#34;&#34;&#34;Crop lidar Frame. Can be chained together.
+
+        Args:
+            dim (str): dimension to corp (x,y, or z)
+            minvalue (float): min value to crop. (greater equal)
+            maxvalue (float): max value to crop. (smaller equal)
+        Returns:
+            [type]: croped frame.
+        &#34;&#34;&#34;
+        pc_df = self.data
+        if maxvalue &lt; minvalue:
+            raise ValueError(&#34;maxvalue must be greater than minvalue&#34;)
+        if dim in [&#34;x&#34;, &#34;y&#34;, &#34;z&#34;]:
+            pc_df_filter = pc_df[(pc_df[dim] &lt;= maxvalue) &amp; (pc_df[dim] &gt;= minvalue)]
+        else:
+            raise ValueError(&#34;dim is wrong&#34;)
+        return Frame(pc_df_filter, timestamp=self.timestamp)
+
+    def cluster(self, eps: float, min_points: int):
+        labels = np.array(
+            self.get_open3d_points().cluster_dbscan(
+                eps=eps, min_points=min_points, print_progress=True
+            )
+        )
+        return labels</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="lidar.frame.Frame.data"><code class="name">var <span class="ident">data</span></code></dt>
+<dd>
+<div class="desc"><p>All the data, x,y.z and intensity, range and more</p></div>
+</dd>
+<dt id="lidar.frame.Frame.measurments"><code class="name">var <span class="ident">measurments</span></code></dt>
+<dd>
+<div class="desc"><p>Measurments aka. sclar field of values at each point</p></div>
+</dd>
+<dt id="lidar.frame.Frame.points"><code class="name">var <span class="ident">points</span></code></dt>
+<dd>
+<div class="desc"><p>x,y,z coordinates</p></div>
+</dd>
+<dt id="lidar.frame.Frame.timestamp"><code class="name">var <span class="ident">timestamp</span></code></dt>
+<dd>
+<div class="desc"><p>ROS timestamp</p></div>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="lidar.frame.Frame.cluster"><code class="name flex">
+<span>def <span class="ident">cluster</span></span>(<span>self, eps: float, min_points: int)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cluster(self, eps: float, min_points: int):
+    labels = np.array(
+        self.get_open3d_points().cluster_dbscan(
+            eps=eps, min_points=min_points, print_progress=True
+        )
+    )
+    return labels</code></pre>
+</details>
+</dd>
+<dt id="lidar.frame.Frame.convert_timestamp"><code class="name flex">
+<span>def <span class="ident">convert_timestamp</span></span>(<span>self) -> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Convert ROS timestamp to human readable date and time.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>str</code></dt>
+<dd>date time string</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def convert_timestamp(self) -&gt; str:
+    &#34;&#34;&#34;Convert ROS timestamp to human readable date and time.
+
+    Returns:
+        str: date time string
+    &#34;&#34;&#34;
+    return datetime.fromtimestamp(self.timestamp.to_sec()).strftime(
+        &#34;%A, %B %d, %Y %I:%M:%S&#34;
+    )</code></pre>
+</details>
+</dd>
+<dt id="lidar.frame.Frame.crop"><code class="name flex">
+<span>def <span class="ident">crop</span></span>(<span>self, dim: str, minvalue: float, maxvalue: float)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Crop lidar Frame. Can be chained together.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>dim</code></strong> :&ensp;<code>str</code></dt>
+<dd>dimension to corp (x,y, or z)</dd>
+<dt><strong><code>minvalue</code></strong> :&ensp;<code>float</code></dt>
+<dd>min value to crop. (greater equal)</dd>
+<dt><strong><code>maxvalue</code></strong> :&ensp;<code>float</code></dt>
+<dd>max value to crop. (smaller equal)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>[type]</code></dt>
+<dd>croped frame.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def crop(self, dim: &#34;str&#34;, minvalue: float, maxvalue: float):
+    &#34;&#34;&#34;Crop lidar Frame. Can be chained together.
+
+    Args:
+        dim (str): dimension to corp (x,y, or z)
+        minvalue (float): min value to crop. (greater equal)
+        maxvalue (float): max value to crop. (smaller equal)
+    Returns:
+        [type]: croped frame.
+    &#34;&#34;&#34;
+    pc_df = self.data
+    if maxvalue &lt; minvalue:
+        raise ValueError(&#34;maxvalue must be greater than minvalue&#34;)
+    if dim in [&#34;x&#34;, &#34;y&#34;, &#34;z&#34;]:
+        pc_df_filter = pc_df[(pc_df[dim] &lt;= maxvalue) &amp; (pc_df[dim] &gt;= minvalue)]
+    else:
+        raise ValueError(&#34;dim is wrong&#34;)
+    return Frame(pc_df_filter, timestamp=self.timestamp)</code></pre>
+</details>
+</dd>
+<dt id="lidar.frame.Frame.distances_to_origin"><code class="name flex">
+<span>def <span class="ident">distances_to_origin</span></span>(<span>self) -> <built-in function array></span>
+</code></dt>
+<dd>
+<div class="desc"><p>For each point in the pointcloud calculate the euclidian distance
+to the origin (0,0,0).</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.array</code></dt>
+<dd>List of distances for each point</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def distances_to_origin(self) -&gt; np.array:
+    &#34;&#34;&#34;For each point in the pointcloud calculate the euclidian distance
+    to the origin (0,0,0).
+
+    Returns:
+        np.array: List of distances for each point
+    &#34;&#34;&#34;
+    point_a = np.array((0.0, 0.0, 0.0))
+    points = self.points.values
+    dists = [np.linalg.norm(point_a - point) for point in points]
+    return np.array(dists)</code></pre>
+</details>
+</dd>
+<dt id="lidar.frame.Frame.get_open3d_points"><code class="name flex">
+<span>def <span class="ident">get_open3d_points</span></span>(<span>self) -> open3d.open3d_pybind.geometry.PointCloud</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extract points as open3D PointCloud object. Needed for processing with the
+open3d package.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>o3d.open3d_pybind.geometry.PointCloud</code></dt>
+<dd>the pointcloud</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_open3d_points(self) -&gt; o3d.open3d_pybind.geometry.PointCloud:
+    &#34;&#34;&#34;Extract points as open3D PointCloud object. Needed for processing with the
+    open3d package.
+
+    Returns:
+        o3d.open3d_pybind.geometry.PointCloud: the pointcloud
+    &#34;&#34;&#34;
+    return convert.convert_df2pcd(self.points)</code></pre>
+</details>
+</dd>
+<dt id="lidar.frame.Frame.get_pyntcloud_points"><code class="name flex">
+<span>def <span class="ident">get_pyntcloud_points</span></span>(<span>self) -> pyntcloud.core_class.PyntCloud</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_pyntcloud_points(self) -&gt; pyntcloud.core_class.PyntCloud:
+    return PyntCloud.from_instance(&#34;open3d&#34;, self.get_open3d_points())</code></pre>
+</details>
+</dd>
+<dt id="lidar.frame.Frame.has_data"><code class="name flex">
+<span>def <span class="ident">has_data</span></span>(<span>self) -> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check if lidar frame has data. Data here means point coordinates and
+measruments at each point of the pointcloud.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>`True`` if the lidar frame contains measurment data.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has_data(self) -&gt; bool:
+    &#34;&#34;&#34;Check if lidar frame has data. Data here means point coordinates and
+    measruments at each point of the pointcloud.
+
+    Returns:
+        bool: `True`` if the lidar frame contains measurment data.
+    &#34;&#34;&#34;
+    return not self.data.empty</code></pre>
+</details>
+</dd>
+<dt id="lidar.frame.Frame.plot_interactive"><code class="name flex">
+<span>def <span class="ident">plot_interactive</span></span>(<span>self, backend: str = 'plotly', color='intensity', **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot_interactive(self, backend: &#34;str&#34; = &#34;plotly&#34;, color=&#34;intensity&#34;, **kwargs):
+    args = locals()
+    args.update(kwargs)
+    backend = args.pop(&#34;backend&#34;)
+    if backend == &#34;pyntcloud&#34;:
+        return pyntcloud_3d(self, **kwargs)
+    elif backend == &#34;plotly&#34;:
+        return plotly_3d(self, **kwargs)
+    else:
+        raise ValueError(&#34;wrong backend&#34;)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="lidar" href="index.html">lidar</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></code></h4>
+<ul class="">
+<li><code><a title="lidar.frame.Frame.cluster" href="#lidar.frame.Frame.cluster">cluster</a></code></li>
+<li><code><a title="lidar.frame.Frame.convert_timestamp" href="#lidar.frame.Frame.convert_timestamp">convert_timestamp</a></code></li>
+<li><code><a title="lidar.frame.Frame.crop" href="#lidar.frame.Frame.crop">crop</a></code></li>
+<li><code><a title="lidar.frame.Frame.data" href="#lidar.frame.Frame.data">data</a></code></li>
+<li><code><a title="lidar.frame.Frame.distances_to_origin" href="#lidar.frame.Frame.distances_to_origin">distances_to_origin</a></code></li>
+<li><code><a title="lidar.frame.Frame.get_open3d_points" href="#lidar.frame.Frame.get_open3d_points">get_open3d_points</a></code></li>
+<li><code><a title="lidar.frame.Frame.get_pyntcloud_points" href="#lidar.frame.Frame.get_pyntcloud_points">get_pyntcloud_points</a></code></li>
+<li><code><a title="lidar.frame.Frame.has_data" href="#lidar.frame.Frame.has_data">has_data</a></code></li>
+<li><code><a title="lidar.frame.Frame.measurments" href="#lidar.frame.Frame.measurments">measurments</a></code></li>
+<li><code><a title="lidar.frame.Frame.plot_interactive" href="#lidar.frame.Frame.plot_interactive">plot_interactive</a></code></li>
+<li><code><a title="lidar.frame.Frame.points" href="#lidar.frame.Frame.points">points</a></code></li>
+<li><code><a title="lidar.frame.Frame.timestamp" href="#lidar.frame.Frame.timestamp">timestamp</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.1</a>.</p>
+</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</body>
+</html>
