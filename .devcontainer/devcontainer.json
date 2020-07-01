@@ -1,0 +1,50 @@
+// For format details, see https://aka.ms/vscode-remote/devcontainer.json or this file's README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.122.1/containers/docker-existing-dockerfile
+{
+	"name": "lidar_dev",
+	// Sets the run context to one level up instead of the .devcontainer folder.
+	"context": "..",
+	// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
+	"dockerFile": "Dockerfile",
+	// Set *default* container specific settings.json values on container create.
+	"settings": {
+		"python.formatting.provider": "black",
+		"editor.formatOnSave": true,
+		"[latex]": {
+			"editor.wordWrap": "on",
+			"editor.formatOnSave": false,
+		},
+		"python.linting.mypyEnabled": true,
+		"python.linting.enabled": true,
+		"python.linting.flake8Enabled": true,
+		"python.linting.flake8Args": [
+			"--max-line-length=88"
+		],
+		"python.linting.pylintEnabled": true,
+		"autoDocstring.docstringFormat": "google",
+		"python.linting.pylintPath": "/opt/conda/bin/pylint",
+		"cSpell.maxNumberOfProblems": 500,
+		"python.testing.pytestEnabled": true
+	},
+	"postCreateCommand": "pip install -e .",
+	"extensions": [
+		"ms-python.python",
+		"njpwerner.autodocstring",
+		"ms-azuretools.vscode-docker",
+		"mhutchie.git-graph",
+		"eamodio.gitlens",
+		"tomoki1207.pdf",
+		"ms-azuretools.vscode-docker",
+		"streetsidesoftware.code-spell-checker",
+		"oderwat.indent-rainbow",
+		"gua.rainbow-brackets"
+	],
+	"forwardPorts": [
+		5920,
+		5900,
+		8080
+	],
+	"mounts": [
+		"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+	]
+}
