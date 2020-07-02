@@ -1,7 +1,6 @@
 # Automotive lidar analysis package
 
-Use and read the documentation in doc.
+Use and read the documentation in doc. (open index.html in browser)
 
-Dont add anything here! Eveything should be in the docstrings in the .py files.
-[documentation](doc/lidar/index.html)
+Don't add documentation here! Everything should be in the docstrings in the .py files.
 
