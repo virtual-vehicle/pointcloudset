@@ -33,7 +33,7 @@
 <ul>
 <li>install VS Code</li>
 <li>install the remote development extension in VS code (ms-vscode-remote.vscode-remote-extensionpack)</li>
-<li>install and run docker desktop </li>
+<li>install and run docker desktop</li>
 <li>clone the repository (you can use VC code for that as well)</li>
 <li>open the folder in VS code</li>
 <li>VS code asks to open the remote development environment - say yes</li>
@@ -65,36 +65,6 @@
 <li>for example useage you can have a look at the tests</li>
 <li>every 0.x release needs to have 100% code coverage with tests</li>
 </ul>
-<h1 id="roadmap">Roadmap</h1>
-<h2 id="roadmap-for-version-010">Roadmap for version 0.1.0</h2>
-<ul>
-<li>implement the methods from the pipeline.</li>
-<li>overlay plots similar to the lebrig dataset</li>
-<li>make pip installable form the gitlab repo</li>
-<li>update all docstrings &amp; documentation</li>
-</ul>
-<h2 id="roadmap-of-020">Roadmap of 0.2.0</h2>
-<ul>
-<li>apply frame processing to all frames</li>
-<li>save the dataset object</li>
-<li>open the dateset object</li>
-<li>save to rosbag</li>
-<li>better plotting</li>
-<li>extent processing</li>
-<li>test with ROS integration</li>
-</ul>
-<h2 id="general-things-to-add">general things to add</h2>
-<ul>
-<li>plotly plot with tootip of data for each point</li>
-<li>read dgps data and include in frame</li>
-<li>make a separate python package</li>
-<li>include a small test .bagfile</li>
-</ul>
-<h2 id="speedup-potentials-for-future-improvements">Speedup potentials for future improvements</h2>
-<ul>
-<li>use generators</li>
-<li>avoid converting between pdandas and open3D formats where possible</li>
-</ul>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -116,7 +86,7 @@ The main features of this package are the &#34;Dataset&#34; class consisting of 
 
 * install VS Code
 * install the remote development extension in VS code (ms-vscode-remote.vscode-remote-extensionpack)
-* install and run docker desktop 
+* install and run docker desktop
 * clone the repository (you can use VC code for that as well)
 * open the folder in VS code
 * VS code asks to open the remote development environment - say yes
@@ -156,35 +126,6 @@ docker login registry-gitlab.v2c2.at -u &lt;vornamenachname&gt; -p &lt;token&gt;
 * for example useage you can have a look at the tests
 * every 0.x release needs to have 100% code coverage with tests
 
-
-
-# Roadmap
-## Roadmap for version 0.1.0
-* implement the methods from the pipeline.
-* overlay plots similar to the lebrig dataset
-* make pip installable form the gitlab repo
-* update all docstrings &amp; documentation
-
-
-
-## Roadmap of 0.2.0
-* apply frame processing to all frames
-* save the dataset object
-* open the dateset object
-* save to rosbag
-* better plotting
-* extent processing
-* test with ROS integration
-
-## general things to add
-* plotly plot with tootip of data for each point
-* read dgps data and include in frame
-* make a separate python package
-* include a small test .bagfile
-
-## Speedup potentials for future improvements
-* use generators
-* avoid converting between pdandas and open3D formats where possible
 
 &#34;&#34;&#34;
 
@@ -240,13 +181,6 @@ from .frame import Frame</code></pre>
 </li>
 <li><a href="#contribution">Contribution</a><ul>
 <li><a href="#development">Development</a></li>
-</ul>
-</li>
-<li><a href="#roadmap">Roadmap</a><ul>
-<li><a href="#roadmap-for-version-010">Roadmap for version 0.1.0</a></li>
-<li><a href="#roadmap-of-020">Roadmap of 0.2.0</a></li>
-<li><a href="#general-things-to-add">general things to add</a></li>
-<li><a href="#speedup-potentials-for-future-improvements">Speedup potentials for future improvements</a></li>
 </ul>
 </li>
 </ul>

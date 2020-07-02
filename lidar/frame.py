@@ -4,10 +4,10 @@ Frame Class.
 For one lidar measurement frame. Typically an automotive lidar records many frames per
 second.
 
-One Frame consists of open3D pointcloud (.pointcloud)and a pandas dataframe (.data)
-with all the associated data. Open3D can not store associated data, only 3 RGB values
-therefore all associated data is stored in the dataframe.
-All operations have to act on both, pointcloud and data.
+One Frame consists mainly of pyntcloud pointcloud (.pointcloud) and a pandas dataframe
+ (.data) with all the associated data.
+
+All operations have to act on both, pointcloud and data and keep the timestamp.
 """
 
 import numpy as np

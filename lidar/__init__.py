@@ -15,7 +15,7 @@ The main features of this package are the "Dataset" class consisting of many
 
 * install VS Code
 * install the remote development extension in VS code (ms-vscode-remote.vscode-remote-extensionpack)
-* install and run docker desktop 
+* install and run docker desktop
 * clone the repository (you can use VC code for that as well)
 * open the folder in VS code
 * VS code asks to open the remote development environment - say yes
@@ -55,35 +55,6 @@ docker login registry-gitlab.v2c2.at -u <vornamenachname> -p <token>
 * for example useage you can have a look at the tests
 * every 0.x release needs to have 100% code coverage with tests
 
-
-
-# Roadmap
-## Roadmap for version 0.1.0
-* implement the methods from the pipeline.
-* overlay plots similar to the lebrig dataset
-* make pip installable form the gitlab repo
-* update all docstrings & documentation
-
-
-
-## Roadmap of 0.2.0
-* apply frame processing to all frames
-* save the dataset object
-* open the dateset object
-* save to rosbag
-* better plotting
-* extent processing
-* test with ROS integration
-
-## general things to add
-* plotly plot with tootip of data for each point
-* read dgps data and include in frame
-* make a separate python package
-* include a small test .bagfile
-
-## Speedup potentials for future improvements
-* use generators
-* avoid converting between pdandas and open3D formats where possible
 
 """
 
