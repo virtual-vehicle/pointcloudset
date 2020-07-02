@@ -5,6 +5,11 @@ A package to work with automotive lidar data.
 The main features of this package are the "Dataset" class consisting of many
 "Frame" objects.
 
+# Installation
+
+``` bash
+ pip install git+https://gitlab.v2c2.at/sensor-fdir/lidar
+```
 
 # Getting started
 
