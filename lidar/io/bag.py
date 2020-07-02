@@ -40,4 +40,8 @@ def frame_from_message(dataset, message: rosbag.bag.BagMessage) -> Frame:
     columnnames = supported_lidars[dataset.lidar_name]["columnnames"]
     frame_raw = pc2.read_points(message.message)
     frame_df = pd.DataFrame(np.array(list(frame_raw)), columns=columnnames)
+    if not dataset.keep_zeros:
+        frame_df = frame_df[
+            (frame_df["x"] != 0.0) & (frame_df["y"] != 0.0) & (frame_df["z"] != 0.0)
+        ]
     return Frame(data=frame_df, timestamp=message.timestamp)

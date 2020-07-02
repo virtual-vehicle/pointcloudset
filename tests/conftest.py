@@ -15,7 +15,12 @@ def testbag1():
 
 @pytest.fixture()
 def testset(testbag1):
-    return lidar.Dataset(testbag1, lidar_name="ouster")
+    return lidar.Dataset(testbag1, lidar_name="ouster", keep_zeros=False)
+
+
+@pytest.fixture()
+def testset_withzero(testbag1):
+    return lidar.Dataset(testbag1, lidar_name="ouster", keep_zeros=True)
 
 
 @pytest.fixture()
@@ -24,15 +29,8 @@ def testframe(testset):
 
 
 @pytest.fixture()
-def reference_data_dataframe():
-    filename = Path(__file__).parent.absolute() / "testdata/testframe_dataframe.pkl"
-    return pd.read_pickle(filename)
-
-
-@pytest.fixture()
-def reference_pointcloud_dataframe():
-    filename = Path(__file__).parent.absolute() / "testdata/testframe_pointcloud.pkl"
-    return pd.read_pickle(filename)
+def testframe_withzero(testset_withzero):
+    return testset_withzero[1]
 
 
 @pytest.fixture()
@@ -59,6 +57,21 @@ def testframe_mini_df():
 
 
 @pytest.fixture()
+def reference_data_with_zero_dataframe():
+    filename = (
+        Path(__file__).parent.absolute() / "testdata/testframe_withzero_dataframe.pkl"
+    )
+    return pd.read_pickle(filename)
+
+
+@pytest.fixture()
+def reference_pointcloud_withzero_dataframe():
+    filename = (
+        Path(__file__).parent.absolute() / "testdata/testframe_withzero_pointcloud.pkl"
+    )
+    return pd.read_pickle(filename)
+
+
+@pytest.fixture()
 def testframe_mini(testframe_mini_df):
     return lidar.Frame(testframe_mini_df, rospy.rostime.Time(50))
-

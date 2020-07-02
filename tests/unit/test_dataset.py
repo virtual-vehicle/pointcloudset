@@ -1,8 +1,6 @@
 import pytest_check as check
 
 from lidar import Dataset, Frame
-from typing import List
-import rospy
 
 
 def test_init(testbag1):
@@ -13,7 +11,20 @@ def test_init(testbag1):
 def test_testset(testset):
     check.equal(len(testset), 2)
     check.equal(type(testset.orig_file), str)
-    check.equal(testset.orig_file, "/fault_injection/lidar/tests/testdata/test.bag")
+
+
+def test_testset_topic(testset):
+    topic = testset.topic
+    check.equal(type(topic), str)
+    check.equal(topic, "/os1_cloud_node/points")
+
+
+def test_testset_keep_zeros(testset):
+    check.equal(testset.keep_zeros, False)
+
+
+def test_testset_keep_zeros_true(testset_withzero):
+    check.equal(testset_withzero.keep_zeros, True)
 
 
 def test_getitem(testset: Dataset):
@@ -31,7 +42,3 @@ def test_has_frames(testset: Dataset):
 
 def test_str(testset: Dataset):
     check.equal(type(str(testset)), str)
-    check.equal(
-        str(testset),
-        "Lidar Dataset with 2 frame(s), from file /fault_injection/lidar/tests/testdata/test.bag",
-    )

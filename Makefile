@@ -17,7 +17,5 @@ sort-imports:
 	isort -rc .	
 
 clean:
-	rm --force --recursive build \
-	rm --force --recursive dist \
-	rm --force --recursive *.egg-info \
-	rm --force --recursive .pytest_cache
+	py3clean .
+	

@@ -13,7 +13,7 @@ from .io.bag import frame_from_message, supported_lidars
 
 
 class Dataset:
-    def __init__(self, bagfile: Path, lidar_name: str):
+    def __init__(self, bagfile: Path, lidar_name: str, keep_zeros: bool = False):
         self.bag = rosbag.Bag(bagfile, "r")
         """ROS bag file asa rosbag.Bag object"""
         self.lidar_name = lidar_name
@@ -22,6 +22,8 @@ class Dataset:
         """Name of lidar unit"""
         self.topic = supported_lidars[lidar_name]["topic"]
         """The Pointcloud2 object of the lidar."""
+        self.keep_zeros = keep_zeros
+        """Option for keeping zero elements from Lidar. Default is False"""
 
     @property
     def types_and_topics_in_bag(self):
