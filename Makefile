@@ -19,3 +19,6 @@ sort-imports:
 clean:
 	py3clean .
 	
+
+build:
+	python3 setup.py sdist bdist_wheel
