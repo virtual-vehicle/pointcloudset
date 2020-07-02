@@ -13095,6 +13095,13 @@ Instead use jupyter lab, which is included in the docker image.</p>
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">lidar</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.figsize&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+
+<span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
+<span class="o">%</span><span class="k">config</span> IPCompleter.greedy=True
 </pre></div>
 
     </div>
@@ -13155,7 +13162,7 @@ Dataset only reads frames from the bagfile if needed, in order to save memory an
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">testset</span><span class="p">)</span>
@@ -13165,28 +13172,10 @@ Dataset only reads frames from the bagfile if needed, in order to save memory an
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Lidar Dataset with 2 frame(s), from file /workspaces/lidar/tests/testdata/test.bag
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">testset</span><span class="p">)</span>
@@ -13196,38 +13185,19 @@ Dataset only reads frames from the bagfile if needed, in order to save memory an
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[15]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>2</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>In order to see whats availble use "tab" to see the availble properties and methods. Alterantivly, use help(), dir(), and the documentation.</p>
+<p>In order to see whats availble use "tab" to see the availble properties and methods. Alterantivly, use help(), dir(), and the documentation.
+Also shift tab is nice inside jupyter lab.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">help</span><span class="p">(</span><span class="n">testset</span><span class="p">)</span>
@@ -13237,86 +13207,10 @@ Dataset only reads frames from the bagfile if needed, in order to save memory an
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Help on Dataset in module lidar.dataset object:
-
-class Dataset(builtins.object)
- |  Dataset(bagfile: pathlib.Path, lidar_name: str, keep_zeros: bool = False)
- |  
- |  Methods defined here:
- |  
- |  __getitem__(self, frame_number: Union[int, slice]) -&gt; Union[lidar.frame.Frame, List[lidar.frame.Frame]]
- |  
- |  __init__(self, bagfile: pathlib.Path, lidar_name: str, keep_zeros: bool = False)
- |      Initiallises the Dataset.
- |      
- |      Args:
- |          bagfile (Path): Path to ROS bag file.
- |          lidar_name (str): Name  or lidar, in order to read the right ROS message.
- |          keep_zeros (bool, optional): Keep zero elements. Defaults to False.
- |  
- |  __len__(self) -&gt; int
- |      Number of available frames (i.e. Lidar messages)
- |  
- |  __str__(self)
- |      Return str(self).
- |  
- |  has_frames(self)
- |      Check if dataset has frames.
- |      
- |      Returns:
- |          bool: ``True`` if the dataset contains frames.
- |  
- |  ----------------------------------------------------------------------
- |  Data descriptors defined here:
- |  
- |  __dict__
- |      dictionary for instance variables (if defined)
- |  
- |  __weakref__
- |      list of weak references to the object (if defined)
- |  
- |  end_time
- |      ROS End Time in the bagfile.
- |  
- |  size
- |      Size on disk.
- |  
- |  start_time
- |      ROS Start time in the bagfile.
- |  
- |  topics_in_bag
- |      Topics in the ROS bagfile.
- |      
- |      Returns:
- |          dict: Dict with all topics in the ROS bagfile
- |  
- |  types_and_topics_in_bag
- |      Types and Topics in the original ROS bagfile
- |      
- |      Returns:
- |          rosbag.bag.TypesAndTopicsTuple: All types and topics in the ROS bagfile
-
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="nb">dir</span><span class="p">(</span><span class="n">testset</span><span class="p">)</span>
@@ -13326,104 +13220,16 @@ class Dataset(builtins.object)
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[18]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>[&#39;__class__&#39;,
- &#39;__delattr__&#39;,
- &#39;__dict__&#39;,
- &#39;__dir__&#39;,
- &#39;__doc__&#39;,
- &#39;__eq__&#39;,
- &#39;__format__&#39;,
- &#39;__ge__&#39;,
- &#39;__getattribute__&#39;,
- &#39;__getitem__&#39;,
- &#39;__gt__&#39;,
- &#39;__hash__&#39;,
- &#39;__init__&#39;,
- &#39;__init_subclass__&#39;,
- &#39;__le__&#39;,
- &#39;__len__&#39;,
- &#39;__lt__&#39;,
- &#39;__module__&#39;,
- &#39;__ne__&#39;,
- &#39;__new__&#39;,
- &#39;__reduce__&#39;,
- &#39;__reduce_ex__&#39;,
- &#39;__repr__&#39;,
- &#39;__setattr__&#39;,
- &#39;__sizeof__&#39;,
- &#39;__str__&#39;,
- &#39;__subclasshook__&#39;,
- &#39;__weakref__&#39;,
- &#39;_slice_messages&#39;,
- &#39;bag&#39;,
- &#39;end_time&#39;,
- &#39;has_frames&#39;,
- &#39;keep_zeros&#39;,
- &#39;lidar_name&#39;,
- &#39;orig_file&#39;,
- &#39;size&#39;,
- &#39;start_time&#39;,
- &#39;topic&#39;,
- &#39;topics_in_bag&#39;,
- &#39;types_and_topics_in_bag&#39;]</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">testset</span><span class="o">.</span><span class="n">topics_in_bag</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[19]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>{&#39;/img_node/intensity_image&#39;: TopicTuple(msg_type=&#39;sensor_msgs/Image&#39;, message_count=2, connections=1, frequency=9.769940858173754),
- &#39;/img_node/noise_image&#39;: TopicTuple(msg_type=&#39;sensor_msgs/Image&#39;, message_count=2, connections=1, frequency=9.767847619579925),
- &#39;/img_node/range_image&#39;: TopicTuple(msg_type=&#39;sensor_msgs/Image&#39;, message_count=2, connections=1, frequency=9.778459572940296),
- &#39;/os1_cloud_node/imu&#39;: TopicTuple(msg_type=&#39;sensor_msgs/Imu&#39;, message_count=17, connections=1, frequency=101.68132947066024),
- &#39;/os1_cloud_node/points&#39;: TopicTuple(msg_type=&#39;sensor_msgs/PointCloud2&#39;, message_count=2, connections=1, frequency=10.137364137987708),
- &#39;/os1_node/imu_packets&#39;: TopicTuple(msg_type=&#39;ouster_ros/PacketMsg&#39;, message_count=17, connections=1, frequency=99.4853889943074),
- &#39;/os1_node/lidar_packets&#39;: TopicTuple(msg_type=&#39;ouster_ros/PacketMsg&#39;, message_count=206, connections=1, frequency=11650.844444444445),
- &#39;/rosout&#39;: TopicTuple(msg_type=&#39;rosgraph_msgs/Log&#39;, message_count=12, connections=2, frequency=4744.68778280543),
- &#39;/rosout_agg&#39;: TopicTuple(msg_type=&#39;rosgraph_msgs/Log&#39;, message_count=12, connections=1, frequency=5874.375350140056),
- &#39;/tf_static&#39;: TopicTuple(msg_type=&#39;tf2_msgs/TFMessage&#39;, message_count=1, connections=1, frequency=None)}</pre>
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -13438,7 +13244,7 @@ class Dataset(builtins.object)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">testset</span><span class="o">.</span><span class="n">bag</span><span class="p">)</span>
@@ -13448,38 +13254,20 @@ class Dataset(builtins.object)
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[21]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>rosbag.bag.Bag</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Work-with-Frames">Work with Frames<a class="anchor-link" href="#Work-with-Frames">&#182;</a></h1><p>First grab the first frame in the dataset:</p>
+<h1 id="Work-with-Frames">Work with Frames<a class="anchor-link" href="#Work-with-Frames">&#182;</a></h1><p>They are based on pandas dataframes and pyntcloud.
+This was necessary since, no pointcloud library currently support to store automotive lidar data which consists of more than just y,x,z and maybe R,G,B</p>
+<p>First grab the first frame in the dataset:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">testframe</span> <span class="o">=</span> <span class="n">testset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -13492,31 +13280,13 @@ class Dataset(builtins.object)
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">testframe</span><span class="p">)</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>pointcloud: with 45716 points, data:[&#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;intensity&#39;, &#39;t&#39;, &#39;reflectivity&#39;, &#39;ring&#39;, &#39;noise&#39;, &#39;range&#39;], from Monday, June 22, 2020 01:40:42
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -13577,6 +13347,227 @@ class Dataset(builtins.object)
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">testframe</span><span class="o">.</span><span class="n">plot_interactive</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s2">&quot;pyntcloud&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">testframe</span><span class="o">.</span><span class="n">plot_interactive</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;range&quot;</span><span class="p">,</span> <span class="n">point_size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Working-with-pointcouds">Working with pointcouds<a class="anchor-link" href="#Working-with-pointcouds">&#182;</a></h2><p>The frame consists maily of the properties "data" and "points".</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">testframe</span><span class="o">.</span><span class="n">data</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So data contains everything as a pandas dataframe. With all its power.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">testframe</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">testframe</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">hist</span><span class="p">();</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now a closer look a the points.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">testframe</span><span class="o">.</span><span class="n">points</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So its a Pyntcloud object <a href="https://pyntcloud.readthedocs.io/en/latest/PyntCloud.html">https://pyntcloud.readthedocs.io/en/latest/PyntCloud.html</a> which in turn is also based on Dataframes with many methods for pointclouds.
+In order to access the dataframe use this:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">testframe</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">points</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>You can also work with the pointcloud with open3d</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">open3d_points</span> <span class="o">=</span> <span class="n">testframe</span><span class="o">.</span><span class="n">get_open3d_points</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">open3d_points</span><span class="o">.</span><span class="n">get_max_bound</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Pointcloud-processing-with-build-in-methods">Pointcloud processing with build in methods<a class="anchor-link" href="#Pointcloud-processing-with-build-in-methods">&#182;</a></h2><p>Although you can do a lot with just data and points, on its own the Frame object has methods build in for processing, which in turn return a frame object. The use the power of dataframes, pyntcloud and open3d.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">newframe</span> <span class="o">=</span> <span class="n">testframe</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">newframe</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So this is now a smaller Frame with x ranging from -5 to  5</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>These command can also be chained together</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">newframe2</span> <span class="o">=</span> <span class="n">testframe</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">newframe2</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
 </pre></div>
 
     </div>
