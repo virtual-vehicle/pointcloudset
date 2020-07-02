@@ -14,6 +14,14 @@ from .io.bag import frame_from_message, supported_lidars
 
 class Dataset:
     def __init__(self, bagfile: Path, lidar_name: str, keep_zeros: bool = False):
+        """Initiallises the Dataset.
+
+        Args:
+            bagfile (Path): Path to ROS bag file.
+            lidar_name (str): Name  or lidar, in order to read the right ROS message.
+            keep_zeros (bool, optional): Keep zero elements. Defaults to False.
+        """
+
         self.bag = rosbag.Bag(bagfile, "r")
         """ROS bag file asa rosbag.Bag object"""
         self.lidar_name = lidar_name

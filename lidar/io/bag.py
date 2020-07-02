@@ -27,14 +27,16 @@ supported_lidars = {
 
 
 def frame_from_message(dataset, message: rosbag.bag.BagMessage) -> Frame:
-    """Generates a frame from one ROS pointcloud2 message
+    """Generates a frame from one ROS pointcloud2 message. Optionally with or without 
+    zero elements, i.e. points too close or too far away. Defined in the Dataset
+    property keep_zeros.
 
     Args:
         dataset ([lidar.Dataset]): Dataset where the message is stored
         message (rosbag.bag.BagMessage): the message
 
     Returns:
-        Frame: A frame with the pointcloud data.
+        Frame: A frame with the pointcloud data
     """
 
     columnnames = supported_lidars[dataset.lidar_name]["columnnames"]
