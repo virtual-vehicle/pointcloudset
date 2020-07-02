@@ -5,7 +5,12 @@ For one lidar measurement frame. Typically an automotive lidar records many fram
 second.
 
 One Frame consists mainly of pyntcloud pointcloud (.pointcloud) and a pandas dataframe
- (.data) with all the associated data.
+(.data) with all the associated data.
+
+Note that the index of the poits is not preserved when applying processing. This
+is necessary since pyntcloud does not allow to pass the index. Therfore, a new
+Frame object is generated at each processing stage.
+
 
 All operations have to act on both, pointcloud and data and keep the timestamp.
 """
@@ -100,10 +105,10 @@ class Frame:
         """Update self.data removing points where filter is False.
 
         Args:
-            boolean_array (np.ndarray): [description]
+            boolean_array (np.ndarray): True where the point should remain.
 
         Returns:
-            Frame: Frame with filterd rows.
+            Frame: Frame with filterd rows and reindexed data and points.
         """
         new_data = self.data.loc[boolean_array].reset_index(drop=True)
         return Frame(new_data, timestamp=self.timestamp)
@@ -120,18 +125,23 @@ class Frame:
         """
         if maxvalue < minvalue:
             raise ValueError("maxvalue must be greater than minvalue")
-        filter_array = (
+        bool_array = (
             (self.data[dim] <= maxvalue) & (self.data[dim] >= minvalue)
         ).to_numpy()
-        return self.apply_filter(filter_array)
+        return self.apply_filter(bool_array)
 
-    def cluster(self, eps: float, min_points: int):
+    def get_cluster(self, eps: float, min_points: int) -> pd.DataFrame:
         labels = np.array(
             self.get_open3d_points().cluster_dbscan(
                 eps=eps, min_points=min_points, print_progress=True
             )
         )
-        return labels
+        labels_df = pd.DataFrame(labels, columns=["cluster"])
+        return labels_df
+
+    def take_cluster(self, cluster_number: int, cluster_labels: pd.DataFrame):
+        bool_array = (cluster_labels["cluster"] == cluster_number).values
+        return self.apply_filter(bool_array)
 
     def remove_outlier(self, nb_points: int, radius: float):
         pcd = self.get_open3d_points()

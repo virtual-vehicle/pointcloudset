@@ -98,3 +98,8 @@ reports/example.synctex.gz
 pyntcloud_plot*
 .vscode-server
 ~$*
+pipeline.py
+processing.py
+notebooks/dev_thomas.html
+notebooks/dev_thomas.ipynb
+notebooks/dev_thomas.py

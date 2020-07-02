@@ -91,6 +91,12 @@ testset.topics_in_bag
 type(testset.bag)
 
 
+# In[ ]:
+
+
+testset.end_time
+
+
 # # Work with Frames
 # 
 # They are based on pandas dataframes and pyntcloud.
@@ -127,7 +133,10 @@ len(testframe)
 testframe.plot_interactive()
 
 
-# This plot uses plotly as the backend, which can be rather time consuming. Aternativly you can use:
+# This plot uses plotly as the backend, which can be rather time consuming. 
+# WARNING: delte the output cells with plotly plots, they make the file very big.
+# 
+# Aternativly you can use:
 
 # In[ ]:
 
@@ -178,7 +187,7 @@ testframe.points
 # In[ ]:
 
 
-testframe.points.points
+testframe.points.
 
 
 # You can also work with the pointcloud with open3d

@@ -47,3 +47,10 @@ def test_frame_limit_chaining2(testframe_mini: Frame):
     check.equal(len(totest), 4)
     check.less_equal(max(totest.data.x.values), 300.0)
     check.equal(totest.data.isnull().values.any(), False)
+
+
+def test_processing_index(testframe_mini: Frame):
+    totest = testframe_mini.limit("x", minvalue=0.0, maxvalue=500.0).limit(
+        "x", 0.0, 300.0
+    )
+    check.equal(totest.data.index.is_monotonic_increasing, True)
