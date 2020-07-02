@@ -26,7 +26,33 @@
 <h1 id="reading-this-documentation">Reading this documentation.</h1>
 <p>The main features of this package are the "Dataset" class consisting of many
 "Frame" objects.</p>
-<h1 id="development">Development</h1>
+<h1 id="getting-started">Getting started</h1>
+<ul>
+<li>install VS Code</li>
+<li>install the remote development extension in VS code (ms-vscode-remote.vscode-remote-extensionpack)</li>
+<li>install and run docker desktop </li>
+<li>clone the repository (you can use VC code for that as well)</li>
+<li>open the folder in VS code</li>
+<li>VS code asks to open the remote development environment - say yes</li>
+<li>The docker image is download on the first start, so this may take a while</li>
+</ul>
+<h2 id="gitlab-access-to-the-docker-registry">Gitlab access to the docker registry</h2>
+<p>On your very first time accessing our gitlab docker registry you need to do the following steps:</p>
+<p>1.) generate an access token:
+* in gitlab =&gt; User settings =&gt; Access token
+* generate a token with "read_registy" rights
+* store the token savely (KeePass)</p>
+<p>2.) In the terminal login to our registry:</p>
+<pre><code class="bash">docker login registry-gitlab.v2c2.at -u &lt;vornamenachname&gt; -p &lt;token&gt;
+</code></pre>
+<h1 id="contribution">Contribution</h1>
+<ul>
+<li>add Issues in gitlab</li>
+<li>generate a branch and implement new features</li>
+<li>write tests for the new features</li>
+<li>make a merge request in gitlab</li>
+</ul>
+<h2 id="development">Development</h2>
 <ul>
 <li>use docstrings everywhere. The documentation in "doc" is generated with pdoc.</li>
 <li>Have a look at the Makefile and the available make commands</li>
@@ -41,6 +67,7 @@
 <ul>
 <li>implement the methods from the pipeline.</li>
 <li>overlay plots similar to the lebrig dataset</li>
+<li>make pip installable form the gitlab repo</li>
 <li>update all docstrings &amp; documentation</li>
 </ul>
 <h2 id="roadmap-of-020">Roadmap of 0.2.0</h2>
@@ -77,7 +104,41 @@ The main features of this package are the &#34;Dataset&#34; class consisting of 
 &#34;Frame&#34; objects.
 
 
-# Development
+# Getting started
+
+* install VS Code
+* install the remote development extension in VS code (ms-vscode-remote.vscode-remote-extensionpack)
+* install and run docker desktop 
+* clone the repository (you can use VC code for that as well)
+* open the folder in VS code
+* VS code asks to open the remote development environment - say yes
+* The docker image is download on the first start, so this may take a while
+
+## Gitlab access to the docker registry
+
+On your very first time accessing our gitlab docker registry you need to do the following steps:
+
+1.) generate an access token: 
+* in gitlab =&gt; User settings =&gt; Access token
+* generate a token with &#34;read_registy&#34; rights
+* store the token savely (KeePass)
+
+2.) In the terminal login to our registry:
+
+``` bash
+docker login registry-gitlab.v2c2.at -u &lt;vornamenachname&gt; -p &lt;token&gt;
+```
+
+
+# Contribution
+
+* add Issues in gitlab
+* generate a branch and implement new features
+* write tests for the new features
+* make a merge request in gitlab
+
+
+## Development
 
 * use docstrings everywhere. The documentation in &#34;doc&#34; is generated with pdoc.
 * Have a look at the Makefile and the available make commands
@@ -93,6 +154,7 @@ The main features of this package are the &#34;Dataset&#34; class consisting of 
 ## Roadmap for version 0.1.0
 * implement the methods from the pipeline.
 * overlay plots similar to the lebrig dataset
+* make pip installable form the gitlab repo
 * update all docstrings &amp; documentation
 
 
@@ -163,7 +225,14 @@ from .frame import Frame</code></pre>
 <div class="toc">
 <ul>
 <li><a href="#reading-this-documentation">Reading this documentation.</a></li>
+<li><a href="#getting-started">Getting started</a><ul>
+<li><a href="#gitlab-access-to-the-docker-registry">Gitlab access to the docker registry</a></li>
+</ul>
+</li>
+<li><a href="#contribution">Contribution</a><ul>
 <li><a href="#development">Development</a></li>
+</ul>
+</li>
 <li><a href="#roadmap">Roadmap</a><ul>
 <li><a href="#roadmap-for-version-010">Roadmap for version 0.1.0</a></li>
 <li><a href="#roadmap-of-020">Roadmap of 0.2.0</a></li>

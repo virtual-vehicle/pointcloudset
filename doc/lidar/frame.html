@@ -73,7 +73,7 @@ class Frame:
         &#34;&#34;&#34;Measurments aka. scalar field of values at each point&#34;&#34;&#34;
 
     def __str__(self):
-        return f&#34;pointcloud: with {len(self)} points, data:{list(self.data.columns)}&#34;
+        return f&#34;pointcloud: with {len(self)} points, data:{list(self.data.columns)}, from {self.convert_timestamp()}&#34;
 
     def __len__(self):
         return len(self.data)
@@ -118,14 +118,16 @@ class Frame:
         dists = [np.linalg.norm(point_a - point) for point in points]
         return np.array(dists)
 
-    def plot_interactive(self, backend: &#34;str&#34; = &#34;plotly&#34;, color=&#34;intensity&#34;, **kwargs):
+    def plot_interactive(
+        self, backend: str = &#34;plotly&#34;, color: str = &#34;intensity&#34;, **kwargs
+    ):
         args = locals()
         args.update(kwargs)
         backend = args.pop(&#34;backend&#34;)
         if backend == &#34;pyntcloud&#34;:
             return pyntcloud_3d(self, **kwargs)
         elif backend == &#34;plotly&#34;:
-            return plotly_3d(self, **kwargs)
+            return plotly_3d(self, color=color, **kwargs)
         else:
             raise ValueError(&#34;wrong backend&#34;)
 
@@ -223,7 +225,7 @@ class Frame:
         &#34;&#34;&#34;Measurments aka. scalar field of values at each point&#34;&#34;&#34;
 
     def __str__(self):
-        return f&#34;pointcloud: with {len(self)} points, data:{list(self.data.columns)}&#34;
+        return f&#34;pointcloud: with {len(self)} points, data:{list(self.data.columns)}, from {self.convert_timestamp()}&#34;
 
     def __len__(self):
         return len(self.data)
@@ -268,14 +270,16 @@ class Frame:
         dists = [np.linalg.norm(point_a - point) for point in points]
         return np.array(dists)
 
-    def plot_interactive(self, backend: &#34;str&#34; = &#34;plotly&#34;, color=&#34;intensity&#34;, **kwargs):
+    def plot_interactive(
+        self, backend: str = &#34;plotly&#34;, color: str = &#34;intensity&#34;, **kwargs
+    ):
         args = locals()
         args.update(kwargs)
         backend = args.pop(&#34;backend&#34;)
         if backend == &#34;pyntcloud&#34;:
             return pyntcloud_3d(self, **kwargs)
         elif backend == &#34;plotly&#34;:
-            return plotly_3d(self, **kwargs)
+            return plotly_3d(self, color=color, **kwargs)
         else:
             raise ValueError(&#34;wrong backend&#34;)
 
@@ -573,7 +577,7 @@ measruments at each point of the pointcloud.</p>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.plot_interactive"><code class="name flex">
-<span>def <span class="ident">plot_interactive</span></span>(<span>self, backend: str = 'plotly', color='intensity', **kwargs)</span>
+<span>def <span class="ident">plot_interactive</span></span>(<span>self, backend: str = 'plotly', color: str = 'intensity', **kwargs)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -581,14 +585,16 @@ measruments at each point of the pointcloud.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def plot_interactive(self, backend: &#34;str&#34; = &#34;plotly&#34;, color=&#34;intensity&#34;, **kwargs):
+<pre><code class="python">def plot_interactive(
+    self, backend: str = &#34;plotly&#34;, color: str = &#34;intensity&#34;, **kwargs
+):
     args = locals()
     args.update(kwargs)
     backend = args.pop(&#34;backend&#34;)
     if backend == &#34;pyntcloud&#34;:
         return pyntcloud_3d(self, **kwargs)
     elif backend == &#34;plotly&#34;:
-        return plotly_3d(self, **kwargs)
+        return plotly_3d(self, color=color, **kwargs)
     else:
         raise ValueError(&#34;wrong backend&#34;)</code></pre>
 </details>
