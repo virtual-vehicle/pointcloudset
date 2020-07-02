@@ -38,7 +38,7 @@ class Frame:
         """Measurments aka. scalar field of values at each point"""
 
     def __str__(self):
-        return f"pointcloud: with {len(self)} points, data:{list(self.data.columns)}"
+        return f"pointcloud: with {len(self)} points, data:{list(self.data.columns)}, from {self.convert_timestamp()}"
 
     def __len__(self):
         return len(self.data)
@@ -83,14 +83,16 @@ class Frame:
         dists = [np.linalg.norm(point_a - point) for point in points]
         return np.array(dists)
 
-    def plot_interactive(self, backend: "str" = "plotly", color="intensity", **kwargs):
+    def plot_interactive(
+        self, backend: str = "plotly", color: str = "intensity", **kwargs
+    ):
         args = locals()
         args.update(kwargs)
         backend = args.pop("backend")
         if backend == "pyntcloud":
             return pyntcloud_3d(self, **kwargs)
         elif backend == "plotly":
-            return plotly_3d(self, **kwargs)
+            return plotly_3d(self, color=color, **kwargs)
         else:
             raise ValueError("wrong backend")
 

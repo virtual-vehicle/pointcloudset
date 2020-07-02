@@ -8,7 +8,7 @@ colorscales = {
 
 
 def plotly_3d(
-    frame, point_size: float = 2, color: str = "intensity", **kwargs,
+    frame, color: str, point_size: float = 2, **kwargs,
 ):
     if color not in frame.data.columns:
         raise ValueError(f"choose any of {list(frame.data.columns)}")
