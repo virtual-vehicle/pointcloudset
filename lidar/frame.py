@@ -131,15 +131,34 @@ class Frame:
         return self.apply_filter(bool_array)
 
     def get_cluster(self, eps: float, min_points: int) -> pd.DataFrame:
+        """Get the clusters based on open3D cluster_dbscan. Process futher with
+            take_cluster.
+
+        Args:
+            eps (float): Density parameter that is used to find neighbouring points.
+            min_points (int): Minimum number of points to form a cluster.
+
+        Returns:
+            pd.DataFrame: Dataframe with list of clusters.
+        """
         labels = np.array(
             self.get_open3d_points().cluster_dbscan(
-                eps=eps, min_points=min_points, print_progress=True
+                eps=eps, min_points=min_points, print_progress=False
             )
         )
         labels_df = pd.DataFrame(labels, columns=["cluster"])
         return labels_df
 
     def take_cluster(self, cluster_number: int, cluster_labels: pd.DataFrame):
+        """Takes only the points belonging to the cluster_number.
+
+        Args:
+            cluster_number (int): Cluster id to keep.
+            cluster_labels (pd.DataFrame): clusters generated with get_cluster.
+
+        Returns:
+            Frame: with cluster of ID cluster_number.
+        """
         bool_array = (cluster_labels["cluster"] == cluster_number).values
         return self.apply_filter(bool_array)
 

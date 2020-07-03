@@ -75,3 +75,13 @@ def reference_pointcloud_withzero_dataframe():
 @pytest.fixture()
 def testframe_mini(testframe_mini_df):
     return lidar.Frame(testframe_mini_df, rospy.rostime.Time(50))
+
+
+@pytest.fixture()
+def testframe_mini_real(testframe):
+    return (
+        testframe.limit("x", -1, 1)
+        .limit("y", -1, 1)
+        .limit("z", -1, 1)
+        .limit("intensity", 0, 10)
+    )

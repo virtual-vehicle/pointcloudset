@@ -27,6 +27,9 @@
 second.</p>
 <p>One Frame consists mainly of pyntcloud pointcloud (.pointcloud) and a pandas dataframe
 (.data) with all the associated data.</p>
+<p>Note that the index of the poits is not preserved when applying processing. This
+is necessary since pyntcloud does not allow to pass the index. Therfore, a new
+Frame object is generated at each processing stage.</p>
 <p>All operations have to act on both, pointcloud and data and keep the timestamp.</p>
 <details class="source">
 <summary>
@@ -39,7 +42,12 @@ For one lidar measurement frame. Typically an automotive lidar records many fram
 second.
 
 One Frame consists mainly of pyntcloud pointcloud (.pointcloud) and a pandas dataframe
- (.data) with all the associated data.
+(.data) with all the associated data.
+
+Note that the index of the poits is not preserved when applying processing. This
+is necessary since pyntcloud does not allow to pass the index. Therfore, a new
+Frame object is generated at each processing stage.
+
 
 All operations have to act on both, pointcloud and data and keep the timestamp.
 &#34;&#34;&#34;
@@ -134,10 +142,10 @@ class Frame:
         &#34;&#34;&#34;Update self.data removing points where filter is False.
 
         Args:
-            boolean_array (np.ndarray): [description]
+            boolean_array (np.ndarray): True where the point should remain.
 
         Returns:
-            Frame: Frame with filterd rows.
+            Frame: Frame with filterd rows and reindexed data and points.
         &#34;&#34;&#34;
         new_data = self.data.loc[boolean_array].reset_index(drop=True)
         return Frame(new_data, timestamp=self.timestamp)
@@ -154,18 +162,42 @@ class Frame:
         &#34;&#34;&#34;
         if maxvalue &lt; minvalue:
             raise ValueError(&#34;maxvalue must be greater than minvalue&#34;)
-        filter_array = (
+        bool_array = (
             (self.data[dim] &lt;= maxvalue) &amp; (self.data[dim] &gt;= minvalue)
         ).to_numpy()
-        return self.apply_filter(filter_array)
+        return self.apply_filter(bool_array)
 
-    def cluster(self, eps: float, min_points: int):
+    def get_cluster(self, eps: float, min_points: int) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;Get the clusters based on open3D cluster_dbscan. Process futher with
+            take_cluster.
+
+        Args:
+            eps (float): Density parameter that is used to find neighbouring points.
+            min_points (int): Minimum number of points to form a cluster.
+
+        Returns:
+            pd.DataFrame: Dataframe with list of clusters.
+        &#34;&#34;&#34;
         labels = np.array(
             self.get_open3d_points().cluster_dbscan(
-                eps=eps, min_points=min_points, print_progress=True
+                eps=eps, min_points=min_points, print_progress=False
             )
         )
-        return labels
+        labels_df = pd.DataFrame(labels, columns=[&#34;cluster&#34;])
+        return labels_df
+
+    def take_cluster(self, cluster_number: int, cluster_labels: pd.DataFrame):
+        &#34;&#34;&#34;Takes only the points belonging to the cluster_number.
+
+        Args:
+            cluster_number (int): Cluster id to keep.
+            cluster_labels (pd.DataFrame): clusters generated with get_cluster.
+
+        Returns:
+            Frame: with cluster of ID cluster_number.
+        &#34;&#34;&#34;
+        bool_array = (cluster_labels[&#34;cluster&#34;] == cluster_number).values
+        return self.apply_filter(bool_array)
 
     def remove_outlier(self, nb_points: int, radius: float):
         pcd = self.get_open3d_points()
@@ -286,10 +318,10 @@ class Frame:
         &#34;&#34;&#34;Update self.data removing points where filter is False.
 
         Args:
-            boolean_array (np.ndarray): [description]
+            boolean_array (np.ndarray): True where the point should remain.
 
         Returns:
-            Frame: Frame with filterd rows.
+            Frame: Frame with filterd rows and reindexed data and points.
         &#34;&#34;&#34;
         new_data = self.data.loc[boolean_array].reset_index(drop=True)
         return Frame(new_data, timestamp=self.timestamp)
@@ -306,18 +338,42 @@ class Frame:
         &#34;&#34;&#34;
         if maxvalue &lt; minvalue:
             raise ValueError(&#34;maxvalue must be greater than minvalue&#34;)
-        filter_array = (
+        bool_array = (
             (self.data[dim] &lt;= maxvalue) &amp; (self.data[dim] &gt;= minvalue)
         ).to_numpy()
-        return self.apply_filter(filter_array)
+        return self.apply_filter(bool_array)
 
-    def cluster(self, eps: float, min_points: int):
+    def get_cluster(self, eps: float, min_points: int) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;Get the clusters based on open3D cluster_dbscan. Process futher with
+            take_cluster.
+
+        Args:
+            eps (float): Density parameter that is used to find neighbouring points.
+            min_points (int): Minimum number of points to form a cluster.
+
+        Returns:
+            pd.DataFrame: Dataframe with list of clusters.
+        &#34;&#34;&#34;
         labels = np.array(
             self.get_open3d_points().cluster_dbscan(
-                eps=eps, min_points=min_points, print_progress=True
+                eps=eps, min_points=min_points, print_progress=False
             )
         )
-        return labels
+        labels_df = pd.DataFrame(labels, columns=[&#34;cluster&#34;])
+        return labels_df
+
+    def take_cluster(self, cluster_number: int, cluster_labels: pd.DataFrame):
+        &#34;&#34;&#34;Takes only the points belonging to the cluster_number.
+
+        Args:
+            cluster_number (int): Cluster id to keep.
+            cluster_labels (pd.DataFrame): clusters generated with get_cluster.
+
+        Returns:
+            Frame: with cluster of ID cluster_number.
+        &#34;&#34;&#34;
+        bool_array = (cluster_labels[&#34;cluster&#34;] == cluster_number).values
+        return self.apply_filter(bool_array)
 
     def remove_outlier(self, nb_points: int, radius: float):
         pcd = self.get_open3d_points()
@@ -369,12 +425,12 @@ class Frame:
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>boolean_array</code></strong> :&ensp;<code>np.ndarray</code></dt>
-<dd>[description]</dd>
+<dd>True where the point should remain.</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code><a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></code></dt>
-<dd>Frame with filterd rows.</dd>
+<dd>Frame with filterd rows and reindexed data and points.</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -384,31 +440,13 @@ class Frame:
     &#34;&#34;&#34;Update self.data removing points where filter is False.
 
     Args:
-        boolean_array (np.ndarray): [description]
+        boolean_array (np.ndarray): True where the point should remain.
 
     Returns:
-        Frame: Frame with filterd rows.
+        Frame: Frame with filterd rows and reindexed data and points.
     &#34;&#34;&#34;
     new_data = self.data.loc[boolean_array].reset_index(drop=True)
     return Frame(new_data, timestamp=self.timestamp)</code></pre>
-</details>
-</dd>
-<dt id="lidar.frame.Frame.cluster"><code class="name flex">
-<span>def <span class="ident">cluster</span></span>(<span>self, eps: float, min_points: int)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def cluster(self, eps: float, min_points: int):
-    labels = np.array(
-        self.get_open3d_points().cluster_dbscan(
-            eps=eps, min_points=min_points, print_progress=True
-        )
-    )
-    return labels</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.convert_timestamp"><code class="name flex">
@@ -462,6 +500,48 @@ to the origin (0,0,0).</p>
     points = self.points.xyz
     dists = [np.linalg.norm(point_a - point) for point in points]
     return np.array(dists)</code></pre>
+</details>
+</dd>
+<dt id="lidar.frame.Frame.get_cluster"><code class="name flex">
+<span>def <span class="ident">get_cluster</span></span>(<span>self, eps: float, min_points: int) ‑> pandas.core.frame.DataFrame</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get the clusters based on open3D cluster_dbscan. Process futher with
+take_cluster.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>eps</code></strong> :&ensp;<code>float</code></dt>
+<dd>Density parameter that is used to find neighbouring points.</dd>
+<dt><strong><code>min_points</code></strong> :&ensp;<code>int</code></dt>
+<dd>Minimum number of points to form a cluster.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>pd.DataFrame</code></dt>
+<dd>Dataframe with list of clusters.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_cluster(self, eps: float, min_points: int) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;Get the clusters based on open3D cluster_dbscan. Process futher with
+        take_cluster.
+
+    Args:
+        eps (float): Density parameter that is used to find neighbouring points.
+        min_points (int): Minimum number of points to form a cluster.
+
+    Returns:
+        pd.DataFrame: Dataframe with list of clusters.
+    &#34;&#34;&#34;
+    labels = np.array(
+        self.get_open3d_points().cluster_dbscan(
+            eps=eps, min_points=min_points, print_progress=False
+        )
+    )
+    labels_df = pd.DataFrame(labels, columns=[&#34;cluster&#34;])
+    return labels_df</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.get_open3d_points"><code class="name flex">
@@ -549,10 +629,10 @@ measruments at each point of the pointcloud.</p>
     &#34;&#34;&#34;
     if maxvalue &lt; minvalue:
         raise ValueError(&#34;maxvalue must be greater than minvalue&#34;)
-    filter_array = (
+    bool_array = (
         (self.data[dim] &lt;= maxvalue) &amp; (self.data[dim] &gt;= minvalue)
     ).to_numpy()
-    return self.apply_filter(filter_array)</code></pre>
+    return self.apply_filter(bool_array)</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.plane_segmentation"><code class="name flex">
@@ -629,6 +709,41 @@ measruments at each point of the pointcloud.</p>
     return ind</code></pre>
 </details>
 </dd>
+<dt id="lidar.frame.Frame.take_cluster"><code class="name flex">
+<span>def <span class="ident">take_cluster</span></span>(<span>self, cluster_number: int, cluster_labels: pandas.core.frame.DataFrame)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Takes only the points belonging to the cluster_number.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>cluster_number</code></strong> :&ensp;<code>int</code></dt>
+<dd>Cluster id to keep.</dd>
+<dt><strong><code>cluster_labels</code></strong> :&ensp;<code>pd.DataFrame</code></dt>
+<dd>clusters generated with get_cluster.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></code></dt>
+<dd>with cluster of ID cluster_number.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def take_cluster(self, cluster_number: int, cluster_labels: pd.DataFrame):
+    &#34;&#34;&#34;Takes only the points belonging to the cluster_number.
+
+    Args:
+        cluster_number (int): Cluster id to keep.
+        cluster_labels (pd.DataFrame): clusters generated with get_cluster.
+
+    Returns:
+        Frame: with cluster of ID cluster_number.
+    &#34;&#34;&#34;
+    bool_array = (cluster_labels[&#34;cluster&#34;] == cluster_number).values
+    return self.apply_filter(bool_array)</code></pre>
+</details>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -651,10 +766,10 @@ measruments at each point of the pointcloud.</p>
 <h4><code><a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></code></h4>
 <ul class="two-column">
 <li><code><a title="lidar.frame.Frame.apply_filter" href="#lidar.frame.Frame.apply_filter">apply_filter</a></code></li>
-<li><code><a title="lidar.frame.Frame.cluster" href="#lidar.frame.Frame.cluster">cluster</a></code></li>
 <li><code><a title="lidar.frame.Frame.convert_timestamp" href="#lidar.frame.Frame.convert_timestamp">convert_timestamp</a></code></li>
 <li><code><a title="lidar.frame.Frame.data" href="#lidar.frame.Frame.data">data</a></code></li>
 <li><code><a title="lidar.frame.Frame.distances_to_origin" href="#lidar.frame.Frame.distances_to_origin">distances_to_origin</a></code></li>
+<li><code><a title="lidar.frame.Frame.get_cluster" href="#lidar.frame.Frame.get_cluster">get_cluster</a></code></li>
 <li><code><a title="lidar.frame.Frame.get_open3d_points" href="#lidar.frame.Frame.get_open3d_points">get_open3d_points</a></code></li>
 <li><code><a title="lidar.frame.Frame.has_data" href="#lidar.frame.Frame.has_data">has_data</a></code></li>
 <li><code><a title="lidar.frame.Frame.limit" href="#lidar.frame.Frame.limit">limit</a></code></li>
@@ -664,6 +779,7 @@ measruments at each point of the pointcloud.</p>
 <li><code><a title="lidar.frame.Frame.points" href="#lidar.frame.Frame.points">points</a></code></li>
 <li><code><a title="lidar.frame.Frame.quantile_filter" href="#lidar.frame.Frame.quantile_filter">quantile_filter</a></code></li>
 <li><code><a title="lidar.frame.Frame.remove_outlier" href="#lidar.frame.Frame.remove_outlier">remove_outlier</a></code></li>
+<li><code><a title="lidar.frame.Frame.take_cluster" href="#lidar.frame.Frame.take_cluster">take_cluster</a></code></li>
 <li><code><a title="lidar.frame.Frame.timestamp" href="#lidar.frame.Frame.timestamp">timestamp</a></code></li>
 </ul>
 </li>
