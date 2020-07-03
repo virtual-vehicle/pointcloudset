@@ -23,9 +23,18 @@ from datetime import datetime
 from pyntcloud import PyntCloud
 from typing import List
 import pyntcloud
+import operator
 
 from .convert import convert
 from .plot.frame import plotly_3d, pyntcloud_3d
+
+ops = {
+    ">": operator.gt,
+    "<": operator.lt,
+    ">=": operator.ge,
+    "<=": operator.le,
+    "==": operator.eq,
+}
 
 
 class Frame:
@@ -49,6 +58,9 @@ class Frame:
 
     def __len__(self):
         return len(self.data)
+
+    def describe(self):
+        return self.data.describe()
 
     def get_open3d_points(self) -> o3d.open3d_pybind.geometry.PointCloud:
         """Extract points as open3D PointCloud object. Needed for processing with the
@@ -104,7 +116,8 @@ class Frame:
             raise ValueError("wrong backend")
 
     def apply_filter(self, boolean_array: np.ndarray):
-        """Update self.data removing points where filter is False.
+        """Generating a new Frame by removing points where filter is False.
+        Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.
 
         Args:
             boolean_array (np.ndarray): True where the point should remain.
@@ -113,6 +126,19 @@ class Frame:
             Frame: Frame with filterd rows and reindexed data and points.
         """
         new_data = self.data.loc[boolean_array].reset_index(drop=True)
+        return Frame(new_data, timestamp=self.timestamp)
+
+    def select_by_index(self, index_to_keep: List[int]):
+        """Generating a new Frame by keeping which are in the same idex
+        Usefull for open3d generate index lists. Similar to the 
+
+        Args:
+            index_to_keep (List[int]): List of indices to keep
+
+        Returns:
+            Frame: Frame with keeped rows and reindexed data and points
+        """
+        new_data = self.data.iloc[index_to_keep].reset_index(drop=True)
         return Frame(new_data, timestamp=self.timestamp)
 
     def limit(self, dim: "str", minvalue: float, maxvalue: float):
@@ -175,17 +201,29 @@ class Frame:
             Tuple[open3d.geometry.PointCloud, List[int]] :
         """
         pcd = self.get_open3d_points()
-        cl, ind = pcd.remove_radius_outlier(nb_points=nb_points, radius=radius)
-        return ind
+        cl, index_to_keep = pcd.remove_radius_outlier(
+            nb_points=nb_points, radius=radius
+        )
+        return self.select_by_index(index_to_keep)
 
-    def secect_by_index(self, index: List[int]):
-        pass
+    def quantile_filter(
+        self, dim: str, relation: str = ">=", cut_quantile: float = 0.5
+    ):
+        """Filtering based on quantile values of dimension dim of the data.
 
-    def quantile_filter(self, dim: str, cut_quantile: float):
-        filter_array = (
-            self.data[dim] >= self.data[dim].quantile(cut_quantile)
-        ).to_numpy()
-        return self.apply_filter(filter_array)
+        testframe.quantile_filter("intensity","==",0.5)
+
+        Args:
+            dim (str): column in data, for example "intensity"
+            relation (str, optional): Any operator as string. Defaults to ">=".
+            cut_quantile (float, optional): Qunatile to compare to. Defaults to 0.5.
+
+        Returns:
+            Frame: Frame which fullfils the criteria.
+        """
+        cut_value = self.data[dim].quantile(cut_quantile)
+        filter_array = ops[relation](self.data[dim], cut_value)
+        return self.apply_filter(filter_array.to_numpy())
 
     def plane_segmentation(
         self, max_dist: float, max_iterations: int, n_inliers_to_stop=None

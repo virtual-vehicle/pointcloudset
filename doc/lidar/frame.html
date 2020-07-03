@@ -60,9 +60,18 @@ from datetime import datetime
 from pyntcloud import PyntCloud
 from typing import List
 import pyntcloud
+import operator
 
 from .convert import convert
 from .plot.frame import plotly_3d, pyntcloud_3d
+
+ops = {
+    &#34;&gt;&#34;: operator.gt,
+    &#34;&lt;&#34;: operator.lt,
+    &#34;&gt;=&#34;: operator.ge,
+    &#34;&lt;=&#34;: operator.le,
+    &#34;==&#34;: operator.eq,
+}
 
 
 class Frame:
@@ -86,6 +95,9 @@ class Frame:
 
     def __len__(self):
         return len(self.data)
+
+    def describe(self):
+        return self.data.describe()
 
     def get_open3d_points(self) -&gt; o3d.open3d_pybind.geometry.PointCloud:
         &#34;&#34;&#34;Extract points as open3D PointCloud object. Needed for processing with the
@@ -141,7 +153,8 @@ class Frame:
             raise ValueError(&#34;wrong backend&#34;)
 
     def apply_filter(self, boolean_array: np.ndarray):
-        &#34;&#34;&#34;Update self.data removing points where filter is False.
+        &#34;&#34;&#34;Generating a new Frame by removing points where filter is False.
+        Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.
 
         Args:
             boolean_array (np.ndarray): True where the point should remain.
@@ -150,6 +163,19 @@ class Frame:
             Frame: Frame with filterd rows and reindexed data and points.
         &#34;&#34;&#34;
         new_data = self.data.loc[boolean_array].reset_index(drop=True)
+        return Frame(new_data, timestamp=self.timestamp)
+
+    def select_by_index(self, index_to_keep: List[int]):
+        &#34;&#34;&#34;Generating a new Frame by keeping which are in the same idex
+        Usefull for open3d generate index lists. Similar to the 
+
+        Args:
+            index_to_keep (List[int]): List of indices to keep
+
+        Returns:
+            Frame: Frame with keeped rows and reindexed data and points
+        &#34;&#34;&#34;
+        new_data = self.data.iloc[index_to_keep].reset_index(drop=True)
         return Frame(new_data, timestamp=self.timestamp)
 
     def limit(self, dim: &#34;str&#34;, minvalue: float, maxvalue: float):
@@ -212,17 +238,29 @@ class Frame:
             Tuple[open3d.geometry.PointCloud, List[int]] :
         &#34;&#34;&#34;
         pcd = self.get_open3d_points()
-        cl, ind = pcd.remove_radius_outlier(nb_points=nb_points, radius=radius)
-        return ind
+        cl, index_to_keep = pcd.remove_radius_outlier(
+            nb_points=nb_points, radius=radius
+        )
+        return self.select_by_index(index_to_keep)
 
-    def secect_by_index(self, index: List[int]):
-        pass
+    def quantile_filter(
+        self, dim: str, relation: str = &#34;&gt;=&#34;, cut_quantile: float = 0.5
+    ):
+        &#34;&#34;&#34;Filtering based on quantile values of dimension dim of the data.
 
-    def quantile_filter(self, dim: str, cut_quantile: float):
-        filter_array = (
-            self.data[dim] &gt;= self.data[dim].quantile(cut_quantile)
-        ).to_numpy()
-        return self.apply_filter(filter_array)
+        testframe.quantile_filter(&#34;intensity&#34;,&#34;==&#34;,0.5)
+
+        Args:
+            dim (str): column in data, for example &#34;intensity&#34;
+            relation (str, optional): Any operator as string. Defaults to &#34;&gt;=&#34;.
+            cut_quantile (float, optional): Qunatile to compare to. Defaults to 0.5.
+
+        Returns:
+            Frame: Frame which fullfils the criteria.
+        &#34;&#34;&#34;
+        cut_value = self.data[dim].quantile(cut_quantile)
+        filter_array = ops[relation](self.data[dim], cut_value)
+        return self.apply_filter(filter_array.to_numpy())
 
     def plane_segmentation(
         self, max_dist: float, max_iterations: int, n_inliers_to_stop=None
@@ -288,6 +326,9 @@ class Frame:
     def __len__(self):
         return len(self.data)
 
+    def describe(self):
+        return self.data.describe()
+
     def get_open3d_points(self) -&gt; o3d.open3d_pybind.geometry.PointCloud:
         &#34;&#34;&#34;Extract points as open3D PointCloud object. Needed for processing with the
         open3d package.
@@ -342,7 +383,8 @@ class Frame:
             raise ValueError(&#34;wrong backend&#34;)
 
     def apply_filter(self, boolean_array: np.ndarray):
-        &#34;&#34;&#34;Update self.data removing points where filter is False.
+        &#34;&#34;&#34;Generating a new Frame by removing points where filter is False.
+        Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.
 
         Args:
             boolean_array (np.ndarray): True where the point should remain.
@@ -351,6 +393,19 @@ class Frame:
             Frame: Frame with filterd rows and reindexed data and points.
         &#34;&#34;&#34;
         new_data = self.data.loc[boolean_array].reset_index(drop=True)
+        return Frame(new_data, timestamp=self.timestamp)
+
+    def select_by_index(self, index_to_keep: List[int]):
+        &#34;&#34;&#34;Generating a new Frame by keeping which are in the same idex
+        Usefull for open3d generate index lists. Similar to the 
+
+        Args:
+            index_to_keep (List[int]): List of indices to keep
+
+        Returns:
+            Frame: Frame with keeped rows and reindexed data and points
+        &#34;&#34;&#34;
+        new_data = self.data.iloc[index_to_keep].reset_index(drop=True)
         return Frame(new_data, timestamp=self.timestamp)
 
     def limit(self, dim: &#34;str&#34;, minvalue: float, maxvalue: float):
@@ -413,17 +468,29 @@ class Frame:
             Tuple[open3d.geometry.PointCloud, List[int]] :
         &#34;&#34;&#34;
         pcd = self.get_open3d_points()
-        cl, ind = pcd.remove_radius_outlier(nb_points=nb_points, radius=radius)
-        return ind
+        cl, index_to_keep = pcd.remove_radius_outlier(
+            nb_points=nb_points, radius=radius
+        )
+        return self.select_by_index(index_to_keep)
 
-    def secect_by_index(self, index: List[int]):
-        pass
+    def quantile_filter(
+        self, dim: str, relation: str = &#34;&gt;=&#34;, cut_quantile: float = 0.5
+    ):
+        &#34;&#34;&#34;Filtering based on quantile values of dimension dim of the data.
 
-    def quantile_filter(self, dim: str, cut_quantile: float):
-        filter_array = (
-            self.data[dim] &gt;= self.data[dim].quantile(cut_quantile)
-        ).to_numpy()
-        return self.apply_filter(filter_array)
+        testframe.quantile_filter(&#34;intensity&#34;,&#34;==&#34;,0.5)
+
+        Args:
+            dim (str): column in data, for example &#34;intensity&#34;
+            relation (str, optional): Any operator as string. Defaults to &#34;&gt;=&#34;.
+            cut_quantile (float, optional): Qunatile to compare to. Defaults to 0.5.
+
+        Returns:
+            Frame: Frame which fullfils the criteria.
+        &#34;&#34;&#34;
+        cut_value = self.data[dim].quantile(cut_quantile)
+        filter_array = ops[relation](self.data[dim], cut_value)
+        return self.apply_filter(filter_array.to_numpy())
 
     def plane_segmentation(
         self, max_dist: float, max_iterations: int, n_inliers_to_stop=None
@@ -472,7 +539,8 @@ class Frame:
 <span>def <span class="ident">apply_filter</span></span>(<span>self, boolean_array: numpy.ndarray)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Update self.data removing points where filter is False.</p>
+<div class="desc"><p>Generating a new Frame by removing points where filter is False.
+Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>boolean_array</code></strong> :&ensp;<code>np.ndarray</code></dt>
@@ -488,7 +556,8 @@ class Frame:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def apply_filter(self, boolean_array: np.ndarray):
-    &#34;&#34;&#34;Update self.data removing points where filter is False.
+    &#34;&#34;&#34;Generating a new Frame by removing points where filter is False.
+    Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.
 
     Args:
         boolean_array (np.ndarray): True where the point should remain.
@@ -523,6 +592,19 @@ class Frame:
     return datetime.fromtimestamp(self.timestamp.to_sec()).strftime(
         &#34;%A, %B %d, %Y %I:%M:%S&#34;
     )</code></pre>
+</details>
+</dd>
+<dt id="lidar.frame.Frame.describe"><code class="name flex">
+<span>def <span class="ident">describe</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def describe(self):
+    return self.data.describe()</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.distances_to_origin"><code class="name flex">
@@ -732,19 +814,47 @@ measruments at each point of the pointcloud.</p>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.quantile_filter"><code class="name flex">
-<span>def <span class="ident">quantile_filter</span></span>(<span>self, dim: str, cut_quantile: float)</span>
+<span>def <span class="ident">quantile_filter</span></span>(<span>self, dim: str, relation: str = &#x27;&gt;=&#x27;, cut_quantile: float = 0.5)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Filtering based on quantile values of dimension dim of the data.</p>
+<p>testframe.quantile_filter("intensity","==",0.5)</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>dim</code></strong> :&ensp;<code>str</code></dt>
+<dd>column in data, for example "intensity"</dd>
+<dt><strong><code>relation</code></strong> :&ensp;<code>str</code>, optional</dt>
+<dd>Any operator as string. Defaults to "&gt;=".</dd>
+<dt><strong><code>cut_quantile</code></strong> :&ensp;<code>float</code>, optional</dt>
+<dd>Qunatile to compare to. Defaults to 0.5.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></code></dt>
+<dd>Frame which fullfils the criteria.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def quantile_filter(self, dim: str, cut_quantile: float):
-    filter_array = (
-        self.data[dim] &gt;= self.data[dim].quantile(cut_quantile)
-    ).to_numpy()
-    return self.apply_filter(filter_array)</code></pre>
+<pre><code class="python">def quantile_filter(
+    self, dim: str, relation: str = &#34;&gt;=&#34;, cut_quantile: float = 0.5
+):
+    &#34;&#34;&#34;Filtering based on quantile values of dimension dim of the data.
+
+    testframe.quantile_filter(&#34;intensity&#34;,&#34;==&#34;,0.5)
+
+    Args:
+        dim (str): column in data, for example &#34;intensity&#34;
+        relation (str, optional): Any operator as string. Defaults to &#34;&gt;=&#34;.
+        cut_quantile (float, optional): Qunatile to compare to. Defaults to 0.5.
+
+    Returns:
+        Frame: Frame which fullfils the criteria.
+    &#34;&#34;&#34;
+    cut_value = self.data[dim].quantile(cut_quantile)
+    filter_array = ops[relation](self.data[dim], cut_value)
+    return self.apply_filter(filter_array.to_numpy())</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.remove_radius_outlier"><code class="name flex">
@@ -772,21 +882,44 @@ radius (float) – Radius of the sphere.</p>
         Tuple[open3d.geometry.PointCloud, List[int]] :
     &#34;&#34;&#34;
     pcd = self.get_open3d_points()
-    cl, ind = pcd.remove_radius_outlier(nb_points=nb_points, radius=radius)
-    return ind</code></pre>
+    cl, index_to_keep = pcd.remove_radius_outlier(
+        nb_points=nb_points, radius=radius
+    )
+    return self.select_by_index(index_to_keep)</code></pre>
 </details>
 </dd>
-<dt id="lidar.frame.Frame.secect_by_index"><code class="name flex">
-<span>def <span class="ident">secect_by_index</span></span>(<span>self, index: List[int])</span>
+<dt id="lidar.frame.Frame.select_by_index"><code class="name flex">
+<span>def <span class="ident">select_by_index</span></span>(<span>self, index_to_keep: List[int])</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Generating a new Frame by keeping which are in the same idex
+Usefull for open3d generate index lists. Similar to the </p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>index_to_keep</code></strong> :&ensp;<code>List[int]</code></dt>
+<dd>List of indices to keep</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></code></dt>
+<dd>Frame with keeped rows and reindexed data and points</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def secect_by_index(self, index: List[int]):
-    pass</code></pre>
+<pre><code class="python">def select_by_index(self, index_to_keep: List[int]):
+    &#34;&#34;&#34;Generating a new Frame by keeping which are in the same idex
+    Usefull for open3d generate index lists. Similar to the 
+
+    Args:
+        index_to_keep (List[int]): List of indices to keep
+
+    Returns:
+        Frame: Frame with keeped rows and reindexed data and points
+    &#34;&#34;&#34;
+    new_data = self.data.iloc[index_to_keep].reset_index(drop=True)
+    return Frame(new_data, timestamp=self.timestamp)</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.take_cluster"><code class="name flex">
@@ -848,6 +981,7 @@ radius (float) – Radius of the sphere.</p>
 <li><code><a title="lidar.frame.Frame.apply_filter" href="#lidar.frame.Frame.apply_filter">apply_filter</a></code></li>
 <li><code><a title="lidar.frame.Frame.convert_timestamp" href="#lidar.frame.Frame.convert_timestamp">convert_timestamp</a></code></li>
 <li><code><a title="lidar.frame.Frame.data" href="#lidar.frame.Frame.data">data</a></code></li>
+<li><code><a title="lidar.frame.Frame.describe" href="#lidar.frame.Frame.describe">describe</a></code></li>
 <li><code><a title="lidar.frame.Frame.distances_to_origin" href="#lidar.frame.Frame.distances_to_origin">distances_to_origin</a></code></li>
 <li><code><a title="lidar.frame.Frame.get_cluster" href="#lidar.frame.Frame.get_cluster">get_cluster</a></code></li>
 <li><code><a title="lidar.frame.Frame.get_open3d_points" href="#lidar.frame.Frame.get_open3d_points">get_open3d_points</a></code></li>
@@ -859,7 +993,7 @@ radius (float) – Radius of the sphere.</p>
 <li><code><a title="lidar.frame.Frame.points" href="#lidar.frame.Frame.points">points</a></code></li>
 <li><code><a title="lidar.frame.Frame.quantile_filter" href="#lidar.frame.Frame.quantile_filter">quantile_filter</a></code></li>
 <li><code><a title="lidar.frame.Frame.remove_radius_outlier" href="#lidar.frame.Frame.remove_radius_outlier">remove_radius_outlier</a></code></li>
-<li><code><a title="lidar.frame.Frame.secect_by_index" href="#lidar.frame.Frame.secect_by_index">secect_by_index</a></code></li>
+<li><code><a title="lidar.frame.Frame.select_by_index" href="#lidar.frame.Frame.select_by_index">select_by_index</a></code></li>
 <li><code><a title="lidar.frame.Frame.take_cluster" href="#lidar.frame.Frame.take_cluster">take_cluster</a></code></li>
 <li><code><a title="lidar.frame.Frame.timestamp" href="#lidar.frame.Frame.timestamp">timestamp</a></code></li>
 </ul>
