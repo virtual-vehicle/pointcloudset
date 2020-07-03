@@ -15,15 +15,16 @@ Frame object is generated at each processing stage.
 All operations have to act on both, pointcloud and data and keep the timestamp.
 """
 
+import operator
+from datetime import datetime
+from typing import List
+
 import numpy as np
 import open3d as o3d
 import pandas as pd
-import rospy
-from datetime import datetime
-from pyntcloud import PyntCloud
-from typing import List
 import pyntcloud
-import operator
+import rospy
+from pyntcloud import PyntCloud
 
 from .convert import convert
 from .plot.frame import plotly_3d, pyntcloud_3d
@@ -60,6 +61,8 @@ class Frame:
         return len(self.data)
 
     def describe(self):
+        """Generate descriptive statistics based on .data.describe().
+        """
         return self.data.describe()
 
     def get_open3d_points(self) -> o3d.open3d_pybind.geometry.PointCloud:
@@ -246,4 +249,3 @@ class Frame:
             assert (
                 self.data.index.is_monotonic_increasing
             ), "index should be monotonic increasing"
-

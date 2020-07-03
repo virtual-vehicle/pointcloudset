@@ -1,14 +1,13 @@
 import numpy as np
-import pandas as pd
-import pytest_check as check
-from pandas._testing import assert_frame_equal
-import rospy
 import open3d as o3d
+import pandas as pd
+import plotly
 import pyntcloud
-
+import pytest_check as check
+import rospy
+from pandas._testing import assert_frame_equal
 
 from lidar import Frame
-import plotly
 
 
 def test_init(testframe_mini_df: pd.DataFrame):

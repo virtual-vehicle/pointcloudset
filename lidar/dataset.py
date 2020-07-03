@@ -4,7 +4,7 @@ The Dataset class which contains many frames.
 
 import itertools
 from pathlib import Path
-from typing import List, Union, Iterator
+from typing import Iterator, List, Union
 
 import rosbag
 

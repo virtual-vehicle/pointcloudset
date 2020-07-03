@@ -1,7 +1,8 @@
-import pytest_check as check
-from lidar import Frame
-import pytest
 import numpy as np
+import pytest
+import pytest_check as check
+
+from lidar import Frame
 
 
 def test_frame_limit(testframe_mini: Frame):

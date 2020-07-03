@@ -19,10 +19,12 @@
 # In[ ]:
 
 
-import lidar
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+
+import lidar
+
 plt.rcParams['figure.figsize'] = [20, 10]
 
 get_ipython().run_line_magic('load_ext', 'autoreload')
@@ -237,7 +239,3 @@ newframe2.data.describe()
 
 
 # In[ ]:
-
-
-
-
