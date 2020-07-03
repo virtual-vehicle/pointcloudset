@@ -21,6 +21,7 @@ import pandas as pd
 import rospy
 from datetime import datetime
 from pyntcloud import PyntCloud
+from typing import List
 import pyntcloud
 
 from .convert import convert
@@ -41,6 +42,7 @@ class Frame:
         """Pyntcloud object with x,y,z coordinates"""
         self.measurments = self.data.drop(["x", "y", "z"], axis=1)
         """Measurments aka. scalar field of values at each point"""
+        self._check_index()
 
     def __str__(self):
         return f"pointcloud: with {len(self)} points, data:{list(self.data.columns)}, from {self.convert_timestamp()}"
@@ -121,7 +123,8 @@ class Frame:
             minvalue (float): min value to limit. (greater equal)
             maxvalue (float): max value to limit. (smaller equal)
         Returns:
-            Frame: limited frame, were columns which did not match the criteria were dropped
+            Frame: limited frame, were columns which did not match the criteria were 
+            dropped.
         """
         if maxvalue < minvalue:
             raise ValueError("maxvalue must be greater than minvalue")
@@ -162,10 +165,21 @@ class Frame:
         bool_array = (cluster_labels["cluster"] == cluster_number).values
         return self.apply_filter(bool_array)
 
-    def remove_outlier(self, nb_points: int, radius: float):
+    def remove_radius_outlier(self, nb_points: int, radius: float):
+        """    Function to remove points that have less than nb_points in a given 
+        sphere of a given radius Parameters.
+        Args:
+            nb_points (int) – Number of points within the radius.
+            radius (float) – Radius of the sphere.
+        Returns:
+            Tuple[open3d.geometry.PointCloud, List[int]] :
+        """
         pcd = self.get_open3d_points()
         cl, ind = pcd.remove_radius_outlier(nb_points=nb_points, radius=radius)
         return ind
+
+    def secect_by_index(self, index: List[int]):
+        pass
 
     def quantile_filter(self, dim: str, cut_quantile: float):
         filter_array = (
@@ -182,4 +196,16 @@ class Frame:
             max_iterations=max_iterations,
             n_inliers_to_stop=n_inliers_to_stop,
         )
+
+    def _check_index(self):
+        """A private function to check if the index of the self.data is sane.
+        """
+        if len(self) > 0:
+            assert self.data.index[0] == 0, "index should start with 0"
+            assert self.data.index[-1] + 1 == len(
+                self
+            ), "index should be as long as the data"
+            assert (
+                self.data.index.is_monotonic_increasing
+            ), "index should be monotonic increasing"
 

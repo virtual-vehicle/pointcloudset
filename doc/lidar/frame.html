@@ -58,6 +58,7 @@ import pandas as pd
 import rospy
 from datetime import datetime
 from pyntcloud import PyntCloud
+from typing import List
 import pyntcloud
 
 from .convert import convert
@@ -78,6 +79,7 @@ class Frame:
         &#34;&#34;&#34;Pyntcloud object with x,y,z coordinates&#34;&#34;&#34;
         self.measurments = self.data.drop([&#34;x&#34;, &#34;y&#34;, &#34;z&#34;], axis=1)
         &#34;&#34;&#34;Measurments aka. scalar field of values at each point&#34;&#34;&#34;
+        self._check_index()
 
     def __str__(self):
         return f&#34;pointcloud: with {len(self)} points, data:{list(self.data.columns)}, from {self.convert_timestamp()}&#34;
@@ -158,7 +160,8 @@ class Frame:
             minvalue (float): min value to limit. (greater equal)
             maxvalue (float): max value to limit. (smaller equal)
         Returns:
-            Frame: limited frame, were columns which did not match the criteria were dropped
+            Frame: limited frame, were columns which did not match the criteria were 
+            dropped.
         &#34;&#34;&#34;
         if maxvalue &lt; minvalue:
             raise ValueError(&#34;maxvalue must be greater than minvalue&#34;)
@@ -199,10 +202,21 @@ class Frame:
         bool_array = (cluster_labels[&#34;cluster&#34;] == cluster_number).values
         return self.apply_filter(bool_array)
 
-    def remove_outlier(self, nb_points: int, radius: float):
+    def remove_radius_outlier(self, nb_points: int, radius: float):
+        &#34;&#34;&#34;    Function to remove points that have less than nb_points in a given 
+        sphere of a given radius Parameters.
+        Args:
+            nb_points (int) – Number of points within the radius.
+            radius (float) – Radius of the sphere.
+        Returns:
+            Tuple[open3d.geometry.PointCloud, List[int]] :
+        &#34;&#34;&#34;
         pcd = self.get_open3d_points()
         cl, ind = pcd.remove_radius_outlier(nb_points=nb_points, radius=radius)
         return ind
+
+    def secect_by_index(self, index: List[int]):
+        pass
 
     def quantile_filter(self, dim: str, cut_quantile: float):
         filter_array = (
@@ -218,7 +232,19 @@ class Frame:
             max_dist=max_dist,
             max_iterations=max_iterations,
             n_inliers_to_stop=n_inliers_to_stop,
-        )</code></pre>
+        )
+
+    def _check_index(self):
+        &#34;&#34;&#34;A private function to check if the index of the self.data is sane.
+        &#34;&#34;&#34;
+        if len(self) &gt; 0:
+            assert self.data.index[0] == 0, &#34;index should start with 0&#34;
+            assert self.data.index[-1] + 1 == len(
+                self
+            ), &#34;index should be as long as the data&#34;
+            assert (
+                self.data.index.is_monotonic_increasing
+            ), &#34;index should be monotonic increasing&#34;</code></pre>
 </details>
 </section>
 <section>
@@ -254,6 +280,7 @@ class Frame:
         &#34;&#34;&#34;Pyntcloud object with x,y,z coordinates&#34;&#34;&#34;
         self.measurments = self.data.drop([&#34;x&#34;, &#34;y&#34;, &#34;z&#34;], axis=1)
         &#34;&#34;&#34;Measurments aka. scalar field of values at each point&#34;&#34;&#34;
+        self._check_index()
 
     def __str__(self):
         return f&#34;pointcloud: with {len(self)} points, data:{list(self.data.columns)}, from {self.convert_timestamp()}&#34;
@@ -334,7 +361,8 @@ class Frame:
             minvalue (float): min value to limit. (greater equal)
             maxvalue (float): max value to limit. (smaller equal)
         Returns:
-            Frame: limited frame, were columns which did not match the criteria were dropped
+            Frame: limited frame, were columns which did not match the criteria were 
+            dropped.
         &#34;&#34;&#34;
         if maxvalue &lt; minvalue:
             raise ValueError(&#34;maxvalue must be greater than minvalue&#34;)
@@ -375,10 +403,21 @@ class Frame:
         bool_array = (cluster_labels[&#34;cluster&#34;] == cluster_number).values
         return self.apply_filter(bool_array)
 
-    def remove_outlier(self, nb_points: int, radius: float):
+    def remove_radius_outlier(self, nb_points: int, radius: float):
+        &#34;&#34;&#34;    Function to remove points that have less than nb_points in a given 
+        sphere of a given radius Parameters.
+        Args:
+            nb_points (int) – Number of points within the radius.
+            radius (float) – Radius of the sphere.
+        Returns:
+            Tuple[open3d.geometry.PointCloud, List[int]] :
+        &#34;&#34;&#34;
         pcd = self.get_open3d_points()
         cl, ind = pcd.remove_radius_outlier(nb_points=nb_points, radius=radius)
         return ind
+
+    def secect_by_index(self, index: List[int]):
+        pass
 
     def quantile_filter(self, dim: str, cut_quantile: float):
         filter_array = (
@@ -394,7 +433,19 @@ class Frame:
             max_dist=max_dist,
             max_iterations=max_iterations,
             n_inliers_to_stop=n_inliers_to_stop,
-        )</code></pre>
+        )
+
+    def _check_index(self):
+        &#34;&#34;&#34;A private function to check if the index of the self.data is sane.
+        &#34;&#34;&#34;
+        if len(self) &gt; 0:
+            assert self.data.index[0] == 0, &#34;index should start with 0&#34;
+            assert self.data.index[-1] + 1 == len(
+                self
+            ), &#34;index should be as long as the data&#34;
+            assert (
+                self.data.index.is_monotonic_increasing
+            ), &#34;index should be monotonic increasing&#34;</code></pre>
 </details>
 <h3>Instance variables</h3>
 <dl>
@@ -611,8 +662,9 @@ measruments at each point of the pointcloud.</p>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code><a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></code></dt>
-<dd>limited frame, were columns which did not match the criteria were dropped</dd>
-</dl></div>
+<dd>limited frame, were columns which did not match the criteria were </dd>
+</dl>
+<p>dropped.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -625,7 +677,8 @@ measruments at each point of the pointcloud.</p>
         minvalue (float): min value to limit. (greater equal)
         maxvalue (float): max value to limit. (smaller equal)
     Returns:
-        Frame: limited frame, were columns which did not match the criteria were dropped
+        Frame: limited frame, were columns which did not match the criteria were 
+        dropped.
     &#34;&#34;&#34;
     if maxvalue &lt; minvalue:
         raise ValueError(&#34;maxvalue must be greater than minvalue&#34;)
@@ -694,8 +747,37 @@ measruments at each point of the pointcloud.</p>
     return self.apply_filter(filter_array)</code></pre>
 </details>
 </dd>
-<dt id="lidar.frame.Frame.remove_outlier"><code class="name flex">
-<span>def <span class="ident">remove_outlier</span></span>(<span>self, nb_points: int, radius: float)</span>
+<dt id="lidar.frame.Frame.remove_radius_outlier"><code class="name flex">
+<span>def <span class="ident">remove_radius_outlier</span></span>(<span>self, nb_points: int, radius: float)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Function to remove points that have less than nb_points in a given
+sphere of a given radius Parameters.</p>
+<h2 id="args">Args</h2>
+<p>nb_points (int) – Number of points within the radius.
+radius (float) – Radius of the sphere.</p>
+<h2 id="returns">Returns</h2>
+<p>Tuple[open3d.geometry.PointCloud, List[int]] :</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_radius_outlier(self, nb_points: int, radius: float):
+    &#34;&#34;&#34;    Function to remove points that have less than nb_points in a given 
+    sphere of a given radius Parameters.
+    Args:
+        nb_points (int) – Number of points within the radius.
+        radius (float) – Radius of the sphere.
+    Returns:
+        Tuple[open3d.geometry.PointCloud, List[int]] :
+    &#34;&#34;&#34;
+    pcd = self.get_open3d_points()
+    cl, ind = pcd.remove_radius_outlier(nb_points=nb_points, radius=radius)
+    return ind</code></pre>
+</details>
+</dd>
+<dt id="lidar.frame.Frame.secect_by_index"><code class="name flex">
+<span>def <span class="ident">secect_by_index</span></span>(<span>self, index: List[int])</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -703,10 +785,8 @@ measruments at each point of the pointcloud.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def remove_outlier(self, nb_points: int, radius: float):
-    pcd = self.get_open3d_points()
-    cl, ind = pcd.remove_radius_outlier(nb_points=nb_points, radius=radius)
-    return ind</code></pre>
+<pre><code class="python">def secect_by_index(self, index: List[int]):
+    pass</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.take_cluster"><code class="name flex">
@@ -764,7 +844,7 @@ measruments at each point of the pointcloud.</p>
 <ul>
 <li>
 <h4><code><a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></code></h4>
-<ul class="two-column">
+<ul class="">
 <li><code><a title="lidar.frame.Frame.apply_filter" href="#lidar.frame.Frame.apply_filter">apply_filter</a></code></li>
 <li><code><a title="lidar.frame.Frame.convert_timestamp" href="#lidar.frame.Frame.convert_timestamp">convert_timestamp</a></code></li>
 <li><code><a title="lidar.frame.Frame.data" href="#lidar.frame.Frame.data">data</a></code></li>
@@ -778,7 +858,8 @@ measruments at each point of the pointcloud.</p>
 <li><code><a title="lidar.frame.Frame.plot_interactive" href="#lidar.frame.Frame.plot_interactive">plot_interactive</a></code></li>
 <li><code><a title="lidar.frame.Frame.points" href="#lidar.frame.Frame.points">points</a></code></li>
 <li><code><a title="lidar.frame.Frame.quantile_filter" href="#lidar.frame.Frame.quantile_filter">quantile_filter</a></code></li>
-<li><code><a title="lidar.frame.Frame.remove_outlier" href="#lidar.frame.Frame.remove_outlier">remove_outlier</a></code></li>
+<li><code><a title="lidar.frame.Frame.remove_radius_outlier" href="#lidar.frame.Frame.remove_radius_outlier">remove_radius_outlier</a></code></li>
+<li><code><a title="lidar.frame.Frame.secect_by_index" href="#lidar.frame.Frame.secect_by_index">secect_by_index</a></code></li>
 <li><code><a title="lidar.frame.Frame.take_cluster" href="#lidar.frame.Frame.take_cluster">take_cluster</a></code></li>
 <li><code><a title="lidar.frame.Frame.timestamp" href="#lidar.frame.Frame.timestamp">timestamp</a></code></li>
 </ul>

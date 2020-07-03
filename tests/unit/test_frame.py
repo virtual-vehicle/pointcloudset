@@ -71,6 +71,12 @@ def test_testframe_1(testframe: Frame):
     check.equal(testframe.timestamp.to_time(), 1592833242.7559116)
 
 
+def test_testframe_index(testframe):
+    check.equal(testframe.data.index[0], 0)
+    check.equal(testframe.data.index[-1] + 1, len(testframe))
+    check.equal(testframe.data.index.is_monotonic_increasing, True)
+
+
 def test_testframe_2(testframe_mini: Frame):
     check.equal(len(testframe_mini), 7)
     check.equal(testframe_mini.has_data(), True)
