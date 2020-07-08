@@ -8,8 +8,6 @@ import sensor_msgs.point_cloud2 as pc2
 
 from ..frame import Frame
 
-supported_lidars = {"ouster": {"topic": "/os1_cloud_node/points"}}
-
 
 def frame_from_message(dataset, message: rosbag.bag.BagMessage) -> Frame:
     """Generates a frame from one ROS pointcloud2 message. Optionally with or without 

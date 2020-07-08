@@ -15,12 +15,12 @@ def testbag1():
 
 @pytest.fixture()
 def testset(testbag1):
-    return lidar.Dataset(testbag1, lidar_name="ouster", keep_zeros=False)
+    return lidar.Dataset(testbag1, topic="/os1_cloud_node/points", keep_zeros=False)
 
 
 @pytest.fixture()
 def testset_withzero(testbag1):
-    return lidar.Dataset(testbag1, lidar_name="ouster", keep_zeros=True)
+    return lidar.Dataset(testbag1, topic="/os1_cloud_node/points", keep_zeros=True)
 
 
 @pytest.fixture()

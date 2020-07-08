@@ -33,32 +33,29 @@ The Dataset class which contains many frames.
 
 import itertools
 from pathlib import Path
-from typing import List, Union, Iterator
+from typing import Iterator, List, Union
 
 import rosbag
 
 from .frame import Frame
-from .io.bag import frame_from_message, supported_lidars
+from .io.bag import frame_from_message
 
 
 class Dataset:
-    def __init__(self, bagfile: Path, lidar_name: str, keep_zeros: bool = False):
+    def __init__(self, bagfile: Path, topic: str, keep_zeros: bool = False):
         &#34;&#34;&#34;Initiallises the Dataset.
 
         Args:
             bagfile (Path): Path to ROS bag file.
-            lidar_name (str): Name  or lidar, in order to read the right ROS message.
+            topic (str): lidar pointcloud topic. For example &#34;/os1_cloud_node/points&#34;
             keep_zeros (bool, optional): Keep zero elements. Defaults to False.
         &#34;&#34;&#34;
-
         self.bag = rosbag.Bag(bagfile, &#34;r&#34;)
-        &#34;&#34;&#34;ROS bag file asa rosbag.Bag object&#34;&#34;&#34;
-        self.lidar_name = lidar_name
-        &#34;&#34;&#34;Name of lidar unit&#34;&#34;&#34;
+        &#34;&#34;&#34;ROS bag file as a rosbag.Bag object.&#34;&#34;&#34;
         self.orig_file = bagfile.as_posix()
-        &#34;&#34;&#34;Name of lidar unit&#34;&#34;&#34;
-        self.topic = supported_lidars[lidar_name][&#34;topic&#34;]
-        &#34;&#34;&#34;The Pointcloud2 object of the lidar.&#34;&#34;&#34;
+        &#34;&#34;&#34;Path to bag file.&#34;&#34;&#34;
+        self.topic = topic
+        &#34;&#34;&#34;The ROS Pointcloud2 topic of the lidar.&#34;&#34;&#34;
         self.keep_zeros = keep_zeros
         &#34;&#34;&#34;Option for keeping zero elements from Lidar. Default is False&#34;&#34;&#34;
 
@@ -149,7 +146,7 @@ class Dataset:
                 messages, frame_number.start, frame_number.stop, frame_number.step
             )
         else:
-            raise ValueError(&#34;frame_end must be grather than frame_start and in range&#34;)</code></pre>
+            raise ValueError(&#34;frame_end must be greater than frame_start and in range.&#34;)</code></pre>
 </details>
 </section>
 <section>
@@ -163,7 +160,7 @@ class Dataset:
 <dl>
 <dt id="lidar.dataset.Dataset"><code class="flex name class">
 <span>class <span class="ident">Dataset</span></span>
-<span>(</span><span>bagfile: pathlib.Path, lidar_name: str, keep_zeros: bool = False)</span>
+<span>(</span><span>bagfile: pathlib.Path, topic: str, keep_zeros: bool = False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Initiallises the Dataset.</p>
@@ -171,9 +168,8 @@ class Dataset:
 <dl>
 <dt><strong><code>bagfile</code></strong> :&ensp;<code>Path</code></dt>
 <dd>Path to ROS bag file.</dd>
-<dt><strong><code>lidar_name</code></strong> :&ensp;<code>str</code></dt>
-<dd>Name
-or lidar, in order to read the right ROS message.</dd>
+<dt><strong><code>topic</code></strong> :&ensp;<code>str</code></dt>
+<dd>lidar pointcloud topic. For example "/os1_cloud_node/points"</dd>
 <dt><strong><code>keep_zeros</code></strong> :&ensp;<code>bool</code>, optional</dt>
 <dd>Keep zero elements. Defaults to False.</dd>
 </dl></div>
@@ -182,23 +178,20 @@ or lidar, in order to read the right ROS message.</dd>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Dataset:
-    def __init__(self, bagfile: Path, lidar_name: str, keep_zeros: bool = False):
+    def __init__(self, bagfile: Path, topic: str, keep_zeros: bool = False):
         &#34;&#34;&#34;Initiallises the Dataset.
 
         Args:
             bagfile (Path): Path to ROS bag file.
-            lidar_name (str): Name  or lidar, in order to read the right ROS message.
+            topic (str): lidar pointcloud topic. For example &#34;/os1_cloud_node/points&#34;
             keep_zeros (bool, optional): Keep zero elements. Defaults to False.
         &#34;&#34;&#34;
-
         self.bag = rosbag.Bag(bagfile, &#34;r&#34;)
-        &#34;&#34;&#34;ROS bag file asa rosbag.Bag object&#34;&#34;&#34;
-        self.lidar_name = lidar_name
-        &#34;&#34;&#34;Name of lidar unit&#34;&#34;&#34;
+        &#34;&#34;&#34;ROS bag file as a rosbag.Bag object.&#34;&#34;&#34;
         self.orig_file = bagfile.as_posix()
-        &#34;&#34;&#34;Name of lidar unit&#34;&#34;&#34;
-        self.topic = supported_lidars[lidar_name][&#34;topic&#34;]
-        &#34;&#34;&#34;The Pointcloud2 object of the lidar.&#34;&#34;&#34;
+        &#34;&#34;&#34;Path to bag file.&#34;&#34;&#34;
+        self.topic = topic
+        &#34;&#34;&#34;The ROS Pointcloud2 topic of the lidar.&#34;&#34;&#34;
         self.keep_zeros = keep_zeros
         &#34;&#34;&#34;Option for keeping zero elements from Lidar. Default is False&#34;&#34;&#34;
 
@@ -289,13 +282,13 @@ or lidar, in order to read the right ROS message.</dd>
                 messages, frame_number.start, frame_number.stop, frame_number.step
             )
         else:
-            raise ValueError(&#34;frame_end must be grather than frame_start and in range&#34;)</code></pre>
+            raise ValueError(&#34;frame_end must be greater than frame_start and in range.&#34;)</code></pre>
 </details>
 <h3>Instance variables</h3>
 <dl>
 <dt id="lidar.dataset.Dataset.bag"><code class="name">var <span class="ident">bag</span></code></dt>
 <dd>
-<div class="desc"><p>ROS bag file asa rosbag.Bag object</p></div>
+<div class="desc"><p>ROS bag file as a rosbag.Bag object.</p></div>
 </dd>
 <dt id="lidar.dataset.Dataset.end_time"><code class="name">var <span class="ident">end_time</span> : float</code></dt>
 <dd>
@@ -315,13 +308,9 @@ def end_time(self) -&gt; float:
 <dd>
 <div class="desc"><p>Option for keeping zero elements from Lidar. Default is False</p></div>
 </dd>
-<dt id="lidar.dataset.Dataset.lidar_name"><code class="name">var <span class="ident">lidar_name</span></code></dt>
-<dd>
-<div class="desc"><p>Name of lidar unit</p></div>
-</dd>
 <dt id="lidar.dataset.Dataset.orig_file"><code class="name">var <span class="ident">orig_file</span></code></dt>
 <dd>
-<div class="desc"><p>Name of lidar unit</p></div>
+<div class="desc"><p>Path to bag file.</p></div>
 </dd>
 <dt id="lidar.dataset.Dataset.size"><code class="name">var <span class="ident">size</span> : int</code></dt>
 <dd>
@@ -353,7 +342,7 @@ def start_time(self) -&gt; float:
 </dd>
 <dt id="lidar.dataset.Dataset.topic"><code class="name">var <span class="ident">topic</span></code></dt>
 <dd>
-<div class="desc"><p>The Pointcloud2 object of the lidar.</p></div>
+<div class="desc"><p>The ROS Pointcloud2 topic of the lidar.</p></div>
 </dd>
 <dt id="lidar.dataset.Dataset.topics_in_bag"><code class="name">var <span class="ident">topics_in_bag</span> : dict</code></dt>
 <dd>
@@ -450,7 +439,6 @@ def types_and_topics_in_bag(self):
 <li><code><a title="lidar.dataset.Dataset.end_time" href="#lidar.dataset.Dataset.end_time">end_time</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.has_frames" href="#lidar.dataset.Dataset.has_frames">has_frames</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.keep_zeros" href="#lidar.dataset.Dataset.keep_zeros">keep_zeros</a></code></li>
-<li><code><a title="lidar.dataset.Dataset.lidar_name" href="#lidar.dataset.Dataset.lidar_name">lidar_name</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.orig_file" href="#lidar.dataset.Dataset.orig_file">orig_file</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.size" href="#lidar.dataset.Dataset.size">size</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.start_time" href="#lidar.dataset.Dataset.start_time">start_time</a></code></li>

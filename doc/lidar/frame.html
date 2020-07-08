@@ -52,15 +52,16 @@ Frame object is generated at each processing stage.
 All operations have to act on both, pointcloud and data and keep the timestamp.
 &#34;&#34;&#34;
 
+import operator
+from datetime import datetime
+from typing import List
+
 import numpy as np
 import open3d as o3d
 import pandas as pd
-import rospy
-from datetime import datetime
-from pyntcloud import PyntCloud
-from typing import List
 import pyntcloud
-import operator
+import rospy
+from pyntcloud import PyntCloud
 
 from .convert import convert
 from .plot.frame import plotly_3d, pyntcloud_3d
@@ -97,6 +98,8 @@ class Frame:
         return len(self.data)
 
     def describe(self):
+        &#34;&#34;&#34;Generate descriptive statistics based on .data.describe().
+        &#34;&#34;&#34;
         return self.data.describe()
 
     def get_open3d_points(self) -&gt; o3d.open3d_pybind.geometry.PointCloud:
@@ -167,7 +170,8 @@ class Frame:
 
     def select_by_index(self, index_to_keep: List[int]):
         &#34;&#34;&#34;Generating a new Frame by keeping which are in the same idex
-        Usefull for open3d generate index lists. Similar to the 
+        Usefull for open3d generate index lists. Similar to the the select_by_index
+        function of open3d.
 
         Args:
             index_to_keep (List[int]): List of indices to keep
@@ -265,7 +269,7 @@ class Frame:
     def plane_segmentation(
         self, max_dist: float, max_iterations: int, n_inliers_to_stop=None
     ):
-        self.points.add_scalar_field(
+        return self.points.add_scalar_field(
             &#34;plane_fit&#34;,
             max_dist=max_dist,
             max_iterations=max_iterations,
@@ -327,6 +331,8 @@ class Frame:
         return len(self.data)
 
     def describe(self):
+        &#34;&#34;&#34;Generate descriptive statistics based on .data.describe().
+        &#34;&#34;&#34;
         return self.data.describe()
 
     def get_open3d_points(self) -&gt; o3d.open3d_pybind.geometry.PointCloud:
@@ -397,7 +403,8 @@ class Frame:
 
     def select_by_index(self, index_to_keep: List[int]):
         &#34;&#34;&#34;Generating a new Frame by keeping which are in the same idex
-        Usefull for open3d generate index lists. Similar to the 
+        Usefull for open3d generate index lists. Similar to the the select_by_index
+        function of open3d.
 
         Args:
             index_to_keep (List[int]): List of indices to keep
@@ -495,7 +502,7 @@ class Frame:
     def plane_segmentation(
         self, max_dist: float, max_iterations: int, n_inliers_to_stop=None
     ):
-        self.points.add_scalar_field(
+        return self.points.add_scalar_field(
             &#34;plane_fit&#34;,
             max_dist=max_dist,
             max_iterations=max_iterations,
@@ -598,12 +605,14 @@ Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.</p>
 <span>def <span class="ident">describe</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Generate descriptive statistics based on .data.describe().</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def describe(self):
+    &#34;&#34;&#34;Generate descriptive statistics based on .data.describe().
+    &#34;&#34;&#34;
     return self.data.describe()</code></pre>
 </details>
 </dd>
@@ -782,7 +791,7 @@ measruments at each point of the pointcloud.</p>
 <pre><code class="python">def plane_segmentation(
     self, max_dist: float, max_iterations: int, n_inliers_to_stop=None
 ):
-    self.points.add_scalar_field(
+    return self.points.add_scalar_field(
         &#34;plane_fit&#34;,
         max_dist=max_dist,
         max_iterations=max_iterations,
@@ -893,7 +902,8 @@ radius (float) – Radius of the sphere.</p>
 </code></dt>
 <dd>
 <div class="desc"><p>Generating a new Frame by keeping which are in the same idex
-Usefull for open3d generate index lists. Similar to the </p>
+Usefull for open3d generate index lists. Similar to the the select_by_index
+function of open3d.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>index_to_keep</code></strong> :&ensp;<code>List[int]</code></dt>
@@ -910,7 +920,8 @@ Usefull for open3d generate index lists. Similar to the </p>
 </summary>
 <pre><code class="python">def select_by_index(self, index_to_keep: List[int]):
     &#34;&#34;&#34;Generating a new Frame by keeping which are in the same idex
-    Usefull for open3d generate index lists. Similar to the 
+    Usefull for open3d generate index lists. Similar to the the select_by_index
+    function of open3d.
 
     Args:
         index_to_keep (List[int]): List of indices to keep

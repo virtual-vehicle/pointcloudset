@@ -31,9 +31,8 @@ def test_getitem(testset: Dataset):
     check.equal(type(testset[0]), Frame)
 
 
-def test_getitem_late(testbag1):
-    dataset = Dataset(testbag1, "ouster")
-    check.equal(type(dataset[1]), Frame)
+def test_getitem_late(testset):
+    check.equal(type(testset[1]), Frame)
 
 
 def test_has_frames(testset: Dataset):

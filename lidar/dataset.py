@@ -9,27 +9,24 @@ from typing import Iterator, List, Union
 import rosbag
 
 from .frame import Frame
-from .io.bag import frame_from_message, supported_lidars
+from .io.bag import frame_from_message
 
 
 class Dataset:
-    def __init__(self, bagfile: Path, lidar_name: str, keep_zeros: bool = False):
+    def __init__(self, bagfile: Path, topic: str, keep_zeros: bool = False):
         """Initiallises the Dataset.
 
         Args:
             bagfile (Path): Path to ROS bag file.
-            lidar_name (str): Name  or lidar, in order to read the right ROS message.
+            topic (str): lidar pointcloud topic. For example "/os1_cloud_node/points"
             keep_zeros (bool, optional): Keep zero elements. Defaults to False.
         """
-
         self.bag = rosbag.Bag(bagfile, "r")
-        """ROS bag file asa rosbag.Bag object"""
-        self.lidar_name = lidar_name
-        """Name of lidar unit"""
+        """ROS bag file as a rosbag.Bag object."""
         self.orig_file = bagfile.as_posix()
-        """Name of lidar unit"""
-        self.topic = supported_lidars[lidar_name]["topic"]
-        """The Pointcloud2 object of the lidar."""
+        """Path to bag file."""
+        self.topic = topic
+        """The ROS Pointcloud2 topic of the lidar."""
         self.keep_zeros = keep_zeros
         """Option for keeping zero elements from Lidar. Default is False"""
 
