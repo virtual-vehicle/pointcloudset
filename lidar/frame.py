@@ -133,7 +133,8 @@ class Frame:
 
     def select_by_index(self, index_to_keep: List[int]):
         """Generating a new Frame by keeping which are in the same idex
-        Usefull for open3d generate index lists. Similar to the 
+        Usefull for open3d generate index lists. Similar to the the select_by_index
+        function of open3d.
 
         Args:
             index_to_keep (List[int]): List of indices to keep
@@ -231,7 +232,7 @@ class Frame:
     def plane_segmentation(
         self, max_dist: float, max_iterations: int, n_inliers_to_stop=None
     ):
-        self.points.add_scalar_field(
+        return self.points.add_scalar_field(
             "plane_fit",
             max_dist=max_dist,
             max_iterations=max_iterations,

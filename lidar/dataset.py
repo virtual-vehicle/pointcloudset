@@ -120,4 +120,4 @@ class Dataset:
                 messages, frame_number.start, frame_number.stop, frame_number.step
             )
         else:
-            raise ValueError("frame_end must be grather than frame_start and in range")
+            raise ValueError("frame_end must be greater than frame_start and in range.")
