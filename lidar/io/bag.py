@@ -8,22 +8,7 @@ import sensor_msgs.point_cloud2 as pc2
 
 from ..frame import Frame
 
-supported_lidars = {
-    "ouster": {
-        "topic": "/os1_cloud_node/points",
-        "columnnames": [
-            "x",
-            "y",
-            "z",
-            "intensity",
-            "t",
-            "reflectivity",
-            "ring",
-            "noise",
-            "range",
-        ],
-    }
-}
+supported_lidars = {"ouster": {"topic": "/os1_cloud_node/points"}}
 
 
 def frame_from_message(dataset, message: rosbag.bag.BagMessage) -> Frame:
@@ -39,7 +24,7 @@ def frame_from_message(dataset, message: rosbag.bag.BagMessage) -> Frame:
         Frame: A frame with the pointcloud data
     """
 
-    columnnames = supported_lidars[dataset.lidar_name]["columnnames"]
+    columnnames = [item.name for item in message.message.fields]
     frame_raw = pc2.read_points(message.message)
     frame_df = pd.DataFrame(np.array(list(frame_raw)), columns=columnnames)
     if not dataset.keep_zeros:
@@ -48,3 +33,4 @@ def frame_from_message(dataset, message: rosbag.bag.BagMessage) -> Frame:
         ]
         frame_df = frame_df.reset_index(drop=True)
     return Frame(data=frame_df, timestamp=message.timestamp)
+
