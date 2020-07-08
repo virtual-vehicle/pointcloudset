@@ -64,7 +64,7 @@ class Dataset:
     def end_time(self) -> float:
         """ROS End Time in the bagfile.
         """
-        return self.bag.get_start_time()
+        return self.bag.get_end_time()
 
     def __len__(self) -> int:
         """Number of available frames (i.e. Lidar messages)
