@@ -29,6 +29,9 @@ def test_get_open3d_points(testframe_mini):
     pointcloud = testframe_mini.get_open3d_points()
     check.equal(type(pointcloud), o3d.open3d_pybind.geometry.PointCloud)
     check.equal(pointcloud.has_points(), True)
+    check.equal(len(np.asarray(pointcloud.points)), len(testframe_mini))
+    testlist = list(np.asarray(pointcloud.points))
+    print(testlist)
 
 
 def test_measurments(testframe_mini):
@@ -69,6 +72,7 @@ def test_testframe_1(testframe: Frame):
     check.equal(len(testframe), 45809)
     check.equal(testframe.has_data(), True)
     check.equal(testframe.timestamp.to_time(), 1592833242.7559116)
+    check.equal(len(testframe), 45809)
 
 
 def test_testframe_index(testframe):

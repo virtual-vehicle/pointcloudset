@@ -34,6 +34,16 @@ def test_frame_limit5(testframe_mini: Frame, testframe_mini_df):
     )
 
 
+def test_limit_6(testframe: Frame):
+    totest = testframe.limit("x", minvalue=0.0, maxvalue=500.0)
+    check.equal(len(totest), 25778)
+
+
+def test_limit_7(testframe: Frame):
+    totest = testframe.limit("intensity", minvalue=500.0, maxvalue=510.0)
+    check.equal(len(totest), 416)
+
+
 def test_frame_limit_chaining(testframe_mini: Frame, testframe_mini_df):
     totest = testframe_mini.limit("x", minvalue=0.0, maxvalue=20000.0).limit(
         "x", 0.0, 2.0
@@ -50,8 +60,8 @@ def test_frame_limit_chaining2(testframe_mini: Frame):
     check.equal(totest.data.isnull().values.any(), False)
 
 
-def test_processing_index(testframe_mini: Frame):
-    totest = testframe_mini.limit("x", minvalue=0.0, maxvalue=500.0).limit(
-        "x", 0.0, 300.0
-    )
+def test_limit_chaining3(testframe_mini: Frame):
+    totest = testframe_mini.limit("x", minvalue=0.0, maxvalue=500.0)
     check.equal(totest.data.index.is_monotonic_increasing, True)
+    check.equal(len(totest), 5)
+
