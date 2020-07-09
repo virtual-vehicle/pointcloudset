@@ -93,7 +93,7 @@ class Dataset:
     def end_time(self) -&gt; float:
         &#34;&#34;&#34;ROS End Time in the bagfile.
         &#34;&#34;&#34;
-        return self.bag.get_start_time()
+        return self.bag.get_end_time()
 
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;Number of available frames (i.e. Lidar messages)
@@ -229,7 +229,7 @@ class Dataset:
     def end_time(self) -&gt; float:
         &#34;&#34;&#34;ROS End Time in the bagfile.
         &#34;&#34;&#34;
-        return self.bag.get_start_time()
+        return self.bag.get_end_time()
 
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;Number of available frames (i.e. Lidar messages)
@@ -301,7 +301,7 @@ class Dataset:
 def end_time(self) -&gt; float:
     &#34;&#34;&#34;ROS End Time in the bagfile.
     &#34;&#34;&#34;
-    return self.bag.get_start_time()</code></pre>
+    return self.bag.get_end_time()</code></pre>
 </details>
 </dd>
 <dt id="lidar.dataset.Dataset.keep_zeros"><code class="name">var <span class="ident">keep_zeros</span></code></dt>

@@ -24,7 +24,6 @@ import open3d as o3d
 import pandas as pd
 import pyntcloud
 import rospy
-from pyntcloud import PyntCloud
 
 from .convert import convert
 from .plot.frame import plotly_3d, pyntcloud_3d

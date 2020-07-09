@@ -65,6 +65,7 @@ def test_testframe_1_with_zero(testframe_withzero: Frame):
 
 
 def test_testframe_1(testframe: Frame):
+    # testframe.data.to_pickle("/workspaces/lidar/tests/testdata/testframe_dataframe.pkl")
     check.equal(len(testframe), 45809)
     check.equal(testframe.has_data(), True)
     check.equal(testframe.timestamp.to_time(), 1592833242.7559116)
@@ -91,10 +92,29 @@ def test_testframe_data(testframe: Frame):
     assert_frame_equal(data, testframe.data)
 
 
+def test_testframe_data_types(testframe: Frame):
+    types = [str(types) for types in testframe.data.dtypes.values]
+    check.equal(
+        types,
+        [
+            "float32",
+            "float32",
+            "float32",
+            "float32",
+            "uint32",
+            "uint16",
+            "uint8",
+            "uint16",
+            "uint32",
+        ],
+    )
+
+
 def test_testframe_withzero_data(
     testframe_withzero: Frame, reference_data_with_zero_dataframe: pd.DataFrame
 ):
     data = testframe_withzero.data
+    # data.to_pickle("/workspaces/lidar/tests/testdata/testframe_withzero_dataframe.pkl")
     check.equal(
         list(data.columns),
         ["x", "y", "z", "intensity", "t", "reflectivity", "ring", "noise", "range"],
@@ -109,6 +129,9 @@ def test_testframe_pointcloud(
     pointcloud = testframe_withzero.get_open3d_points()
     array = np.asarray(pointcloud.points)
     pointcloud_df = pd.DataFrame(array)
+    # pointcloud_df.to_pickle(
+    #    "/workspaces/lidar/tests/testdata/testframe_withzero_pointcloud.pkl"
+    # )
     sub_points = pointcloud.select_by_index(list(range(5000, 5550)))
     sub_array = np.asarray(sub_points.points)
 
