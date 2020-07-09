@@ -53,8 +53,9 @@ All operations have to act on both, pointcloud and data and keep the timestamp.
 &#34;&#34;&#34;
 
 import operator
+import warnings
 from datetime import datetime
-from typing import List
+from typing import List, Union, Type
 
 import numpy as np
 import open3d as o3d
@@ -108,6 +109,10 @@ class Frame:
         Returns:
             o3d.open3d_pybind.geometry.PointCloud: the pointcloud
         &#34;&#34;&#34;
+        converted = convert.convert_df2pcd(self.points.points)
+        assert len(np.asarray(converted.points)) == len(
+            self
+        ), &#34;len of open3d points should be the same as len of the Frame&#34;
         return convert.convert_df2pcd(self.points.points)
 
     def convert_timestamp(self) -&gt; str:
@@ -266,14 +271,41 @@ class Frame:
         return self.apply_filter(filter_array.to_numpy())
 
     def plane_segmentation(
-        self, max_dist: float, max_iterations: int, n_inliers_to_stop=None
+        self,
+        distance_threshold: float,
+        ransac_n: int,
+        num_iterations: int,
+        return_plane_model: bool = False,
     ):
-        return self.points.add_scalar_field(
-            &#34;plane_fit&#34;,
-            max_dist=max_dist,
-            max_iterations=max_iterations,
-            n_inliers_to_stop=n_inliers_to_stop,
+        &#34;&#34;&#34;Segments a plane in the point cloud using the RANSAC algorithm.
+        Based on open3D plane segmentation.
+
+        Args:
+            distance_threshold (float): Max distance a point can be from the plane model, and still be considered an inlier.
+            ransac_n (int):  Number of initial points to be considered inliers in each iteration.
+            num_iterations (int): Number of iterations.
+            return_plane_model (bool, optional): Return also plane model parameters. Defaults to False.
+
+        Returns:
+            Frame or dict: Frame with inliers or a dict of Frame with inliers and the plane parameters.
+        &#34;&#34;&#34;
+        pcd = self.get_open3d_points()
+        plane_model, inliers = pcd.segment_plane(
+            distance_threshold=distance_threshold,
+            ransac_n=ransac_n,
+            num_iterations=num_iterations,
         )
+        if len(self) &gt; 200:
+            warnings.warn(
+                &#34;&#34;&#34;Might not produce reproducable resuts, If the number of points
+                is high. Try to reduce the area of interesst before using
+                plane_segmentation. Caused by open3D.&#34;&#34;&#34;
+            )
+        inlier_Frame = self.select_by_index(inliers)
+        if return_plane_model:
+            return {&#34;Frame&#34;: inlier_Frame, &#34;plane_model&#34;: plane_model}
+        else:
+            return inlier_Frame
 
     def _check_index(self):
         &#34;&#34;&#34;A private function to check if the index of the self.data is sane.
@@ -341,6 +373,10 @@ class Frame:
         Returns:
             o3d.open3d_pybind.geometry.PointCloud: the pointcloud
         &#34;&#34;&#34;
+        converted = convert.convert_df2pcd(self.points.points)
+        assert len(np.asarray(converted.points)) == len(
+            self
+        ), &#34;len of open3d points should be the same as len of the Frame&#34;
         return convert.convert_df2pcd(self.points.points)
 
     def convert_timestamp(self) -&gt; str:
@@ -499,14 +535,41 @@ class Frame:
         return self.apply_filter(filter_array.to_numpy())
 
     def plane_segmentation(
-        self, max_dist: float, max_iterations: int, n_inliers_to_stop=None
+        self,
+        distance_threshold: float,
+        ransac_n: int,
+        num_iterations: int,
+        return_plane_model: bool = False,
     ):
-        return self.points.add_scalar_field(
-            &#34;plane_fit&#34;,
-            max_dist=max_dist,
-            max_iterations=max_iterations,
-            n_inliers_to_stop=n_inliers_to_stop,
+        &#34;&#34;&#34;Segments a plane in the point cloud using the RANSAC algorithm.
+        Based on open3D plane segmentation.
+
+        Args:
+            distance_threshold (float): Max distance a point can be from the plane model, and still be considered an inlier.
+            ransac_n (int):  Number of initial points to be considered inliers in each iteration.
+            num_iterations (int): Number of iterations.
+            return_plane_model (bool, optional): Return also plane model parameters. Defaults to False.
+
+        Returns:
+            Frame or dict: Frame with inliers or a dict of Frame with inliers and the plane parameters.
+        &#34;&#34;&#34;
+        pcd = self.get_open3d_points()
+        plane_model, inliers = pcd.segment_plane(
+            distance_threshold=distance_threshold,
+            ransac_n=ransac_n,
+            num_iterations=num_iterations,
         )
+        if len(self) &gt; 200:
+            warnings.warn(
+                &#34;&#34;&#34;Might not produce reproducable resuts, If the number of points
+                is high. Try to reduce the area of interesst before using
+                plane_segmentation. Caused by open3D.&#34;&#34;&#34;
+            )
+        inlier_Frame = self.select_by_index(inliers)
+        if return_plane_model:
+            return {&#34;Frame&#34;: inlier_Frame, &#34;plane_model&#34;: plane_model}
+        else:
+            return inlier_Frame
 
     def _check_index(self):
         &#34;&#34;&#34;A private function to check if the index of the self.data is sane.
@@ -707,6 +770,10 @@ open3d package.</p>
     Returns:
         o3d.open3d_pybind.geometry.PointCloud: the pointcloud
     &#34;&#34;&#34;
+    converted = convert.convert_df2pcd(self.points.points)
+    assert len(np.asarray(converted.points)) == len(
+        self
+    ), &#34;len of open3d points should be the same as len of the Frame&#34;
     return convert.convert_df2pcd(self.points.points)</code></pre>
 </details>
 </dd>
@@ -779,23 +846,67 @@ measruments at each point of the pointcloud.</p>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.plane_segmentation"><code class="name flex">
-<span>def <span class="ident">plane_segmentation</span></span>(<span>self, max_dist: float, max_iterations: int, n_inliers_to_stop=None)</span>
+<span>def <span class="ident">plane_segmentation</span></span>(<span>self, distance_threshold: float, ransac_n: int, num_iterations: int, return_plane_model: bool = False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Segments a plane in the point cloud using the RANSAC algorithm.
+Based on open3D plane segmentation.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>distance_threshold</code></strong> :&ensp;<code>float</code></dt>
+<dd>Max distance a point can be from the plane model, and still be considered an inlier.</dd>
+<dt><strong><code>ransac_n</code></strong> :&ensp;<code>int</code></dt>
+<dd>Number of initial points to be considered inliers in each iteration.</dd>
+<dt><strong><code>num_iterations</code></strong> :&ensp;<code>int</code></dt>
+<dd>Number of iterations.</dd>
+<dt><strong><code>return_plane_model</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>Return also plane model parameters. Defaults to False.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></code> or <code>dict</code></dt>
+<dd>Frame with inliers or a dict of Frame with inliers and the plane parameters.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def plane_segmentation(
-    self, max_dist: float, max_iterations: int, n_inliers_to_stop=None
+    self,
+    distance_threshold: float,
+    ransac_n: int,
+    num_iterations: int,
+    return_plane_model: bool = False,
 ):
-    return self.points.add_scalar_field(
-        &#34;plane_fit&#34;,
-        max_dist=max_dist,
-        max_iterations=max_iterations,
-        n_inliers_to_stop=n_inliers_to_stop,
-    )</code></pre>
+    &#34;&#34;&#34;Segments a plane in the point cloud using the RANSAC algorithm.
+    Based on open3D plane segmentation.
+
+    Args:
+        distance_threshold (float): Max distance a point can be from the plane model, and still be considered an inlier.
+        ransac_n (int):  Number of initial points to be considered inliers in each iteration.
+        num_iterations (int): Number of iterations.
+        return_plane_model (bool, optional): Return also plane model parameters. Defaults to False.
+
+    Returns:
+        Frame or dict: Frame with inliers or a dict of Frame with inliers and the plane parameters.
+    &#34;&#34;&#34;
+    pcd = self.get_open3d_points()
+    plane_model, inliers = pcd.segment_plane(
+        distance_threshold=distance_threshold,
+        ransac_n=ransac_n,
+        num_iterations=num_iterations,
+    )
+    if len(self) &gt; 200:
+        warnings.warn(
+            &#34;&#34;&#34;Might not produce reproducable resuts, If the number of points
+            is high. Try to reduce the area of interesst before using
+            plane_segmentation. Caused by open3D.&#34;&#34;&#34;
+        )
+    inlier_Frame = self.select_by_index(inliers)
+    if return_plane_model:
+        return {&#34;Frame&#34;: inlier_Frame, &#34;plane_model&#34;: plane_model}
+    else:
+        return inlier_Frame</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.plot_interactive"><code class="name flex">

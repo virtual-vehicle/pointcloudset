@@ -16,8 +16,9 @@ All operations have to act on both, pointcloud and data and keep the timestamp.
 """
 
 import operator
+import warnings
 from datetime import datetime
-from typing import List
+from typing import List, Union, Type
 
 import numpy as np
 import open3d as o3d
@@ -71,6 +72,10 @@ class Frame:
         Returns:
             o3d.open3d_pybind.geometry.PointCloud: the pointcloud
         """
+        converted = convert.convert_df2pcd(self.points.points)
+        assert len(np.asarray(converted.points)) == len(
+            self
+        ), "len of open3d points should be the same as len of the Frame"
         return convert.convert_df2pcd(self.points.points)
 
     def convert_timestamp(self) -> str:
@@ -229,14 +234,41 @@ class Frame:
         return self.apply_filter(filter_array.to_numpy())
 
     def plane_segmentation(
-        self, max_dist: float, max_iterations: int, n_inliers_to_stop=None
+        self,
+        distance_threshold: float,
+        ransac_n: int,
+        num_iterations: int,
+        return_plane_model: bool = False,
     ):
-        return self.points.add_scalar_field(
-            "plane_fit",
-            max_dist=max_dist,
-            max_iterations=max_iterations,
-            n_inliers_to_stop=n_inliers_to_stop,
+        """Segments a plane in the point cloud using the RANSAC algorithm.
+        Based on open3D plane segmentation.
+
+        Args:
+            distance_threshold (float): Max distance a point can be from the plane model, and still be considered an inlier.
+            ransac_n (int):  Number of initial points to be considered inliers in each iteration.
+            num_iterations (int): Number of iterations.
+            return_plane_model (bool, optional): Return also plane model parameters. Defaults to False.
+
+        Returns:
+            Frame or dict: Frame with inliers or a dict of Frame with inliers and the plane parameters.
+        """
+        pcd = self.get_open3d_points()
+        plane_model, inliers = pcd.segment_plane(
+            distance_threshold=distance_threshold,
+            ransac_n=ransac_n,
+            num_iterations=num_iterations,
         )
+        if len(self) > 200:
+            warnings.warn(
+                """Might not produce reproducable resuts, If the number of points
+                is high. Try to reduce the area of interesst before using
+                plane_segmentation. Caused by open3D."""
+            )
+        inlier_Frame = self.select_by_index(inliers)
+        if return_plane_model:
+            return {"Frame": inlier_Frame, "plane_model": plane_model}
+        else:
+            return inlier_Frame
 
     def _check_index(self):
         """A private function to check if the index of the self.data is sane.
