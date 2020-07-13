@@ -7,26 +7,34 @@ from pathlib import Path
 from typing import Iterator, List, Union
 
 import rosbag
+import genpy
 
 from .frame import Frame
 from .file.bag import frame_from_message
 
 
+
 class Dataset:
-    def __init__(self, bagfile: Path, topic: str, keep_zeros: bool = False):
+    def __init__(self, bagfile: Path, topic: str, timerange: tuple = (None), keep_zeros: bool = False):
         """Initiallises the Dataset.
 
         Args:
             bagfile (Path): Path to ROS bag file.
             topic (str): lidar pointcloud topic. For example "/os1_cloud_node/points"
+            timerange: Only messages between timerange[0] and timerange[1] will be read from file. 
             keep_zeros (bool, optional): Keep zero elements. Defaults to False.
         """
         self.bag = rosbag.Bag(bagfile, "r")
         """ROS bag file as a rosbag.Bag object."""
         self.orig_file = bagfile.as_posix()
         """Path to bag file."""
-        self.topic = topic
+        if(topic in self.topics_in_bag):
+            self.topic = topic
+        else:
+            raise IOError("Topic {} not in bag.".format(topic))
         """The ROS Pointcloud2 topic of the lidar."""
+        self.timerange = timerange
+        """Messages between start and end time will be read from the bag file."""
         self.keep_zeros = keep_zeros
         """Option for keeping zero elements from Lidar. Default is False"""
 
@@ -69,7 +77,11 @@ class Dataset:
     def __len__(self) -> int:
         """Number of available frames (i.e. Lidar messages)
         """
-        return (self.types_and_topics_in_bag.topics)[self.topic].message_count
+        if self.timerange is None:
+            return (self.types_and_topics_in_bag.topics)[self.topic].message_count
+        else:
+            l = sum(1 for m in self)
+            return l
 
     def __str__(self):
         return f"Lidar Dataset with {len(self)} frame(s), from file {self.orig_file}"
@@ -82,11 +94,17 @@ class Dataset:
                 frame_list.append(frame_from_message(self, message))
             return frame_list
         elif isinstance(frame_number, int):
-            messages = self.bag.read_messages(topics=[self.topic])
-            sliced_messages = itertools.islice(
-                messages, frame_number, frame_number + 1, 1
-            )
-            message = next(sliced_messages)
+            if self.timerange is None:
+                messages = self.bag.read_messages(topics=[self.topic])
+            else:
+                messages = self.bag.read_messages(topics=[self.topic],
+                            start_time=genpy.Time.from_sec(self.timerange[0]),
+                            end_time=genpy.Time.from_sec(self.timerange[1]))
+                
+                sliced_messages = itertools.islice(
+                    messages, frame_number, frame_number + 1, 1)
+                message = next(sliced_messages)
+                
             return frame_from_message(self, message)
         else:
             raise TypeError("Wrong type {}".format(type(frame_number).__name__))
