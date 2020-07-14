@@ -4,7 +4,7 @@ from lidar import Dataset, Frame
 
 
 def test_init(testbag1):
-    dataset = Dataset(testbag1, "ouster")
+    dataset = Dataset(testbag1, "/os1_cloud_node/points")
     check.equal(type(dataset), Dataset)
 
 
