@@ -112,6 +112,15 @@ class Frame:
     def plot_interactive(
         self, backend: str = "plotly", color: str = "intensity", **kwargs
     ):
+        """Generate either a plotly or pyntcloud 3D plot. 
+        (Note: Plotly plots also give index of datapoint in pandas array when hovering over datapoint)
+        
+        Args: backend (str): specify either "plotly" or "pyntcloud" as plot environment
+              color (str): name of the column in the data that should be used as color array for plotly plots
+
+        Returns:
+            np.array: List of distances for each point
+        """
         args = locals()
         args.update(kwargs)
         backend = args.pop("backend")

@@ -77,7 +77,7 @@ class Dataset:
     def __len__(self) -> int:
         """Number of available frames (i.e. Lidar messages)
         """
-        if self.timerange is None:
+        if self.timerange is None and self.keep_zeros is True:
             return (self.types_and_topics_in_bag.topics)[self.topic].message_count
         else:
             l = sum(1 for m in self)
@@ -101,10 +101,9 @@ class Dataset:
                             start_time=genpy.Time.from_sec(self.timerange[0]),
                             end_time=genpy.Time.from_sec(self.timerange[1]))
                 
-                sliced_messages = itertools.islice(
-                    messages, frame_number, frame_number + 1, 1)
-                message = next(sliced_messages)
-                
+            sliced_messages = itertools.islice(
+                messages, frame_number, frame_number + 1, 1)
+            message = next(sliced_messages)
             return frame_from_message(self, message)
         else:
             raise TypeError("Wrong type {}".format(type(frame_number).__name__))
