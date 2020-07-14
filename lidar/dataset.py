@@ -13,22 +13,27 @@ from .frame import Frame
 from .file.bag import frame_from_message
 
 
-
 class Dataset:
-    def __init__(self, bagfile: Path, topic: str, timerange: tuple = (None), keep_zeros: bool = False):
+    def __init__(
+        self,
+        bagfile: Path,
+        topic: str,
+        timerange: tuple = (None),
+        keep_zeros: bool = False,
+    ):
         """Initiallises the Dataset.
 
         Args:
             bagfile (Path): Path to ROS bag file.
             topic (str): lidar pointcloud topic. For example "/os1_cloud_node/points"
-            timerange: Only messages between timerange[0] and timerange[1] will be read from file. 
+            timerange: Only messages between timerange[0] and timerange[1] will be read from file.
             keep_zeros (bool, optional): Keep zero elements. Defaults to False.
         """
         self.bag = rosbag.Bag(bagfile, "r")
         """ROS bag file as a rosbag.Bag object."""
         self.orig_file = bagfile.as_posix()
         """Path to bag file."""
-        if(topic in self.topics_in_bag):
+        if topic in self.topics_in_bag:
             self.topic = topic
         else:
             raise IOError("Topic {} not in bag.".format(topic))
@@ -36,7 +41,7 @@ class Dataset:
         self.timerange = timerange
         """Messages between start and end time will be read from the bag file."""
         self.keep_zeros = keep_zeros
-        """Option for keeping zero elements from Lidar. Default is False"""
+        """Option for keeping zero elements in Lidar Frames. Default is False"""
 
     @property
     def types_and_topics_in_bag(self):
@@ -97,12 +102,15 @@ class Dataset:
             if self.timerange is None:
                 messages = self.bag.read_messages(topics=[self.topic])
             else:
-                messages = self.bag.read_messages(topics=[self.topic],
-                            start_time=genpy.Time.from_sec(self.timerange[0]),
-                            end_time=genpy.Time.from_sec(self.timerange[1]))
-                
+                messages = self.bag.read_messages(
+                    topics=[self.topic],
+                    start_time=genpy.Time.from_sec(self.timerange[0]),
+                    end_time=genpy.Time.from_sec(self.timerange[1]),
+                )
+
             sliced_messages = itertools.islice(
-                messages, frame_number, frame_number + 1, 1)
+                messages, frame_number, frame_number + 1, 1
+            )
             message = next(sliced_messages)
             return frame_from_message(self, message)
         else:
