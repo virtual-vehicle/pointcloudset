@@ -3,6 +3,8 @@ import open3d as o3d
 import pandas as pd
 import plotly
 import pyntcloud
+import IPython
+import pytest
 import pytest_check as check
 import rospy
 from pandas._testing import assert_frame_equal
@@ -58,6 +60,10 @@ def test_str(testframe_mini: Frame):
         str(testframe_mini),
         "pointcloud: with 7 points, data:['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range'], from Thursday, January 01, 1970 12:00:50",
     )
+
+
+def test_describe(testframe: Frame):
+    check.equal(type(testframe.describe()), pd.DataFrame)
 
 
 # test with actual data
@@ -171,3 +177,22 @@ def test_plot1(testframe_mini: Frame):
     check.equal(
         type(testframe_mini.plot_interactive()), plotly.graph_objs._figure.Figure
     )
+
+
+def test_plot2(testframe_mini: Frame):
+    check.equal(
+        type(testframe_mini.plot_interactive(backend="pyntcloud")),
+        plotly.graph_objs._figure.Figure,
+    )
+
+
+def test_plot2(testframe_mini: Frame):
+    check.equal(
+        type(testframe_mini.plot_interactive(backend="pyntcloud")),
+        IPython.lib.display.IFrame,
+    )
+
+
+def test_plot_error(testframe_mini: Frame):
+    with pytest.raises(ValueError):
+        testframe_mini.plot_interactive(backend="fake")
