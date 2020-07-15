@@ -1,17 +1,49 @@
 """
-A package to work with automotive lidar data.
+A package to work with automotive lidar data stored in ROS bag files.
 
-# Reading this documentation.
+
+# Main features
+
+* Direct import from ROS bagfiles
+* Support for large files 
+* Interactive 3D visualisation
+* Support for numerical data per point (intensity, range, noise …)
+* High level processing based on pandas, open3D and pyntcloud
+
+
 The main features of this package are the "Dataset" class consisting of many
 "Frame" objects.
 
-# Installation
+![slide](assets/Slide2.png "Logo Title Text 1")
+
+* See the usage.ipynb notebook in the notebook folder for an interactive tuturial.
+* For  more useage examples you can have a look at the tests.
+
+# Installation in another project
 
 ``` bash
  pip install git+https://gitlab.v2c2.at/sensor-fdir/lidar
 ```
 
-# Getting started
+# Development
+
+## How to Contribute
+
+* add Issues in gitlab
+* generate a branch and implement new features
+* write tests for the new features
+* make a merge request in gitlab
+
+## Guidelines
+
+* use docstrings everywhere. The documentation in "doc" is generated with pdoc with $make doc
+* Write tests for every method/function which manipulates data.
+* Have a look at the Makefile and the available make commands.
+* Use typehints when declaring a function, class or method.
+* VS code settings in the dev container take care of linting with mypy and flake8 and code formatting with black.
+* every 0.x release needs to have 100% code coverage with tests
+
+## Getting started
 
 * install VS Code
 * install the remote development extension in VS code (ms-vscode-remote.vscode-remote-extensionpack)
@@ -27,34 +59,14 @@ On your very first time accessing our gitlab docker registry you need to do the 
 
 1.) generate an access token: 
 * in gitlab => User settings => Access token
-* generate a token with "read_registy" rights
-* store the token savely (KeePass)
+* generate a token with "read_registry" rights
+* store the token safely (KeePass)
 
 2.) In the terminal login to our registry:
 
 ``` bash
 docker login registry-gitlab.v2c2.at -u <vornamenachname> -p <token>
 ```
-
-
-# Contribution
-
-* add Issues in gitlab
-* generate a branch and implement new features
-* write tests for the new features
-* make a merge request in gitlab
-
-
-## Development
-
-* use docstrings everywhere. The documentation in "doc" is generated with pdoc.
-* Have a look at the Makefile and the available make commands
-* use typehints when declaring a function, class or method.
-* VS code settings in the dev container take care of linting and code formatting.
-* write tests for every method/function wich manipulates data
-* for example useage you can have a look at the tests
-* every 0.x release needs to have 100% code coverage with tests
-
 
 """
 
