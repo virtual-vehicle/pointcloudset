@@ -12,16 +12,16 @@ def plotly_3d(
 ):
     if color not in frame.data.columns:
         raise ValueError(f"choose any of {list(frame.data.columns)}")
-    
-    ids = ["id="+str(i) for i in range(0, frame.data.shape[0])]
-    
+
+    ids = ["id=" + str(i) for i in range(0, frame.data.shape[0])]
+
     fig = px.scatter_3d(
         frame.data,
         x="x",
         y="y",
         z="z",
         color=color,
-        hover_name = ids,
+        hover_name=ids,
         hover_data=frame.measurments.columns,
         title=frame.convert_timestamp(),
         **kwargs,
@@ -29,6 +29,7 @@ def plotly_3d(
     fig.update_traces(
         marker=dict(size=point_size, line=dict(width=0)), selector=dict(mode="markers")
     )
+    fig.update_layout(scene_aspectmode="data",)
     return fig
 
 
