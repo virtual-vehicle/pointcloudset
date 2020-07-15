@@ -5,7 +5,7 @@ A package to work with automotive lidar data stored in ROS bag files.
 # Main features
 
 * Direct import from ROS bagfiles
-* Support for large files 
+* Support for large files
 * Interactive 3D visualisation
 * Support for numerical data per point (intensity, range, noise …)
 * High level processing based on pandas, open3D and pyntcloud
@@ -13,8 +13,6 @@ A package to work with automotive lidar data stored in ROS bag files.
 
 The main features of this package are the "Dataset" class consisting of many
 "Frame" objects.
-
-![slide](assets/Slide2.png "Logo Title Text 1")
 
 * See the usage.ipynb notebook in the notebook folder for an interactive tuturial.
 * For  more useage examples you can have a look at the tests.
@@ -57,7 +55,7 @@ The main features of this package are the "Dataset" class consisting of many
 
 On your very first time accessing our gitlab docker registry you need to do the following steps:
 
-1.) generate an access token: 
+1.) generate an access token:
 * in gitlab => User settings => Access token
 * generate a token with "read_registry" rights
 * store the token safely (KeePass)

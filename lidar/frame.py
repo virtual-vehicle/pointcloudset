@@ -18,7 +18,7 @@ All operations have to act on both, pointcloud and data and keep the timestamp.
 import operator
 import warnings
 from datetime import datetime
-from typing import List, Union, Type
+from typing import List, Type, Union
 
 import numpy as np
 import open3d as o3d
@@ -112,9 +112,9 @@ class Frame:
     def plot_interactive(
         self, backend: str = "plotly", color: str = "intensity", **kwargs
     ):
-        """Generate either a plotly or pyntcloud 3D plot. 
+        """Generate either a plotly or pyntcloud 3D plot.
         (Note: Plotly plots also give index of datapoint in pandas array when hovering over datapoint)
-        
+
         Args: backend (str): specify either "plotly" or "pyntcloud" as plot environment
               color (str): name of the column in the data that should be used as color array for plotly plots
 
@@ -166,7 +166,7 @@ class Frame:
             minvalue (float): min value to limit. (greater equal)
             maxvalue (float): max value to limit. (smaller equal)
         Returns:
-            Frame: limited frame, were columns which did not match the criteria were 
+            Frame: limited frame, were columns which did not match the criteria were
             dropped.
         """
         if maxvalue < minvalue:
@@ -209,7 +209,7 @@ class Frame:
         return self.apply_filter(bool_array)
 
     def remove_radius_outlier(self, nb_points: int, radius: float):
-        """    Function to remove points that have less than nb_points in a given 
+        """    Function to remove points that have less than nb_points in a given
         sphere of a given radius Parameters.
         Args:
             nb_points (int) – Number of points within the radius.

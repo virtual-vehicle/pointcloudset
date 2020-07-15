@@ -64,4 +64,3 @@ def test_limit_chaining3(testframe_mini: Frame):
     totest = testframe_mini.limit("x", minvalue=0.0, maxvalue=500.0)
     check.equal(totest.data.index.is_monotonic_increasing, True)
     check.equal(len(totest), 5)
-

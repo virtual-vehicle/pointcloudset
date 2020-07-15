@@ -6,11 +6,11 @@ import itertools
 from pathlib import Path
 from typing import Iterator, List, Union
 
-import rosbag
 import genpy
+import rosbag
 
-from .frame import Frame
 from .file.bag import frame_from_message
+from .frame import Frame
 
 
 class Dataset:

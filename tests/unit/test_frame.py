@@ -1,9 +1,9 @@
+import IPython
 import numpy as np
 import open3d as o3d
 import pandas as pd
 import plotly
 import pyntcloud
-import IPython
 import pytest
 import pytest_check as check
 import rospy

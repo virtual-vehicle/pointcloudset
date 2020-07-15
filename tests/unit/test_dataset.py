@@ -1,5 +1,5 @@
-import pytest_check as check
 import pytest
+import pytest_check as check
 
 from lidar import Dataset, Frame
 
@@ -89,4 +89,3 @@ def test_end_time(testset: Dataset):
 
 def test_time(testset: Dataset):
     check.greater(testset.end_time, testset.start_time)
-
