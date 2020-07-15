@@ -55,7 +55,7 @@ All operations have to act on both, pointcloud and data and keep the timestamp.
 import operator
 import warnings
 from datetime import datetime
-from typing import List, Union, Type
+from typing import List, Type, Union
 
 import numpy as np
 import open3d as o3d
@@ -149,6 +149,15 @@ class Frame:
     def plot_interactive(
         self, backend: str = &#34;plotly&#34;, color: str = &#34;intensity&#34;, **kwargs
     ):
+        &#34;&#34;&#34;Generate either a plotly or pyntcloud 3D plot.
+        (Note: Plotly plots also give index of datapoint in pandas array when hovering over datapoint)
+
+        Args: backend (str): specify either &#34;plotly&#34; or &#34;pyntcloud&#34; as plot environment
+              color (str): name of the column in the data that should be used as color array for plotly plots
+
+        Returns:
+            np.array: List of distances for each point
+        &#34;&#34;&#34;
         args = locals()
         args.update(kwargs)
         backend = args.pop(&#34;backend&#34;)
@@ -194,7 +203,7 @@ class Frame:
             minvalue (float): min value to limit. (greater equal)
             maxvalue (float): max value to limit. (smaller equal)
         Returns:
-            Frame: limited frame, were columns which did not match the criteria were 
+            Frame: limited frame, were columns which did not match the criteria were
             dropped.
         &#34;&#34;&#34;
         if maxvalue &lt; minvalue:
@@ -237,7 +246,7 @@ class Frame:
         return self.apply_filter(bool_array)
 
     def remove_radius_outlier(self, nb_points: int, radius: float):
-        &#34;&#34;&#34;    Function to remove points that have less than nb_points in a given 
+        &#34;&#34;&#34;    Function to remove points that have less than nb_points in a given
         sphere of a given radius Parameters.
         Args:
             nb_points (int) – Number of points within the radius.
@@ -413,6 +422,15 @@ class Frame:
     def plot_interactive(
         self, backend: str = &#34;plotly&#34;, color: str = &#34;intensity&#34;, **kwargs
     ):
+        &#34;&#34;&#34;Generate either a plotly or pyntcloud 3D plot.
+        (Note: Plotly plots also give index of datapoint in pandas array when hovering over datapoint)
+
+        Args: backend (str): specify either &#34;plotly&#34; or &#34;pyntcloud&#34; as plot environment
+              color (str): name of the column in the data that should be used as color array for plotly plots
+
+        Returns:
+            np.array: List of distances for each point
+        &#34;&#34;&#34;
         args = locals()
         args.update(kwargs)
         backend = args.pop(&#34;backend&#34;)
@@ -458,7 +476,7 @@ class Frame:
             minvalue (float): min value to limit. (greater equal)
             maxvalue (float): max value to limit. (smaller equal)
         Returns:
-            Frame: limited frame, were columns which did not match the criteria were 
+            Frame: limited frame, were columns which did not match the criteria were
             dropped.
         &#34;&#34;&#34;
         if maxvalue &lt; minvalue:
@@ -501,7 +519,7 @@ class Frame:
         return self.apply_filter(bool_array)
 
     def remove_radius_outlier(self, nb_points: int, radius: float):
-        &#34;&#34;&#34;    Function to remove points that have less than nb_points in a given 
+        &#34;&#34;&#34;    Function to remove points that have less than nb_points in a given
         sphere of a given radius Parameters.
         Args:
             nb_points (int) – Number of points within the radius.
@@ -819,7 +837,7 @@ measruments at each point of the pointcloud.</p>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code><a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></code></dt>
-<dd>limited frame, were columns which did not match the criteria were </dd>
+<dd>limited frame, were columns which did not match the criteria were</dd>
 </dl>
 <p>dropped.</p></div>
 <details class="source">
@@ -834,7 +852,7 @@ measruments at each point of the pointcloud.</p>
         minvalue (float): min value to limit. (greater equal)
         maxvalue (float): max value to limit. (smaller equal)
     Returns:
-        Frame: limited frame, were columns which did not match the criteria were 
+        Frame: limited frame, were columns which did not match the criteria were
         dropped.
     &#34;&#34;&#34;
     if maxvalue &lt; minvalue:
@@ -913,7 +931,15 @@ Based on open3D plane segmentation.</p>
 <span>def <span class="ident">plot_interactive</span></span>(<span>self, backend: str = 'plotly', color: str = 'intensity', **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Generate either a plotly or pyntcloud 3D plot.
+(Note: Plotly plots also give index of datapoint in pandas array when hovering over datapoint)</p>
+<p>Args: backend (str): specify either "plotly" or "pyntcloud" as plot environment
+color (str): name of the column in the data that should be used as color array for plotly plots</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>np.array</code></dt>
+<dd>List of distances for each point</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -921,6 +947,15 @@ Based on open3D plane segmentation.</p>
 <pre><code class="python">def plot_interactive(
     self, backend: str = &#34;plotly&#34;, color: str = &#34;intensity&#34;, **kwargs
 ):
+    &#34;&#34;&#34;Generate either a plotly or pyntcloud 3D plot.
+    (Note: Plotly plots also give index of datapoint in pandas array when hovering over datapoint)
+
+    Args: backend (str): specify either &#34;plotly&#34; or &#34;pyntcloud&#34; as plot environment
+          color (str): name of the column in the data that should be used as color array for plotly plots
+
+    Returns:
+        np.array: List of distances for each point
+    &#34;&#34;&#34;
     args = locals()
     args.update(kwargs)
     backend = args.pop(&#34;backend&#34;)
@@ -992,7 +1027,7 @@ radius (float) – Radius of the sphere.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def remove_radius_outlier(self, nb_points: int, radius: float):
-    &#34;&#34;&#34;    Function to remove points that have less than nb_points in a given 
+    &#34;&#34;&#34;    Function to remove points that have less than nb_points in a given
     sphere of a given radius Parameters.
     Args:
         nb_points (int) – Number of points within the radius.

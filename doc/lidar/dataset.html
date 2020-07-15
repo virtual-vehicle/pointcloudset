@@ -35,29 +35,42 @@ import itertools
 from pathlib import Path
 from typing import Iterator, List, Union
 
+import genpy
 import rosbag
 
-from .frame import Frame
 from .file.bag import frame_from_message
+from .frame import Frame
 
 
 class Dataset:
-    def __init__(self, bagfile: Path, topic: str, keep_zeros: bool = False):
+    def __init__(
+        self,
+        bagfile: Path,
+        topic: str,
+        timerange: tuple = (None),
+        keep_zeros: bool = False,
+    ):
         &#34;&#34;&#34;Initiallises the Dataset.
 
         Args:
             bagfile (Path): Path to ROS bag file.
             topic (str): lidar pointcloud topic. For example &#34;/os1_cloud_node/points&#34;
+            timerange: Only messages between timerange[0] and timerange[1] will be read from file.
             keep_zeros (bool, optional): Keep zero elements. Defaults to False.
         &#34;&#34;&#34;
         self.bag = rosbag.Bag(bagfile, &#34;r&#34;)
         &#34;&#34;&#34;ROS bag file as a rosbag.Bag object.&#34;&#34;&#34;
         self.orig_file = bagfile.as_posix()
         &#34;&#34;&#34;Path to bag file.&#34;&#34;&#34;
-        self.topic = topic
+        if topic in self.topics_in_bag:
+            self.topic = topic
+        else:
+            raise IOError(&#34;Topic {} not in bag.&#34;.format(topic))
         &#34;&#34;&#34;The ROS Pointcloud2 topic of the lidar.&#34;&#34;&#34;
+        self.timerange = timerange
+        &#34;&#34;&#34;Messages between start and end time will be read from the bag file.&#34;&#34;&#34;
         self.keep_zeros = keep_zeros
-        &#34;&#34;&#34;Option for keeping zero elements from Lidar. Default is False&#34;&#34;&#34;
+        &#34;&#34;&#34;Option for keeping zero elements in Lidar Frames. Default is False&#34;&#34;&#34;
 
     @property
     def types_and_topics_in_bag(self):
@@ -98,7 +111,11 @@ class Dataset:
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;Number of available frames (i.e. Lidar messages)
         &#34;&#34;&#34;
-        return (self.types_and_topics_in_bag.topics)[self.topic].message_count
+        if self.timerange is None and self.keep_zeros is True:
+            return (self.types_and_topics_in_bag.topics)[self.topic].message_count
+        else:
+            l = sum(1 for m in self)
+            return l
 
     def __str__(self):
         return f&#34;Lidar Dataset with {len(self)} frame(s), from file {self.orig_file}&#34;
@@ -111,7 +128,15 @@ class Dataset:
                 frame_list.append(frame_from_message(self, message))
             return frame_list
         elif isinstance(frame_number, int):
-            messages = self.bag.read_messages(topics=[self.topic])
+            if self.timerange is None:
+                messages = self.bag.read_messages(topics=[self.topic])
+            else:
+                messages = self.bag.read_messages(
+                    topics=[self.topic],
+                    start_time=genpy.Time.from_sec(self.timerange[0]),
+                    end_time=genpy.Time.from_sec(self.timerange[1]),
+                )
+
             sliced_messages = itertools.islice(
                 messages, frame_number, frame_number + 1, 1
             )
@@ -160,7 +185,7 @@ class Dataset:
 <dl>
 <dt id="lidar.dataset.Dataset"><code class="flex name class">
 <span>class <span class="ident">Dataset</span></span>
-<span>(</span><span>bagfile: pathlib.Path, topic: str, keep_zeros: bool = False)</span>
+<span>(</span><span>bagfile: pathlib.Path, topic: str, timerange: tuple = None, keep_zeros: bool = False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Initiallises the Dataset.</p>
@@ -170,6 +195,8 @@ class Dataset:
 <dd>Path to ROS bag file.</dd>
 <dt><strong><code>topic</code></strong> :&ensp;<code>str</code></dt>
 <dd>lidar pointcloud topic. For example "/os1_cloud_node/points"</dd>
+<dt><strong><code>timerange</code></strong></dt>
+<dd>Only messages between timerange[0] and timerange[1] will be read from file.</dd>
 <dt><strong><code>keep_zeros</code></strong> :&ensp;<code>bool</code>, optional</dt>
 <dd>Keep zero elements. Defaults to False.</dd>
 </dl></div>
@@ -178,22 +205,34 @@ class Dataset:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Dataset:
-    def __init__(self, bagfile: Path, topic: str, keep_zeros: bool = False):
+    def __init__(
+        self,
+        bagfile: Path,
+        topic: str,
+        timerange: tuple = (None),
+        keep_zeros: bool = False,
+    ):
         &#34;&#34;&#34;Initiallises the Dataset.
 
         Args:
             bagfile (Path): Path to ROS bag file.
             topic (str): lidar pointcloud topic. For example &#34;/os1_cloud_node/points&#34;
+            timerange: Only messages between timerange[0] and timerange[1] will be read from file.
             keep_zeros (bool, optional): Keep zero elements. Defaults to False.
         &#34;&#34;&#34;
         self.bag = rosbag.Bag(bagfile, &#34;r&#34;)
         &#34;&#34;&#34;ROS bag file as a rosbag.Bag object.&#34;&#34;&#34;
         self.orig_file = bagfile.as_posix()
         &#34;&#34;&#34;Path to bag file.&#34;&#34;&#34;
-        self.topic = topic
+        if topic in self.topics_in_bag:
+            self.topic = topic
+        else:
+            raise IOError(&#34;Topic {} not in bag.&#34;.format(topic))
         &#34;&#34;&#34;The ROS Pointcloud2 topic of the lidar.&#34;&#34;&#34;
+        self.timerange = timerange
+        &#34;&#34;&#34;Messages between start and end time will be read from the bag file.&#34;&#34;&#34;
         self.keep_zeros = keep_zeros
-        &#34;&#34;&#34;Option for keeping zero elements from Lidar. Default is False&#34;&#34;&#34;
+        &#34;&#34;&#34;Option for keeping zero elements in Lidar Frames. Default is False&#34;&#34;&#34;
 
     @property
     def types_and_topics_in_bag(self):
@@ -234,7 +273,11 @@ class Dataset:
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;Number of available frames (i.e. Lidar messages)
         &#34;&#34;&#34;
-        return (self.types_and_topics_in_bag.topics)[self.topic].message_count
+        if self.timerange is None and self.keep_zeros is True:
+            return (self.types_and_topics_in_bag.topics)[self.topic].message_count
+        else:
+            l = sum(1 for m in self)
+            return l
 
     def __str__(self):
         return f&#34;Lidar Dataset with {len(self)} frame(s), from file {self.orig_file}&#34;
@@ -247,7 +290,15 @@ class Dataset:
                 frame_list.append(frame_from_message(self, message))
             return frame_list
         elif isinstance(frame_number, int):
-            messages = self.bag.read_messages(topics=[self.topic])
+            if self.timerange is None:
+                messages = self.bag.read_messages(topics=[self.topic])
+            else:
+                messages = self.bag.read_messages(
+                    topics=[self.topic],
+                    start_time=genpy.Time.from_sec(self.timerange[0]),
+                    end_time=genpy.Time.from_sec(self.timerange[1]),
+                )
+
             sliced_messages = itertools.islice(
                 messages, frame_number, frame_number + 1, 1
             )
@@ -306,7 +357,7 @@ def end_time(self) -&gt; float:
 </dd>
 <dt id="lidar.dataset.Dataset.keep_zeros"><code class="name">var <span class="ident">keep_zeros</span></code></dt>
 <dd>
-<div class="desc"><p>Option for keeping zero elements from Lidar. Default is False</p></div>
+<div class="desc"><p>Option for keeping zero elements in Lidar Frames. Default is False</p></div>
 </dd>
 <dt id="lidar.dataset.Dataset.orig_file"><code class="name">var <span class="ident">orig_file</span></code></dt>
 <dd>
@@ -340,9 +391,9 @@ def start_time(self) -&gt; float:
     return self.bag.get_start_time()</code></pre>
 </details>
 </dd>
-<dt id="lidar.dataset.Dataset.topic"><code class="name">var <span class="ident">topic</span></code></dt>
+<dt id="lidar.dataset.Dataset.timerange"><code class="name">var <span class="ident">timerange</span></code></dt>
 <dd>
-<div class="desc"><p>The ROS Pointcloud2 topic of the lidar.</p></div>
+<div class="desc"><p>Messages between start and end time will be read from the bag file.</p></div>
 </dd>
 <dt id="lidar.dataset.Dataset.topics_in_bag"><code class="name">var <span class="ident">topics_in_bag</span> : dict</code></dt>
 <dd>
@@ -442,7 +493,7 @@ def types_and_topics_in_bag(self):
 <li><code><a title="lidar.dataset.Dataset.orig_file" href="#lidar.dataset.Dataset.orig_file">orig_file</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.size" href="#lidar.dataset.Dataset.size">size</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.start_time" href="#lidar.dataset.Dataset.start_time">start_time</a></code></li>
-<li><code><a title="lidar.dataset.Dataset.topic" href="#lidar.dataset.Dataset.topic">topic</a></code></li>
+<li><code><a title="lidar.dataset.Dataset.timerange" href="#lidar.dataset.Dataset.timerange">timerange</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.topics_in_bag" href="#lidar.dataset.Dataset.topics_in_bag">topics_in_bag</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.types_and_topics_in_bag" href="#lidar.dataset.Dataset.types_and_topics_in_bag">types_and_topics_in_bag</a></code></li>
 </ul>

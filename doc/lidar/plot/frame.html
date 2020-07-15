@@ -40,12 +40,16 @@ def plotly_3d(
 ):
     if color not in frame.data.columns:
         raise ValueError(f&#34;choose any of {list(frame.data.columns)}&#34;)
+    
+    ids = [&#34;id=&#34;+str(i) for i in range(0, frame.data.shape[0])]
+    
     fig = px.scatter_3d(
         frame.data,
         x=&#34;x&#34;,
         y=&#34;y&#34;,
         z=&#34;z&#34;,
         color=color,
+        hover_name = ids,
         hover_data=frame.measurments.columns,
         title=frame.convert_timestamp(),
         **kwargs,
@@ -81,12 +85,16 @@ def pyntcloud_3d(frame, **kwargs):
 ):
     if color not in frame.data.columns:
         raise ValueError(f&#34;choose any of {list(frame.data.columns)}&#34;)
+    
+    ids = [&#34;id=&#34;+str(i) for i in range(0, frame.data.shape[0])]
+    
     fig = px.scatter_3d(
         frame.data,
         x=&#34;x&#34;,
         y=&#34;y&#34;,
         z=&#34;z&#34;,
         color=color,
+        hover_name = ids,
         hover_data=frame.measurments.columns,
         title=frame.convert_timestamp(),
         **kwargs,
