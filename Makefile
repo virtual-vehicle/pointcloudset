@@ -6,19 +6,22 @@ doccoverage:
 	docstr-coverage lidar --skipmagic
 
 docserver:
-	pdoc --http : .	
+	pdoc --http : .
 
 test:
 	coverage run -m pytest
-	/opt/conda/bin/python -m coverage report -i 
+	/opt/conda/bin/python -m coverage report -i
 	/opt/conda/bin/python -m coverage html -i
 
 sort-imports:
-	isort -rc .	
+	isort -rc .
 
 clean:
 	py3clean .
-	
+
+black:
+	black . --exclude=notebooks
+
 
 build:
 	python3 setup.py sdist bdist_wheel
