@@ -51,13 +51,10 @@ def test_getitem_error(testset: Dataset):
         testset["fake"]
 
 
-def test_getitem_timerange(testbag1):
-    dataset = Dataset(
-        testbag1,
-        topic="/os1_cloud_node/points",
-        timerange=(1592833242.6053855, 1592833242.7881582),
+def test_getitem_timerange(testset):
+    dataset = testset.get_frames_between_timestamps(
+        1592833242.6053855, 1592833242.7881582
     )
-    check.equal(type(dataset.timerange), tuple)
     check.equal(type(dataset[0:2]), list)
     check.equal(type(dataset[0:2][0]), Frame)
 
@@ -73,6 +70,11 @@ def test_has_frames(testset: Dataset):
 
 def test_str(testset: Dataset):
     check.equal(type(str(testset)), str)
+
+
+def test_testset_len_withzero(testset_withzero):
+    check.equal(testset_withzero.keep_zeros, True)
+    check.equal(len(testset_withzero), 2)
 
 
 def test_size(testset: Dataset):
