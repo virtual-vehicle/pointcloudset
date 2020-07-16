@@ -1,5 +1,7 @@
 """
-The Dataset class which contains many frames.
+The Dataset class which contains many frames. 
+
+For more details on how to use it please refer to the usage.ipynb Notebook for an interactive tuturial.
 """
 
 import itertools
@@ -21,7 +23,11 @@ class Dataset:
         timerange: tuple = (None),
         keep_zeros: bool = False,
     ):
-        """Initiallises the Dataset.
+        """The Dataset.
+
+        Example:
+        testbag = Path().cwd().parent.joinpath("tests/testdata/test.bag")
+        testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
 
         Args:
             bagfile (Path): Path to ROS bag file.
@@ -45,37 +51,31 @@ class Dataset:
 
     @property
     def types_and_topics_in_bag(self):
-        """Types and Topics in the original ROS bagfile
-
-        Returns:
-            rosbag.bag.TypesAndTopicsTuple: All types and topics in the ROS bagfile
+        """Types and Topics in the original ROS bagfile as rosbag.bag.TypesAndTopicsTuple
         """
         return self.bag.get_type_and_topic_info()
 
     @property
     def topics_in_bag(self) -> dict:
-        """Topics in the ROS bagfile.
-
-        Returns:
-            dict: Dict with all topics in the ROS bagfile
+        """Topics in the ROS bagfile as a dict.
         """
         return self.types_and_topics_in_bag.topics
 
     @property
     def size(self) -> int:
-        """Size on disk.
+        """Size on disk as an int.
         """
         return self.bag.size
 
     @property
     def start_time(self) -> float:
-        """ROS Start time in the bagfile.
+        """ROS Start time in the bagfile as a float.
         """
         return self.bag.get_start_time()
 
     @property
     def end_time(self) -> float:
-        """ROS End Time in the bagfile.
+        """ROS End Time in the bagfile as a float.
         """
         return self.bag.get_end_time()
 
