@@ -28,7 +28,7 @@ import pyntcloud
 import rospy
 
 from .convert import convert
-from .plot.frame import plotly_3d, pyntcloud_3d
+from .plot.frame import plotly_3d, pyntcloud_3d, plot_overlay
 
 ops = {
     ">": operator.gt,
@@ -138,6 +138,9 @@ class Frame:
             return plotly_3d(self, color=color, **kwargs)
         else:
             raise ValueError("wrong backend")
+
+    def plot_overlay(self, frames_dict: dict, color="intensity"):
+        return plot_overlay(self, frames_dict=frames_dict, color=color)
 
     def apply_filter(self, boolean_array: np.ndarray):
         """Generating a new Frame by removing points where filter is False.

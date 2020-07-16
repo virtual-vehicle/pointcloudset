@@ -11,7 +11,7 @@ colorscales = {
 
 
 def plotly_3d(
-    frame, color: str, point_size: float = 2, **kwargs,
+    frame, color: str, point_size: float = 2, prepend_id: str = "", **kwargs,
 ):
     """Plot a Frame as a 3D scatter plot with plotly.
 
@@ -31,7 +31,7 @@ def plotly_3d(
     if color not in frame.data.columns:
         raise ValueError(f"choose any of {list(frame.data.columns)}")
 
-    ids = ["id=" + str(i) for i in range(0, frame.data.shape[0])]
+    ids = [prepend_id + "id=" + str(i) for i in range(0, frame.data.shape[0])]
 
     fig = px.scatter_3d(
         frame.data,
@@ -49,6 +49,23 @@ def plotly_3d(
     )
     fig.update_layout(scene_aspectmode="data",)
     return fig
+
+
+def plot_overlay(orig_frame, frames_dict: dict, color="intensity"):
+    p1 = orig_frame.plot_interactive(color=color, point_size=1.0, prepend_id="Orginal ")
+    p1.update_traces(marker_color="black", opacity=0.7)
+    i = 0
+    colors = px.colors.qualitative.Plotly
+    for name, frame in frames_dict.items():
+        marker_color = colors[i]
+        p2 = frame.plot_interactive(color=color, point_size=2.0, prepend_id=name + " ")
+        p2.update_traces(marker_color=marker_color)
+        trace2 = p2.data[0]
+        p1.add_trace(trace2)
+        i = i + 1
+        if i > len(colors):
+            i = 0
+    return p1
 
 
 def pyntcloud_3d(frame, **kwargs):
