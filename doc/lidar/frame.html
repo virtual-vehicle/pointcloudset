@@ -181,12 +181,12 @@ class Frame:
             raise ValueError(&#34;wrong backend&#34;)
 
     def plot_overlay(self, frames_dict: dict):
-        &#34;&#34;&#34;Overlay the Frame with the plot of others. For example overlay the plot with a frame which contains
-        a cluster or plane segmentation. Best used with smaller pointclouds.
+        &#34;&#34;&#34;Overlay the Frame with the plot(s) of other Frames. For example overlay the plot with a frame which contains
+        a cluster or a plane. Best used with smaller pointclouds.
 
         Example:
 
-        newframe.plot_overlay({&#34;Plane&#34;: plane,&#34;Cluster 1&#34;: cluster1,&#34;Cluster 2&#34;: cluster2})
+        testframe.plot_overlay({&#34;Plane&#34;: plane,&#34;Cluster 1&#34;: cluster1,&#34;Cluster 2&#34;: cluster2})
 
         Args:
             frames_dict (dict): A dictionary in the form {&#34;Name&#34;, Frame}. Can be arbitrarly long, 
@@ -488,12 +488,12 @@ testframe = testset[0]</p></div>
             raise ValueError(&#34;wrong backend&#34;)
 
     def plot_overlay(self, frames_dict: dict):
-        &#34;&#34;&#34;Overlay the Frame with the plot of others. For example overlay the plot with a frame which contains
-        a cluster or plane segmentation. Best used with smaller pointclouds.
+        &#34;&#34;&#34;Overlay the Frame with the plot(s) of other Frames. For example overlay the plot with a frame which contains
+        a cluster or a plane. Best used with smaller pointclouds.
 
         Example:
 
-        newframe.plot_overlay({&#34;Plane&#34;: plane,&#34;Cluster 1&#34;: cluster1,&#34;Cluster 2&#34;: cluster2})
+        testframe.plot_overlay({&#34;Plane&#34;: plane,&#34;Cluster 1&#34;: cluster1,&#34;Cluster 2&#34;: cluster2})
 
         Args:
             frames_dict (dict): A dictionary in the form {&#34;Name&#34;, Frame}. Can be arbitrarly long, 
@@ -1048,10 +1048,10 @@ color (str): name of the column in the data that should be used as color array f
 <span>def <span class="ident">plot_overlay</span></span>(<span>self, frames_dict: dict)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Overlay the Frame with the plot of others. For example overlay the plot with a frame which contains
-a cluster or plane segmentation. Best used with smaller pointclouds.</p>
+<div class="desc"><p>Overlay the Frame with the plot(s) of other Frames. For example overlay the plot with a frame which contains
+a cluster or a plane. Best used with smaller pointclouds.</p>
 <p>Example:</p>
-<p>newframe.plot_overlay({"Plane": plane,"Cluster 1": cluster1,"Cluster 2": cluster2})</p>
+<p>testframe.plot_overlay({"Plane": plane,"Cluster 1": cluster1,"Cluster 2": cluster2})</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>frames_dict</code></strong> :&ensp;<code>dict</code></dt>
@@ -1067,12 +1067,12 @@ a cluster or plane segmentation. Best used with smaller pointclouds.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def plot_overlay(self, frames_dict: dict):
-    &#34;&#34;&#34;Overlay the Frame with the plot of others. For example overlay the plot with a frame which contains
-    a cluster or plane segmentation. Best used with smaller pointclouds.
+    &#34;&#34;&#34;Overlay the Frame with the plot(s) of other Frames. For example overlay the plot with a frame which contains
+    a cluster or a plane. Best used with smaller pointclouds.
 
     Example:
 
-    newframe.plot_overlay({&#34;Plane&#34;: plane,&#34;Cluster 1&#34;: cluster1,&#34;Cluster 2&#34;: cluster2})
+    testframe.plot_overlay({&#34;Plane&#34;: plane,&#34;Cluster 1&#34;: cluster1,&#34;Cluster 2&#34;: cluster2})
 
     Args:
         frames_dict (dict): A dictionary in the form {&#34;Name&#34;, Frame}. Can be arbitrarly long, 
