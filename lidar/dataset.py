@@ -135,6 +135,15 @@ class Dataset:
             raise ValueError("frame_end must be greater than frame_start and in range.")
 
     def get_frames_between_timestamps(self, start_time: float, end_time: float) -> List[Frame]:
+        """Get all frames within specific time range
+
+        Args:
+            start_time: timestamp as float (ros posix time)
+            end_time: timestamp as float (ros posix time)
+
+        Returns:
+            List of frames
+        """
         messages = self.bag.read_messages(
                     topics=[self.topic],
                     start_time=genpy.Time.from_sec(start_time),
