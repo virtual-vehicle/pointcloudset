@@ -154,7 +154,7 @@ class Frame:
 
     def select_by_index(self, index_to_keep: List[int]):
         """Generating a new Frame by keeping index_to_keep.
-        
+
         Usefull for open3d generate index lists. Similar to the the select_by_index
         function of open3d.
 
@@ -162,7 +162,7 @@ class Frame:
             index_to_keep (List[int]): List of indices to keep
 
         Returns:
-            Frame: Frame with keeped rows and reindexed data and points
+            Frame: Frame with kept rows and reindexed data and points
         """
         new_data = self.data.iloc[index_to_keep].reset_index(drop=True)
         return Frame(new_data, timestamp=self.timestamp)
