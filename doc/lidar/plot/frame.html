@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.4" />
 <title>lidar.plot.frame API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Frame plotting
+Used mainly by Frame.plot_interactive() but could also be used on its own." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin>
@@ -22,11 +23,16 @@
 <h1 class="title">Module <code>lidar.plot.frame</code></h1>
 </header>
 <section id="section-intro">
+<h1 id="frame-plotting">Frame plotting</h1>
+<p>Used mainly by Frame.plot_interactive() but could also be used on its own.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">import plotly.express as px
+<pre><code class="python">&#34;&#34;&#34; # Frame plotting
+Used mainly by Frame.plot_interactive() but could also be used on its own. 
+&#34;&#34;&#34;
+import plotly.express as px
 
 intensity_scale = [[0, &#34;black&#34;], [0.1, &#34;blue&#34;], [0.2, &#34;green&#34;], [1, &#34;red&#34;]]
 colorscales = {
@@ -38,6 +44,21 @@ colorscales = {
 def plotly_3d(
     frame, color: str, point_size: float = 2, **kwargs,
 ):
+    &#34;&#34;&#34;Plot a Frame as a 3D scatter plot with plotly.
+
+    You can pass arguments to the plotly express function scatter_3D
+
+    Args:
+        frame (Frame): the frame to plot
+        color (str): Which column to plot. For example &#34;intensity&#34;
+        point_size (float, optional): Size of each point. Defaults to 2.
+
+    Raises:
+        ValueError: if the color is not in the data
+
+    Returns:
+        Plotly plot: The interactive plotly plot, best use inside a jupyter notebook.
+    &#34;&#34;&#34;
     if color not in frame.data.columns:
         raise ValueError(f&#34;choose any of {list(frame.data.columns)}&#34;)
 
@@ -62,6 +83,14 @@ def plotly_3d(
 
 
 def pyntcloud_3d(frame, **kwargs):
+    &#34;&#34;&#34;Plot a Frame with the build in function of pyntcloud. Is faster than plotly.
+
+    Args:
+        frame (Frame): the frame to plot
+
+    Returns:
+        pyntcloud plot: The interactive pyntcloud plot, best use inside a jupyter notebook.
+    &#34;&#34;&#34;
     return frame.points.plot(mesh=True, backend=&#34;threejs&#34;, **kwargs)</code></pre>
 </details>
 </section>
@@ -76,7 +105,27 @@ def pyntcloud_3d(frame, **kwargs):
 <span>def <span class="ident">plotly_3d</span></span>(<span>frame, color: str, point_size: float = 2, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Plot a Frame as a 3D scatter plot with plotly.</p>
+<p>You can pass arguments to the plotly express function scatter_3D</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>frame</code></strong> :&ensp;<code>Frame</code></dt>
+<dd>the frame to plot</dd>
+<dt><strong><code>color</code></strong> :&ensp;<code>str</code></dt>
+<dd>Which column to plot. For example "intensity"</dd>
+<dt><strong><code>point_size</code></strong> :&ensp;<code>float</code>, optional</dt>
+<dd>Size of each point. Defaults to 2.</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ValueError</code></dt>
+<dd>if the color is not in the data</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Plotly plot</code></dt>
+<dd>The interactive plotly plot, best use inside a jupyter notebook.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -84,6 +133,21 @@ def pyntcloud_3d(frame, **kwargs):
 <pre><code class="python">def plotly_3d(
     frame, color: str, point_size: float = 2, **kwargs,
 ):
+    &#34;&#34;&#34;Plot a Frame as a 3D scatter plot with plotly.
+
+    You can pass arguments to the plotly express function scatter_3D
+
+    Args:
+        frame (Frame): the frame to plot
+        color (str): Which column to plot. For example &#34;intensity&#34;
+        point_size (float, optional): Size of each point. Defaults to 2.
+
+    Raises:
+        ValueError: if the color is not in the data
+
+    Returns:
+        Plotly plot: The interactive plotly plot, best use inside a jupyter notebook.
+    &#34;&#34;&#34;
     if color not in frame.data.columns:
         raise ValueError(f&#34;choose any of {list(frame.data.columns)}&#34;)
 
@@ -111,12 +175,30 @@ def pyntcloud_3d(frame, **kwargs):
 <span>def <span class="ident">pyntcloud_3d</span></span>(<span>frame, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Plot a Frame with the build in function of pyntcloud. Is faster than plotly.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>frame</code></strong> :&ensp;<code>Frame</code></dt>
+<dd>the frame to plot</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>pyntcloud plot</code></dt>
+<dd>The interactive pyntcloud plot, best use inside a jupyter notebook.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def pyntcloud_3d(frame, **kwargs):
+    &#34;&#34;&#34;Plot a Frame with the build in function of pyntcloud. Is faster than plotly.
+
+    Args:
+        frame (Frame): the frame to plot
+
+    Returns:
+        pyntcloud plot: The interactive pyntcloud plot, best use inside a jupyter notebook.
+    &#34;&#34;&#34;
     return frame.points.plot(mesh=True, backend=&#34;threejs&#34;, **kwargs)</code></pre>
 </details>
 </dd>
@@ -128,7 +210,9 @@ def pyntcloud_3d(frame, **kwargs):
 <nav id="sidebar">
 <h1>Index</h1>
 <div class="toc">
-<ul></ul>
+<ul>
+<li><a href="#frame-plotting">Frame plotting</a></li>
+</ul>
 </div>
 <ul id="index">
 <li><h3>Super-module</h3>

@@ -1,5 +1,5 @@
 """
-Frame Class.
+# Frame Class.
 
 For one lidar measurement frame. Typically an automotive lidar records many frames per
 second.
@@ -7,12 +7,13 @@ second.
 One Frame consists mainly of pyntcloud pointcloud (.pointcloud) and a pandas dataframe
 (.data) with all the associated data.
 
-Note that the index of the poits is not preserved when applying processing. This
-is necessary since pyntcloud does not allow to pass the index. Therfore, a new
+Note that the index of the points is not preserved when applying processing. This
+is necessary since pyntcloud does not allow to pass the index. Therefore, a new
 Frame object is generated at each processing stage.
 
-
-All operations have to act on both, pointcloud and data and keep the timestamp.
+## Developer notes:
+* All operations have to act on both, pointcloud and data and keep the timestamp.
+* All processing methods need to return another Frame. 
 """
 
 import operator
@@ -39,11 +40,17 @@ ops = {
 
 
 class Frame:
-    "One Frame of lidar measurements."
-
     def __init__(
         self, data: pd.DataFrame, timestamp: rospy.rostime.Time = rospy.rostime.Time()
     ):
+        """One Frame of lidar measurements.
+
+        Example:
+        testbag = Path().cwd().parent.joinpath("tests/testdata/test.bag")
+        testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
+        testframe = testset[0]
+        
+        """
         self.data = data
         """All the data, x,y.z and intensity, range and more"""
         self.timestamp = timestamp
@@ -115,8 +122,9 @@ class Frame:
         """Generate either a plotly or pyntcloud 3D plot.
         (Note: Plotly plots also give index of datapoint in pandas array when hovering over datapoint)
 
-        Args: backend (str): specify either "plotly" or "pyntcloud" as plot environment
-              color (str): name of the column in the data that should be used as color array for plotly plots
+        Args: 
+            backend (str): specify either "plotly" or "pyntcloud" as plot environment
+            color (str): name of the column in the data that should be used as color array for plotly plots
 
         Returns:
             np.array: List of distances for each point
@@ -145,7 +153,8 @@ class Frame:
         return Frame(new_data, timestamp=self.timestamp)
 
     def select_by_index(self, index_to_keep: List[int]):
-        """Generating a new Frame by keeping which are in the same idex
+        """Generating a new Frame by keeping index_to_keep.
+
         Usefull for open3d generate index lists. Similar to the the select_by_index
         function of open3d.
 
@@ -153,13 +162,17 @@ class Frame:
             index_to_keep (List[int]): List of indices to keep
 
         Returns:
-            Frame: Frame with keeped rows and reindexed data and points
+            Frame: Frame with kept rows and reindexed data and points
         """
         new_data = self.data.iloc[index_to_keep].reset_index(drop=True)
         return Frame(new_data, timestamp=self.timestamp)
 
     def limit(self, dim: "str", minvalue: float, maxvalue: float):
         """Limit the range of certain values in lidar Frame. Can be chained together.
+
+        Example:
+
+        testframe.limit("x", -1.0, 1.0).limit("intensity", 0.0, 50.0)
 
         Args:
             dim (str): dimension to limit, any column in data not just x, y, or z
@@ -227,6 +240,8 @@ class Frame:
         self, dim: str, relation: str = ">=", cut_quantile: float = 0.5
     ):
         """Filtering based on quantile values of dimension dim of the data.
+
+        Example:
 
         testframe.quantile_filter("intensity","==",0.5)
 

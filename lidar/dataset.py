@@ -1,7 +1,12 @@
 """
+# Dataset Class
 The Dataset class which contains many frames. 
 
 For more details on how to use it please refer to the usage.ipynb Notebook for an interactive tuturial.
+
+# Developer notes
+* The important stuff happens in the __getitem__ method. Only then the rosbag is actually read with the help of 
+generators.
 """
 
 import itertools

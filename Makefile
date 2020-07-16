@@ -10,8 +10,8 @@ docserver:
 
 test:
 	coverage run -m pytest
-	/opt/conda/bin/python -m coverage report -i
-	/opt/conda/bin/python -m coverage html -i
+	python -m coverage report -i
+	python -m coverage html -i
 
 sort-imports:
 	isort -rc .
