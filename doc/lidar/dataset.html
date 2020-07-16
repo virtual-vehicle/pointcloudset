@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.8.4" />
 <title>lidar.dataset API documentation</title>
-<meta name="description" content="The Dataset class which contains many frames …" />
+<meta name="description" content="Dataset Class
+The Dataset class which contains many frames …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin>
@@ -22,16 +23,27 @@
 <h1 class="title">Module <code>lidar.dataset</code></h1>
 </header>
 <section id="section-intro">
+<h1 id="dataset-class">Dataset Class</h1>
 <p>The Dataset class which contains many frames. </p>
 <p>For more details on how to use it please refer to the usage.ipynb Notebook for an interactive tuturial.</p>
+<h1 id="developer-notes">Developer notes</h1>
+<ul>
+<li>The important stuff happens in the <strong>getitem</strong> method. Only then the rosbag is actually read with the help of
+generators.</li>
+</ul>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;
+# Dataset Class
 The Dataset class which contains many frames. 
 
 For more details on how to use it please refer to the usage.ipynb Notebook for an interactive tuturial.
+
+# Developer notes
+* The important stuff happens in the __getitem__ method. Only then the rosbag is actually read with the help of 
+generators.
 &#34;&#34;&#34;
 
 import itertools
@@ -56,7 +68,7 @@ class Dataset:
         &#34;&#34;&#34;The Dataset.
 
         Example:
-        
+        testbag = Path().cwd().parent.joinpath(&#34;tests/testdata/test.bag&#34;)
         testset = lidar.Dataset(testbag,topic=&#34;/os1_cloud_node/points&#34;,keep_zeros=False)
 
         Args:
@@ -190,8 +202,9 @@ class Dataset:
 </code></dt>
 <dd>
 <div class="desc"><p>The Dataset.</p>
-<p>Example:</p>
-<p>testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)</p>
+<p>Example:
+testbag = Path().cwd().parent.joinpath("tests/testdata/test.bag")
+testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>bagfile</code></strong> :&ensp;<code>Path</code></dt>
@@ -218,7 +231,7 @@ class Dataset:
         &#34;&#34;&#34;The Dataset.
 
         Example:
-        
+        testbag = Path().cwd().parent.joinpath(&#34;tests/testdata/test.bag&#34;)
         testset = lidar.Dataset(testbag,topic=&#34;/os1_cloud_node/points&#34;,keep_zeros=False)
 
         Args:
@@ -458,7 +471,10 @@ def types_and_topics_in_bag(self):
 <nav id="sidebar">
 <h1>Index</h1>
 <div class="toc">
-<ul></ul>
+<ul>
+<li><a href="#dataset-class">Dataset Class</a></li>
+<li><a href="#developer-notes">Developer notes</a></li>
+</ul>
 </div>
 <ul id="index">
 <li><h3>Super-module</h3>
