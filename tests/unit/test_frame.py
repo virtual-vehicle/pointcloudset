@@ -54,11 +54,11 @@ def test_len(testframe_mini: Frame):
     check.equal(len(testframe_mini), 7)
 
 
-def test_str(testframe_mini: Frame):
-    check.equal(type(str(testframe_mini)), str)
+def test_str(testframe: Frame):
+    check.equal(type(str(testframe)), str)
     check.equal(
-        str(testframe_mini),
-        "pointcloud: with 7 points, data:['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range'], from Thursday, January 01, 1970 12:00:50",
+        str(testframe),
+        "pointcloud: with 45809 points, data:['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range'], from Monday, June 22, 2020 03:40:42",
     )
 
 
