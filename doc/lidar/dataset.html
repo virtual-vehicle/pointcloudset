@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.8.3" />
+<meta name="generator" content="pdoc 0.8.4" />
 <title>lidar.dataset API documentation</title>
-<meta name="description" content="The Dataset class which contains many frames." />
+<meta name="description" content="The Dataset class which contains many frames …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin>
@@ -22,13 +22,16 @@
 <h1 class="title">Module <code>lidar.dataset</code></h1>
 </header>
 <section id="section-intro">
-<p>The Dataset class which contains many frames.</p>
+<p>The Dataset class which contains many frames. </p>
+<p>For more details on how to use it please refer to the usage.ipynb Notebook for an interactive tuturial.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;
-The Dataset class which contains many frames.
+The Dataset class which contains many frames. 
+
+For more details on how to use it please refer to the usage.ipynb Notebook for an interactive tuturial.
 &#34;&#34;&#34;
 
 import itertools
@@ -50,7 +53,11 @@ class Dataset:
         timerange: tuple = (None),
         keep_zeros: bool = False,
     ):
-        &#34;&#34;&#34;Initiallises the Dataset.
+        &#34;&#34;&#34;The Dataset.
+
+        Example:
+        
+        testset = lidar.Dataset(testbag,topic=&#34;/os1_cloud_node/points&#34;,keep_zeros=False)
 
         Args:
             bagfile (Path): Path to ROS bag file.
@@ -74,37 +81,31 @@ class Dataset:
 
     @property
     def types_and_topics_in_bag(self):
-        &#34;&#34;&#34;Types and Topics in the original ROS bagfile
-
-        Returns:
-            rosbag.bag.TypesAndTopicsTuple: All types and topics in the ROS bagfile
+        &#34;&#34;&#34;Types and Topics in the original ROS bagfile as rosbag.bag.TypesAndTopicsTuple
         &#34;&#34;&#34;
         return self.bag.get_type_and_topic_info()
 
     @property
     def topics_in_bag(self) -&gt; dict:
-        &#34;&#34;&#34;Topics in the ROS bagfile.
-
-        Returns:
-            dict: Dict with all topics in the ROS bagfile
+        &#34;&#34;&#34;Topics in the ROS bagfile as a dict.
         &#34;&#34;&#34;
         return self.types_and_topics_in_bag.topics
 
     @property
     def size(self) -&gt; int:
-        &#34;&#34;&#34;Size on disk.
+        &#34;&#34;&#34;Size on disk as an int.
         &#34;&#34;&#34;
         return self.bag.size
 
     @property
     def start_time(self) -&gt; float:
-        &#34;&#34;&#34;ROS Start time in the bagfile.
+        &#34;&#34;&#34;ROS Start time in the bagfile as a float.
         &#34;&#34;&#34;
         return self.bag.get_start_time()
 
     @property
     def end_time(self) -&gt; float:
-        &#34;&#34;&#34;ROS End Time in the bagfile.
+        &#34;&#34;&#34;ROS End Time in the bagfile as a float.
         &#34;&#34;&#34;
         return self.bag.get_end_time()
 
@@ -188,7 +189,9 @@ class Dataset:
 <span>(</span><span>bagfile: pathlib.Path, topic: str, timerange: tuple = None, keep_zeros: bool = False)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Initiallises the Dataset.</p>
+<div class="desc"><p>The Dataset.</p>
+<p>Example:</p>
+<p>testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>bagfile</code></strong> :&ensp;<code>Path</code></dt>
@@ -212,7 +215,11 @@ class Dataset:
         timerange: tuple = (None),
         keep_zeros: bool = False,
     ):
-        &#34;&#34;&#34;Initiallises the Dataset.
+        &#34;&#34;&#34;The Dataset.
+
+        Example:
+        
+        testset = lidar.Dataset(testbag,topic=&#34;/os1_cloud_node/points&#34;,keep_zeros=False)
 
         Args:
             bagfile (Path): Path to ROS bag file.
@@ -236,37 +243,31 @@ class Dataset:
 
     @property
     def types_and_topics_in_bag(self):
-        &#34;&#34;&#34;Types and Topics in the original ROS bagfile
-
-        Returns:
-            rosbag.bag.TypesAndTopicsTuple: All types and topics in the ROS bagfile
+        &#34;&#34;&#34;Types and Topics in the original ROS bagfile as rosbag.bag.TypesAndTopicsTuple
         &#34;&#34;&#34;
         return self.bag.get_type_and_topic_info()
 
     @property
     def topics_in_bag(self) -&gt; dict:
-        &#34;&#34;&#34;Topics in the ROS bagfile.
-
-        Returns:
-            dict: Dict with all topics in the ROS bagfile
+        &#34;&#34;&#34;Topics in the ROS bagfile as a dict.
         &#34;&#34;&#34;
         return self.types_and_topics_in_bag.topics
 
     @property
     def size(self) -&gt; int:
-        &#34;&#34;&#34;Size on disk.
+        &#34;&#34;&#34;Size on disk as an int.
         &#34;&#34;&#34;
         return self.bag.size
 
     @property
     def start_time(self) -&gt; float:
-        &#34;&#34;&#34;ROS Start time in the bagfile.
+        &#34;&#34;&#34;ROS Start time in the bagfile as a float.
         &#34;&#34;&#34;
         return self.bag.get_start_time()
 
     @property
     def end_time(self) -&gt; float:
-        &#34;&#34;&#34;ROS End Time in the bagfile.
+        &#34;&#34;&#34;ROS End Time in the bagfile as a float.
         &#34;&#34;&#34;
         return self.bag.get_end_time()
 
@@ -343,14 +344,14 @@ class Dataset:
 </dd>
 <dt id="lidar.dataset.Dataset.end_time"><code class="name">var <span class="ident">end_time</span> : float</code></dt>
 <dd>
-<div class="desc"><p>ROS End Time in the bagfile.</p></div>
+<div class="desc"><p>ROS End Time in the bagfile as a float.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def end_time(self) -&gt; float:
-    &#34;&#34;&#34;ROS End Time in the bagfile.
+    &#34;&#34;&#34;ROS End Time in the bagfile as a float.
     &#34;&#34;&#34;
     return self.bag.get_end_time()</code></pre>
 </details>
@@ -365,28 +366,28 @@ def end_time(self) -&gt; float:
 </dd>
 <dt id="lidar.dataset.Dataset.size"><code class="name">var <span class="ident">size</span> : int</code></dt>
 <dd>
-<div class="desc"><p>Size on disk.</p></div>
+<div class="desc"><p>Size on disk as an int.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def size(self) -&gt; int:
-    &#34;&#34;&#34;Size on disk.
+    &#34;&#34;&#34;Size on disk as an int.
     &#34;&#34;&#34;
     return self.bag.size</code></pre>
 </details>
 </dd>
 <dt id="lidar.dataset.Dataset.start_time"><code class="name">var <span class="ident">start_time</span> : float</code></dt>
 <dd>
-<div class="desc"><p>ROS Start time in the bagfile.</p></div>
+<div class="desc"><p>ROS Start time in the bagfile as a float.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def start_time(self) -&gt; float:
-    &#34;&#34;&#34;ROS Start time in the bagfile.
+    &#34;&#34;&#34;ROS Start time in the bagfile as a float.
     &#34;&#34;&#34;
     return self.bag.get_start_time()</code></pre>
 </details>
@@ -397,44 +398,28 @@ def start_time(self) -&gt; float:
 </dd>
 <dt id="lidar.dataset.Dataset.topics_in_bag"><code class="name">var <span class="ident">topics_in_bag</span> : dict</code></dt>
 <dd>
-<div class="desc"><p>Topics in the ROS bagfile.</p>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><code>dict</code></dt>
-<dd>Dict with all topics in the ROS bagfile</dd>
-</dl></div>
+<div class="desc"><p>Topics in the ROS bagfile as a dict.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def topics_in_bag(self) -&gt; dict:
-    &#34;&#34;&#34;Topics in the ROS bagfile.
-
-    Returns:
-        dict: Dict with all topics in the ROS bagfile
+    &#34;&#34;&#34;Topics in the ROS bagfile as a dict.
     &#34;&#34;&#34;
     return self.types_and_topics_in_bag.topics</code></pre>
 </details>
 </dd>
 <dt id="lidar.dataset.Dataset.types_and_topics_in_bag"><code class="name">var <span class="ident">types_and_topics_in_bag</span></code></dt>
 <dd>
-<div class="desc"><p>Types and Topics in the original ROS bagfile</p>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><code>rosbag.bag.TypesAndTopicsTuple</code></dt>
-<dd>All types and topics in the ROS bagfile</dd>
-</dl></div>
+<div class="desc"><p>Types and Topics in the original ROS bagfile as rosbag.bag.TypesAndTopicsTuple</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@property
 def types_and_topics_in_bag(self):
-    &#34;&#34;&#34;Types and Topics in the original ROS bagfile
-
-    Returns:
-        rosbag.bag.TypesAndTopicsTuple: All types and topics in the ROS bagfile
+    &#34;&#34;&#34;Types and Topics in the original ROS bagfile as rosbag.bag.TypesAndTopicsTuple
     &#34;&#34;&#34;
     return self.bag.get_type_and_topic_info()</code></pre>
 </details>
@@ -504,7 +489,7 @@ def types_and_topics_in_bag(self):
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.3</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.4</a>.</p>
 </footer>
 </body>
 </html>
