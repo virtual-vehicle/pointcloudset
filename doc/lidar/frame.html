@@ -69,7 +69,7 @@ import pyntcloud
 import rospy
 
 from .convert import convert
-from .plot.frame import plotly_3d, pyntcloud_3d
+from .plot.frame import plotly_3d, pyntcloud_3d, plot_overlay
 
 ops = {
     &#34;&gt;&#34;: operator.gt,
@@ -179,6 +179,22 @@ class Frame:
             return plotly_3d(self, color=color, **kwargs)
         else:
             raise ValueError(&#34;wrong backend&#34;)
+
+    def plot_overlay(self, frames_dict: dict):
+        &#34;&#34;&#34;Overlay the Frame with the plot of others. For example overlay the plot with a frame which contains
+        a cluster or plane segmentation. Best used with smaller pointclouds.
+
+        Example:
+
+        newframe.plot_overlay({&#34;Plane&#34;: plane,&#34;Cluster 1&#34;: cluster1,&#34;Cluster 2&#34;: cluster2})
+
+        Args:
+            frames_dict (dict): A dictionary in the form {&#34;Name&#34;, Frame}. Can be arbitrarly long, 
+
+        Returns:
+            plotly.graph_objs._figure.Figure: The interactive plot with overlays.
+        &#34;&#34;&#34;
+        return plot_overlay(self, frames_dict=frames_dict)
 
     def apply_filter(self, boolean_array: np.ndarray):
         &#34;&#34;&#34;Generating a new Frame by removing points where filter is False.
@@ -470,6 +486,22 @@ testframe = testset[0]</p></div>
             return plotly_3d(self, color=color, **kwargs)
         else:
             raise ValueError(&#34;wrong backend&#34;)
+
+    def plot_overlay(self, frames_dict: dict):
+        &#34;&#34;&#34;Overlay the Frame with the plot of others. For example overlay the plot with a frame which contains
+        a cluster or plane segmentation. Best used with smaller pointclouds.
+
+        Example:
+
+        newframe.plot_overlay({&#34;Plane&#34;: plane,&#34;Cluster 1&#34;: cluster1,&#34;Cluster 2&#34;: cluster2})
+
+        Args:
+            frames_dict (dict): A dictionary in the form {&#34;Name&#34;, Frame}. Can be arbitrarly long, 
+
+        Returns:
+            plotly.graph_objs._figure.Figure: The interactive plot with overlays.
+        &#34;&#34;&#34;
+        return plot_overlay(self, frames_dict=frames_dict)
 
     def apply_filter(self, boolean_array: np.ndarray):
         &#34;&#34;&#34;Generating a new Frame by removing points where filter is False.
@@ -1012,6 +1044,45 @@ color (str): name of the column in the data that should be used as color array f
         raise ValueError(&#34;wrong backend&#34;)</code></pre>
 </details>
 </dd>
+<dt id="lidar.frame.Frame.plot_overlay"><code class="name flex">
+<span>def <span class="ident">plot_overlay</span></span>(<span>self, frames_dict: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Overlay the Frame with the plot of others. For example overlay the plot with a frame which contains
+a cluster or plane segmentation. Best used with smaller pointclouds.</p>
+<p>Example:</p>
+<p>newframe.plot_overlay({"Plane": plane,"Cluster 1": cluster1,"Cluster 2": cluster2})</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>frames_dict</code></strong> :&ensp;<code>dict</code></dt>
+<dd>A dictionary in the form {"Name", Frame}. Can be arbitrarly long, </dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>plotly.graph_objs._figure.Figure</code></dt>
+<dd>The interactive plot with overlays.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot_overlay(self, frames_dict: dict):
+    &#34;&#34;&#34;Overlay the Frame with the plot of others. For example overlay the plot with a frame which contains
+    a cluster or plane segmentation. Best used with smaller pointclouds.
+
+    Example:
+
+    newframe.plot_overlay({&#34;Plane&#34;: plane,&#34;Cluster 1&#34;: cluster1,&#34;Cluster 2&#34;: cluster2})
+
+    Args:
+        frames_dict (dict): A dictionary in the form {&#34;Name&#34;, Frame}. Can be arbitrarly long, 
+
+    Returns:
+        plotly.graph_objs._figure.Figure: The interactive plot with overlays.
+    &#34;&#34;&#34;
+    return plot_overlay(self, frames_dict=frames_dict)</code></pre>
+</details>
+</dd>
 <dt id="lidar.frame.Frame.quantile_filter"><code class="name flex">
 <span>def <span class="ident">quantile_filter</span></span>(<span>self, dim: str, relation: str = &#x27;&gt;=&#x27;, cut_quantile: float = 0.5)</span>
 </code></dt>
@@ -1200,6 +1271,7 @@ function of open3d.</p>
 <li><code><a title="lidar.frame.Frame.measurments" href="#lidar.frame.Frame.measurments">measurments</a></code></li>
 <li><code><a title="lidar.frame.Frame.plane_segmentation" href="#lidar.frame.Frame.plane_segmentation">plane_segmentation</a></code></li>
 <li><code><a title="lidar.frame.Frame.plot_interactive" href="#lidar.frame.Frame.plot_interactive">plot_interactive</a></code></li>
+<li><code><a title="lidar.frame.Frame.plot_overlay" href="#lidar.frame.Frame.plot_overlay">plot_overlay</a></code></li>
 <li><code><a title="lidar.frame.Frame.points" href="#lidar.frame.Frame.points">points</a></code></li>
 <li><code><a title="lidar.frame.Frame.quantile_filter" href="#lidar.frame.Frame.quantile_filter">quantile_filter</a></code></li>
 <li><code><a title="lidar.frame.Frame.remove_radius_outlier" href="#lidar.frame.Frame.remove_radius_outlier">remove_radius_outlier</a></code></li>

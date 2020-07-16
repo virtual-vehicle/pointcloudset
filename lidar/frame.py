@@ -139,8 +139,21 @@ class Frame:
         else:
             raise ValueError("wrong backend")
 
-    def plot_overlay(self, frames_dict: dict, color="intensity"):
-        return plot_overlay(self, frames_dict=frames_dict, color=color)
+    def plot_overlay(self, frames_dict: dict):
+        """Overlay the Frame with the plot(s) of other Frames. For example overlay the plot with a frame which contains
+        a cluster or a plane. Best used with smaller pointclouds.
+
+        Example:
+
+        testframe.plot_overlay({"Plane": plane,"Cluster 1": cluster1,"Cluster 2": cluster2})
+
+        Args:
+            frames_dict (dict): A dictionary in the form {"Name", Frame}. Can be arbitrarly long, 
+
+        Returns:
+            plotly.graph_objs._figure.Figure: The interactive plot with overlays.
+        """
+        return plot_overlay(self, frames_dict=frames_dict)
 
     def apply_filter(self, boolean_array: np.ndarray):
         """Generating a new Frame by removing points where filter is False.

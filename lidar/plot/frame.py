@@ -28,8 +28,8 @@ def plotly_3d(
     Returns:
         Plotly plot: The interactive plotly plot, best use inside a jupyter notebook.
     """
-    if color not in frame.data.columns:
-        raise ValueError(f"choose any of {list(frame.data.columns)}")
+    if color != None and color not in frame.data.columns:
+        raise ValueError(f"choose any of {list(frame.data.columns)} or None")
 
     ids = [prepend_id + "id=" + str(i) for i in range(0, frame.data.shape[0])]
 
@@ -51,14 +51,14 @@ def plotly_3d(
     return fig
 
 
-def plot_overlay(orig_frame, frames_dict: dict, color="intensity"):
-    p1 = orig_frame.plot_interactive(color=color, point_size=1.0, prepend_id="Orginal ")
+def plot_overlay(orig_frame, frames_dict: dict):
+    p1 = orig_frame.plot_interactive(color=None, point_size=1.0, prepend_id="Orginal ")
     p1.update_traces(marker_color="black", opacity=0.7)
     i = 0
     colors = px.colors.qualitative.Plotly
     for name, frame in frames_dict.items():
         marker_color = colors[i]
-        p2 = frame.plot_interactive(color=color, point_size=2.0, prepend_id=name + " ")
+        p2 = frame.plot_interactive(color=None, point_size=2.0, prepend_id=name + " ")
         p2.update_traces(marker_color=marker_color)
         trace2 = p2.data[0]
         p1.add_trace(trace2)

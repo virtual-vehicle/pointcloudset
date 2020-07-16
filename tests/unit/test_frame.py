@@ -196,3 +196,15 @@ def test_plot2(testframe_mini: Frame):
 def test_plot_error(testframe_mini: Frame):
     with pytest.raises(ValueError):
         testframe_mini.plot_interactive(backend="fake")
+
+
+def test_plot_overlay(testframe: Frame):
+    smaller = testframe.limit("x", -0.5, 0.0)
+    smaller2 = testframe.limit("x", -0.1, 0.0)
+    check.equal(
+        type(
+            smaller.plot_overlay({"Smaller2": smaller2})),
+            plotly.graph_objs._figure.Figure,
+        
+    )
+

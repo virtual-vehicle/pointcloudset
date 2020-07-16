@@ -62,7 +62,6 @@ class Dataset:
         self,
         bagfile: Path,
         topic: str,
-        timerange: tuple = (None),
         keep_zeros: bool = False,
     ):
         &#34;&#34;&#34;The Dataset.
@@ -74,7 +73,6 @@ class Dataset:
         Args:
             bagfile (Path): Path to ROS bag file.
             topic (str): lidar pointcloud topic. For example &#34;/os1_cloud_node/points&#34;
-            timerange: Only messages between timerange[0] and timerange[1] will be read from file.
             keep_zeros (bool, optional): Keep zero elements. Defaults to False.
         &#34;&#34;&#34;
         self.bag = rosbag.Bag(bagfile, &#34;r&#34;)
@@ -86,8 +84,6 @@ class Dataset:
         else:
             raise IOError(&#34;Topic {} not in bag.&#34;.format(topic))
         &#34;&#34;&#34;The ROS Pointcloud2 topic of the lidar.&#34;&#34;&#34;
-        self.timerange = timerange
-        &#34;&#34;&#34;Messages between start and end time will be read from the bag file.&#34;&#34;&#34;
         self.keep_zeros = keep_zeros
         &#34;&#34;&#34;Option for keeping zero elements in Lidar Frames. Default is False&#34;&#34;&#34;
 
@@ -124,7 +120,7 @@ class Dataset:
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;Number of available frames (i.e. Lidar messages)
         &#34;&#34;&#34;
-        if self.timerange is None and self.keep_zeros is True:
+        if self.keep_zeros is True:
             return (self.types_and_topics_in_bag.topics)[self.topic].message_count
         else:
             l = sum(1 for m in self)
@@ -141,15 +137,8 @@ class Dataset:
                 frame_list.append(frame_from_message(self, message))
             return frame_list
         elif isinstance(frame_number, int):
-            if self.timerange is None:
-                messages = self.bag.read_messages(topics=[self.topic])
-            else:
-                messages = self.bag.read_messages(
-                    topics=[self.topic],
-                    start_time=genpy.Time.from_sec(self.timerange[0]),
-                    end_time=genpy.Time.from_sec(self.timerange[1]),
-                )
-
+            messages = self.bag.read_messages(topics=[self.topic])
+                
             sliced_messages = itertools.islice(
                 messages, frame_number, frame_number + 1, 1
             )
@@ -184,7 +173,26 @@ class Dataset:
                 messages, frame_number.start, frame_number.stop, frame_number.step
             )
         else:
-            raise ValueError(&#34;frame_end must be greater than frame_start and in range.&#34;)</code></pre>
+            raise ValueError(&#34;frame_end must be greater than frame_start and in range.&#34;)
+
+    def get_frames_between_timestamps(self, start_time: float, end_time: float) -&gt; List[Frame]:
+        &#34;&#34;&#34;Get all frames within specific time range
+
+        Args:
+            start_time: timestamp as float (ros posix time)
+            end_time: timestamp as float (ros posix time)
+
+        Returns:
+            List of frames
+        &#34;&#34;&#34;
+        messages = self.bag.read_messages(
+                    topics=[self.topic],
+                    start_time=genpy.Time.from_sec(start_time),
+                    end_time=genpy.Time.from_sec(end_time))
+        frame_list = []
+        for message in messages:
+                frame_list.append(frame_from_message(self, message))
+        return frame_list</code></pre>
 </details>
 </section>
 <section>
@@ -198,7 +206,7 @@ class Dataset:
 <dl>
 <dt id="lidar.dataset.Dataset"><code class="flex name class">
 <span>class <span class="ident">Dataset</span></span>
-<span>(</span><span>bagfile: pathlib.Path, topic: str, timerange: tuple = None, keep_zeros: bool = False)</span>
+<span>(</span><span>bagfile: pathlib.Path, topic: str, keep_zeros: bool = False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>The Dataset.</p>
@@ -211,8 +219,6 @@ testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
 <dd>Path to ROS bag file.</dd>
 <dt><strong><code>topic</code></strong> :&ensp;<code>str</code></dt>
 <dd>lidar pointcloud topic. For example "/os1_cloud_node/points"</dd>
-<dt><strong><code>timerange</code></strong></dt>
-<dd>Only messages between timerange[0] and timerange[1] will be read from file.</dd>
 <dt><strong><code>keep_zeros</code></strong> :&ensp;<code>bool</code>, optional</dt>
 <dd>Keep zero elements. Defaults to False.</dd>
 </dl></div>
@@ -225,7 +231,6 @@ testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
         self,
         bagfile: Path,
         topic: str,
-        timerange: tuple = (None),
         keep_zeros: bool = False,
     ):
         &#34;&#34;&#34;The Dataset.
@@ -237,7 +242,6 @@ testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
         Args:
             bagfile (Path): Path to ROS bag file.
             topic (str): lidar pointcloud topic. For example &#34;/os1_cloud_node/points&#34;
-            timerange: Only messages between timerange[0] and timerange[1] will be read from file.
             keep_zeros (bool, optional): Keep zero elements. Defaults to False.
         &#34;&#34;&#34;
         self.bag = rosbag.Bag(bagfile, &#34;r&#34;)
@@ -249,8 +253,6 @@ testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
         else:
             raise IOError(&#34;Topic {} not in bag.&#34;.format(topic))
         &#34;&#34;&#34;The ROS Pointcloud2 topic of the lidar.&#34;&#34;&#34;
-        self.timerange = timerange
-        &#34;&#34;&#34;Messages between start and end time will be read from the bag file.&#34;&#34;&#34;
         self.keep_zeros = keep_zeros
         &#34;&#34;&#34;Option for keeping zero elements in Lidar Frames. Default is False&#34;&#34;&#34;
 
@@ -287,7 +289,7 @@ testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;Number of available frames (i.e. Lidar messages)
         &#34;&#34;&#34;
-        if self.timerange is None and self.keep_zeros is True:
+        if self.keep_zeros is True:
             return (self.types_and_topics_in_bag.topics)[self.topic].message_count
         else:
             l = sum(1 for m in self)
@@ -304,15 +306,8 @@ testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
                 frame_list.append(frame_from_message(self, message))
             return frame_list
         elif isinstance(frame_number, int):
-            if self.timerange is None:
-                messages = self.bag.read_messages(topics=[self.topic])
-            else:
-                messages = self.bag.read_messages(
-                    topics=[self.topic],
-                    start_time=genpy.Time.from_sec(self.timerange[0]),
-                    end_time=genpy.Time.from_sec(self.timerange[1]),
-                )
-
+            messages = self.bag.read_messages(topics=[self.topic])
+                
             sliced_messages = itertools.islice(
                 messages, frame_number, frame_number + 1, 1
             )
@@ -347,7 +342,26 @@ testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
                 messages, frame_number.start, frame_number.stop, frame_number.step
             )
         else:
-            raise ValueError(&#34;frame_end must be greater than frame_start and in range.&#34;)</code></pre>
+            raise ValueError(&#34;frame_end must be greater than frame_start and in range.&#34;)
+
+    def get_frames_between_timestamps(self, start_time: float, end_time: float) -&gt; List[Frame]:
+        &#34;&#34;&#34;Get all frames within specific time range
+
+        Args:
+            start_time: timestamp as float (ros posix time)
+            end_time: timestamp as float (ros posix time)
+
+        Returns:
+            List of frames
+        &#34;&#34;&#34;
+        messages = self.bag.read_messages(
+                    topics=[self.topic],
+                    start_time=genpy.Time.from_sec(start_time),
+                    end_time=genpy.Time.from_sec(end_time))
+        frame_list = []
+        for message in messages:
+                frame_list.append(frame_from_message(self, message))
+        return frame_list</code></pre>
 </details>
 <h3>Instance variables</h3>
 <dl>
@@ -405,10 +419,6 @@ def start_time(self) -&gt; float:
     return self.bag.get_start_time()</code></pre>
 </details>
 </dd>
-<dt id="lidar.dataset.Dataset.timerange"><code class="name">var <span class="ident">timerange</span></code></dt>
-<dd>
-<div class="desc"><p>Messages between start and end time will be read from the bag file.</p></div>
-</dd>
 <dt id="lidar.dataset.Dataset.topics_in_bag"><code class="name">var <span class="ident">topics_in_bag</span> : dict</code></dt>
 <dd>
 <div class="desc"><p>Topics in the ROS bagfile as a dict.</p></div>
@@ -440,6 +450,44 @@ def types_and_topics_in_bag(self):
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="lidar.dataset.Dataset.get_frames_between_timestamps"><code class="name flex">
+<span>def <span class="ident">get_frames_between_timestamps</span></span>(<span>self, start_time: float, end_time: float) ‑> List[<a title="lidar.frame.Frame" href="frame.html#lidar.frame.Frame">Frame</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get all frames within specific time range</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>start_time</code></strong></dt>
+<dd>timestamp as float (ros posix time)</dd>
+<dt><strong><code>end_time</code></strong></dt>
+<dd>timestamp as float (ros posix time)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>List of frames</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_frames_between_timestamps(self, start_time: float, end_time: float) -&gt; List[Frame]:
+    &#34;&#34;&#34;Get all frames within specific time range
+
+    Args:
+        start_time: timestamp as float (ros posix time)
+        end_time: timestamp as float (ros posix time)
+
+    Returns:
+        List of frames
+    &#34;&#34;&#34;
+    messages = self.bag.read_messages(
+                topics=[self.topic],
+                start_time=genpy.Time.from_sec(start_time),
+                end_time=genpy.Time.from_sec(end_time))
+    frame_list = []
+    for message in messages:
+            frame_list.append(frame_from_message(self, message))
+    return frame_list</code></pre>
+</details>
+</dd>
 <dt id="lidar.dataset.Dataset.has_frames"><code class="name flex">
 <span>def <span class="ident">has_frames</span></span>(<span>self)</span>
 </code></dt>
@@ -489,12 +537,12 @@ def types_and_topics_in_bag(self):
 <ul class="">
 <li><code><a title="lidar.dataset.Dataset.bag" href="#lidar.dataset.Dataset.bag">bag</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.end_time" href="#lidar.dataset.Dataset.end_time">end_time</a></code></li>
+<li><code><a title="lidar.dataset.Dataset.get_frames_between_timestamps" href="#lidar.dataset.Dataset.get_frames_between_timestamps">get_frames_between_timestamps</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.has_frames" href="#lidar.dataset.Dataset.has_frames">has_frames</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.keep_zeros" href="#lidar.dataset.Dataset.keep_zeros">keep_zeros</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.orig_file" href="#lidar.dataset.Dataset.orig_file">orig_file</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.size" href="#lidar.dataset.Dataset.size">size</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.start_time" href="#lidar.dataset.Dataset.start_time">start_time</a></code></li>
-<li><code><a title="lidar.dataset.Dataset.timerange" href="#lidar.dataset.Dataset.timerange">timerange</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.topics_in_bag" href="#lidar.dataset.Dataset.topics_in_bag">topics_in_bag</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.types_and_topics_in_bag" href="#lidar.dataset.Dataset.types_and_topics_in_bag">types_and_topics_in_bag</a></code></li>
 </ul>

@@ -42,7 +42,7 @@ colorscales = {
 
 
 def plotly_3d(
-    frame, color: str, point_size: float = 2, **kwargs,
+    frame, color: str, point_size: float = 2, prepend_id: str = &#34;&#34;, **kwargs,
 ):
     &#34;&#34;&#34;Plot a Frame as a 3D scatter plot with plotly.
 
@@ -59,10 +59,10 @@ def plotly_3d(
     Returns:
         Plotly plot: The interactive plotly plot, best use inside a jupyter notebook.
     &#34;&#34;&#34;
-    if color not in frame.data.columns:
-        raise ValueError(f&#34;choose any of {list(frame.data.columns)}&#34;)
+    if color != None and color not in frame.data.columns:
+        raise ValueError(f&#34;choose any of {list(frame.data.columns)} or None&#34;)
 
-    ids = [&#34;id=&#34; + str(i) for i in range(0, frame.data.shape[0])]
+    ids = [prepend_id + &#34;id=&#34; + str(i) for i in range(0, frame.data.shape[0])]
 
     fig = px.scatter_3d(
         frame.data,
@@ -80,6 +80,23 @@ def plotly_3d(
     )
     fig.update_layout(scene_aspectmode=&#34;data&#34;,)
     return fig
+
+
+def plot_overlay(orig_frame, frames_dict: dict):
+    p1 = orig_frame.plot_interactive(color=None, point_size=1.0, prepend_id=&#34;Orginal &#34;)
+    p1.update_traces(marker_color=&#34;black&#34;, opacity=0.7)
+    i = 0
+    colors = px.colors.qualitative.Plotly
+    for name, frame in frames_dict.items():
+        marker_color = colors[i]
+        p2 = frame.plot_interactive(color=None, point_size=2.0, prepend_id=name + &#34; &#34;)
+        p2.update_traces(marker_color=marker_color)
+        trace2 = p2.data[0]
+        p1.add_trace(trace2)
+        i = i + 1
+        if i &gt; len(colors):
+            i = 0
+    return p1
 
 
 def pyntcloud_3d(frame, **kwargs):
@@ -101,8 +118,34 @@ def pyntcloud_3d(frame, **kwargs):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="lidar.plot.frame.plot_overlay"><code class="name flex">
+<span>def <span class="ident">plot_overlay</span></span>(<span>orig_frame, frames_dict: dict)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot_overlay(orig_frame, frames_dict: dict):
+    p1 = orig_frame.plot_interactive(color=None, point_size=1.0, prepend_id=&#34;Orginal &#34;)
+    p1.update_traces(marker_color=&#34;black&#34;, opacity=0.7)
+    i = 0
+    colors = px.colors.qualitative.Plotly
+    for name, frame in frames_dict.items():
+        marker_color = colors[i]
+        p2 = frame.plot_interactive(color=None, point_size=2.0, prepend_id=name + &#34; &#34;)
+        p2.update_traces(marker_color=marker_color)
+        trace2 = p2.data[0]
+        p1.add_trace(trace2)
+        i = i + 1
+        if i &gt; len(colors):
+            i = 0
+    return p1</code></pre>
+</details>
+</dd>
 <dt id="lidar.plot.frame.plotly_3d"><code class="name flex">
-<span>def <span class="ident">plotly_3d</span></span>(<span>frame, color: str, point_size: float = 2, **kwargs)</span>
+<span>def <span class="ident">plotly_3d</span></span>(<span>frame, color: str, point_size: float = 2, prepend_id: str = '', **kwargs)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Plot a Frame as a 3D scatter plot with plotly.</p>
@@ -131,7 +174,7 @@ def pyntcloud_3d(frame, **kwargs):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def plotly_3d(
-    frame, color: str, point_size: float = 2, **kwargs,
+    frame, color: str, point_size: float = 2, prepend_id: str = &#34;&#34;, **kwargs,
 ):
     &#34;&#34;&#34;Plot a Frame as a 3D scatter plot with plotly.
 
@@ -148,10 +191,10 @@ def pyntcloud_3d(frame, **kwargs):
     Returns:
         Plotly plot: The interactive plotly plot, best use inside a jupyter notebook.
     &#34;&#34;&#34;
-    if color not in frame.data.columns:
-        raise ValueError(f&#34;choose any of {list(frame.data.columns)}&#34;)
+    if color != None and color not in frame.data.columns:
+        raise ValueError(f&#34;choose any of {list(frame.data.columns)} or None&#34;)
 
-    ids = [&#34;id=&#34; + str(i) for i in range(0, frame.data.shape[0])]
+    ids = [prepend_id + &#34;id=&#34; + str(i) for i in range(0, frame.data.shape[0])]
 
     fig = px.scatter_3d(
         frame.data,
@@ -222,6 +265,7 @@ def pyntcloud_3d(frame, **kwargs):
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="lidar.plot.frame.plot_overlay" href="#lidar.plot.frame.plot_overlay">plot_overlay</a></code></li>
 <li><code><a title="lidar.plot.frame.plotly_3d" href="#lidar.plot.frame.plotly_3d">plotly_3d</a></code></li>
 <li><code><a title="lidar.plot.frame.pyntcloud_3d" href="#lidar.plot.frame.pyntcloud_3d">pyntcloud_3d</a></code></li>
 </ul>
