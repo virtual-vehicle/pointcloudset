@@ -36,7 +36,6 @@ class Dataset:
         Args:
             bagfile (Path): Path to ROS bag file.
             topic (str): lidar pointcloud topic. For example "/os1_cloud_node/points"
-            timerange: Only messages between timerange[0] and timerange[1] will be read from file.
             keep_zeros (bool, optional): Keep zero elements. Defaults to False.
         """
         self.bag = rosbag.Bag(bagfile, "r")
