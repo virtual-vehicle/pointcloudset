@@ -20,7 +20,7 @@ The main features of this package are the "Dataset" class consisting of many
 # Installation in another project
 
 ``` bash
- pip install git+https://gitlab.v2c2.at/sensor-fdir/lidar
+ pip install git+https://gitlab.v2c2.at/sensor-fdir/lidar@0.1.0
 ```
 
 # Development
