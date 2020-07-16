@@ -18,7 +18,6 @@ class Dataset:
         self,
         bagfile: Path,
         topic: str,
-        timerange: tuple = (None),
         keep_zeros: bool = False,
     ):
         """Initiallises the Dataset.
@@ -38,8 +37,6 @@ class Dataset:
         else:
             raise IOError("Topic {} not in bag.".format(topic))
         """The ROS Pointcloud2 topic of the lidar."""
-        self.timerange = timerange
-        """Messages between start and end time will be read from the bag file."""
         self.keep_zeros = keep_zeros
         """Option for keeping zero elements in Lidar Frames. Default is False"""
 
@@ -82,7 +79,7 @@ class Dataset:
     def __len__(self) -> int:
         """Number of available frames (i.e. Lidar messages)
         """
-        if self.timerange is None and self.keep_zeros is True:
+        if self.keep_zeros is True:
             return (self.types_and_topics_in_bag.topics)[self.topic].message_count
         else:
             l = sum(1 for m in self)
@@ -99,15 +96,8 @@ class Dataset:
                 frame_list.append(frame_from_message(self, message))
             return frame_list
         elif isinstance(frame_number, int):
-            if self.timerange is None:
-                messages = self.bag.read_messages(topics=[self.topic])
-            else:
-                messages = self.bag.read_messages(
-                    topics=[self.topic],
-                    start_time=genpy.Time.from_sec(self.timerange[0]),
-                    end_time=genpy.Time.from_sec(self.timerange[1]),
-                )
-
+            messages = self.bag.read_messages(topics=[self.topic])
+                
             sliced_messages = itertools.islice(
                 messages, frame_number, frame_number + 1, 1
             )
@@ -143,3 +133,13 @@ class Dataset:
             )
         else:
             raise ValueError("frame_end must be greater than frame_start and in range.")
+
+    def get_frames_between_timestamps(self, start_time: float, end_time: float) -> List[Frame]:
+        messages = self.bag.read_messages(
+                    topics=[self.topic],
+                    start_time=genpy.Time.from_sec(start_time),
+                    end_time=genpy.Time.from_sec(end_time))
+        frame_list = []
+        for message in messages:
+                frame_list.append(frame_from_message(self, message))
+        return frame_list
