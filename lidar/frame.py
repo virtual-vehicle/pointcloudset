@@ -13,13 +13,13 @@ Frame object is generated at each processing stage.
 
 ## Developer notes:
 * All operations have to act on both, pointcloud and data and keep the timestamp.
-* All processing methods need to return another Frame. 
+* All processing methods need to return another Frame.
 """
 
 import operator
 import warnings
 from datetime import datetime
-from typing import List, Type, Union
+from typing import List
 
 import numpy as np
 import open3d as o3d
@@ -41,7 +41,10 @@ ops = {
 
 class Frame:
     def __init__(
-        self, data: pd.DataFrame, timestamp: rospy.rostime.Time = rospy.rostime.Time()
+        self,
+        data: pd.DataFrame,
+        orig_file: str = "",
+        timestamp: rospy.rostime.Time = rospy.rostime.Time(),
     ):
         """One Frame of lidar measurements.
 
@@ -49,7 +52,7 @@ class Frame:
         testbag = Path().cwd().parent.joinpath("tests/testdata/test.bag")
         testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
         testframe = testset[0]
-        
+
         """
         self.data = data
         """All the data, x,y.z and intensity, range and more"""
@@ -59,6 +62,9 @@ class Frame:
         """Pyntcloud object with x,y,z coordinates"""
         self.measurments = self.data.drop(["x", "y", "z"], axis=1)
         """Measurments aka. scalar field of values at each point"""
+        self.orig_file = orig_file
+        """Path to bag file. Defaults to empty"""
+
         self._check_index()
 
     def __str__(self):
@@ -120,11 +126,13 @@ class Frame:
         self, backend: str = "plotly", color: str = "intensity", **kwargs
     ):
         """Generate either a plotly or pyntcloud 3D plot.
-        (Note: Plotly plots also give index of datapoint in pandas array when hovering over datapoint)
+        (Note: Plotly plots also give index of datapoint in pandas array when hovering
+        over datapoint)
 
-        Args: 
+        Args:
             backend (str): specify either "plotly" or "pyntcloud" as plot environment
-            color (str): name of the column in the data that should be used as color array for plotly plots
+            color (str): name of the column in the data that should be used as color
+            array for plotly plots
 
         Returns:
             np.array: List of distances for each point
@@ -140,15 +148,18 @@ class Frame:
             raise ValueError("wrong backend")
 
     def plot_overlay(self, frames_dict: dict):
-        """Overlay the Frame with the plot(s) of other Frames. For example overlay the plot with a frame which contains
+        """Overlay the Frame with the plot(s) of other Frames. For example overlay the
+        plot with a frame which contains
         a cluster or a plane. Best used with smaller pointclouds.
 
         Example:
 
-        testframe.plot_overlay({"Plane": plane,"Cluster 1": cluster1,"Cluster 2": cluster2})
+        testframe.plot_overlay({"Plane": plane,"Cluster 1": cluster1,
+        "Cluster 2": cluster2})
 
         Args:
-            frames_dict (dict): A dictionary in the form {"Name", Frame}. Can be arbitrarly long, 
+            frames_dict (dict): A dictionary in the form {"Name", Frame}.
+            Can be arbitrarly long,
 
         Returns:
             plotly.graph_objs._figure.Figure: The interactive plot with overlays.

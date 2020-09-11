@@ -1,11 +1,11 @@
 """
 # Dataset Class
-The Dataset class which contains many frames. 
+The Dataset class which contains many frames.
 
 For more details on how to use it please refer to the usage.ipynb Notebook for an interactive tuturial.
 
 # Developer notes
-* The important stuff happens in the __getitem__ method. Only then the rosbag is actually read with the help of 
+* The important stuff happens in the __getitem__ method. Only then the rosbag is actually read with the help of
 generators.
 """
 
@@ -22,10 +22,7 @@ from .frame import Frame
 
 class Dataset:
     def __init__(
-        self,
-        bagfile: Path,
-        topic: str,
-        keep_zeros: bool = False,
+        self, bagfile: Path, topic: str, keep_zeros: bool = False,
     ):
         """The Dataset.
 
@@ -101,7 +98,7 @@ class Dataset:
             return frame_list
         elif isinstance(frame_number, int):
             messages = self.bag.read_messages(topics=[self.topic])
-                
+
             sliced_messages = itertools.islice(
                 messages, frame_number, frame_number + 1, 1
             )
@@ -138,7 +135,9 @@ class Dataset:
         else:
             raise ValueError("frame_end must be greater than frame_start and in range.")
 
-    def get_frames_between_timestamps(self, start_time: float, end_time: float) -> List[Frame]:
+    def get_frames_between_timestamps(
+        self, start_time: float, end_time: float
+    ) -> List[Frame]:
         """Get all frames within specific time range
 
         Args:
@@ -149,10 +148,11 @@ class Dataset:
             List of frames
         """
         messages = self.bag.read_messages(
-                    topics=[self.topic],
-                    start_time=genpy.Time.from_sec(start_time),
-                    end_time=genpy.Time.from_sec(end_time))
+            topics=[self.topic],
+            start_time=genpy.Time.from_sec(start_time),
+            end_time=genpy.Time.from_sec(end_time),
+        )
         frame_list = []
         for message in messages:
-                frame_list.append(frame_from_message(self, message))
+            frame_list.append(frame_from_message(self, message))
         return frame_list

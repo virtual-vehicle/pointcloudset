@@ -4,6 +4,7 @@ import open3d as o3d
 import pandas as pd
 import plotly
 import pyntcloud
+from pathlib import Path
 import pytest
 import pytest_check as check
 import rospy
@@ -49,6 +50,11 @@ def test_timestamp(testframe_mini):
     check.equal(type(testframe_mini.timestamp), rospy.rostime.Time)
 
 
+def test_org_file(testframe):
+    check.equal(type(testframe.orig_file), str)
+    check.equal(Path(testframe.orig_file).stem, "test")
+
+
 def test_len(testframe_mini: Frame):
     check.equal(type(len(testframe_mini)), int)
     check.equal(len(testframe_mini), 7)
@@ -58,7 +64,7 @@ def test_str(testframe: Frame):
     check.equal(type(str(testframe)), str)
     check.equal(
         str(testframe),
-        "pointcloud: with 45809 points, data:['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range'], from Monday, June 22, 2020 03:40:42",
+        "pointcloud: with 45809 points, data:['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range'], from Monday, June 22, 2020 01:40:42",
     )
 
 
@@ -202,9 +208,7 @@ def test_plot_overlay(testframe: Frame):
     smaller = testframe.limit("x", -0.5, 0.0)
     smaller2 = testframe.limit("x", -0.1, 0.0)
     check.equal(
-        type(
-            smaller.plot_overlay({"Smaller2": smaller2})),
-            plotly.graph_objs._figure.Figure,
-        
+        type(smaller.plot_overlay({"Smaller2": smaller2})),
+        plotly.graph_objs._figure.Figure,
     )
 
