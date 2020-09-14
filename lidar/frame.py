@@ -20,6 +20,7 @@ import operator
 import warnings
 from datetime import datetime
 from typing import List
+from pathlib import Path
 
 import numpy as np
 import open3d as o3d
@@ -320,6 +321,19 @@ class Frame:
             return {"Frame": inlier_Frame, "plane_model": plane_model}
         else:
             return inlier_Frame
+
+    def to_csv(self, folder: Path = Path()):
+        """Exports the frame as a csv for use with cloud compare or similar tools.
+        The filename is derived automaticaly from the bag file name and the timestamp
+        of the frame.
+        """
+        orig_file_name = Path(self.orig_file).stem
+        if folder == Path():
+            destination_folder = Path(self.orig_file).parents[0]
+        else:
+            destination_folder = folder
+        filename = f"{orig_file_name}_timestamp_{self.timestamp}.csv"
+        self.data.to_csv(destination_folder.joinpath(filename), index=False)
 
     def _check_index(self):
         """A private function to check if the index of the self.data is sane.

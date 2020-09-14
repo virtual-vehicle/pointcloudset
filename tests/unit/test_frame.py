@@ -212,3 +212,29 @@ def test_plot_overlay(testframe: Frame):
         plotly.graph_objs._figure.Figure,
     )
 
+
+def test_to_csv(testframe: Frame, tmp_path: Path):
+    testframe.to_csv(tmp_path)
+    testfile_name = tmp_path.joinpath("test_timestamp_1592833242755911566.csv")
+    print(testfile_name)
+    print(testfile_name.exists())
+    check.equal(testfile_name.exists(), True)
+    read_frame = pd.read_csv(testfile_name)
+    test_values = read_frame.iloc[0].values
+    np.testing.assert_allclose(
+        [
+            1.4383683e00,
+            -4.0477440e-01,
+            2.1055990e-01,
+            1.1000000e01,
+            +3.5151600e06,
+            2.0000000e00,
+            1.6000000e01,
+            3.5000000e01,
+            +1.5090000e03,
+        ],
+        test_values,
+        rtol=1e-10,
+        atol=0,
+    )
+
