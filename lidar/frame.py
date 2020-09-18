@@ -322,18 +322,19 @@ class Frame:
         else:
             return inlier_Frame
 
-    def to_csv(self, folder: Path = Path()):
+    def to_csv(self, path: Path = Path()):
         """Exports the frame as a csv for use with cloud compare or similar tools.
-        The filename is derived automaticaly from the bag file name and the timestamp
-        of the frame.
+        Args:
+            path (Path, optional): Destination. Defaults to the folder of
+            the bag fiile with the timestamp of the frame.
         """
         orig_file_name = Path(self.orig_file).stem
-        if folder == Path():
-            destination_folder = Path(self.orig_file).parents[0]
+        if path == Path():
+            filename = f"{orig_file_name}_timestamp_{self.timestamp}.csv"
+            destination_folder = path.joinpath(filename)
         else:
-            destination_folder = folder
-        filename = f"{orig_file_name}_timestamp_{self.timestamp}.csv"
-        self.data.to_csv(destination_folder.joinpath(filename), index=False)
+            destination_folder = path
+        self.data.to_csv(destination_folder, index=False)
 
     def _check_index(self):
         """A private function to check if the index of the self.data is sane.

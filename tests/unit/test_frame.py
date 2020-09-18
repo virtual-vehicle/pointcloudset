@@ -214,8 +214,8 @@ def test_plot_overlay(testframe: Frame):
 
 
 def test_to_csv(testframe: Frame, tmp_path: Path):
-    testframe.to_csv(tmp_path)
     testfile_name = tmp_path.joinpath("test_timestamp_1592833242755911566.csv")
+    testframe.to_csv(testfile_name)
     print(testfile_name)
     print(testfile_name.exists())
     check.equal(testfile_name.exists(), True)
