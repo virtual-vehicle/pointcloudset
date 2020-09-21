@@ -362,7 +362,7 @@ class Frame:
         orig_file_name = Path(self.orig_file).stem
         if path == Path():
             filename = f"{orig_file_name}_timestamp_{self.timestamp}.csv"
-            destination_folder = path.joinpath(filename)
+            destination_folder = Path(self.orig_file).parent.joinpath(filename)
         else:
             destination_folder = path
         self.data.to_csv(destination_folder, index=False)
