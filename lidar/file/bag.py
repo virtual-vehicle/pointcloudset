@@ -8,7 +8,6 @@ import sensor_msgs.point_cloud2 as pc2
 
 from ..frame import Frame
 
-
 PANDAS_TYPEMAPPING = {
     1: np.dtype("int8"),
     2: np.dtype("uint8"),
