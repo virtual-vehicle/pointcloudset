@@ -1,10 +1,9 @@
+from pathlib import Path
 import IPython
 import numpy as np
 import open3d as o3d
 import pandas as pd
 import plotly
-import pyntcloud
-from pathlib import Path
 import pytest
 import pytest_check as check
 import rospy
@@ -40,10 +39,6 @@ def test_get_open3d_points(testframe_mini):
 def test_measurments(testframe_mini):
     measurements = testframe_mini.measurments
     check.equal(type(measurements), pd.DataFrame)
-    check.equal(
-        list(measurements.columns),
-        ["intensity", "t", "reflectivity", "ring", "noise", "range"],
-    )
 
 
 def test_timestamp(testframe_mini):
@@ -66,6 +61,44 @@ def test_str(testframe: Frame):
         str(testframe),
         "pointcloud: with 45809 points, data:['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range'], from Monday, June 22, 2020 01:40:42",
     )
+
+
+def test_add_column(testframe_mini: Frame):
+    testframe_mini.add_column("test", testframe_mini.data["x"])
+    after_columns = list(testframe_mini.data.columns.values)
+    check.equal(
+        str(after_columns),
+        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'test']",
+    )
+
+
+def test_calculate_distance_to_plane1(testframe_mini: Frame):
+    testframe_mini.calculate_distance_to_plane(
+        plane_model=np.array([1, 0, 0, 0]), absolute_values=False
+    )
+    check.equal(
+        str(list(testframe_mini.data.columns.values)),
+        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [1,0,0,0]']",
+    )
+    check.equal(testframe_mini.data["distance to plane: [1,0,0,0]"][1], 1.0)
+
+
+def test_calculate_distance_to_plane2(testframe_mini: Frame):
+    testframe_mini.calculate_distance_to_plane(
+        plane_model=np.array([-1, 0, 0, 0]), absolute_values=False
+    )
+    check.equal(
+        str(list(testframe_mini.data.columns.values)),
+        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [-1, 0, 0, 0]']",
+    )
+    check.equal(testframe_mini.data["distance to plane: [-1, 0, 0, 0]"][1], -1.0)
+
+
+def test_calculate_distance_to_plane3(testframe_mini: Frame):
+    testframe_mini.calculate_distance_to_plane(
+        plane_model=np.array([-1, 0, 0, 0]), absolute_values=True
+    )
+    check.equal(testframe_mini.data["distance to plane: [-1, 0, 0, 0]"][1], 1.0)
 
 
 def test_describe(testframe: Frame):
@@ -237,4 +270,3 @@ def test_to_csv(testframe: Frame, tmp_path: Path):
         rtol=1e-10,
         atol=0,
     )
-

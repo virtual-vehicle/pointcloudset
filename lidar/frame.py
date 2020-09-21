@@ -19,8 +19,8 @@ Frame object is generated at each processing stage.
 import operator
 import warnings
 from datetime import datetime
-from typing import List
 from pathlib import Path
+from typing import List
 
 import numpy as np
 import open3d as o3d
@@ -29,7 +29,8 @@ import pyntcloud
 import rospy
 
 from .convert import convert
-from .plot.frame import plotly_3d, pyntcloud_3d, plot_overlay
+from .geometry import plane
+from .plot.frame import plot_overlay, plotly_3d, pyntcloud_3d
 
 ops = {
     ">": operator.gt,
@@ -74,6 +75,48 @@ class Frame:
     def __len__(self):
         return len(self.data)
 
+    def add_column(self, column_name: str, values: np.array):
+        """Adding a new column to the data of the frame.
+
+        Args:
+            column_name (str): name of the new column.
+            values (np.array): Values of the new column.
+        """
+        self.data[column_name] = values
+
+    def calculate_distance_to_plane(
+        self, plane_model: np.array, absolute_values: bool = False
+    ):
+        """Calculates the distance of each point to a plane and adds it as a column
+        to the data of the frame. Uses the plane equation a x + b y + c z + d = 0
+
+        Args:
+            plane_model (np.array): [a, b, c, d], could be provided by plane_segmentation
+            absolute_values (bool, optional): Calculate absolute distances if True. Defaults to False.
+        """
+        points = self.points.xyz
+        distances = np.asarray(
+            [plane.distance_to_point(point, plane_model) for point in points]
+        )
+        if absolute_values:
+            distances = np.absolute(distances)
+        plane_str = np.array2string(
+            plane_model, precision=2, separator=",", suppress_small=True
+        )
+        self.add_column(f"distance to plane: {plane_str}", distances)
+
+    def distances_to_origin(self) -> np.array:
+        """For each point in the pointcloud calculate the euclidian distance
+        to the origin (0,0,0).
+
+        Returns:
+            np.array: List of distances for each point
+        """
+        point_a = np.array((0.0, 0.0, 0.0))
+        points = self.points.xyz
+        dists = [np.linalg.norm(point_a - point) for point in points]
+        return np.array(dists)
+
     def describe(self):
         """Generate descriptive statistics based on .data.describe().
         """
@@ -110,18 +153,6 @@ class Frame:
             bool: `True`` if the lidar frame contains measurment data.
         """
         return not self.data.empty
-
-    def distances_to_origin(self) -> np.array:
-        """For each point in the pointcloud calculate the euclidian distance
-        to the origin (0,0,0).
-
-        Returns:
-            np.array: List of distances for each point
-        """
-        point_a = np.array((0.0, 0.0, 0.0))
-        points = self.points.xyz
-        dists = [np.linalg.norm(point_a - point) for point in points]
-        return np.array(dists)
 
     def plot_interactive(
         self, backend: str = "plotly", color: str = "intensity", **kwargs
@@ -337,7 +368,7 @@ class Frame:
         self.data.to_csv(destination_folder, index=False)
 
     def _check_index(self):
-        """A private function to check if the index of the self.data is sane.
+        """A private function to check if the index of self.data is sane.
         """
         if len(self) > 0:
             assert self.data.index[0] == 0, "index should start with 0"
