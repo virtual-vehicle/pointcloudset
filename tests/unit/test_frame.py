@@ -52,7 +52,7 @@ def test_org_file(testframe):
 
 def test_len(testframe_mini: Frame):
     check.equal(type(len(testframe_mini)), int)
-    check.equal(len(testframe_mini), 7)
+    check.equal(len(testframe_mini), 8)
 
 
 def test_str(testframe: Frame):
@@ -127,7 +127,7 @@ def test_testframe_index(testframe):
 
 
 def test_testframe_2(testframe_mini: Frame):
-    check.equal(len(testframe_mini), 7)
+    check.equal(len(testframe_mini), 8)
     check.equal(testframe_mini.has_data(), True)
 
 
@@ -190,15 +190,15 @@ def test_testframe_pointcloud(
     assert_frame_equal(pointcloud_df, reference_pointcloud_withzero_dataframe)
 
 
-def test_distances_to_origin(testframe_mini):
-    distances = testframe_mini.distances_to_origin()
-    check.equal(type(distances), np.ndarray)
+def test_distances_to_origin(testframe_mini: Frame):
+    testframe_mini.calculate_distance_to_origin()
     check.equal(
         np.allclose(
-            distances,
+            testframe_mini.data["distance to origin"].values,
             np.asarray(
                 [
                     0.0,
+                    1.73205081,
                     1.73205081,
                     937.15579489,
                     1058.09727232,

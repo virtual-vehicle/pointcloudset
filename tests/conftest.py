@@ -49,11 +49,12 @@ def testframe_mini_df():
     np.random.seed(5)
     df1 = pd.DataFrame(np.zeros(shape=(1, len(columns))), columns=columns)
     df2 = pd.DataFrame(np.ones(shape=(1, len(columns))), columns=columns)
-    df3 = pd.DataFrame(
+    df3 = pd.DataFrame(-1.0 * np.ones(shape=(1, len(columns))), columns=columns)
+    df4 = pd.DataFrame(
         np.random.randint(0, 1000, size=(5, len(columns))) * np.random.random(),
         columns=columns,
     )
-    return pd.concat([df1, df2, df3]).reset_index(drop=True)
+    return pd.concat([df1, df2, df3, df4]).reset_index(drop=True)
 
 
 @pytest.fixture()

@@ -85,14 +85,14 @@ class Frame:
         self.data[column_name] = values
 
     def calculate_distance_to_plane(
-        self, plane_model: np.array, absolute_values: bool = False
+        self, plane_model: np.array, absolute_values: bool = True
     ):
         """Calculates the distance of each point to a plane and adds it as a column
         to the data of the frame. Uses the plane equation a x + b y + c z + d = 0
 
         Args:
             plane_model (np.array): [a, b, c, d], could be provided by plane_segmentation
-            absolute_values (bool, optional): Calculate absolute distances if True. Defaults to False.
+            absolute_values (bool, optional): Calculate absolute distances if True. Defaults to True.
         """
         points = self.points.xyz
         distances = np.asarray(
@@ -105,17 +105,14 @@ class Frame:
         )
         self.add_column(f"distance to plane: {plane_str}", distances)
 
-    def distances_to_origin(self) -> np.array:
+    def calculate_distance_to_origin(self):
         """For each point in the pointcloud calculate the euclidian distance
-        to the origin (0,0,0).
-
-        Returns:
-            np.array: List of distances for each point
+        to the origin (0,0,0). Adds a new column to the data with the values.
         """
         point_a = np.array((0.0, 0.0, 0.0))
         points = self.points.xyz
-        dists = [np.linalg.norm(point_a - point) for point in points]
-        return np.array(dists)
+        distances = np.array([np.linalg.norm(point_a - point) for point in points])
+        self.add_column("distance to origin", distances)
 
     def describe(self):
         """Generate descriptive statistics based on .data.describe().
