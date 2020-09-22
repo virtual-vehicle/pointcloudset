@@ -11,7 +11,7 @@ generators.
 
 import itertools
 from pathlib import Path
-from typing import Iterator, List, Union
+from typing import Iterator, List, Union, Callable
 
 import genpy
 import rosbag
@@ -33,7 +33,7 @@ class Dataset:
         Args:
             bagfile (Path): Path to ROS bag file.
             topic (str): lidar pointcloud topic. For example "/os1_cloud_node/points"
-            keep_zeros (bool, optional): Keep zero elements. Defaults to False.
+            keep_zeros (bool, optional): Keep zero elements of points in pointclouds. Defaults to False.
         """
         self.bag = rosbag.Bag(bagfile, "r")
         """ROS bag file as a rosbag.Bag object."""
@@ -80,11 +80,7 @@ class Dataset:
     def __len__(self) -> int:
         """Number of available frames (i.e. Lidar messages)
         """
-        if self.keep_zeros is True:
-            return (self.types_and_topics_in_bag.topics)[self.topic].message_count
-        else:
-            l = sum(1 for m in self)
-            return l
+        return (self.types_and_topics_in_bag.topics)[self.topic].message_count
 
     def __str__(self):
         return f"Lidar Dataset with {len(self)} frame(s), from file {self.orig_file}"
@@ -156,3 +152,6 @@ class Dataset:
         for message in messages:
             frame_list.append(frame_from_message(self, message))
         return frame_list
+
+    def apply_pipeline(pipeline: Callable) -> List[Frame]:
+        pass
