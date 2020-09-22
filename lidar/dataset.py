@@ -15,6 +15,7 @@ from typing import Iterator, List, Union, Callable
 
 import genpy
 import rosbag
+from tqdm import tqdm
 
 from .file.bag import frame_from_message
 from .frame import Frame
@@ -85,6 +86,18 @@ class Dataset:
     def __str__(self):
         return f"Lidar Dataset with {len(self)} frame(s), from file {self.orig_file}"
 
+    def __iter__(self):
+        self.n = 0
+        return self
+
+    def __next__(self):
+        if self.n <= len(self):
+            result = self[self.n]
+            self.n += 1
+            return result
+        else:
+            raise StopIteration
+
     def __getitem__(self, frame_number: Union[int, slice]) -> Union[Frame, List[Frame]]:
         if isinstance(frame_number, slice):
             sliced_messages = self._slice_messages(frame_number)
@@ -153,5 +166,23 @@ class Dataset:
             frame_list.append(frame_from_message(self, message))
         return frame_list
 
-    def apply_pipeline(pipeline: Callable) -> List[Frame]:
-        pass
+    def apply_pipeline(self, pipeline: Callable[[Frame], Frame]) -> List[Frame]:
+        """Applies a function to all frames inside the dataset.
+
+        Example:
+
+        def pipeline1(frame_in):
+            return frame_in.limit("x",0.0,1.0)
+
+        dataset.apply_pipeline(pipeline1)
+
+
+        Args:
+            pipeline (Callable): A function with a chain of processing on frames. It
+            must take a frame as argument and return a frame.
+
+        Returns:
+            List[Frame]: A list with frames to which the pipeline function has been applied.
+        """
+        return [pipeline(frame) for frame in self]
+

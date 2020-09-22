@@ -9,6 +9,16 @@ def test_init(testbag1):
     check.equal(type(dataset), Dataset)
 
 
+def test_iter(testset):
+    frame_list = [str(frame.timestamp) for frame in testset]
+    check.equal(frame_list, ["1592833242657266645", "1592833242755911566"])
+
+
+def test_iter2(testset):
+    frame_list = [frame for frame in testset]
+    check.equal(type(frame_list[0]), Frame)
+
+
 def test_init_error(testbag1):
     with pytest.raises(IOError):
         dataset = Dataset(testbag1, "/fake")
