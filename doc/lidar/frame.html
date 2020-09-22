@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.8.4" />
+<meta name="generator" content="pdoc 0.8.3" />
 <title>lidar.frame API documentation</title>
 <meta name="description" content="Frame Class …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
@@ -54,13 +54,14 @@ Frame object is generated at each processing stage.
 
 ## Developer notes:
 * All operations have to act on both, pointcloud and data and keep the timestamp.
-* All processing methods need to return another Frame. 
+* All processing methods need to return another Frame.
 &#34;&#34;&#34;
 
 import operator
 import warnings
 from datetime import datetime
-from typing import List, Type, Union
+from pathlib import Path
+from typing import List
 
 import numpy as np
 import open3d as o3d
@@ -69,7 +70,8 @@ import pyntcloud
 import rospy
 
 from .convert import convert
-from .plot.frame import plotly_3d, pyntcloud_3d, plot_overlay
+from .geometry import plane
+from .plot.frame import plot_overlay, plotly_3d, pyntcloud_3d
 
 ops = {
     &#34;&gt;&#34;: operator.gt,
@@ -82,7 +84,10 @@ ops = {
 
 class Frame:
     def __init__(
-        self, data: pd.DataFrame, timestamp: rospy.rostime.Time = rospy.rostime.Time()
+        self,
+        data: pd.DataFrame,
+        orig_file: str = &#34;&#34;,
+        timestamp: rospy.rostime.Time = rospy.rostime.Time(),
     ):
         &#34;&#34;&#34;One Frame of lidar measurements.
 
@@ -90,7 +95,7 @@ class Frame:
         testbag = Path().cwd().parent.joinpath(&#34;tests/testdata/test.bag&#34;)
         testset = lidar.Dataset(testbag,topic=&#34;/os1_cloud_node/points&#34;,keep_zeros=False)
         testframe = testset[0]
-        
+
         &#34;&#34;&#34;
         self.data = data
         &#34;&#34;&#34;All the data, x,y.z and intensity, range and more&#34;&#34;&#34;
@@ -100,6 +105,9 @@ class Frame:
         &#34;&#34;&#34;Pyntcloud object with x,y,z coordinates&#34;&#34;&#34;
         self.measurments = self.data.drop([&#34;x&#34;, &#34;y&#34;, &#34;z&#34;], axis=1)
         &#34;&#34;&#34;Measurments aka. scalar field of values at each point&#34;&#34;&#34;
+        self.orig_file = orig_file
+        &#34;&#34;&#34;Path to bag file. Defaults to empty&#34;&#34;&#34;
+
         self._check_index()
 
     def __str__(self):
@@ -107,6 +115,48 @@ class Frame:
 
     def __len__(self):
         return len(self.data)
+
+    def add_column(self, column_name: str, values: np.array):
+        &#34;&#34;&#34;Adding a new column to the data of the frame.
+
+        Args:
+            column_name (str): name of the new column.
+            values (np.array): Values of the new column.
+        &#34;&#34;&#34;
+        self.data[column_name] = values
+        return self
+
+    def calculate_distance_to_plane(
+        self, plane_model: np.array, absolute_values: bool = True
+    ):
+        &#34;&#34;&#34;Calculates the distance of each point to a plane and adds it as a column
+        to the data of the frame. Uses the plane equation a x + b y + c z + d = 0
+
+        Args:
+            plane_model (np.array): [a, b, c, d], could be provided by plane_segmentation
+            absolute_values (bool, optional): Calculate absolute distances if True. Defaults to True.
+        &#34;&#34;&#34;
+        points = self.points.xyz
+        distances = np.asarray(
+            [plane.distance_to_point(point, plane_model) for point in points]
+        )
+        if absolute_values:
+            distances = np.absolute(distances)
+        plane_str = np.array2string(
+            plane_model, precision=2, separator=&#34;,&#34;, suppress_small=True
+        )
+        self.add_column(f&#34;distance to plane: {plane_str}&#34;, distances)
+        return self
+
+    def calculate_distance_to_origin(self):
+        &#34;&#34;&#34;For each point in the pointcloud calculate the euclidian distance
+        to the origin (0,0,0). Adds a new column to the data with the values.
+        &#34;&#34;&#34;
+        point_a = np.array((0.0, 0.0, 0.0))
+        points = self.points.xyz
+        distances = np.array([np.linalg.norm(point_a - point) for point in points])
+        self.add_column(&#34;distance to origin&#34;, distances)
+        return self
 
     def describe(self):
         &#34;&#34;&#34;Generate descriptive statistics based on .data.describe().
@@ -145,27 +195,17 @@ class Frame:
         &#34;&#34;&#34;
         return not self.data.empty
 
-    def distances_to_origin(self) -&gt; np.array:
-        &#34;&#34;&#34;For each point in the pointcloud calculate the euclidian distance
-        to the origin (0,0,0).
-
-        Returns:
-            np.array: List of distances for each point
-        &#34;&#34;&#34;
-        point_a = np.array((0.0, 0.0, 0.0))
-        points = self.points.xyz
-        dists = [np.linalg.norm(point_a - point) for point in points]
-        return np.array(dists)
-
     def plot_interactive(
         self, backend: str = &#34;plotly&#34;, color: str = &#34;intensity&#34;, **kwargs
     ):
         &#34;&#34;&#34;Generate either a plotly or pyntcloud 3D plot.
-        (Note: Plotly plots also give index of datapoint in pandas array when hovering over datapoint)
+        (Note: Plotly plots also give index of datapoint in pandas array when hovering
+        over datapoint)
 
-        Args: 
+        Args:
             backend (str): specify either &#34;plotly&#34; or &#34;pyntcloud&#34; as plot environment
-            color (str): name of the column in the data that should be used as color array for plotly plots
+            color (str): name of the column in the data that should be used as color
+            array for plotly plots
 
         Returns:
             np.array: List of distances for each point
@@ -181,15 +221,18 @@ class Frame:
             raise ValueError(&#34;wrong backend&#34;)
 
     def plot_overlay(self, frames_dict: dict):
-        &#34;&#34;&#34;Overlay the Frame with the plot(s) of other Frames. For example overlay the plot with a frame which contains
+        &#34;&#34;&#34;Overlay the Frame with the plot(s) of other Frames. For example overlay the
+        plot with a frame which contains
         a cluster or a plane. Best used with smaller pointclouds.
 
         Example:
 
-        testframe.plot_overlay({&#34;Plane&#34;: plane,&#34;Cluster 1&#34;: cluster1,&#34;Cluster 2&#34;: cluster2})
+        testframe.plot_overlay({&#34;Plane&#34;: plane,&#34;Cluster 1&#34;: cluster1,
+        &#34;Cluster 2&#34;: cluster2})
 
         Args:
-            frames_dict (dict): A dictionary in the form {&#34;Name&#34;, Frame}. Can be arbitrarly long, 
+            frames_dict (dict): A dictionary in the form {&#34;Name&#34;, Frame}.
+            Can be arbitrarly long,
 
         Returns:
             plotly.graph_objs._figure.Figure: The interactive plot with overlays.
@@ -351,8 +394,22 @@ class Frame:
         else:
             return inlier_Frame
 
+    def to_csv(self, path: Path = Path()):
+        &#34;&#34;&#34;Exports the frame as a csv for use with cloud compare or similar tools.
+        Args:
+            path (Path, optional): Destination. Defaults to the folder of
+            the bag fiile with the timestamp of the frame.
+        &#34;&#34;&#34;
+        orig_file_name = Path(self.orig_file).stem
+        if path == Path():
+            filename = f&#34;{orig_file_name}_timestamp_{self.timestamp}.csv&#34;
+            destination_folder = Path(self.orig_file).parent.joinpath(filename)
+        else:
+            destination_folder = path
+        self.data.to_csv(destination_folder, index=False)
+
     def _check_index(self):
-        &#34;&#34;&#34;A private function to check if the index of the self.data is sane.
+        &#34;&#34;&#34;A private function to check if the index of self.data is sane.
         &#34;&#34;&#34;
         if len(self) &gt; 0:
             assert self.data.index[0] == 0, &#34;index should start with 0&#34;
@@ -375,7 +432,7 @@ class Frame:
 <dl>
 <dt id="lidar.frame.Frame"><code class="flex name class">
 <span>class <span class="ident">Frame</span></span>
-<span>(</span><span>data: pandas.core.frame.DataFrame, timestamp: rospy.rostime.Time = rospy.Time[0])</span>
+<span>(</span><span>data: pandas.core.frame.DataFrame, orig_file: str = '', timestamp: rospy.rostime.Time = rospy.Time[0])</span>
 </code></dt>
 <dd>
 <div class="desc"><p>One Frame of lidar measurements.</p>
@@ -389,7 +446,10 @@ testframe = testset[0]</p></div>
 </summary>
 <pre><code class="python">class Frame:
     def __init__(
-        self, data: pd.DataFrame, timestamp: rospy.rostime.Time = rospy.rostime.Time()
+        self,
+        data: pd.DataFrame,
+        orig_file: str = &#34;&#34;,
+        timestamp: rospy.rostime.Time = rospy.rostime.Time(),
     ):
         &#34;&#34;&#34;One Frame of lidar measurements.
 
@@ -397,7 +457,7 @@ testframe = testset[0]</p></div>
         testbag = Path().cwd().parent.joinpath(&#34;tests/testdata/test.bag&#34;)
         testset = lidar.Dataset(testbag,topic=&#34;/os1_cloud_node/points&#34;,keep_zeros=False)
         testframe = testset[0]
-        
+
         &#34;&#34;&#34;
         self.data = data
         &#34;&#34;&#34;All the data, x,y.z and intensity, range and more&#34;&#34;&#34;
@@ -407,6 +467,9 @@ testframe = testset[0]</p></div>
         &#34;&#34;&#34;Pyntcloud object with x,y,z coordinates&#34;&#34;&#34;
         self.measurments = self.data.drop([&#34;x&#34;, &#34;y&#34;, &#34;z&#34;], axis=1)
         &#34;&#34;&#34;Measurments aka. scalar field of values at each point&#34;&#34;&#34;
+        self.orig_file = orig_file
+        &#34;&#34;&#34;Path to bag file. Defaults to empty&#34;&#34;&#34;
+
         self._check_index()
 
     def __str__(self):
@@ -414,6 +477,48 @@ testframe = testset[0]</p></div>
 
     def __len__(self):
         return len(self.data)
+
+    def add_column(self, column_name: str, values: np.array):
+        &#34;&#34;&#34;Adding a new column to the data of the frame.
+
+        Args:
+            column_name (str): name of the new column.
+            values (np.array): Values of the new column.
+        &#34;&#34;&#34;
+        self.data[column_name] = values
+        return self
+
+    def calculate_distance_to_plane(
+        self, plane_model: np.array, absolute_values: bool = True
+    ):
+        &#34;&#34;&#34;Calculates the distance of each point to a plane and adds it as a column
+        to the data of the frame. Uses the plane equation a x + b y + c z + d = 0
+
+        Args:
+            plane_model (np.array): [a, b, c, d], could be provided by plane_segmentation
+            absolute_values (bool, optional): Calculate absolute distances if True. Defaults to True.
+        &#34;&#34;&#34;
+        points = self.points.xyz
+        distances = np.asarray(
+            [plane.distance_to_point(point, plane_model) for point in points]
+        )
+        if absolute_values:
+            distances = np.absolute(distances)
+        plane_str = np.array2string(
+            plane_model, precision=2, separator=&#34;,&#34;, suppress_small=True
+        )
+        self.add_column(f&#34;distance to plane: {plane_str}&#34;, distances)
+        return self
+
+    def calculate_distance_to_origin(self):
+        &#34;&#34;&#34;For each point in the pointcloud calculate the euclidian distance
+        to the origin (0,0,0). Adds a new column to the data with the values.
+        &#34;&#34;&#34;
+        point_a = np.array((0.0, 0.0, 0.0))
+        points = self.points.xyz
+        distances = np.array([np.linalg.norm(point_a - point) for point in points])
+        self.add_column(&#34;distance to origin&#34;, distances)
+        return self
 
     def describe(self):
         &#34;&#34;&#34;Generate descriptive statistics based on .data.describe().
@@ -452,27 +557,17 @@ testframe = testset[0]</p></div>
         &#34;&#34;&#34;
         return not self.data.empty
 
-    def distances_to_origin(self) -&gt; np.array:
-        &#34;&#34;&#34;For each point in the pointcloud calculate the euclidian distance
-        to the origin (0,0,0).
-
-        Returns:
-            np.array: List of distances for each point
-        &#34;&#34;&#34;
-        point_a = np.array((0.0, 0.0, 0.0))
-        points = self.points.xyz
-        dists = [np.linalg.norm(point_a - point) for point in points]
-        return np.array(dists)
-
     def plot_interactive(
         self, backend: str = &#34;plotly&#34;, color: str = &#34;intensity&#34;, **kwargs
     ):
         &#34;&#34;&#34;Generate either a plotly or pyntcloud 3D plot.
-        (Note: Plotly plots also give index of datapoint in pandas array when hovering over datapoint)
+        (Note: Plotly plots also give index of datapoint in pandas array when hovering
+        over datapoint)
 
-        Args: 
+        Args:
             backend (str): specify either &#34;plotly&#34; or &#34;pyntcloud&#34; as plot environment
-            color (str): name of the column in the data that should be used as color array for plotly plots
+            color (str): name of the column in the data that should be used as color
+            array for plotly plots
 
         Returns:
             np.array: List of distances for each point
@@ -488,15 +583,18 @@ testframe = testset[0]</p></div>
             raise ValueError(&#34;wrong backend&#34;)
 
     def plot_overlay(self, frames_dict: dict):
-        &#34;&#34;&#34;Overlay the Frame with the plot(s) of other Frames. For example overlay the plot with a frame which contains
+        &#34;&#34;&#34;Overlay the Frame with the plot(s) of other Frames. For example overlay the
+        plot with a frame which contains
         a cluster or a plane. Best used with smaller pointclouds.
 
         Example:
 
-        testframe.plot_overlay({&#34;Plane&#34;: plane,&#34;Cluster 1&#34;: cluster1,&#34;Cluster 2&#34;: cluster2})
+        testframe.plot_overlay({&#34;Plane&#34;: plane,&#34;Cluster 1&#34;: cluster1,
+        &#34;Cluster 2&#34;: cluster2})
 
         Args:
-            frames_dict (dict): A dictionary in the form {&#34;Name&#34;, Frame}. Can be arbitrarly long, 
+            frames_dict (dict): A dictionary in the form {&#34;Name&#34;, Frame}.
+            Can be arbitrarly long,
 
         Returns:
             plotly.graph_objs._figure.Figure: The interactive plot with overlays.
@@ -658,8 +756,22 @@ testframe = testset[0]</p></div>
         else:
             return inlier_Frame
 
+    def to_csv(self, path: Path = Path()):
+        &#34;&#34;&#34;Exports the frame as a csv for use with cloud compare or similar tools.
+        Args:
+            path (Path, optional): Destination. Defaults to the folder of
+            the bag fiile with the timestamp of the frame.
+        &#34;&#34;&#34;
+        orig_file_name = Path(self.orig_file).stem
+        if path == Path():
+            filename = f&#34;{orig_file_name}_timestamp_{self.timestamp}.csv&#34;
+            destination_folder = Path(self.orig_file).parent.joinpath(filename)
+        else:
+            destination_folder = path
+        self.data.to_csv(destination_folder, index=False)
+
     def _check_index(self):
-        &#34;&#34;&#34;A private function to check if the index of the self.data is sane.
+        &#34;&#34;&#34;A private function to check if the index of self.data is sane.
         &#34;&#34;&#34;
         if len(self) &gt; 0:
             assert self.data.index[0] == 0, &#34;index should start with 0&#34;
@@ -680,6 +792,10 @@ testframe = testset[0]</p></div>
 <dd>
 <div class="desc"><p>Measurments aka. scalar field of values at each point</p></div>
 </dd>
+<dt id="lidar.frame.Frame.orig_file"><code class="name">var <span class="ident">orig_file</span></code></dt>
+<dd>
+<div class="desc"><p>Path to bag file. Defaults to empty</p></div>
+</dd>
 <dt id="lidar.frame.Frame.points"><code class="name">var <span class="ident">points</span></code></dt>
 <dd>
 <div class="desc"><p>Pyntcloud object with x,y,z coordinates</p></div>
@@ -691,6 +807,33 @@ testframe = testset[0]</p></div>
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="lidar.frame.Frame.add_column"><code class="name flex">
+<span>def <span class="ident">add_column</span></span>(<span>self, column_name: str, values: <built-in function array>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Adding a new column to the data of the frame.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>column_name</code></strong> :&ensp;<code>str</code></dt>
+<dd>name of the new column.</dd>
+<dt><strong><code>values</code></strong> :&ensp;<code>np.array</code></dt>
+<dd>Values of the new column.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_column(self, column_name: str, values: np.array):
+    &#34;&#34;&#34;Adding a new column to the data of the frame.
+
+    Args:
+        column_name (str): name of the new column.
+        values (np.array): Values of the new column.
+    &#34;&#34;&#34;
+    self.data[column_name] = values
+    return self</code></pre>
+</details>
+</dd>
 <dt id="lidar.frame.Frame.apply_filter"><code class="name flex">
 <span>def <span class="ident">apply_filter</span></span>(<span>self, boolean_array: numpy.ndarray)</span>
 </code></dt>
@@ -723,6 +866,67 @@ Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.</p>
     &#34;&#34;&#34;
     new_data = self.data.loc[boolean_array].reset_index(drop=True)
     return Frame(new_data, timestamp=self.timestamp)</code></pre>
+</details>
+</dd>
+<dt id="lidar.frame.Frame.calculate_distance_to_origin"><code class="name flex">
+<span>def <span class="ident">calculate_distance_to_origin</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>For each point in the pointcloud calculate the euclidian distance
+to the origin (0,0,0). Adds a new column to the data with the values.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calculate_distance_to_origin(self):
+    &#34;&#34;&#34;For each point in the pointcloud calculate the euclidian distance
+    to the origin (0,0,0). Adds a new column to the data with the values.
+    &#34;&#34;&#34;
+    point_a = np.array((0.0, 0.0, 0.0))
+    points = self.points.xyz
+    distances = np.array([np.linalg.norm(point_a - point) for point in points])
+    self.add_column(&#34;distance to origin&#34;, distances)
+    return self</code></pre>
+</details>
+</dd>
+<dt id="lidar.frame.Frame.calculate_distance_to_plane"><code class="name flex">
+<span>def <span class="ident">calculate_distance_to_plane</span></span>(<span>self, plane_model: <built-in function array>, absolute_values: bool = True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculates the distance of each point to a plane and adds it as a column
+to the data of the frame. Uses the plane equation a x + b y + c z + d = 0</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>plane_model</code></strong> :&ensp;<code>np.array</code></dt>
+<dd>[a, b, c, d], could be provided by plane_segmentation</dd>
+<dt><strong><code>absolute_values</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>Calculate absolute distances if True. Defaults to True.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calculate_distance_to_plane(
+    self, plane_model: np.array, absolute_values: bool = True
+):
+    &#34;&#34;&#34;Calculates the distance of each point to a plane and adds it as a column
+    to the data of the frame. Uses the plane equation a x + b y + c z + d = 0
+
+    Args:
+        plane_model (np.array): [a, b, c, d], could be provided by plane_segmentation
+        absolute_values (bool, optional): Calculate absolute distances if True. Defaults to True.
+    &#34;&#34;&#34;
+    points = self.points.xyz
+    distances = np.asarray(
+        [plane.distance_to_point(point, plane_model) for point in points]
+    )
+    if absolute_values:
+        distances = np.absolute(distances)
+    plane_str = np.array2string(
+        plane_model, precision=2, separator=&#34;,&#34;, suppress_small=True
+    )
+    self.add_column(f&#34;distance to plane: {plane_str}&#34;, distances)
+    return self</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.convert_timestamp"><code class="name flex">
@@ -763,34 +967,6 @@ Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.</p>
     &#34;&#34;&#34;Generate descriptive statistics based on .data.describe().
     &#34;&#34;&#34;
     return self.data.describe()</code></pre>
-</details>
-</dd>
-<dt id="lidar.frame.Frame.distances_to_origin"><code class="name flex">
-<span>def <span class="ident">distances_to_origin</span></span>(<span>self) ‑> <built-in function array></span>
-</code></dt>
-<dd>
-<div class="desc"><p>For each point in the pointcloud calculate the euclidian distance
-to the origin (0,0,0).</p>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><code>np.array</code></dt>
-<dd>List of distances for each point</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def distances_to_origin(self) -&gt; np.array:
-    &#34;&#34;&#34;For each point in the pointcloud calculate the euclidian distance
-    to the origin (0,0,0).
-
-    Returns:
-        np.array: List of distances for each point
-    &#34;&#34;&#34;
-    point_a = np.array((0.0, 0.0, 0.0))
-    points = self.points.xyz
-    dists = [np.linalg.norm(point_a - point) for point in points]
-    return np.array(dists)</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.get_cluster"><code class="name flex">
@@ -1007,10 +1183,16 @@ Based on open3D plane segmentation.</p>
 </code></dt>
 <dd>
 <div class="desc"><p>Generate either a plotly or pyntcloud 3D plot.
-(Note: Plotly plots also give index of datapoint in pandas array when hovering over datapoint)</p>
-<p>Args:
-backend (str): specify either "plotly" or "pyntcloud" as plot environment
-color (str): name of the column in the data that should be used as color array for plotly plots</p>
+(Note: Plotly plots also give index of datapoint in pandas array when hovering
+over datapoint)</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>backend</code></strong> :&ensp;<code>str</code></dt>
+<dd>specify either "plotly" or "pyntcloud" as plot environment</dd>
+<dt><strong><code>color</code></strong> :&ensp;<code>str</code></dt>
+<dd>name of the column in the data that should be used as color</dd>
+</dl>
+<p>array for plotly plots</p>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code>np.array</code></dt>
@@ -1024,11 +1206,13 @@ color (str): name of the column in the data that should be used as color array f
     self, backend: str = &#34;plotly&#34;, color: str = &#34;intensity&#34;, **kwargs
 ):
     &#34;&#34;&#34;Generate either a plotly or pyntcloud 3D plot.
-    (Note: Plotly plots also give index of datapoint in pandas array when hovering over datapoint)
+    (Note: Plotly plots also give index of datapoint in pandas array when hovering
+    over datapoint)
 
-    Args: 
+    Args:
         backend (str): specify either &#34;plotly&#34; or &#34;pyntcloud&#34; as plot environment
-        color (str): name of the column in the data that should be used as color array for plotly plots
+        color (str): name of the column in the data that should be used as color
+        array for plotly plots
 
     Returns:
         np.array: List of distances for each point
@@ -1048,15 +1232,18 @@ color (str): name of the column in the data that should be used as color array f
 <span>def <span class="ident">plot_overlay</span></span>(<span>self, frames_dict: dict)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Overlay the Frame with the plot(s) of other Frames. For example overlay the plot with a frame which contains
+<div class="desc"><p>Overlay the Frame with the plot(s) of other Frames. For example overlay the
+plot with a frame which contains
 a cluster or a plane. Best used with smaller pointclouds.</p>
 <p>Example:</p>
-<p>testframe.plot_overlay({"Plane": plane,"Cluster 1": cluster1,"Cluster 2": cluster2})</p>
+<p>testframe.plot_overlay({"Plane": plane,"Cluster 1": cluster1,
+"Cluster 2": cluster2})</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>frames_dict</code></strong> :&ensp;<code>dict</code></dt>
-<dd>A dictionary in the form {"Name", Frame}. Can be arbitrarly long, </dd>
+<dd>A dictionary in the form {"Name", Frame}.</dd>
 </dl>
+<p>Can be arbitrarly long,</p>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code>plotly.graph_objs._figure.Figure</code></dt>
@@ -1067,15 +1254,18 @@ a cluster or a plane. Best used with smaller pointclouds.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def plot_overlay(self, frames_dict: dict):
-    &#34;&#34;&#34;Overlay the Frame with the plot(s) of other Frames. For example overlay the plot with a frame which contains
+    &#34;&#34;&#34;Overlay the Frame with the plot(s) of other Frames. For example overlay the
+    plot with a frame which contains
     a cluster or a plane. Best used with smaller pointclouds.
 
     Example:
 
-    testframe.plot_overlay({&#34;Plane&#34;: plane,&#34;Cluster 1&#34;: cluster1,&#34;Cluster 2&#34;: cluster2})
+    testframe.plot_overlay({&#34;Plane&#34;: plane,&#34;Cluster 1&#34;: cluster1,
+    &#34;Cluster 2&#34;: cluster2})
 
     Args:
-        frames_dict (dict): A dictionary in the form {&#34;Name&#34;, Frame}. Can be arbitrarly long, 
+        frames_dict (dict): A dictionary in the form {&#34;Name&#34;, Frame}.
+        Can be arbitrarly long,
 
     Returns:
         plotly.graph_objs._figure.Figure: The interactive plot with overlays.
@@ -1233,6 +1423,36 @@ function of open3d.</p>
     return self.apply_filter(bool_array)</code></pre>
 </details>
 </dd>
+<dt id="lidar.frame.Frame.to_csv"><code class="name flex">
+<span>def <span class="ident">to_csv</span></span>(<span>self, path: pathlib.Path = PosixPath('.'))</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Exports the frame as a csv for use with cloud compare or similar tools.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>path</code></strong> :&ensp;<code>Path</code>, optional</dt>
+<dd>Destination. Defaults to the folder of</dd>
+</dl>
+<p>the bag fiile with the timestamp of the frame.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_csv(self, path: Path = Path()):
+    &#34;&#34;&#34;Exports the frame as a csv for use with cloud compare or similar tools.
+    Args:
+        path (Path, optional): Destination. Defaults to the folder of
+        the bag fiile with the timestamp of the frame.
+    &#34;&#34;&#34;
+    orig_file_name = Path(self.orig_file).stem
+    if path == Path():
+        filename = f&#34;{orig_file_name}_timestamp_{self.timestamp}.csv&#34;
+        destination_folder = Path(self.orig_file).parent.joinpath(filename)
+    else:
+        destination_folder = path
+    self.data.to_csv(destination_folder, index=False)</code></pre>
+</details>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -1259,16 +1479,19 @@ function of open3d.</p>
 <li>
 <h4><code><a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></code></h4>
 <ul class="">
+<li><code><a title="lidar.frame.Frame.add_column" href="#lidar.frame.Frame.add_column">add_column</a></code></li>
 <li><code><a title="lidar.frame.Frame.apply_filter" href="#lidar.frame.Frame.apply_filter">apply_filter</a></code></li>
+<li><code><a title="lidar.frame.Frame.calculate_distance_to_origin" href="#lidar.frame.Frame.calculate_distance_to_origin">calculate_distance_to_origin</a></code></li>
+<li><code><a title="lidar.frame.Frame.calculate_distance_to_plane" href="#lidar.frame.Frame.calculate_distance_to_plane">calculate_distance_to_plane</a></code></li>
 <li><code><a title="lidar.frame.Frame.convert_timestamp" href="#lidar.frame.Frame.convert_timestamp">convert_timestamp</a></code></li>
 <li><code><a title="lidar.frame.Frame.data" href="#lidar.frame.Frame.data">data</a></code></li>
 <li><code><a title="lidar.frame.Frame.describe" href="#lidar.frame.Frame.describe">describe</a></code></li>
-<li><code><a title="lidar.frame.Frame.distances_to_origin" href="#lidar.frame.Frame.distances_to_origin">distances_to_origin</a></code></li>
 <li><code><a title="lidar.frame.Frame.get_cluster" href="#lidar.frame.Frame.get_cluster">get_cluster</a></code></li>
 <li><code><a title="lidar.frame.Frame.get_open3d_points" href="#lidar.frame.Frame.get_open3d_points">get_open3d_points</a></code></li>
 <li><code><a title="lidar.frame.Frame.has_data" href="#lidar.frame.Frame.has_data">has_data</a></code></li>
 <li><code><a title="lidar.frame.Frame.limit" href="#lidar.frame.Frame.limit">limit</a></code></li>
 <li><code><a title="lidar.frame.Frame.measurments" href="#lidar.frame.Frame.measurments">measurments</a></code></li>
+<li><code><a title="lidar.frame.Frame.orig_file" href="#lidar.frame.Frame.orig_file">orig_file</a></code></li>
 <li><code><a title="lidar.frame.Frame.plane_segmentation" href="#lidar.frame.Frame.plane_segmentation">plane_segmentation</a></code></li>
 <li><code><a title="lidar.frame.Frame.plot_interactive" href="#lidar.frame.Frame.plot_interactive">plot_interactive</a></code></li>
 <li><code><a title="lidar.frame.Frame.plot_overlay" href="#lidar.frame.Frame.plot_overlay">plot_overlay</a></code></li>
@@ -1278,6 +1501,7 @@ function of open3d.</p>
 <li><code><a title="lidar.frame.Frame.select_by_index" href="#lidar.frame.Frame.select_by_index">select_by_index</a></code></li>
 <li><code><a title="lidar.frame.Frame.take_cluster" href="#lidar.frame.Frame.take_cluster">take_cluster</a></code></li>
 <li><code><a title="lidar.frame.Frame.timestamp" href="#lidar.frame.Frame.timestamp">timestamp</a></code></li>
+<li><code><a title="lidar.frame.Frame.to_csv" href="#lidar.frame.Frame.to_csv">to_csv</a></code></li>
 </ul>
 </li>
 </ul>
@@ -1286,7 +1510,7 @@ function of open3d.</p>
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.4</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.3</a>.</p>
 </footer>
 </body>
 </html>

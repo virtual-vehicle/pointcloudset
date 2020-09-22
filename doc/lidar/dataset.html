@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
-<meta name="generator" content="pdoc 0.8.4" />
+<meta name="generator" content="pdoc 0.8.3" />
 <title>lidar.dataset API documentation</title>
 <meta name="description" content="Dataset Class
 The Dataset class which contains many frames …" />
@@ -24,7 +24,7 @@ The Dataset class which contains many frames …" />
 </header>
 <section id="section-intro">
 <h1 id="dataset-class">Dataset Class</h1>
-<p>The Dataset class which contains many frames. </p>
+<p>The Dataset class which contains many frames.</p>
 <p>For more details on how to use it please refer to the usage.ipynb Notebook for an interactive tuturial.</p>
 <h1 id="developer-notes">Developer notes</h1>
 <ul>
@@ -37,21 +37,22 @@ generators.</li>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;
 # Dataset Class
-The Dataset class which contains many frames. 
+The Dataset class which contains many frames.
 
 For more details on how to use it please refer to the usage.ipynb Notebook for an interactive tuturial.
 
 # Developer notes
-* The important stuff happens in the __getitem__ method. Only then the rosbag is actually read with the help of 
+* The important stuff happens in the __getitem__ method. Only then the rosbag is actually read with the help of
 generators.
 &#34;&#34;&#34;
 
 import itertools
 from pathlib import Path
-from typing import Iterator, List, Union
+from typing import Iterator, List, Union, Callable
 
 import genpy
 import rosbag
+from tqdm import tqdm
 
 from .file.bag import frame_from_message
 from .frame import Frame
@@ -59,10 +60,7 @@ from .frame import Frame
 
 class Dataset:
     def __init__(
-        self,
-        bagfile: Path,
-        topic: str,
-        keep_zeros: bool = False,
+        self, bagfile: Path, topic: str, keep_zeros: bool = False,
     ):
         &#34;&#34;&#34;The Dataset.
 
@@ -73,7 +71,7 @@ class Dataset:
         Args:
             bagfile (Path): Path to ROS bag file.
             topic (str): lidar pointcloud topic. For example &#34;/os1_cloud_node/points&#34;
-            keep_zeros (bool, optional): Keep zero elements. Defaults to False.
+            keep_zeros (bool, optional): Keep zero elements of points in pointclouds. Defaults to False.
         &#34;&#34;&#34;
         self.bag = rosbag.Bag(bagfile, &#34;r&#34;)
         &#34;&#34;&#34;ROS bag file as a rosbag.Bag object.&#34;&#34;&#34;
@@ -120,14 +118,22 @@ class Dataset:
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;Number of available frames (i.e. Lidar messages)
         &#34;&#34;&#34;
-        if self.keep_zeros is True:
-            return (self.types_and_topics_in_bag.topics)[self.topic].message_count
-        else:
-            l = sum(1 for m in self)
-            return l
+        return (self.types_and_topics_in_bag.topics)[self.topic].message_count
 
     def __str__(self):
         return f&#34;Lidar Dataset with {len(self)} frame(s), from file {self.orig_file}&#34;
+
+    def __iter__(self):
+        self.n = 0
+        return self
+
+    def __next__(self):
+        if self.n &lt;= len(self):
+            result = self[self.n]
+            self.n += 1
+            return result
+        else:
+            raise StopIteration
 
     def __getitem__(self, frame_number: Union[int, slice]) -&gt; Union[Frame, List[Frame]]:
         if isinstance(frame_number, slice):
@@ -138,7 +144,7 @@ class Dataset:
             return frame_list
         elif isinstance(frame_number, int):
             messages = self.bag.read_messages(topics=[self.topic])
-                
+
             sliced_messages = itertools.islice(
                 messages, frame_number, frame_number + 1, 1
             )
@@ -175,7 +181,9 @@ class Dataset:
         else:
             raise ValueError(&#34;frame_end must be greater than frame_start and in range.&#34;)
 
-    def get_frames_between_timestamps(self, start_time: float, end_time: float) -&gt; List[Frame]:
+    def get_frames_between_timestamps(
+        self, start_time: float, end_time: float
+    ) -&gt; List[Frame]:
         &#34;&#34;&#34;Get all frames within specific time range
 
         Args:
@@ -186,13 +194,34 @@ class Dataset:
             List of frames
         &#34;&#34;&#34;
         messages = self.bag.read_messages(
-                    topics=[self.topic],
-                    start_time=genpy.Time.from_sec(start_time),
-                    end_time=genpy.Time.from_sec(end_time))
+            topics=[self.topic],
+            start_time=genpy.Time.from_sec(start_time),
+            end_time=genpy.Time.from_sec(end_time),
+        )
         frame_list = []
         for message in messages:
-                frame_list.append(frame_from_message(self, message))
-        return frame_list</code></pre>
+            frame_list.append(frame_from_message(self, message))
+        return frame_list
+
+    def apply_pipeline(self, pipeline: Callable[[Frame], Frame]) -&gt; List[Frame]:
+        &#34;&#34;&#34;Applies a function to all frames inside the dataset.
+
+        Example:
+
+        def pipeline1(frame_in):
+            return frame_in.limit(&#34;x&#34;,0.0,1.0)
+
+        dataset.apply_pipeline(pipeline1)
+
+
+        Args:
+            pipeline (Callable): A function with a chain of processing on frames. It
+            must take a frame as argument and return a frame.
+
+        Returns:
+            List[Frame]: A list with frames to which the pipeline function has been applied.
+        &#34;&#34;&#34;
+        return [pipeline(frame) for frame in self]</code></pre>
 </details>
 </section>
 <section>
@@ -220,7 +249,7 @@ testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
 <dt><strong><code>topic</code></strong> :&ensp;<code>str</code></dt>
 <dd>lidar pointcloud topic. For example "/os1_cloud_node/points"</dd>
 <dt><strong><code>keep_zeros</code></strong> :&ensp;<code>bool</code>, optional</dt>
-<dd>Keep zero elements. Defaults to False.</dd>
+<dd>Keep zero elements of points in pointclouds. Defaults to False.</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -228,10 +257,7 @@ testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
 </summary>
 <pre><code class="python">class Dataset:
     def __init__(
-        self,
-        bagfile: Path,
-        topic: str,
-        keep_zeros: bool = False,
+        self, bagfile: Path, topic: str, keep_zeros: bool = False,
     ):
         &#34;&#34;&#34;The Dataset.
 
@@ -242,7 +268,7 @@ testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
         Args:
             bagfile (Path): Path to ROS bag file.
             topic (str): lidar pointcloud topic. For example &#34;/os1_cloud_node/points&#34;
-            keep_zeros (bool, optional): Keep zero elements. Defaults to False.
+            keep_zeros (bool, optional): Keep zero elements of points in pointclouds. Defaults to False.
         &#34;&#34;&#34;
         self.bag = rosbag.Bag(bagfile, &#34;r&#34;)
         &#34;&#34;&#34;ROS bag file as a rosbag.Bag object.&#34;&#34;&#34;
@@ -289,14 +315,22 @@ testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;Number of available frames (i.e. Lidar messages)
         &#34;&#34;&#34;
-        if self.keep_zeros is True:
-            return (self.types_and_topics_in_bag.topics)[self.topic].message_count
-        else:
-            l = sum(1 for m in self)
-            return l
+        return (self.types_and_topics_in_bag.topics)[self.topic].message_count
 
     def __str__(self):
         return f&#34;Lidar Dataset with {len(self)} frame(s), from file {self.orig_file}&#34;
+
+    def __iter__(self):
+        self.n = 0
+        return self
+
+    def __next__(self):
+        if self.n &lt;= len(self):
+            result = self[self.n]
+            self.n += 1
+            return result
+        else:
+            raise StopIteration
 
     def __getitem__(self, frame_number: Union[int, slice]) -&gt; Union[Frame, List[Frame]]:
         if isinstance(frame_number, slice):
@@ -307,7 +341,7 @@ testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
             return frame_list
         elif isinstance(frame_number, int):
             messages = self.bag.read_messages(topics=[self.topic])
-                
+
             sliced_messages = itertools.islice(
                 messages, frame_number, frame_number + 1, 1
             )
@@ -344,7 +378,9 @@ testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
         else:
             raise ValueError(&#34;frame_end must be greater than frame_start and in range.&#34;)
 
-    def get_frames_between_timestamps(self, start_time: float, end_time: float) -&gt; List[Frame]:
+    def get_frames_between_timestamps(
+        self, start_time: float, end_time: float
+    ) -&gt; List[Frame]:
         &#34;&#34;&#34;Get all frames within specific time range
 
         Args:
@@ -355,13 +391,34 @@ testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
             List of frames
         &#34;&#34;&#34;
         messages = self.bag.read_messages(
-                    topics=[self.topic],
-                    start_time=genpy.Time.from_sec(start_time),
-                    end_time=genpy.Time.from_sec(end_time))
+            topics=[self.topic],
+            start_time=genpy.Time.from_sec(start_time),
+            end_time=genpy.Time.from_sec(end_time),
+        )
         frame_list = []
         for message in messages:
-                frame_list.append(frame_from_message(self, message))
-        return frame_list</code></pre>
+            frame_list.append(frame_from_message(self, message))
+        return frame_list
+
+    def apply_pipeline(self, pipeline: Callable[[Frame], Frame]) -&gt; List[Frame]:
+        &#34;&#34;&#34;Applies a function to all frames inside the dataset.
+
+        Example:
+
+        def pipeline1(frame_in):
+            return frame_in.limit(&#34;x&#34;,0.0,1.0)
+
+        dataset.apply_pipeline(pipeline1)
+
+
+        Args:
+            pipeline (Callable): A function with a chain of processing on frames. It
+            must take a frame as argument and return a frame.
+
+        Returns:
+            List[Frame]: A list with frames to which the pipeline function has been applied.
+        &#34;&#34;&#34;
+        return [pipeline(frame) for frame in self]</code></pre>
 </details>
 <h3>Instance variables</h3>
 <dl>
@@ -450,6 +507,51 @@ def types_and_topics_in_bag(self):
 </dl>
 <h3>Methods</h3>
 <dl>
+<dt id="lidar.dataset.Dataset.apply_pipeline"><code class="name flex">
+<span>def <span class="ident">apply_pipeline</span></span>(<span>self, pipeline: Callable[[<a title="lidar.frame.Frame" href="frame.html#lidar.frame.Frame">Frame</a>], <a title="lidar.frame.Frame" href="frame.html#lidar.frame.Frame">Frame</a>]) ‑> List[<a title="lidar.frame.Frame" href="frame.html#lidar.frame.Frame">Frame</a>]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Applies a function to all frames inside the dataset.</p>
+<p>Example:</p>
+<p>def pipeline1(frame_in):
+return frame_in.limit("x",0.0,1.0)</p>
+<p>dataset.apply_pipeline(pipeline1)</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>pipeline</code></strong> :&ensp;<code>Callable</code></dt>
+<dd>A function with a chain of processing on frames. It</dd>
+</dl>
+<p>must take a frame as argument and return a frame.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>List[Frame]</code></dt>
+<dd>A list with frames to which the pipeline function has been applied.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply_pipeline(self, pipeline: Callable[[Frame], Frame]) -&gt; List[Frame]:
+    &#34;&#34;&#34;Applies a function to all frames inside the dataset.
+
+    Example:
+
+    def pipeline1(frame_in):
+        return frame_in.limit(&#34;x&#34;,0.0,1.0)
+
+    dataset.apply_pipeline(pipeline1)
+
+
+    Args:
+        pipeline (Callable): A function with a chain of processing on frames. It
+        must take a frame as argument and return a frame.
+
+    Returns:
+        List[Frame]: A list with frames to which the pipeline function has been applied.
+    &#34;&#34;&#34;
+    return [pipeline(frame) for frame in self]</code></pre>
+</details>
+</dd>
 <dt id="lidar.dataset.Dataset.get_frames_between_timestamps"><code class="name flex">
 <span>def <span class="ident">get_frames_between_timestamps</span></span>(<span>self, start_time: float, end_time: float) ‑> List[<a title="lidar.frame.Frame" href="frame.html#lidar.frame.Frame">Frame</a>]</span>
 </code></dt>
@@ -468,7 +570,9 @@ def types_and_topics_in_bag(self):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_frames_between_timestamps(self, start_time: float, end_time: float) -&gt; List[Frame]:
+<pre><code class="python">def get_frames_between_timestamps(
+    self, start_time: float, end_time: float
+) -&gt; List[Frame]:
     &#34;&#34;&#34;Get all frames within specific time range
 
     Args:
@@ -479,12 +583,13 @@ def types_and_topics_in_bag(self):
         List of frames
     &#34;&#34;&#34;
     messages = self.bag.read_messages(
-                topics=[self.topic],
-                start_time=genpy.Time.from_sec(start_time),
-                end_time=genpy.Time.from_sec(end_time))
+        topics=[self.topic],
+        start_time=genpy.Time.from_sec(start_time),
+        end_time=genpy.Time.from_sec(end_time),
+    )
     frame_list = []
     for message in messages:
-            frame_list.append(frame_from_message(self, message))
+        frame_list.append(frame_from_message(self, message))
     return frame_list</code></pre>
 </details>
 </dd>
@@ -535,6 +640,7 @@ def types_and_topics_in_bag(self):
 <li>
 <h4><code><a title="lidar.dataset.Dataset" href="#lidar.dataset.Dataset">Dataset</a></code></h4>
 <ul class="">
+<li><code><a title="lidar.dataset.Dataset.apply_pipeline" href="#lidar.dataset.Dataset.apply_pipeline">apply_pipeline</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.bag" href="#lidar.dataset.Dataset.bag">bag</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.end_time" href="#lidar.dataset.Dataset.end_time">end_time</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.get_frames_between_timestamps" href="#lidar.dataset.Dataset.get_frames_between_timestamps">get_frames_between_timestamps</a></code></li>
@@ -553,7 +659,7 @@ def types_and_topics_in_bag(self):
 </nav>
 </main>
 <footer id="footer">
-<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.4</a>.</p>
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.3</a>.</p>
 </footer>
 </body>
 </html>
