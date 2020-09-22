@@ -41,6 +41,13 @@ def test_getitem_late(testset):
     check.equal(type(testset[1]), Frame)
 
 
+def test_getitem_2times(testset):
+    check.equal(type(testset[0]), Frame)
+    check.equal(type(testset[1]), Frame)
+    check.equal(type(testset[0]), Frame)
+    check.equal(type(testset[1]), Frame)
+
+
 def test_getitem_slice(testset):
     check.equal(type(testset[0:2]), list)
     check.equal(type(testset[0:2][0]), Frame)

@@ -83,6 +83,7 @@ class Frame:
             values (np.array): Values of the new column.
         """
         self.data[column_name] = values
+        return self
 
     def calculate_distance_to_plane(
         self, plane_model: np.array, absolute_values: bool = True
@@ -104,6 +105,7 @@ class Frame:
             plane_model, precision=2, separator=",", suppress_small=True
         )
         self.add_column(f"distance to plane: {plane_str}", distances)
+        return self
 
     def calculate_distance_to_origin(self):
         """For each point in the pointcloud calculate the euclidian distance
@@ -113,6 +115,7 @@ class Frame:
         points = self.points.xyz
         distances = np.array([np.linalg.norm(point_a - point) for point in points])
         self.add_column("distance to origin", distances)
+        return self
 
     def describe(self):
         """Generate descriptive statistics based on .data.describe().
