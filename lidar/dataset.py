@@ -11,11 +11,11 @@ generators.
 
 import itertools
 from pathlib import Path
-from typing import Iterator, List, Union, Callable
+from typing import Iterator, List, Union
 
 import genpy
 import rosbag
-from tqdm import tqdm
+
 
 from .file.bag import frame_from_message
 from .frame import Frame
@@ -165,24 +165,4 @@ class Dataset:
         for message in messages:
             frame_list.append(frame_from_message(self, message))
         return frame_list
-
-    def apply_pipeline(self, pipeline: Callable[[Frame], Frame]) -> List[Frame]:
-        """Applies a function to all frames inside the dataset.
-
-        Example:
-
-        def pipeline1(frame_in):
-            return frame_in.limit("x",0.0,1.0)
-
-        dataset.apply_pipeline(pipeline1)
-
-
-        Args:
-            pipeline (Callable): A function with a chain of processing on frames. It
-            must take a frame as argument and return a frame.
-
-        Returns:
-            List[Frame]: A list with frames to which the pipeline function has been applied.
-        """
-        return [pipeline(frame) for frame in self]
 
