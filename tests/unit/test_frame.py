@@ -59,7 +59,7 @@ def test_str(testframe: Frame):
     check.equal(type(str(testframe)), str)
     check.equal(
         str(testframe),
-        "pointcloud: with 45809 points, data:['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range'], from Monday, June 22, 2020 01:40:42",
+        "pointcloud: with 45809 points, data:['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'original_id'], from Monday, June 22, 2020 01:40:42",
     )
 
 
@@ -137,10 +137,20 @@ def test_testframe_data(testframe: Frame):
     data = testframe.data
     check.equal(
         list(data.columns),
-        ["x", "y", "z", "intensity", "t", "reflectivity", "ring", "noise", "range"],
+        [
+            "x",
+            "y",
+            "z",
+            "intensity",
+            "t",
+            "reflectivity",
+            "ring",
+            "noise",
+            "range",
+            "original_id",
+        ],
     )
-    check.equal(data.shape, (45809, 9))
-    assert_frame_equal(data, testframe.data)
+    check.equal(data.shape, (45809, 10))
 
 
 def test_testframe_data_types(testframe: Frame):
@@ -156,6 +166,7 @@ def test_testframe_data_types(testframe: Frame):
             "uint16",
             "uint8",
             "uint16",
+            "uint32",
             "uint32",
         ],
     )
@@ -266,6 +277,7 @@ def test_to_csv(testframe: Frame, tmp_path: Path):
             1.6000000e01,
             3.5000000e01,
             +1.5090000e03,
+            4.624000e03,
         ],
         test_values,
         rtol=1e-10,
@@ -291,6 +303,7 @@ def test_to_csv2(testframe: Frame, tmp_path: Path):
             1.6000000e01,
             3.5000000e01,
             +1.5090000e03,
+            4.624000e03,
         ],
         test_values,
         rtol=1e-10,

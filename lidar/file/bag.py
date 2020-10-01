@@ -44,6 +44,8 @@ def frame_from_message(dataset, message: rosbag.bag.BagMessage) -> Frame:
         frame_df = frame_df[
             (frame_df["x"] != 0.0) & (frame_df["y"] != 0.0) & (frame_df["z"] != 0.0)
         ]
+        frame_df["original_id"] = frame_df.index
+        frame_df = frame_df.astype({"original_id": "uint32"})
         frame_df = frame_df.reset_index(drop=True)
     return Frame(
         data=frame_df, orig_file=dataset.orig_file, timestamp=message.timestamp
