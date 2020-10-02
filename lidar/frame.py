@@ -105,8 +105,7 @@ class Frame:
                 elif len(point) != 1:
                     raise Exception()
             else:
-                point = pd.DataFrame(self.data.iloc[id]).transpose()
-                point = point.astype(dict(self.data.dtypes))
+                point = self[id]
         except IndexError:
             raise IndexError(f"point with {id} does note exist.")
         except Exception:
