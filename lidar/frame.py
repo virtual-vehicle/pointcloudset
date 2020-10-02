@@ -16,13 +16,13 @@ Frame object is generated at each processing stage.
 * All processing methods need to return another Frame.
 """
 from __future__ import annotations
+
 import operator
+import traceback
 import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import List, Union
-import traceback
-
 
 import numpy as np
 import open3d as o3d
@@ -77,6 +77,14 @@ class Frame:
     def __len__(self):
         return len(self.data)
 
+    def __getitem__(self, id: Union[int, slice]) -> pd.DataFrame:
+        if isinstance(id, slice):
+            return self.data.iloc[id]
+        elif isinstance(id, int):
+            return self.data.iloc[[id]]
+        else:
+            raise TypeError("Wrong type {}".format(type(id).__name__))
+
     def extract_point(self, id: int, use_orginal_id: bool = False) -> pd.DataFrame:
         """Extract a specific point from the Frame defined by the point id. The id
         can be the current index of the data from the Frame or the original_id.
@@ -91,18 +99,19 @@ class Frame:
         """
         try:
             if use_orginal_id:
-                data = self.data[self.data["original_id"] == id]
-                if len(data) == 0:
+                point = self.data[self.data["original_id"] == id]
+                if len(point) == 0:
                     raise IndexError
-                elif len(data) != 1:
+                elif len(point) != 1:
                     raise Exception()
             else:
-                data = pd.DataFrame(self.data.iloc[id]).transpose()
+                point = pd.DataFrame(self.data.iloc[id]).transpose()
+                point = point.astype(dict(self.data.dtypes))
         except IndexError:
             raise IndexError(f"point with {id} does note exist.")
         except Exception:
             print(traceback.print_exc())
-        return data.reset_index()
+        return point.reset_index(drop=True)
 
     def add_column(self, column_name: str, values: np.array):
         """Adding a new column to the data of the frame.

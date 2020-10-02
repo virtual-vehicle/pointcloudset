@@ -1,4 +1,5 @@
 from pathlib import Path
+
 import IPython
 import numpy as np
 import open3d as o3d
@@ -53,6 +54,48 @@ def test_org_file(testframe):
 def test_len(testframe_mini: Frame):
     check.equal(type(len(testframe_mini)), int)
     check.equal(len(testframe_mini), 8)
+
+
+def test_getitem_single(testframe: Frame):
+    extracted = testframe[0]
+    check.equal(type(extracted), pd.DataFrame)
+    check.equal(len(extracted), 1)
+    check.equal(extracted.shape, (1, 10))
+    check.equal(type(extracted.original_id.values[0]), np.uint32)
+    check.equal(extracted.original_id.values[0], 4624)
+
+
+def test_getitem_single_error(testframe: Frame):
+    with pytest.raises(IndexError):
+        testframe[1000000000]
+
+
+def test_getitem_slice(testframe: Frame):
+    extracted = testframe[0:3]
+    check.equal(type(extracted), pd.DataFrame)
+    check.equal(len(extracted), 3)
+    check.equal(type(extracted.original_id.values[0]), np.uint32)
+    check.equal(
+        (extracted.original_id.values == np.array([4624, 4688, 4692])).all(), True
+    )
+
+
+def test_getitem_slice_full(testframe: Frame):
+    extracted = testframe[:]
+    check.equal(len(extracted), len(testframe))
+    check.equal(testframe.data.equals(extracted), True)
+
+
+def test_getitem_slice_step(testframe: Frame):
+    extracted = testframe[0:10:2]
+    check.equal(type(extracted), pd.DataFrame)
+    check.equal(len(extracted), 5)
+    check.equal(
+        (
+            extracted.original_id.values == np.array([4624, 4692, 4700, 4752, 4760])
+        ).all(),
+        True,
+    )
 
 
 def test_str(testframe: Frame):

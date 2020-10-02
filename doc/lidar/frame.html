@@ -57,13 +57,13 @@ Frame object is generated at each processing stage.
 * All processing methods need to return another Frame.
 &#34;&#34;&#34;
 from __future__ import annotations
+
 import operator
+import traceback
 import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import List, Union
-import traceback
-
 
 import numpy as np
 import open3d as o3d
@@ -118,6 +118,14 @@ class Frame:
     def __len__(self):
         return len(self.data)
 
+    def __getitem__(self, id: Union[int, slice]) -&gt; pd.DataFrame:
+        if isinstance(id, slice):
+            return self.data.iloc[id]
+        elif isinstance(id, int):
+            return self.data.iloc[[id]]
+        else:
+            raise TypeError(&#34;Wrong type {}&#34;.format(type(id).__name__))
+
     def extract_point(self, id: int, use_orginal_id: bool = False) -&gt; pd.DataFrame:
         &#34;&#34;&#34;Extract a specific point from the Frame defined by the point id. The id
         can be the current index of the data from the Frame or the original_id.
@@ -132,18 +140,19 @@ class Frame:
         &#34;&#34;&#34;
         try:
             if use_orginal_id:
-                data = self.data[self.data[&#34;original_id&#34;] == id]
-                if len(data) == 0:
+                point = self.data[self.data[&#34;original_id&#34;] == id]
+                if len(point) == 0:
                     raise IndexError
-                elif len(data) != 1:
+                elif len(point) != 1:
                     raise Exception()
             else:
-                data = pd.DataFrame(self.data.iloc[id]).transpose()
+                point = pd.DataFrame(self.data.iloc[id]).transpose()
+                point = point.astype(dict(self.data.dtypes))
         except IndexError:
             raise IndexError(f&#34;point with {id} does note exist.&#34;)
         except Exception:
             print(traceback.print_exc())
-        return data.reset_index()
+        return point.reset_index(drop=True)
 
     def add_column(self, column_name: str, values: np.array):
         &#34;&#34;&#34;Adding a new column to the data of the frame.
@@ -507,6 +516,14 @@ testframe = testset[0]</p></div>
     def __len__(self):
         return len(self.data)
 
+    def __getitem__(self, id: Union[int, slice]) -&gt; pd.DataFrame:
+        if isinstance(id, slice):
+            return self.data.iloc[id]
+        elif isinstance(id, int):
+            return self.data.iloc[[id]]
+        else:
+            raise TypeError(&#34;Wrong type {}&#34;.format(type(id).__name__))
+
     def extract_point(self, id: int, use_orginal_id: bool = False) -&gt; pd.DataFrame:
         &#34;&#34;&#34;Extract a specific point from the Frame defined by the point id. The id
         can be the current index of the data from the Frame or the original_id.
@@ -521,18 +538,19 @@ testframe = testset[0]</p></div>
         &#34;&#34;&#34;
         try:
             if use_orginal_id:
-                data = self.data[self.data[&#34;original_id&#34;] == id]
-                if len(data) == 0:
+                point = self.data[self.data[&#34;original_id&#34;] == id]
+                if len(point) == 0:
                     raise IndexError
-                elif len(data) != 1:
+                elif len(point) != 1:
                     raise Exception()
             else:
-                data = pd.DataFrame(self.data.iloc[id]).transpose()
+                point = pd.DataFrame(self.data.iloc[id]).transpose()
+                point = point.astype(dict(self.data.dtypes))
         except IndexError:
             raise IndexError(f&#34;point with {id} does note exist.&#34;)
         except Exception:
             print(traceback.print_exc())
-        return data.reset_index()
+        return point.reset_index(drop=True)
 
     def add_column(self, column_name: str, values: np.array):
         &#34;&#34;&#34;Adding a new column to the data of the frame.
@@ -1062,18 +1080,19 @@ can be the current index of the data from the Frame or the original_id.</p>
     &#34;&#34;&#34;
     try:
         if use_orginal_id:
-            data = self.data[self.data[&#34;original_id&#34;] == id]
-            if len(data) == 0:
+            point = self.data[self.data[&#34;original_id&#34;] == id]
+            if len(point) == 0:
                 raise IndexError
-            elif len(data) != 1:
+            elif len(point) != 1:
                 raise Exception()
         else:
-            data = pd.DataFrame(self.data.iloc[id]).transpose()
+            point = pd.DataFrame(self.data.iloc[id]).transpose()
+            point = point.astype(dict(self.data.dtypes))
     except IndexError:
         raise IndexError(f&#34;point with {id} does note exist.&#34;)
     except Exception:
         print(traceback.print_exc())
-    return data.reset_index()</code></pre>
+    return point.reset_index(drop=True)</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.get_cluster"><code class="name flex">
