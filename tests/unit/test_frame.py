@@ -116,30 +116,6 @@ def test_add_column(testframe_mini: Frame):
     )
 
 
-def test_extract_point1(testframe: Frame):
-    res = testframe.extract_point(id=1, use_orginal_id=False)
-    check.equal(type(res), pd.DataFrame)
-    check.equal(len(res), 1)
-    check.equal(list(res.index.values)[0], 0)
-
-
-def test_extract_point_not_available(testframe: Frame):
-    with pytest.raises(IndexError):
-        testframe.extract_point(id=10000000, use_orginal_id=False)
-
-
-def test_extract_point_orginal_id(testframe: Frame):
-    res = testframe.extract_point(id=4692, use_orginal_id=True)
-    check.equal(type(res), pd.DataFrame)
-    check.equal(len(res), 1)
-    check.equal(list(res.index.values)[0], 0)
-
-
-def test_extract_point_orginal_id_not_available(testframe: Frame):
-    with pytest.raises(IndexError):
-        testframe.extract_point(id=10000000, use_orginal_id=True)
-
-
 def test_calculate_distance_to_plane1(testframe_mini: Frame):
     newframe = testframe_mini.calculate_distance_to_plane(
         plane_model=np.array([1, 0, 0, 0]), absolute_values=False

@@ -112,6 +112,25 @@ class Frame:
             print(traceback.print_exc())
         return point.reset_index(drop=True)
 
+    def point_difference(self, frameB: Frame, original_id: int) -> pd.DataFrame:
+        """Calculate the difference of each element of a Point in the current Frame to
+        the correspoing point in Frame B. Both frames must contain the same id.
+
+        Args:
+            frameB (Frame): Frame which contains the point to comapare to.
+            original_id (int): Orginal ID of the point.
+
+        Returns:
+            pd.DataFrame: A single row DataFrame with the differences (A - B).
+        """
+        pointA = self.extract_point(original_id, use_orginal_id=True)
+        pointB = frameB.extract_point(original_id, use_orginal_id=True)
+        difference = pointA - pointB
+        difference = difference.drop(["original_id"], axis=1)
+        difference.columns = [f"{column} difference" for column in difference.columns]
+        difference["original_id"] = pointA["original_id"]
+        return difference
+
     def add_column(self, column_name: str, values: np.array):
         """Adding a new column to the data of the frame.
 
