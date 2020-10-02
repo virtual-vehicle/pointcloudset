@@ -56,12 +56,14 @@ Frame object is generated at each processing stage.
 * All operations have to act on both, pointcloud and data and keep the timestamp.
 * All processing methods need to return another Frame.
 &#34;&#34;&#34;
-
+from __future__ import annotations
 import operator
 import warnings
 from datetime import datetime
 from pathlib import Path
-from typing import List
+from typing import List, Union
+import traceback
+
 
 import numpy as np
 import open3d as o3d
@@ -115,6 +117,33 @@ class Frame:
 
     def __len__(self):
         return len(self.data)
+
+    def extract_point(self, id: int, use_orginal_id: bool = False) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;Extract a specific point from the Frame defined by the point id. The id
+        can be the current index of the data from the Frame or the original_id.
+
+        Args:
+            id (int): Id number
+            use_orginal_id (bool, optional): Use normal index or the orginal_id.
+            Defaults to False.
+
+        Returns:
+            pd.DataFrame: a frame which only containse the defined points.
+        &#34;&#34;&#34;
+        try:
+            if use_orginal_id:
+                data = self.data[self.data[&#34;original_id&#34;] == id]
+                if len(data) == 0:
+                    raise IndexError
+                elif len(data) != 1:
+                    raise Exception()
+            else:
+                data = pd.DataFrame(self.data.iloc[id]).transpose()
+        except IndexError:
+            raise IndexError(f&#34;point with {id} does note exist.&#34;)
+        except Exception:
+            print(traceback.print_exc())
+        return data.reset_index()
 
     def add_column(self, column_name: str, values: np.array):
         &#34;&#34;&#34;Adding a new column to the data of the frame.
@@ -432,7 +461,7 @@ class Frame:
 <dl>
 <dt id="lidar.frame.Frame"><code class="flex name class">
 <span>class <span class="ident">Frame</span></span>
-<span>(</span><span>data: pandas.core.frame.DataFrame, orig_file: str = '', timestamp: rospy.rostime.Time = rospy.Time[0])</span>
+<span>(</span><span>data: pd.DataFrame, orig_file: str = '', timestamp: rospy.rostime.Time = rospy.Time[0])</span>
 </code></dt>
 <dd>
 <div class="desc"><p>One Frame of lidar measurements.</p>
@@ -477,6 +506,33 @@ testframe = testset[0]</p></div>
 
     def __len__(self):
         return len(self.data)
+
+    def extract_point(self, id: int, use_orginal_id: bool = False) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;Extract a specific point from the Frame defined by the point id. The id
+        can be the current index of the data from the Frame or the original_id.
+
+        Args:
+            id (int): Id number
+            use_orginal_id (bool, optional): Use normal index or the orginal_id.
+            Defaults to False.
+
+        Returns:
+            pd.DataFrame: a frame which only containse the defined points.
+        &#34;&#34;&#34;
+        try:
+            if use_orginal_id:
+                data = self.data[self.data[&#34;original_id&#34;] == id]
+                if len(data) == 0:
+                    raise IndexError
+                elif len(data) != 1:
+                    raise Exception()
+            else:
+                data = pd.DataFrame(self.data.iloc[id]).transpose()
+        except IndexError:
+            raise IndexError(f&#34;point with {id} does note exist.&#34;)
+        except Exception:
+            print(traceback.print_exc())
+        return data.reset_index()
 
     def add_column(self, column_name: str, values: np.array):
         &#34;&#34;&#34;Adding a new column to the data of the frame.
@@ -808,7 +864,7 @@ testframe = testset[0]</p></div>
 <h3>Methods</h3>
 <dl>
 <dt id="lidar.frame.Frame.add_column"><code class="name flex">
-<span>def <span class="ident">add_column</span></span>(<span>self, column_name: str, values: <built-in function array>)</span>
+<span>def <span class="ident">add_column</span></span>(<span>self, column_name: str, values: np.array)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Adding a new column to the data of the frame.</p>
@@ -835,7 +891,7 @@ testframe = testset[0]</p></div>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.apply_filter"><code class="name flex">
-<span>def <span class="ident">apply_filter</span></span>(<span>self, boolean_array: numpy.ndarray)</span>
+<span>def <span class="ident">apply_filter</span></span>(<span>self, boolean_array: np.ndarray)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Generating a new Frame by removing points where filter is False.
@@ -890,7 +946,7 @@ to the origin (0,0,0). Adds a new column to the data with the values.</p></div>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.calculate_distance_to_plane"><code class="name flex">
-<span>def <span class="ident">calculate_distance_to_plane</span></span>(<span>self, plane_model: <built-in function array>, absolute_values: bool = True)</span>
+<span>def <span class="ident">calculate_distance_to_plane</span></span>(<span>self, plane_model: np.array, absolute_values: bool = True)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Calculates the distance of each point to a plane and adds it as a column
@@ -967,6 +1023,57 @@ to the data of the frame. Uses the plane equation a x + b y + c z + d = 0</p>
     &#34;&#34;&#34;Generate descriptive statistics based on .data.describe().
     &#34;&#34;&#34;
     return self.data.describe()</code></pre>
+</details>
+</dd>
+<dt id="lidar.frame.Frame.extract_point"><code class="name flex">
+<span>def <span class="ident">extract_point</span></span>(<span>self, id: int, use_orginal_id: bool = False) ‑> pandas.core.frame.DataFrame</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extract a specific point from the Frame defined by the point id. The id
+can be the current index of the data from the Frame or the original_id.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>id</code></strong> :&ensp;<code>int</code></dt>
+<dd>Id number</dd>
+<dt><strong><code>use_orginal_id</code></strong> :&ensp;<code>bool</code>, optional</dt>
+<dd>Use normal index or the orginal_id.</dd>
+</dl>
+<p>Defaults to False.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>pd.DataFrame</code></dt>
+<dd>a frame which only containse the defined points.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extract_point(self, id: int, use_orginal_id: bool = False) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;Extract a specific point from the Frame defined by the point id. The id
+    can be the current index of the data from the Frame or the original_id.
+
+    Args:
+        id (int): Id number
+        use_orginal_id (bool, optional): Use normal index or the orginal_id.
+        Defaults to False.
+
+    Returns:
+        pd.DataFrame: a frame which only containse the defined points.
+    &#34;&#34;&#34;
+    try:
+        if use_orginal_id:
+            data = self.data[self.data[&#34;original_id&#34;] == id]
+            if len(data) == 0:
+                raise IndexError
+            elif len(data) != 1:
+                raise Exception()
+        else:
+            data = pd.DataFrame(self.data.iloc[id]).transpose()
+    except IndexError:
+        raise IndexError(f&#34;point with {id} does note exist.&#34;)
+    except Exception:
+        print(traceback.print_exc())
+    return data.reset_index()</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.get_cluster"><code class="name flex">
@@ -1066,7 +1173,7 @@ measruments at each point of the pointcloud.</p>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.limit"><code class="name flex">
-<span>def <span class="ident">limit</span></span>(<span>self, dim: str, minvalue: float, maxvalue: float)</span>
+<span>def <span class="ident">limit</span></span>(<span>self, dim: "'str'", minvalue: float, maxvalue: float)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Limit the range of certain values in lidar Frame. Can be chained together.</p>
@@ -1389,7 +1496,7 @@ function of open3d.</p>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.take_cluster"><code class="name flex">
-<span>def <span class="ident">take_cluster</span></span>(<span>self, cluster_number: int, cluster_labels: pandas.core.frame.DataFrame)</span>
+<span>def <span class="ident">take_cluster</span></span>(<span>self, cluster_number: int, cluster_labels: pd.DataFrame)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Takes only the points belonging to the cluster_number.</p>
@@ -1424,7 +1531,7 @@ function of open3d.</p>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.to_csv"><code class="name flex">
-<span>def <span class="ident">to_csv</span></span>(<span>self, path: pathlib.Path = PosixPath('.'))</span>
+<span>def <span class="ident">to_csv</span></span>(<span>self, path: Path = PosixPath('.'))</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Exports the frame as a csv for use with cloud compare or similar tools.</p>
@@ -1486,6 +1593,7 @@ function of open3d.</p>
 <li><code><a title="lidar.frame.Frame.convert_timestamp" href="#lidar.frame.Frame.convert_timestamp">convert_timestamp</a></code></li>
 <li><code><a title="lidar.frame.Frame.data" href="#lidar.frame.Frame.data">data</a></code></li>
 <li><code><a title="lidar.frame.Frame.describe" href="#lidar.frame.Frame.describe">describe</a></code></li>
+<li><code><a title="lidar.frame.Frame.extract_point" href="#lidar.frame.Frame.extract_point">extract_point</a></code></li>
 <li><code><a title="lidar.frame.Frame.get_cluster" href="#lidar.frame.Frame.get_cluster">get_cluster</a></code></li>
 <li><code><a title="lidar.frame.Frame.get_open3d_points" href="#lidar.frame.Frame.get_open3d_points">get_open3d_points</a></code></li>
 <li><code><a title="lidar.frame.Frame.has_data" href="#lidar.frame.Frame.has_data">has_data</a></code></li>

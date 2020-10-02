@@ -15,12 +15,14 @@ Frame object is generated at each processing stage.
 * All operations have to act on both, pointcloud and data and keep the timestamp.
 * All processing methods need to return another Frame.
 """
-
+from __future__ import annotations
 import operator
 import warnings
 from datetime import datetime
 from pathlib import Path
-from typing import List
+from typing import List, Union
+import traceback
+
 
 import numpy as np
 import open3d as o3d
@@ -74,6 +76,33 @@ class Frame:
 
     def __len__(self):
         return len(self.data)
+
+    def extract_point(self, id: int, use_orginal_id: bool = False) -> pd.DataFrame:
+        """Extract a specific point from the Frame defined by the point id. The id
+        can be the current index of the data from the Frame or the original_id.
+
+        Args:
+            id (int): Id number
+            use_orginal_id (bool, optional): Use normal index or the orginal_id.
+            Defaults to False.
+
+        Returns:
+            pd.DataFrame: a frame which only containse the defined points.
+        """
+        try:
+            if use_orginal_id:
+                data = self.data[self.data["original_id"] == id]
+                if len(data) == 0:
+                    raise IndexError
+                elif len(data) != 1:
+                    raise Exception()
+            else:
+                data = pd.DataFrame(self.data.iloc[id]).transpose()
+        except IndexError:
+            raise IndexError(f"point with {id} does note exist.")
+        except Exception:
+            print(traceback.print_exc())
+        return data.reset_index()
 
     def add_column(self, column_name: str, values: np.array):
         """Adding a new column to the data of the frame.

@@ -73,6 +73,8 @@ def frame_from_message(dataset, message: rosbag.bag.BagMessage) -&gt; Frame:
         frame_df = frame_df[
             (frame_df[&#34;x&#34;] != 0.0) &amp; (frame_df[&#34;y&#34;] != 0.0) &amp; (frame_df[&#34;z&#34;] != 0.0)
         ]
+        frame_df[&#34;original_id&#34;] = frame_df.index
+        frame_df = frame_df.astype({&#34;original_id&#34;: &#34;uint32&#34;})
         frame_df = frame_df.reset_index(drop=True)
     return Frame(
         data=frame_df, orig_file=dataset.orig_file, timestamp=message.timestamp
@@ -133,6 +135,8 @@ property keep_zeros.</p>
         frame_df = frame_df[
             (frame_df[&#34;x&#34;] != 0.0) &amp; (frame_df[&#34;y&#34;] != 0.0) &amp; (frame_df[&#34;z&#34;] != 0.0)
         ]
+        frame_df[&#34;original_id&#34;] = frame_df.index
+        frame_df = frame_df.astype({&#34;original_id&#34;: &#34;uint32&#34;})
         frame_df = frame_df.reset_index(drop=True)
     return Frame(
         data=frame_df, orig_file=dataset.orig_file, timestamp=message.timestamp
