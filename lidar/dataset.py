@@ -16,7 +16,6 @@ from typing import Iterator, List, Union
 import genpy
 import rosbag
 
-
 from .file.bag import frame_from_message
 from .frame import Frame
 
@@ -165,4 +164,3 @@ class Dataset:
         for message in messages:
             frame_list.append(frame_from_message(self, message))
         return frame_list
-

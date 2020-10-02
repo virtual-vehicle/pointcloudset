@@ -1,6 +1,6 @@
 import numpy as np
-import pytest_check as check
 import pytest
+import pytest_check as check
 
 from lidar.geometry import plane
 
