@@ -8,7 +8,7 @@ For more details on how to use it please refer to the usage.ipynb Notebook for a
 * The important stuff happens in the __getitem__ method. Only then the rosbag is actually read with the help of
 generators.
 """
-
+from __future__ import annotations
 import itertools
 from pathlib import Path
 from typing import Iterator, List, Union
@@ -115,7 +115,7 @@ class Dataset:
         else:
             raise TypeError("Wrong type {}".format(type(frame_number).__name__))
 
-    def has_frames(self):
+    def has_frames(self) -> bool:
         """Check if dataset has frames.
 
         Returns:
