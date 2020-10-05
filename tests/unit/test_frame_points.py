@@ -12,6 +12,22 @@ def test_extract_point1(testframe: Frame):
     check.equal(type(res), pd.DataFrame)
     check.equal(len(res), 1)
     check.equal(list(res.index.values)[0], 0)
+    types = [str(types) for types in res.dtypes.values]
+    check.equal(
+        types,
+        [
+            "float32",
+            "float32",
+            "float32",
+            "float32",
+            "uint32",
+            "uint16",
+            "uint8",
+            "uint16",
+            "uint32",
+            "uint32",
+        ],
+    )
 
 
 def test_extract_point_not_available(testframe: Frame):
@@ -24,6 +40,22 @@ def test_extract_point_orginal_id(testframe: Frame):
     check.equal(type(res), pd.DataFrame)
     check.equal(len(res), 1)
     check.equal(list(res.index.values)[0], 0)
+    types = [str(types) for types in res.dtypes.values]
+    check.equal(
+        types,
+        [
+            "float32",
+            "float32",
+            "float32",
+            "float32",
+            "uint32",
+            "uint16",
+            "uint8",
+            "uint16",
+            "uint32",
+            "uint32",
+        ],
+    )
 
 
 def test_extract_point_orginal_id_not_available(testframe: Frame):
@@ -86,4 +118,20 @@ def test_point_difference2(testset: Dataset):
             ],
         ),
         True,
+    )
+    types = [str(types) for types in diff.dtypes.values]
+    check.equal(
+        types,
+        [
+            "float32",
+            "float32",
+            "float32",
+            "float32",
+            "uint32",
+            "uint16",
+            "uint8",
+            "uint16",
+            "uint32",
+            "uint32",
+        ],
     )
