@@ -85,6 +85,9 @@ class Dataset:
     def __str__(self):
         return f"Lidar Dataset with {len(self)} frame(s), from file {self.orig_file}"
 
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.orig_file})"
+
     def __iter__(self):
         self.n = 0
         return self

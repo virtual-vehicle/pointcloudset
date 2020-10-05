@@ -87,6 +87,15 @@ def test_has_frames(testset: Dataset):
 
 def test_str(testset: Dataset):
     check.equal(type(str(testset)), str)
+    check.equal(
+        str(testset),
+        "Lidar Dataset with 2 frame(s), from file /workspaces/lidar/tests/testdata/test.bag",
+    )
+
+
+def test_repr(testset: Dataset):
+    check.equal(type(str(testset)), str)
+    check.equal(repr(testset), "Dataset(/workspaces/lidar/tests/testdata/test.bag)")
 
 
 def test_testset_len_withzero(testset_withzero):
