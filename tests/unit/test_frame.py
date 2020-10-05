@@ -106,6 +106,11 @@ def test_str(testframe: Frame):
     )
 
 
+def test_repr(testframe_mini: Frame):
+    check.equal(type(repr(testframe_mini)), str)
+    check.equal(len(repr(testframe_mini)), 777)
+
+
 def test_add_column(testframe_mini: Frame):
     newframe = testframe_mini.add_column("test", testframe_mini.data["x"])
     check.equal(type(newframe), Frame)

@@ -73,6 +73,9 @@ class Frame:
 
         self._check_index()
 
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.data}, {self.timestamp}, {self.orig_file})"
+
     def __str__(self) -> str:
         return f"pointcloud: with {len(self)} points, data:{list(self.data.columns)}, from {self.convert_timestamp()}"
 
