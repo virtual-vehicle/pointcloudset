@@ -129,8 +129,13 @@ class Frame:
             pd.DataFrame: A single row DataFrame with the differences (A - B).
         """
         pointA = self.extract_point(original_id, use_orginal_id=True)
-        pointB = frameB.extract_point(original_id, use_orginal_id=True)
-        difference = pointA - pointB
+        try:
+            pointB = frameB.extract_point(original_id, use_orginal_id=True)
+            difference = pointA - pointB
+        except IndexError:
+            # there is no point with the orignal_id in frameB
+            difference = pointA
+            difference.loc[:] = np.nan
         difference = difference.drop(["original_id"], axis=1)
         difference.columns = [f"{column} difference" for column in difference.columns]
         difference["original_id"] = pointA["original_id"]
