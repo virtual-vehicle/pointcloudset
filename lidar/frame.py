@@ -29,6 +29,8 @@ import open3d as o3d
 import pandas as pd
 import pyntcloud
 import rospy
+import plotly
+import IPython
 
 from .convert import convert
 from .geometry import plane
@@ -71,10 +73,10 @@ class Frame:
 
         self._check_index()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"pointcloud: with {len(self)} points, data:{list(self.data.columns)}, from {self.convert_timestamp()}"
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.data)
 
     def __getitem__(self, id: Union[int, slice]) -> pd.DataFrame:
@@ -131,7 +133,7 @@ class Frame:
         difference["original_id"] = pointA["original_id"]
         return difference
 
-    def add_column(self, column_name: str, values: np.array):
+    def add_column(self, column_name: str, values: np.array) -> Frame:
         """Adding a new column to the data of the frame.
 
         Args:
@@ -143,7 +145,7 @@ class Frame:
 
     def calculate_distance_to_plane(
         self, plane_model: np.array, absolute_values: bool = True
-    ):
+    ) -> Frame:
         """Calculates the distance of each point to a plane and adds it as a column
         to the data of the frame. Uses the plane equation a x + b y + c z + d = 0
 
@@ -163,7 +165,7 @@ class Frame:
         self.add_column(f"distance to plane: {plane_str}", distances)
         return self
 
-    def calculate_distance_to_origin(self):
+    def calculate_distance_to_origin(self) -> Frame:
         """For each point in the pointcloud calculate the euclidian distance
         to the origin (0,0,0). Adds a new column to the data with the values.
         """
@@ -173,7 +175,7 @@ class Frame:
         self.add_column("distance to origin", distances)
         return self
 
-    def describe(self):
+    def describe(self) -> pd.DataFrame:
         """Generate descriptive statistics based on .data.describe().
         """
         return self.data.describe()
@@ -212,7 +214,9 @@ class Frame:
 
     def plot_interactive(
         self, backend: str = "plotly", color: str = "intensity", **kwargs
-    ):
+    ) -> Union[
+        plotly.graph_objs._figure.Figure, IPython.lib.display.IFrame,
+    ]:
         """Generate either a plotly or pyntcloud 3D plot.
         (Note: Plotly plots also give index of datapoint in pandas array when hovering
         over datapoint)
@@ -235,7 +239,7 @@ class Frame:
         else:
             raise ValueError("wrong backend")
 
-    def plot_overlay(self, frames_dict: dict):
+    def plot_overlay(self, frames_dict: dict) -> plotly.graph_objs._figure.Figure:
         """Overlay the Frame with the plot(s) of other Frames. For example overlay the
         plot with a frame which contains
         a cluster or a plane. Best used with smaller pointclouds.
@@ -254,7 +258,7 @@ class Frame:
         """
         return plot_overlay(self, frames_dict=frames_dict)
 
-    def apply_filter(self, boolean_array: np.ndarray):
+    def apply_filter(self, boolean_array: np.ndarray) -> Frame:
         """Generating a new Frame by removing points where filter is False.
         Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.
 
@@ -267,7 +271,7 @@ class Frame:
         new_data = self.data.loc[boolean_array].reset_index(drop=True)
         return Frame(new_data, timestamp=self.timestamp)
 
-    def select_by_index(self, index_to_keep: List[int]):
+    def select_by_index(self, index_to_keep: List[int]) -> Frame:
         """Generating a new Frame by keeping index_to_keep.
 
         Usefull for open3d generate index lists. Similar to the the select_by_index
@@ -282,7 +286,7 @@ class Frame:
         new_data = self.data.iloc[index_to_keep].reset_index(drop=True)
         return Frame(new_data, timestamp=self.timestamp)
 
-    def limit(self, dim: "str", minvalue: float, maxvalue: float):
+    def limit(self, dim: "str", minvalue: float, maxvalue: float) -> Frame:
         """Limit the range of certain values in lidar Frame. Can be chained together.
 
         Example:
@@ -323,7 +327,7 @@ class Frame:
         labels_df = pd.DataFrame(labels, columns=["cluster"])
         return labels_df
 
-    def take_cluster(self, cluster_number: int, cluster_labels: pd.DataFrame):
+    def take_cluster(self, cluster_number: int, cluster_labels: pd.DataFrame) -> Frame:
         """Takes only the points belonging to the cluster_number.
 
         Args:
@@ -336,7 +340,7 @@ class Frame:
         bool_array = (cluster_labels["cluster"] == cluster_number).values
         return self.apply_filter(bool_array)
 
-    def remove_radius_outlier(self, nb_points: int, radius: float):
+    def remove_radius_outlier(self, nb_points: int, radius: float) -> Frame:
         """    Function to remove points that have less than nb_points in a given
         sphere of a given radius Parameters.
         Args:
@@ -353,7 +357,7 @@ class Frame:
 
     def quantile_filter(
         self, dim: str, relation: str = ">=", cut_quantile: float = 0.5
-    ):
+    ) -> Frame:
         """Filtering based on quantile values of dimension dim of the data.
 
         Example:
@@ -378,7 +382,7 @@ class Frame:
         ransac_n: int,
         num_iterations: int,
         return_plane_model: bool = False,
-    ):
+    ) -> Union[dict, Frame]:
         """Segments a plane in the point cloud using the RANSAC algorithm.
         Based on open3D plane segmentation.
 
@@ -409,7 +413,7 @@ class Frame:
         else:
             return inlier_Frame
 
-    def to_csv(self, path: Path = Path()):
+    def to_csv(self, path: Path = Path()) -> None:
         """Exports the frame as a csv for use with cloud compare or similar tools.
         Args:
             path (Path, optional): Destination. Defaults to the folder of
