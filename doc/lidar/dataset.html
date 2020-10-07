@@ -45,7 +45,7 @@ For more details on how to use it please refer to the usage.ipynb Notebook for a
 * The important stuff happens in the __getitem__ method. Only then the rosbag is actually read with the help of
 generators.
 &#34;&#34;&#34;
-
+from __future__ import annotations
 import itertools
 from pathlib import Path
 from typing import Iterator, List, Union
@@ -122,6 +122,9 @@ class Dataset:
     def __str__(self):
         return f&#34;Lidar Dataset with {len(self)} frame(s), from file {self.orig_file}&#34;
 
+    def __repr__(self) -&gt; str:
+        return f&#34;{self.__class__.__name__}({self.orig_file})&#34;
+
     def __iter__(self):
         self.n = 0
         return self
@@ -152,7 +155,7 @@ class Dataset:
         else:
             raise TypeError(&#34;Wrong type {}&#34;.format(type(frame_number).__name__))
 
-    def has_frames(self):
+    def has_frames(self) -&gt; bool:
         &#34;&#34;&#34;Check if dataset has frames.
 
         Returns:
@@ -214,7 +217,7 @@ class Dataset:
 <dl>
 <dt id="lidar.dataset.Dataset"><code class="flex name class">
 <span>class <span class="ident">Dataset</span></span>
-<span>(</span><span>bagfile: pathlib.Path, topic: str, keep_zeros: bool = False)</span>
+<span>(</span><span>bagfile: Path, topic: str, keep_zeros: bool = False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>The Dataset.</p>
@@ -299,6 +302,9 @@ testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
     def __str__(self):
         return f&#34;Lidar Dataset with {len(self)} frame(s), from file {self.orig_file}&#34;
 
+    def __repr__(self) -&gt; str:
+        return f&#34;{self.__class__.__name__}({self.orig_file})&#34;
+
     def __iter__(self):
         self.n = 0
         return self
@@ -329,7 +335,7 @@ testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
         else:
             raise TypeError(&#34;Wrong type {}&#34;.format(type(frame_number).__name__))
 
-    def has_frames(self):
+    def has_frames(self) -&gt; bool:
         &#34;&#34;&#34;Check if dataset has frames.
 
         Returns:
@@ -508,7 +514,7 @@ def types_and_topics_in_bag(self):
 </details>
 </dd>
 <dt id="lidar.dataset.Dataset.has_frames"><code class="name flex">
-<span>def <span class="ident">has_frames</span></span>(<span>self)</span>
+<span>def <span class="ident">has_frames</span></span>(<span>self) ‑> bool</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Check if dataset has frames.</p>
@@ -521,7 +527,7 @@ def types_and_topics_in_bag(self):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def has_frames(self):
+<pre><code class="python">def has_frames(self) -&gt; bool:
     &#34;&#34;&#34;Check if dataset has frames.
 
     Returns:

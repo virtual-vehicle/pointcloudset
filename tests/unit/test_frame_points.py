@@ -135,3 +135,21 @@ def test_point_difference2(testset: Dataset):
             "uint32",
         ],
     )
+
+
+def test_point_all_difference(testframe0: Frame, testframe_mini_real: Frame):
+    res = testframe_mini_real.calculate_all_point_differences(testframe0)
+    check.equal(type(res), Frame)
+    check.equal(len(res), len(testframe_mini_real))
+    manual_diff = (
+        testframe_mini_real.data[testframe_mini_real.data["original_id"] == 9701][
+            "x"
+        ].values
+        - testframe0.data[testframe0.data["original_id"] == 9701]["x"].values
+    )[0]
+    check.equal(
+        res.data[res.data["original_id"] == 9701]["x difference"].values[0], manual_diff
+    )
+    check.equal(
+        len(res.data.columns.values), 19,
+    )

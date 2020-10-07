@@ -29,6 +29,11 @@ def testframe(testset):
 
 
 @pytest.fixture()
+def testframe0(testset):
+    return testset[0]
+
+
+@pytest.fixture()
 def testframe_withzero(testset_withzero):
     return testset_withzero[1]
 
@@ -90,3 +95,14 @@ def testframe_mini_real(testframe):
         .limit("z", -1, 1)
         .limit("intensity", 0, 10)
     )
+
+
+@pytest.fixture()
+def testframe_mini_real0(testframe0):
+    return (
+        testframe0.limit("x", -1, 1)
+        .limit("y", -1, 1)
+        .limit("z", -1, 1)
+        .limit("intensity", 0, 10)
+    )
+
