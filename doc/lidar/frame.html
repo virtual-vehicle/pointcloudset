@@ -158,9 +158,11 @@ class Frame:
             print(traceback.print_exc())
         return point.reset_index(drop=True)
 
-    def point_difference(self, frameB: Frame, original_id: int) -&gt; pd.DataFrame:
-        &#34;&#34;&#34;Calculate the difference of each element of a Point in the current Frame to
-        the correspoing point in Frame B. Both frames must contain the same id.
+    def calculate_single_point_difference(
+        self, frameB: Frame, original_id: int
+    ) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;Calculate the difference of one element of a Point in the current Frame to
+        the correspoing point in Frame B. Both frames must contain the same orginal_id.
 
         Args:
             frameB (Frame): Frame which contains the point to comapare to.
@@ -197,7 +199,10 @@ class Frame:
         frameB_original_ids = frameB.data.original_id.values
         intersection = np.intersect1d(refrence_orginial_ids, frameB_original_ids)
         if len(intersection) &gt; 0:
-            diff_list = [self.point_difference(frameB, id) for id in intersection]
+            diff_list = [
+                self.calculate_single_point_difference(frameB, id)
+                for id in intersection
+            ]
             orginal_types = [str(types) for types in diff_list[0].dtypes.values]
             target_type_dict = dict(zip(diff_list[0].columns.values, orginal_types))
             diff_df = pd.concat(diff_list)
@@ -610,9 +615,11 @@ testframe = testset[0]</p></div>
             print(traceback.print_exc())
         return point.reset_index(drop=True)
 
-    def point_difference(self, frameB: Frame, original_id: int) -&gt; pd.DataFrame:
-        &#34;&#34;&#34;Calculate the difference of each element of a Point in the current Frame to
-        the correspoing point in Frame B. Both frames must contain the same id.
+    def calculate_single_point_difference(
+        self, frameB: Frame, original_id: int
+    ) -&gt; pd.DataFrame:
+        &#34;&#34;&#34;Calculate the difference of one element of a Point in the current Frame to
+        the correspoing point in Frame B. Both frames must contain the same orginal_id.
 
         Args:
             frameB (Frame): Frame which contains the point to comapare to.
@@ -649,7 +656,10 @@ testframe = testset[0]</p></div>
         frameB_original_ids = frameB.data.original_id.values
         intersection = np.intersect1d(refrence_orginial_ids, frameB_original_ids)
         if len(intersection) &gt; 0:
-            diff_list = [self.point_difference(frameB, id) for id in intersection]
+            diff_list = [
+                self.calculate_single_point_difference(frameB, id)
+                for id in intersection
+            ]
             orginal_types = [str(types) for types in diff_list[0].dtypes.values]
             target_type_dict = dict(zip(diff_list[0].columns.values, orginal_types))
             diff_df = pd.concat(diff_list)
@@ -1088,7 +1098,10 @@ of the frame. (frame - frameB)</p>
     frameB_original_ids = frameB.data.original_id.values
     intersection = np.intersect1d(refrence_orginial_ids, frameB_original_ids)
     if len(intersection) &gt; 0:
-        diff_list = [self.point_difference(frameB, id) for id in intersection]
+        diff_list = [
+            self.calculate_single_point_difference(frameB, id)
+            for id in intersection
+        ]
         orginal_types = [str(types) for types in diff_list[0].dtypes.values]
         target_type_dict = dict(zip(diff_list[0].columns.values, orginal_types))
         diff_df = pd.concat(diff_list)
@@ -1159,6 +1172,55 @@ to the data of the frame. Uses the plane equation a x + b y + c z + d = 0</p>
     )
     self.add_column(f&#34;distance to plane: {plane_str}&#34;, distances)
     return self</code></pre>
+</details>
+</dd>
+<dt id="lidar.frame.Frame.calculate_single_point_difference"><code class="name flex">
+<span>def <span class="ident">calculate_single_point_difference</span></span>(<span>self, frameB: <a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a>, original_id: int) ‑> pandas.core.frame.DataFrame</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Calculate the difference of one element of a Point in the current Frame to
+the correspoing point in Frame B. Both frames must contain the same orginal_id.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>frameB</code></strong> :&ensp;<code><a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></code></dt>
+<dd>Frame which contains the point to comapare to.</dd>
+<dt><strong><code>original_id</code></strong> :&ensp;<code>int</code></dt>
+<dd>Orginal ID of the point.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>pd.DataFrame</code></dt>
+<dd>A single row DataFrame with the differences (A - B).</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def calculate_single_point_difference(
+    self, frameB: Frame, original_id: int
+) -&gt; pd.DataFrame:
+    &#34;&#34;&#34;Calculate the difference of one element of a Point in the current Frame to
+    the correspoing point in Frame B. Both frames must contain the same orginal_id.
+
+    Args:
+        frameB (Frame): Frame which contains the point to comapare to.
+        original_id (int): Orginal ID of the point.
+
+    Returns:
+        pd.DataFrame: A single row DataFrame with the differences (A - B).
+    &#34;&#34;&#34;
+    pointA = self.extract_point(original_id, use_orginal_id=True)
+    try:
+        pointB = frameB.extract_point(original_id, use_orginal_id=True)
+        difference = pointA - pointB
+    except IndexError:
+        # there is no point with the orignal_id in frameB
+        difference = pointA
+        difference.loc[:] = np.nan
+    difference = difference.drop([&#34;original_id&#34;], axis=1)
+    difference.columns = [f&#34;{column} difference&#34; for column in difference.columns]
+    difference[&#34;original_id&#34;] = pointA[&#34;original_id&#34;]
+    return difference</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.convert_timestamp"><code class="name flex">
@@ -1558,53 +1620,6 @@ a cluster or a plane. Best used with smaller pointclouds.</p>
     return plot_overlay(self, frames_dict=frames_dict)</code></pre>
 </details>
 </dd>
-<dt id="lidar.frame.Frame.point_difference"><code class="name flex">
-<span>def <span class="ident">point_difference</span></span>(<span>self, frameB: <a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a>, original_id: int) ‑> pandas.core.frame.DataFrame</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Calculate the difference of each element of a Point in the current Frame to
-the correspoing point in Frame B. Both frames must contain the same id.</p>
-<h2 id="args">Args</h2>
-<dl>
-<dt><strong><code>frameB</code></strong> :&ensp;<code><a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></code></dt>
-<dd>Frame which contains the point to comapare to.</dd>
-<dt><strong><code>original_id</code></strong> :&ensp;<code>int</code></dt>
-<dd>Orginal ID of the point.</dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><code>pd.DataFrame</code></dt>
-<dd>A single row DataFrame with the differences (A - B).</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def point_difference(self, frameB: Frame, original_id: int) -&gt; pd.DataFrame:
-    &#34;&#34;&#34;Calculate the difference of each element of a Point in the current Frame to
-    the correspoing point in Frame B. Both frames must contain the same id.
-
-    Args:
-        frameB (Frame): Frame which contains the point to comapare to.
-        original_id (int): Orginal ID of the point.
-
-    Returns:
-        pd.DataFrame: A single row DataFrame with the differences (A - B).
-    &#34;&#34;&#34;
-    pointA = self.extract_point(original_id, use_orginal_id=True)
-    try:
-        pointB = frameB.extract_point(original_id, use_orginal_id=True)
-        difference = pointA - pointB
-    except IndexError:
-        # there is no point with the orignal_id in frameB
-        difference = pointA
-        difference.loc[:] = np.nan
-    difference = difference.drop([&#34;original_id&#34;], axis=1)
-    difference.columns = [f&#34;{column} difference&#34; for column in difference.columns]
-    difference[&#34;original_id&#34;] = pointA[&#34;original_id&#34;]
-    return difference</code></pre>
-</details>
-</dd>
 <dt id="lidar.frame.Frame.quantile_filter"><code class="name flex">
 <span>def <span class="ident">quantile_filter</span></span>(<span>self, dim: str, relation: str = &#x27;&gt;=&#x27;, cut_quantile: float = 0.5) ‑> <a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></span>
 </code></dt>
@@ -1816,6 +1831,7 @@ function of open3d.</p>
 <li><code><a title="lidar.frame.Frame.calculate_all_point_differences" href="#lidar.frame.Frame.calculate_all_point_differences">calculate_all_point_differences</a></code></li>
 <li><code><a title="lidar.frame.Frame.calculate_distance_to_origin" href="#lidar.frame.Frame.calculate_distance_to_origin">calculate_distance_to_origin</a></code></li>
 <li><code><a title="lidar.frame.Frame.calculate_distance_to_plane" href="#lidar.frame.Frame.calculate_distance_to_plane">calculate_distance_to_plane</a></code></li>
+<li><code><a title="lidar.frame.Frame.calculate_single_point_difference" href="#lidar.frame.Frame.calculate_single_point_difference">calculate_single_point_difference</a></code></li>
 <li><code><a title="lidar.frame.Frame.convert_timestamp" href="#lidar.frame.Frame.convert_timestamp">convert_timestamp</a></code></li>
 <li><code><a title="lidar.frame.Frame.data" href="#lidar.frame.Frame.data">data</a></code></li>
 <li><code><a title="lidar.frame.Frame.describe" href="#lidar.frame.Frame.describe">describe</a></code></li>
@@ -1829,7 +1845,6 @@ function of open3d.</p>
 <li><code><a title="lidar.frame.Frame.plane_segmentation" href="#lidar.frame.Frame.plane_segmentation">plane_segmentation</a></code></li>
 <li><code><a title="lidar.frame.Frame.plot_interactive" href="#lidar.frame.Frame.plot_interactive">plot_interactive</a></code></li>
 <li><code><a title="lidar.frame.Frame.plot_overlay" href="#lidar.frame.Frame.plot_overlay">plot_overlay</a></code></li>
-<li><code><a title="lidar.frame.Frame.point_difference" href="#lidar.frame.Frame.point_difference">point_difference</a></code></li>
 <li><code><a title="lidar.frame.Frame.points" href="#lidar.frame.Frame.points">points</a></code></li>
 <li><code><a title="lidar.frame.Frame.quantile_filter" href="#lidar.frame.Frame.quantile_filter">quantile_filter</a></code></li>
 <li><code><a title="lidar.frame.Frame.remove_radius_outlier" href="#lidar.frame.Frame.remove_radius_outlier">remove_radius_outlier</a></code></li>

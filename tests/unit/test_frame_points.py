@@ -64,7 +64,7 @@ def test_extract_point_orginal_id_not_available(testframe: Frame):
 
 
 def test_point_difference(testframe: Frame):
-    difference = testframe.point_difference(testframe, 4624)
+    difference = testframe.calculate_single_point_difference(testframe, 4624)
     check.equal(len(difference), 1)
     check.equal(
         (
@@ -98,7 +98,7 @@ def test_point_difference(testframe: Frame):
 def test_point_difference2(testset: Dataset):
     testframe1 = testset[0]
     testframe2 = testset[1]
-    diff = testframe1.point_difference(testframe2, 4692)
+    diff = testframe1.calculate_single_point_difference(testframe2, 4692)
     check.equal(len(diff), 1)
     check.equal(diff.original_id.values[0], 4692)
     check.equal(

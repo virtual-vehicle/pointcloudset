@@ -117,7 +117,9 @@ class Frame:
             print(traceback.print_exc())
         return point.reset_index(drop=True)
 
-    def point_difference(self, frameB: Frame, original_id: int) -> pd.DataFrame:
+    def calculate_single_point_difference(
+        self, frameB: Frame, original_id: int
+    ) -> pd.DataFrame:
         """Calculate the difference of one element of a Point in the current Frame to
         the correspoing point in Frame B. Both frames must contain the same orginal_id.
 
@@ -156,7 +158,10 @@ class Frame:
         frameB_original_ids = frameB.data.original_id.values
         intersection = np.intersect1d(refrence_orginial_ids, frameB_original_ids)
         if len(intersection) > 0:
-            diff_list = [self.point_difference(frameB, id) for id in intersection]
+            diff_list = [
+                self.calculate_single_point_difference(frameB, id)
+                for id in intersection
+            ]
             orginal_types = [str(types) for types in diff_list[0].dtypes.values]
             target_type_dict = dict(zip(diff_list[0].columns.values, orginal_types))
             diff_df = pd.concat(diff_list)
