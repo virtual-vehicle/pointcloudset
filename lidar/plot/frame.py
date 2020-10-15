@@ -1,5 +1,5 @@
 """ # Frame plotting
-Used mainly by Frame.plot_interactive() but could also be used on its own. 
+Used mainly by Frame.plot_interactive() but could also be used on its own.
 """
 import plotly.express as px
 

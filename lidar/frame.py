@@ -289,7 +289,7 @@ class Frame:
         "Cluster 2": cluster2})
 
         Args:
-            frames_dict (dict): A dictionary in the form {"Name", Frame}.
+            frames_dict (dict): A dictionary in the form {"Name" : Frame}.
             Can be arbitrarly long,
 
         Returns:
