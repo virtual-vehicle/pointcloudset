@@ -34,7 +34,7 @@ import IPython
 
 from .convert import convert
 from .geometry import plane
-from .plot.frame import plot_overlay, plotly_3d, pyntcloud_3d
+from .plot.frame import plot_overlay, plotly_3d, pyntcloud_3d, plot_overlay_plane
 
 ops = {
     ">": operator.gt,
@@ -280,13 +280,11 @@ class Frame:
 
     def plot_overlay(self, frames_dict: dict) -> plotly.graph_objs._figure.Figure:
         """Overlay the Frame with the plot(s) of other Frames. For example overlay the
-        plot with a frame which contains
-        a cluster or a plane. Best used with smaller pointclouds.
+        plot with a frame which contains a cluster. Best used with smaller pointclouds.
 
         Example:
 
-        testframe.plot_overlay({"Plane": plane,"Cluster 1": cluster1,
-        "Cluster 2": cluster2})
+        testframe.plot_overlay({"Cluster 1": cluster1, "Cluster 2": cluster2})
 
         Args:
             frames_dict (dict): A dictionary in the form {"Name" : Frame}.
@@ -296,6 +294,25 @@ class Frame:
             plotly.graph_objs._figure.Figure: The interactive plot with overlays.
         """
         return plot_overlay(self, frames_dict=frames_dict)
+
+    def plot_overlay_plane(self, plane_dict: dict) -> plotly.graph_objs._figure.Figure:
+        """Overlay the Frame with plot(s) of plane surfaces. Fore
+
+        Example:
+
+        plane = frame.plane_segmentation(0.05,5,100,return_plane_model=True)
+        frame.plot_overlay_plane({"Plane 1": plane["plane_model"]})
+
+        Args:
+            plane_dict (dict): A dictionary in the form {"Name" : plane_model}.
+            Plane model as given by plane_segementations: as a numpy array of the
+            paramters a,b,c and d.
+            Can be arbitrarly long.
+
+        Returns:
+            plotly.graph_objs._figure.Figure: The interactive plot with overlays.
+        """
+        return plot_overlay_plane(self, plane_dict=plane_dict)
 
     def apply_filter(self, boolean_array: np.ndarray) -> Frame:
         """Generating a new Frame by removing points where filter is False.

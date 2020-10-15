@@ -2,6 +2,9 @@
 Used mainly by Frame.plot_interactive() but could also be used on its own.
 """
 import plotly.express as px
+import plotly.graph_objs as go
+import numpy as np
+
 
 intensity_scale = [[0, "black"], [0.1, "blue"], [0.2, "green"], [1, "red"]]
 colorscales = {
@@ -65,6 +68,44 @@ def plot_overlay(orig_frame, frames_dict: dict):
         i = i + 1
         if i > len(colors):
             i = 0
+    return p1
+
+
+def plot_overlay_plane(orig_frame, plane_dict: dict):
+    p1 = orig_frame.plot_interactive(color=None, point_size=1.0, prepend_id="Orginal ")
+    p1.update_traces(marker_color="black", opacity=0.7)
+
+    x = np.linspace(min(orig_frame.data.x) * 0.95, max(orig_frame.data.x) * 1.05, 100)
+    y = np.linspace(min(orig_frame.data.y) * 0.95, max(orig_frame.data.y) * 1.05, 100)
+
+    X, Y = np.meshgrid(x, y)
+
+    surfacecolor = np.ones(shape=X.shape)
+    colors = px.colors.qualitative.Plotly
+    colorscale = [[color[0] / len(colors), color[1]] for color in enumerate(colors)]
+
+    i = 0
+    for name, plane_model in plane_dict.items():
+        a, b, c, d = plane_model
+        Z = (-d - a * X - b * Y) / c
+        p2 = go.Figure(
+            data=[
+                go.Surface(
+                    x=X,
+                    y=Y,
+                    z=Z,
+                    name=name,
+                    surfacecolor=surfacecolor * i,
+                    colorscale=colorscale,
+                    showscale=False,
+                    cmin=0,
+                    cmax=1,
+                )
+            ]
+        )
+        trace2 = p2.data[0]
+        p1.add_trace(trace2)
+        i = i + 1
     return p1
 
 
