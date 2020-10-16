@@ -128,9 +128,9 @@ def test_calculate_distance_to_plane1(testframe_mini: Frame):
     check.equal(type(newframe), Frame)
     check.equal(
         str(list(testframe_mini.data.columns.values)),
-        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [1,0,0,0]']",
+        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [1 0 0 0]']",
     )
-    check.equal(testframe_mini.data["distance to plane: [1,0,0,0]"][1], 1.0)
+    check.equal(testframe_mini.data["distance to plane: [1 0 0 0]"][1], 1.0)
 
 
 def test_calculate_distance_to_plane2(testframe_mini: Frame):
@@ -139,16 +139,16 @@ def test_calculate_distance_to_plane2(testframe_mini: Frame):
     )
     check.equal(
         str(list(testframe_mini.data.columns.values)),
-        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [-1, 0, 0, 0]']",
+        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [-1  0  0  0]']",
     )
-    check.equal(testframe_mini.data["distance to plane: [-1, 0, 0, 0]"][1], -1.0)
+    check.equal(testframe_mini.data["distance to plane: [-1  0  0  0]"][1], -1.0)
 
 
 def test_calculate_distance_to_plane3(testframe_mini: Frame):
     testframe_mini.calculate_distance_to_plane(
         plane_model=np.array([-1, 0, 0, 0]), absolute_values=True
     )
-    check.equal(testframe_mini.data["distance to plane: [-1, 0, 0, 0]"][1], 1.0)
+    check.equal(testframe_mini.data["distance to plane: [-1  0  0  0]"][1], 1.0)
 
 
 def test_describe(testframe: Frame):
@@ -272,8 +272,6 @@ def test_distances_to_origin(testframe_mini: Frame):
         ),
         True,
     )
-
-
 
 
 def test_to_csv(testframe: Frame, tmp_path: Path):

@@ -173,7 +173,7 @@ class Frame:
             raise ValueError("no intersection fraund between the frames.")
 
     def add_column(self, column_name: str, values: np.array) -> Frame:
-        """Adding a new column to the data of the frame.
+        """Adding a new column with a scalar value to the data of the frame.
 
         Args:
             column_name (str): name of the new column.
@@ -199,7 +199,7 @@ class Frame:
         if absolute_values:
             distances = np.absolute(distances)
         plane_str = np.array2string(
-            plane_model, precision=2, separator=",", suppress_small=True
+            plane_model, formatter={"float_kind": lambda x: "%.4f" % x}
         )
         self.add_column(f"distance to plane: {plane_str}", distances)
         return self
