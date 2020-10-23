@@ -73,6 +73,28 @@ class Frame:
 
         self._check_index()
 
+    @property
+    def data(self):
+        return self.__data
+
+    @data.setter
+    def data(self, df: pd.DataFrame):
+        if not isinstance(df, pd.DataFrame):
+            raise TypeError("Data argument must be a DataFrame")
+        elif not set(["x", "y", "z"]).issubset(df.columns):
+            raise ValueError("Data must have x, y and z coordinates")
+        self._update_data(df)
+        self._check_index()
+
+    def _update_data(self, df: pd.DataFrame):
+        """Utility function. Implicitly called when self.data is assigned."""
+        print("_update_data_called")
+        self.__data = df
+        self.timestamp = rospy.rostime.Time()
+        self.points = pyntcloud.PyntCloud(self.__data[["x", "y", "z"]], mesh=None)
+        self.measurments = self.__data.drop(["x", "y", "z"], axis=1)
+        self.orig_file = ""
+
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.data}, {self.timestamp}, {self.orig_file})"
 
@@ -89,6 +111,26 @@ class Frame:
             return self.data.iloc[[id]]
         else:
             raise TypeError("Wrong type {}".format(type(id).__name__))
+
+    @classmethod
+    def from_pyntcloud(cls, pyntcloud_in: pyntcloud.PyntCloud) -> Frame:
+        """Converts a pyntcloud to a lidar Frame.
+
+        Args:
+            pyntcloud_in (pyntcloud.PyntCloud): pyntcloud object to convert to frame
+
+        Returns:
+            Frame: Frame object from pyntcloud
+        """
+        data = pyntcloud_in.points
+        return cls(data=data)
+
+    @classmethod
+    def from_file(cls, file_path: Path, **kwargs) -> Frame:
+        pyntcloud_in = pyntcloud.PyntCloud.from_file(file_path.as_posix(), **kwargs)
+        frame = cls.from_pyntcloud(pyntcloud_in)
+        frame.orig_file = file_path.as_posix()
+        return frame
 
     def extract_point(self, id: int, use_orginal_id: bool = False) -> pd.DataFrame:
         """Extract a specific point from the Frame defined by the point id. The id
