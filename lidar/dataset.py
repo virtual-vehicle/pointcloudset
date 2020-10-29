@@ -12,6 +12,7 @@ from __future__ import annotations
 import itertools
 from pathlib import Path
 from typing import Iterator, List, Union
+import warnings
 
 import genpy
 import rosbag
@@ -46,6 +47,15 @@ class Dataset:
         """The ROS Pointcloud2 topic of the lidar."""
         self.keep_zeros = keep_zeros
         """Option for keeping zero elements in Lidar Frames. Default is False"""
+        self.time_step = self._calc_time_step()
+        """Time step between two frames. Assumed to be constant"""
+        self._len = (self.types_and_topics_in_bag.topics)[self.topic].message_count
+        """Hidden length propery"""
+        self.start_time = self[0].timestamp.to_sec()
+        """ROS Start time in the bagfile in seconds. Derifed from the first frame
+        since the bag.get_start_time() can deviate form the actual time in
+        the first frame.
+        """
 
     @property
     def types_and_topics_in_bag(self):
@@ -66,32 +76,15 @@ class Dataset:
         return self.bag.size
 
     @property
-    def start_time(self) -> float:
-        """ROS Start time in the bagfile in seconds. Derifed from the first frame
-        since the bag.get_start_time() can deviate form the actual time in
-        the first frame.
-        """
-        return self[0].timestamp.to_sec()
-
-    @property
     def end_time(self) -> float:
         """ROS End Time in the bagfile as a float.
         """
         return self.bag.get_end_time()
 
-    @property
-    def time_step(self) -> float:
-        """Timestep between two frames. Assumed to be constant in the whole bagfile.
-        This is currently the case for mechanical spinning lidar.
-        """
-        frame0 = self[0]
-        frame1 = self[1]
-        return frame1.timestamp.to_sec() - frame0.timestamp.to_sec()
-
     def __len__(self) -> int:
         """Number of available frames (i.e. Lidar messages)
         """
-        return (self.types_and_topics_in_bag.topics)[self.topic].message_count
+        return self._len
 
     def __str__(self):
         return f"Lidar Dataset with {len(self)} frame(s), from file {self.orig_file}"
@@ -119,6 +112,11 @@ class Dataset:
                 frame_list.append(frame_from_message(self, message))
             return frame_list
         elif isinstance(frame_number, int):
+            if frame_number > 500:
+                warnings.warn(
+                    "Might take a long time, try using get_frame_fast instead",
+                    ResourceWarning,
+                )
             messages = self.bag.read_messages(topics=[self.topic])
             sliced_messages = itertools.islice(
                 messages, frame_number, frame_number + 1, 1
@@ -146,28 +144,25 @@ class Dataset:
         Returns:
             float: The approximate time of the frame number in seconds.
         """
-        time_step = (self.end_time - self.start_time) / len(self)
-        return self.start_time + frame_number * time_step
+        return self.start_time + frame_number * self.time_step
 
-    def _slice_messages(self, frame_number: slice) -> Iterator:
-        """Slice the ROS bag message generator
+    def get_frame_fast(self, frame_number: int) -> Frame:
+        """Alternative to get a specific frame. Indented for larger bagfiles.
+        This method assumes that the time between frames is constant.
+        It does not replace __getitem__ fully since it relays on the method
+        approximate_time_of_frame, but should produce the same result most of the times.
 
         Args:
-            frame_number (slice): the slice position
-
-        Raises:
-            ValueError: if out of range
+            frame_number (int): frame number
 
         Returns:
-            itertools.islice: sliced message, a subset of all messages
+            Frame: equivalent to Dataset[frame_number]
         """
-        if (frame_number.stop > frame_number.start) & (frame_number.stop <= len(self)):
-            messages = self.bag.read_messages(topics=[self.topic])
-            return itertools.islice(
-                messages, frame_number.start, frame_number.stop, frame_number.step
-            )
-        else:
-            raise ValueError("frame_end must be greater than frame_start and in range.")
+        start_time = self.approximate_time_of_frame(frame_number)
+        frame_list = self.get_frames_between_timestamps(
+            start_time - 0.5 * self.time_step, start_time + 0.5 * self.time_step
+        )
+        return frame_list[0]
 
     def get_frames_between_timestamps(
         self, start_time: float, end_time: float
@@ -190,3 +185,32 @@ class Dataset:
         for message in messages:
             frame_list.append(frame_from_message(self, message))
         return frame_list
+
+    def _slice_messages(self, frame_number: slice) -> Iterator:
+        """Slice the ROS bag message generator
+
+        Args:
+            frame_number (slice): the slice position
+
+        Raises:
+            ValueError: if out of range
+
+        Returns:
+            itertools.islice: sliced message, a subset of all messages
+        """
+        if (frame_number.stop > frame_number.start) & (frame_number.stop <= len(self)):
+            messages = self.bag.read_messages(topics=[self.topic])
+            return itertools.islice(
+                messages, frame_number.start, frame_number.stop, frame_number.step
+            )
+        else:
+            raise ValueError("frame_end must be greater than frame_start and in range.")
+
+    def _calc_time_step(self) -> float:
+        """Timestep between two frames. Assumed to be constant in the whole bagfile.
+        This is currently the case for mechanical spinning lidar.
+        """
+        frame0 = self[0]
+        frame1 = self[1]
+        return frame1.timestamp.to_sec() - frame0.timestamp.to_sec()
+

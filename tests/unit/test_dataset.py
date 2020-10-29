@@ -137,3 +137,14 @@ def test_time_of_step1(testset: Dataset):
     diff = frame1.timestamp.to_sec() - time1
     check.less(diff, 0.5 * testset.time_step)
 
+
+def test_get_frame_fast0(testset: Dataset):
+    frame0 = testset[0]
+    frame_fast = testset.get_frame_fast(0)
+    check.equal(frame0.timestamp.to_sec(), frame_fast.timestamp.to_sec())
+
+
+def test_get_frame_fast1(testset: Dataset):
+    frame1 = testset[1]
+    frame_fast = testset.get_frame_fast(1)
+    check.equal(frame1.timestamp.to_sec(), frame_fast.timestamp.to_sec())
