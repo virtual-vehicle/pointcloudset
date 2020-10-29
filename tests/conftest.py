@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 import rospy
 
-import lidar
+from lidar import Dataset, Frame
 
 
 @pytest.fixture()
@@ -15,12 +15,12 @@ def testbag1():
 
 @pytest.fixture()
 def testset(testbag1):
-    return lidar.Dataset(testbag1, topic="/os1_cloud_node/points", keep_zeros=False)
+    return Dataset(testbag1, topic="/os1_cloud_node/points", keep_zeros=False)
 
 
 @pytest.fixture()
 def testset_withzero(testbag1):
-    return lidar.Dataset(testbag1, topic="/os1_cloud_node/points", keep_zeros=True)
+    return Dataset(testbag1, topic="/os1_cloud_node/points", keep_zeros=True)
 
 
 @pytest.fixture()
@@ -79,8 +79,8 @@ def reference_pointcloud_withzero_dataframe():
 
 
 @pytest.fixture()
-def testframe_mini(testframe_mini_df):
-    return lidar.Frame(
+def testframe_mini(testframe_mini_df) -> Frame:
+    return Frame(
         data=testframe_mini_df,
         timestamp=rospy.rostime.Time(50),
         orig_file="/fake/testrame_mini.bag",
@@ -88,7 +88,7 @@ def testframe_mini(testframe_mini_df):
 
 
 @pytest.fixture()
-def testframe_mini_real(testframe):
+def testframe_mini_real(testframe) -> Frame:
     return (
         testframe.limit("x", -1, 1)
         .limit("y", -1, 1)

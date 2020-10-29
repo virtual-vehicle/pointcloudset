@@ -67,15 +67,26 @@ class Dataset:
 
     @property
     def start_time(self) -> float:
-        """ROS Start time in the bagfile as a float.
+        """ROS Start time in the bagfile in seconds. Derifed from the first frame
+        since the bag.get_start_time() can deviate form the actual time in
+        the first frame.
         """
-        return self.bag.get_start_time()
+        return self[0].timestamp.to_sec()
 
     @property
     def end_time(self) -> float:
         """ROS End Time in the bagfile as a float.
         """
         return self.bag.get_end_time()
+
+    @property
+    def time_step(self) -> float:
+        """Timestep between two frames. Assumed to be constant in the whole bagfile.
+        This is currently the case for mechanical spinning lidar.
+        """
+        frame0 = self[0]
+        frame1 = self[1]
+        return frame1.timestamp.to_sec() - frame0.timestamp.to_sec()
 
     def __len__(self) -> int:
         """Number of available frames (i.e. Lidar messages)
@@ -100,7 +111,7 @@ class Dataset:
         else:
             raise StopIteration
 
-    def __getitem__(self, frame_number: Union[int, slice]) -> Union[Frame, List[Frame]]:
+    def __getitem__(self, frame_number: Union[slice, int]) -> Union[List[Frame], Frame]:
         if isinstance(frame_number, slice):
             sliced_messages = self._slice_messages(frame_number)
             frame_list = []
@@ -109,7 +120,6 @@ class Dataset:
             return frame_list
         elif isinstance(frame_number, int):
             messages = self.bag.read_messages(topics=[self.topic])
-
             sliced_messages = itertools.islice(
                 messages, frame_number, frame_number + 1, 1
             )
@@ -125,6 +135,19 @@ class Dataset:
             bool: ``True`` if the dataset contains frames.
         """
         return len(self) > 0
+
+    def approximate_time_of_frame(self, frame_number: int) -> float:
+        """Calcuate the approximate time of a specific frame number. Needed as input for
+        get_frames_between_timestamps.
+
+        Args:
+            frame_number (int): Frame step number
+
+        Returns:
+            float: The approximate time of the frame number in seconds.
+        """
+        time_step = (self.end_time - self.start_time) / len(self)
+        return self.start_time + frame_number * time_step
 
     def _slice_messages(self, frame_number: slice) -> Iterator:
         """Slice the ROS bag message generator

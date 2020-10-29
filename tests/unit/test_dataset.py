@@ -21,7 +21,7 @@ def test_iter2(testset):
 
 def test_init_error(testbag1):
     with pytest.raises(IOError):
-        dataset = Dataset(testbag1, "/fake")
+        Dataset(testbag1, "/fake")
 
 
 def test_testset(testset):
@@ -108,7 +108,8 @@ def test_size(testset: Dataset):
 
 
 def test_start_time(testset: Dataset):
-    check.equal(testset.start_time, 1592833242.6053855)
+    frame0 = testset[0]
+    check.equal(testset.start_time, frame0.timestamp.to_sec())
 
 
 def test_end_time(testset: Dataset):
@@ -117,3 +118,22 @@ def test_end_time(testset: Dataset):
 
 def test_time(testset: Dataset):
     check.greater(testset.end_time, testset.start_time)
+
+
+def test_time_step(testset: Dataset):
+    check.almost_equal(testset.time_step, 0.1, abs=0.02)
+
+
+def test_time_of_step0(testset: Dataset):
+    frame0 = testset[0]
+    time0 = testset.approximate_time_of_frame(0)
+    diff = frame0.timestamp.to_sec() - time0
+    check.almost_equal(diff, 0.0)
+
+
+def test_time_of_step1(testset: Dataset):
+    frame1 = testset[1]
+    time1 = testset.approximate_time_of_frame(1)
+    diff = frame1.timestamp.to_sec() - time1
+    check.less(diff, 0.5 * testset.time_step)
+
