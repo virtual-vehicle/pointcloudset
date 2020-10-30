@@ -47,15 +47,19 @@ class Dataset:
         """The ROS Pointcloud2 topic of the lidar."""
         self.keep_zeros = keep_zeros
         """Option for keeping zero elements in Lidar Frames. Default is False"""
-        self.time_step = self._calc_time_step()
-        """Time step between two frames. Assumed to be constant"""
         self._len = (self.types_and_topics_in_bag.topics)[self.topic].message_count
         """Hidden length propery"""
-        self.start_time = self[0].timestamp.to_sec()
+        self._first_frame_time = self[0].timestamp.to_sec()
         """ROS Start time in the bagfile in seconds. Derifed from the first frame
         since the bag.get_start_time() can deviate form the actual time in
         the first frame.
         """
+        self.start_time = self.bag.get_start_time()
+        """ROS start Time in the bagfile as a float."""
+        self.end_time = self.bag.get_end_time()
+        """ROS End Time in the bagfile as a float."""
+        self.time_step = self._calc_time_step()
+        """Time step between two frames. Assumed to be constant"""
 
     @property
     def types_and_topics_in_bag(self):
@@ -74,12 +78,6 @@ class Dataset:
         """Size on disk as an int.
         """
         return self.bag.size
-
-    @property
-    def end_time(self) -> float:
-        """ROS End Time in the bagfile as a float.
-        """
-        return self.bag.get_end_time()
 
     def __len__(self) -> int:
         """Number of available frames (i.e. Lidar messages)
@@ -144,7 +142,7 @@ class Dataset:
         Returns:
             float: The approximate time of the frame number in seconds.
         """
-        return self.start_time + frame_number * self.time_step
+        return self._first_frame_time + frame_number * self.time_step
 
     def get_frame_fast(self, frame_number: int) -> Frame:
         """Alternative to get a specific frame. Indented for larger bagfiles.
@@ -210,7 +208,5 @@ class Dataset:
         """Timestep between two frames. Assumed to be constant in the whole bagfile.
         This is currently the case for mechanical spinning lidar.
         """
-        frame0 = self[0]
-        frame1 = self[1]
-        return frame1.timestamp.to_sec() - frame0.timestamp.to_sec()
+        return (self.end_time - self.start_time) / len(self)
 

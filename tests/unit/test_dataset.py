@@ -108,12 +108,17 @@ def test_size(testset: Dataset):
 
 
 def test_start_time(testset: Dataset):
+    check.equal(testset.start_time, testset.bag.get_start_time())
+
+
+def test_first_frame_time(testset: Dataset):
     frame0 = testset[0]
-    check.equal(testset.start_time, frame0.timestamp.to_sec())
+    check.equal(testset._first_frame_time, frame0.timestamp.to_sec())
 
 
 def test_end_time(testset: Dataset):
     check.equal(testset.end_time, 1592833242.7881582)
+    check.greater(testset.end_time, testset.start_time)
 
 
 def test_time(testset: Dataset):
