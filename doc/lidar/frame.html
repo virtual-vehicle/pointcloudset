@@ -75,7 +75,7 @@ import IPython
 
 from .convert import convert
 from .geometry import plane
-from .plot.frame import plot_overlay, plotly_3d, pyntcloud_3d
+from .plot.frame import plot_overlay, plotly_3d, pyntcloud_3d, plot_overlay_plane
 
 ops = {
     &#34;&gt;&#34;: operator.gt,
@@ -214,7 +214,7 @@ class Frame:
             raise ValueError(&#34;no intersection fraund between the frames.&#34;)
 
     def add_column(self, column_name: str, values: np.array) -&gt; Frame:
-        &#34;&#34;&#34;Adding a new column to the data of the frame.
+        &#34;&#34;&#34;Adding a new column with a scalar value to the data of the frame.
 
         Args:
             column_name (str): name of the new column.
@@ -240,7 +240,7 @@ class Frame:
         if absolute_values:
             distances = np.absolute(distances)
         plane_str = np.array2string(
-            plane_model, precision=2, separator=&#34;,&#34;, suppress_small=True
+            plane_model, formatter={&#34;float_kind&#34;: lambda x: &#34;%.4f&#34; % x}
         )
         self.add_column(f&#34;distance to plane: {plane_str}&#34;, distances)
         return self
@@ -321,22 +321,39 @@ class Frame:
 
     def plot_overlay(self, frames_dict: dict) -&gt; plotly.graph_objs._figure.Figure:
         &#34;&#34;&#34;Overlay the Frame with the plot(s) of other Frames. For example overlay the
-        plot with a frame which contains
-        a cluster or a plane. Best used with smaller pointclouds.
+        plot with a frame which contains a cluster. Best used with smaller pointclouds.
 
         Example:
 
-        testframe.plot_overlay({&#34;Plane&#34;: plane,&#34;Cluster 1&#34;: cluster1,
-        &#34;Cluster 2&#34;: cluster2})
+        testframe.plot_overlay({&#34;Cluster 1&#34;: cluster1, &#34;Cluster 2&#34;: cluster2})
 
         Args:
-            frames_dict (dict): A dictionary in the form {&#34;Name&#34;, Frame}.
+            frames_dict (dict): A dictionary in the form {&#34;Name&#34; : Frame}.
             Can be arbitrarly long,
 
         Returns:
             plotly.graph_objs._figure.Figure: The interactive plot with overlays.
         &#34;&#34;&#34;
         return plot_overlay(self, frames_dict=frames_dict)
+
+    def plot_overlay_plane(self, plane_dict: dict) -&gt; plotly.graph_objs._figure.Figure:
+        &#34;&#34;&#34;Overlay the Frame with plot(s) of plane surfaces. Fore
+
+        Example:
+
+        plane = frame.plane_segmentation(0.05,5,100,return_plane_model=True)
+        frame.plot_overlay_plane({&#34;Plane 1&#34;: plane[&#34;plane_model&#34;]})
+
+        Args:
+            plane_dict (dict): A dictionary in the form {&#34;Name&#34; : plane_model}.
+            Plane model as given by plane_segementations: as a numpy array of the
+            paramters a,b,c and d.
+            Can be arbitrarly long.
+
+        Returns:
+            plotly.graph_objs._figure.Figure: The interactive plot with overlays.
+        &#34;&#34;&#34;
+        return plot_overlay_plane(self, plane_dict=plane_dict)
 
     def apply_filter(self, boolean_array: np.ndarray) -&gt; Frame:
         &#34;&#34;&#34;Generating a new Frame by removing points where filter is False.
@@ -671,7 +688,7 @@ testframe = testset[0]</p></div>
             raise ValueError(&#34;no intersection fraund between the frames.&#34;)
 
     def add_column(self, column_name: str, values: np.array) -&gt; Frame:
-        &#34;&#34;&#34;Adding a new column to the data of the frame.
+        &#34;&#34;&#34;Adding a new column with a scalar value to the data of the frame.
 
         Args:
             column_name (str): name of the new column.
@@ -697,7 +714,7 @@ testframe = testset[0]</p></div>
         if absolute_values:
             distances = np.absolute(distances)
         plane_str = np.array2string(
-            plane_model, precision=2, separator=&#34;,&#34;, suppress_small=True
+            plane_model, formatter={&#34;float_kind&#34;: lambda x: &#34;%.4f&#34; % x}
         )
         self.add_column(f&#34;distance to plane: {plane_str}&#34;, distances)
         return self
@@ -778,22 +795,39 @@ testframe = testset[0]</p></div>
 
     def plot_overlay(self, frames_dict: dict) -&gt; plotly.graph_objs._figure.Figure:
         &#34;&#34;&#34;Overlay the Frame with the plot(s) of other Frames. For example overlay the
-        plot with a frame which contains
-        a cluster or a plane. Best used with smaller pointclouds.
+        plot with a frame which contains a cluster. Best used with smaller pointclouds.
 
         Example:
 
-        testframe.plot_overlay({&#34;Plane&#34;: plane,&#34;Cluster 1&#34;: cluster1,
-        &#34;Cluster 2&#34;: cluster2})
+        testframe.plot_overlay({&#34;Cluster 1&#34;: cluster1, &#34;Cluster 2&#34;: cluster2})
 
         Args:
-            frames_dict (dict): A dictionary in the form {&#34;Name&#34;, Frame}.
+            frames_dict (dict): A dictionary in the form {&#34;Name&#34; : Frame}.
             Can be arbitrarly long,
 
         Returns:
             plotly.graph_objs._figure.Figure: The interactive plot with overlays.
         &#34;&#34;&#34;
         return plot_overlay(self, frames_dict=frames_dict)
+
+    def plot_overlay_plane(self, plane_dict: dict) -&gt; plotly.graph_objs._figure.Figure:
+        &#34;&#34;&#34;Overlay the Frame with plot(s) of plane surfaces. Fore
+
+        Example:
+
+        plane = frame.plane_segmentation(0.05,5,100,return_plane_model=True)
+        frame.plot_overlay_plane({&#34;Plane 1&#34;: plane[&#34;plane_model&#34;]})
+
+        Args:
+            plane_dict (dict): A dictionary in the form {&#34;Name&#34; : plane_model}.
+            Plane model as given by plane_segementations: as a numpy array of the
+            paramters a,b,c and d.
+            Can be arbitrarly long.
+
+        Returns:
+            plotly.graph_objs._figure.Figure: The interactive plot with overlays.
+        &#34;&#34;&#34;
+        return plot_overlay_plane(self, plane_dict=plane_dict)
 
     def apply_filter(self, boolean_array: np.ndarray) -&gt; Frame:
         &#34;&#34;&#34;Generating a new Frame by removing points where filter is False.
@@ -1005,7 +1039,7 @@ testframe = testset[0]</p></div>
 <span>def <span class="ident">add_column</span></span>(<span>self, column_name: str, values: np.array) ‑> <a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Adding a new column to the data of the frame.</p>
+<div class="desc"><p>Adding a new column with a scalar value to the data of the frame.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>column_name</code></strong> :&ensp;<code>str</code></dt>
@@ -1018,7 +1052,7 @@ testframe = testset[0]</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def add_column(self, column_name: str, values: np.array) -&gt; Frame:
-    &#34;&#34;&#34;Adding a new column to the data of the frame.
+    &#34;&#34;&#34;Adding a new column with a scalar value to the data of the frame.
 
     Args:
         column_name (str): name of the new column.
@@ -1168,7 +1202,7 @@ to the data of the frame. Uses the plane equation a x + b y + c z + d = 0</p>
     if absolute_values:
         distances = np.absolute(distances)
     plane_str = np.array2string(
-        plane_model, precision=2, separator=&#34;,&#34;, suppress_small=True
+        plane_model, formatter={&#34;float_kind&#34;: lambda x: &#34;%.4f&#34; % x}
     )
     self.add_column(f&#34;distance to plane: {plane_str}&#34;, distances)
     return self</code></pre>
@@ -1580,15 +1614,13 @@ over datapoint)</p>
 </code></dt>
 <dd>
 <div class="desc"><p>Overlay the Frame with the plot(s) of other Frames. For example overlay the
-plot with a frame which contains
-a cluster or a plane. Best used with smaller pointclouds.</p>
+plot with a frame which contains a cluster. Best used with smaller pointclouds.</p>
 <p>Example:</p>
-<p>testframe.plot_overlay({"Plane": plane,"Cluster 1": cluster1,
-"Cluster 2": cluster2})</p>
+<p>testframe.plot_overlay({"Cluster 1": cluster1, "Cluster 2": cluster2})</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>frames_dict</code></strong> :&ensp;<code>dict</code></dt>
-<dd>A dictionary in the form {"Name", Frame}.</dd>
+<dd>A dictionary in the form {"Name" : Frame}.</dd>
 </dl>
 <p>Can be arbitrarly long,</p>
 <h2 id="returns">Returns</h2>
@@ -1602,22 +1634,65 @@ a cluster or a plane. Best used with smaller pointclouds.</p>
 </summary>
 <pre><code class="python">def plot_overlay(self, frames_dict: dict) -&gt; plotly.graph_objs._figure.Figure:
     &#34;&#34;&#34;Overlay the Frame with the plot(s) of other Frames. For example overlay the
-    plot with a frame which contains
-    a cluster or a plane. Best used with smaller pointclouds.
+    plot with a frame which contains a cluster. Best used with smaller pointclouds.
 
     Example:
 
-    testframe.plot_overlay({&#34;Plane&#34;: plane,&#34;Cluster 1&#34;: cluster1,
-    &#34;Cluster 2&#34;: cluster2})
+    testframe.plot_overlay({&#34;Cluster 1&#34;: cluster1, &#34;Cluster 2&#34;: cluster2})
 
     Args:
-        frames_dict (dict): A dictionary in the form {&#34;Name&#34;, Frame}.
+        frames_dict (dict): A dictionary in the form {&#34;Name&#34; : Frame}.
         Can be arbitrarly long,
 
     Returns:
         plotly.graph_objs._figure.Figure: The interactive plot with overlays.
     &#34;&#34;&#34;
     return plot_overlay(self, frames_dict=frames_dict)</code></pre>
+</details>
+</dd>
+<dt id="lidar.frame.Frame.plot_overlay_plane"><code class="name flex">
+<span>def <span class="ident">plot_overlay_plane</span></span>(<span>self, plane_dict: dict) ‑> 'plotly.graph_objs._figure.Figure'</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Overlay the Frame with plot(s) of plane surfaces. Fore</p>
+<p>Example:</p>
+<p>plane = frame.plane_segmentation(0.05,5,100,return_plane_model=True)
+frame.plot_overlay_plane({"Plane 1": plane["plane_model"]})</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>plane_dict</code></strong> :&ensp;<code>dict</code></dt>
+<dd>A dictionary in the form {"Name" : plane_model}.</dd>
+</dl>
+<p>Plane model as given by plane_segementations: as a numpy array of the
+paramters a,b,c and d.
+Can be arbitrarly long.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>plotly.graph_objs._figure.Figure</code></dt>
+<dd>The interactive plot with overlays.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def plot_overlay_plane(self, plane_dict: dict) -&gt; plotly.graph_objs._figure.Figure:
+    &#34;&#34;&#34;Overlay the Frame with plot(s) of plane surfaces. Fore
+
+    Example:
+
+    plane = frame.plane_segmentation(0.05,5,100,return_plane_model=True)
+    frame.plot_overlay_plane({&#34;Plane 1&#34;: plane[&#34;plane_model&#34;]})
+
+    Args:
+        plane_dict (dict): A dictionary in the form {&#34;Name&#34; : plane_model}.
+        Plane model as given by plane_segementations: as a numpy array of the
+        paramters a,b,c and d.
+        Can be arbitrarly long.
+
+    Returns:
+        plotly.graph_objs._figure.Figure: The interactive plot with overlays.
+    &#34;&#34;&#34;
+    return plot_overlay_plane(self, plane_dict=plane_dict)</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.quantile_filter"><code class="name flex">
@@ -1845,6 +1920,7 @@ function of open3d.</p>
 <li><code><a title="lidar.frame.Frame.plane_segmentation" href="#lidar.frame.Frame.plane_segmentation">plane_segmentation</a></code></li>
 <li><code><a title="lidar.frame.Frame.plot_interactive" href="#lidar.frame.Frame.plot_interactive">plot_interactive</a></code></li>
 <li><code><a title="lidar.frame.Frame.plot_overlay" href="#lidar.frame.Frame.plot_overlay">plot_overlay</a></code></li>
+<li><code><a title="lidar.frame.Frame.plot_overlay_plane" href="#lidar.frame.Frame.plot_overlay_plane">plot_overlay_plane</a></code></li>
 <li><code><a title="lidar.frame.Frame.points" href="#lidar.frame.Frame.points">points</a></code></li>
 <li><code><a title="lidar.frame.Frame.quantile_filter" href="#lidar.frame.Frame.quantile_filter">quantile_filter</a></code></li>
 <li><code><a title="lidar.frame.Frame.remove_radius_outlier" href="#lidar.frame.Frame.remove_radius_outlier">remove_radius_outlier</a></code></li>
