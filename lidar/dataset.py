@@ -9,13 +9,15 @@ For more details on how to use it please refer to the usage.ipynb Notebook for a
 generators.
 """
 from __future__ import annotations
+
 import itertools
-from pathlib import Path
-from typing import Iterator, List, Union
 import warnings
+from pathlib import Path
+from typing import Callable, Iterator, List, Optional, Union
 
 import genpy
 import rosbag
+from tqdm import tqdm
 
 from .file.bag import frame_from_message
 from .frame import Frame
@@ -184,6 +186,40 @@ class Dataset:
             frame_list.append(frame_from_message(self, message))
         return frame_list
 
+    def apply_pipeline(
+        self,
+        pipeline: Callable[[Frame], Frame],
+        start_frame_number: Optional[int] = 0,
+        end_frame_number: Optional[int] = None,
+    ) -> List:
+        """Applies a function to all, or a given range, of Frames in the dataset.
+
+        Example:
+
+        def pipeline1(frame: Frame):
+            return frame.limit("x", 0, 1)
+
+        test_dataset.apply_pipeline(pipeline1, 0, 10)
+
+        Args:
+            pipeline (Callable[[Frame], Frame]): A function with a chain of processings on aframes.
+            start_frame_number (int, optional): Frame number to start. Defaults to 0.
+            end_frame_number (Optional, optional): Frame number to end. Defaults to None which corresponds to the end of the dataset.
+
+        Returns:
+            List: A list of results. Can be a list of Frames or other objects.
+        """
+        messages = self.bag.read_messages(topics=[self.topic])
+        sliced_messages = itertools.islice(messages, start_frame_number, None)
+        result_list = []
+        if end_frame_number is None:
+            end_frame_number = len(self)
+        for frame_number in tqdm(range(start_frame_number, end_frame_number, 1)):
+            message = next(sliced_messages)
+            frame = frame_from_message(self, message)
+            result_list.append(pipeline(frame))
+        return result_list
+
     def _slice_messages(self, frame_number: slice) -> Iterator:
         """Slice the ROS bag message generator
 
@@ -209,4 +245,3 @@ class Dataset:
         This is currently the case for mechanical spinning lidar.
         """
         return (self.end_time - self.start_time) / len(self)
-
