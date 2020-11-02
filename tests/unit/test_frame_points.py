@@ -1,10 +1,9 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 import pytest
 import pytest_check as check
 
-from lidar import Frame
-from lidar import Dataset
+from lidar import Dataset, Frame
 
 
 def test_extract_point1(testframe: Frame):

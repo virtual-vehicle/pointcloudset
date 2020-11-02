@@ -24,17 +24,18 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Union
 
+import IPython
 import numpy as np
 import open3d as o3d
 import pandas as pd
+import plotly
 import pyntcloud
 import rospy
-import plotly
-import IPython
 
 from .convert import convert
 from .geometry import plane
-from .plot.frame import plot_overlay, plotly_3d, pyntcloud_3d, plot_overlay_plane
+from .plot.frame import (plot_overlay, plot_overlay_plane, plotly_3d,
+                         pyntcloud_3d)
 
 ops = {
     ">": operator.gt,
