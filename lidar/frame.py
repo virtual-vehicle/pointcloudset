@@ -34,8 +34,7 @@ import rospy
 
 from .convert import convert
 from .geometry import plane
-from .plot.frame import (plot_overlay, plot_overlay_plane, plotly_3d,
-                         pyntcloud_3d)
+from .plot.frame import plot_overlay, plot_overlay_plane, plotly_3d, pyntcloud_3d
 
 ops = {
     ">": operator.gt,
@@ -251,6 +250,17 @@ class Frame:
             bool: `True`` if the lidar frame contains measurment data.
         """
         return not self.data.empty
+
+    def contains_original_id_number(self, original_id: int) -> bool:
+        """Check if lidar frame contains a specific orginal_id.
+
+        Args:
+            original_id (int): the orginal_id to check
+
+        Returns:
+            bool: True if the original_id exists.
+        """
+        return original_id in self.data["original_id"].values
 
     def plot_interactive(
         self, backend: str = "plotly", color: str = "intensity", **kwargs

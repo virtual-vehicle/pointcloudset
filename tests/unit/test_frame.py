@@ -22,6 +22,14 @@ def test_has_data(testframe_mini):
     check.equal(testframe_mini.has_data(), True)
 
 
+def test_contains_original_id_number(testframe: Frame):
+    check.equal(testframe.contains_original_id_number(4700), True)
+    check.equal(testframe.contains_original_id_number(100000000), False)
+    check.equal(testframe.contains_original_id_number(1), False)
+    check.equal(testframe.contains_original_id_number(0), False)
+    check.equal(testframe.contains_original_id_number(-1000), False)
+
+
 def test_points(testframe_mini):
     points = testframe_mini.points.points
     check.equal(type(points), pd.DataFrame)

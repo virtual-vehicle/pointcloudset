@@ -65,17 +65,17 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Union
 
+import IPython
 import numpy as np
 import open3d as o3d
 import pandas as pd
+import plotly
 import pyntcloud
 import rospy
-import plotly
-import IPython
 
 from .convert import convert
 from .geometry import plane
-from .plot.frame import plot_overlay, plotly_3d, pyntcloud_3d, plot_overlay_plane
+from .plot.frame import plot_overlay, plot_overlay_plane, plotly_3d, pyntcloud_3d
 
 ops = {
     &#34;&gt;&#34;: operator.gt,
@@ -291,6 +291,17 @@ class Frame:
             bool: `True`` if the lidar frame contains measurment data.
         &#34;&#34;&#34;
         return not self.data.empty
+
+    def contains_original_id_number(self, original_id: int) -&gt; bool:
+        &#34;&#34;&#34;Check if lidar frame contains a specific orginal_id.
+
+        Args:
+            original_id (int): the orginal_id to check
+
+        Returns:
+            bool: True if the original_id exists.
+        &#34;&#34;&#34;
+        return original_id in self.data[&#34;original_id&#34;].values
 
     def plot_interactive(
         self, backend: str = &#34;plotly&#34;, color: str = &#34;intensity&#34;, **kwargs
@@ -765,6 +776,17 @@ testframe = testset[0]</p></div>
             bool: `True`` if the lidar frame contains measurment data.
         &#34;&#34;&#34;
         return not self.data.empty
+
+    def contains_original_id_number(self, original_id: int) -&gt; bool:
+        &#34;&#34;&#34;Check if lidar frame contains a specific orginal_id.
+
+        Args:
+            original_id (int): the orginal_id to check
+
+        Returns:
+            bool: True if the original_id exists.
+        &#34;&#34;&#34;
+        return original_id in self.data[&#34;original_id&#34;].values
 
     def plot_interactive(
         self, backend: str = &#34;plotly&#34;, color: str = &#34;intensity&#34;, **kwargs
@@ -1255,6 +1277,37 @@ the correspoing point in Frame B. Both frames must contain the same orginal_id.<
     difference.columns = [f&#34;{column} difference&#34; for column in difference.columns]
     difference[&#34;original_id&#34;] = pointA[&#34;original_id&#34;]
     return difference</code></pre>
+</details>
+</dd>
+<dt id="lidar.frame.Frame.contains_original_id_number"><code class="name flex">
+<span>def <span class="ident">contains_original_id_number</span></span>(<span>self, original_id: int) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check if lidar frame contains a specific orginal_id.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>original_id</code></strong> :&ensp;<code>int</code></dt>
+<dd>the orginal_id to check</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>True if the original_id exists.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def contains_original_id_number(self, original_id: int) -&gt; bool:
+    &#34;&#34;&#34;Check if lidar frame contains a specific orginal_id.
+
+    Args:
+        original_id (int): the orginal_id to check
+
+    Returns:
+        bool: True if the original_id exists.
+    &#34;&#34;&#34;
+    return original_id in self.data[&#34;original_id&#34;].values</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.convert_timestamp"><code class="name flex">
@@ -1907,6 +1960,7 @@ function of open3d.</p>
 <li><code><a title="lidar.frame.Frame.calculate_distance_to_origin" href="#lidar.frame.Frame.calculate_distance_to_origin">calculate_distance_to_origin</a></code></li>
 <li><code><a title="lidar.frame.Frame.calculate_distance_to_plane" href="#lidar.frame.Frame.calculate_distance_to_plane">calculate_distance_to_plane</a></code></li>
 <li><code><a title="lidar.frame.Frame.calculate_single_point_difference" href="#lidar.frame.Frame.calculate_single_point_difference">calculate_single_point_difference</a></code></li>
+<li><code><a title="lidar.frame.Frame.contains_original_id_number" href="#lidar.frame.Frame.contains_original_id_number">contains_original_id_number</a></code></li>
 <li><code><a title="lidar.frame.Frame.convert_timestamp" href="#lidar.frame.Frame.convert_timestamp">convert_timestamp</a></code></li>
 <li><code><a title="lidar.frame.Frame.data" href="#lidar.frame.Frame.data">data</a></code></li>
 <li><code><a title="lidar.frame.Frame.describe" href="#lidar.frame.Frame.describe">describe</a></code></li>
