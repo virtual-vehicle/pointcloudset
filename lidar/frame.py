@@ -170,7 +170,7 @@ class Frame:
             self.data = self.data.merge(diff_df, on="original_id", how="left")
             return self
         else:
-            raise ValueError("no intersection fraund between the frames.")
+            raise ValueError("no intersection found between the frames.")
 
     def add_column(self, column_name: str, values: np.array) -> Frame:
         """Adding a new column with a scalar value to the data of the frame.
