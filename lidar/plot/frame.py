@@ -1,10 +1,9 @@
 """ # Frame plotting
 Used mainly by Frame.plot_interactive() but could also be used on its own.
 """
+import numpy as np
 import plotly.express as px
 import plotly.graph_objs as go
-import numpy as np
-
 
 intensity_scale = [[0, "black"], [0.1, "blue"], [0.2, "green"], [1, "red"]]
 colorscales = {

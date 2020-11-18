@@ -1,9 +1,7 @@
 import IPython
-
 import plotly
 import pytest
 import pytest_check as check
-
 
 from lidar import Frame
 

@@ -24,17 +24,17 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Union
 
+import IPython
 import numpy as np
 import open3d as o3d
 import pandas as pd
+import plotly
 import pyntcloud
 import rospy
-import plotly
-import IPython
 
 from .convert import convert
 from .geometry import plane
-from .plot.frame import plot_overlay, plotly_3d, pyntcloud_3d, plot_overlay_plane
+from .plot.frame import plot_overlay, plot_overlay_plane, plotly_3d, pyntcloud_3d
 
 ops = {
     ">": operator.gt,
@@ -88,7 +88,6 @@ class Frame:
 
     def _update_data(self, df: pd.DataFrame):
         """Utility function. Implicitly called when self.data is assigned."""
-        print("_update_data_called")
         self.__data = df
         self.timestamp = rospy.rostime.Time()
         self.points = pyntcloud.PyntCloud(self.__data[["x", "y", "z"]], mesh=None)
@@ -111,26 +110,6 @@ class Frame:
             return self.data.iloc[[id]]
         else:
             raise TypeError("Wrong type {}".format(type(id).__name__))
-
-    @classmethod
-    def from_pyntcloud(cls, pyntcloud_in: pyntcloud.PyntCloud) -> Frame:
-        """Converts a pyntcloud to a lidar Frame.
-
-        Args:
-            pyntcloud_in (pyntcloud.PyntCloud): pyntcloud object to convert to frame
-
-        Returns:
-            Frame: Frame object from pyntcloud
-        """
-        data = pyntcloud_in.points
-        return cls(data=data)
-
-    @classmethod
-    def from_file(cls, file_path: Path, **kwargs) -> Frame:
-        pyntcloud_in = pyntcloud.PyntCloud.from_file(file_path.as_posix(), **kwargs)
-        frame = cls.from_pyntcloud(pyntcloud_in)
-        frame.orig_file = file_path.as_posix()
-        return frame
 
     def extract_point(self, id: int, use_orginal_id: bool = False) -> pd.DataFrame:
         """Extract a specific point from the Frame defined by the point id. The id

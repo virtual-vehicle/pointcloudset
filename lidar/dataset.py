@@ -9,6 +9,7 @@ For more details on how to use it please refer to the usage.ipynb Notebook for a
 generators.
 """
 from __future__ import annotations
+
 import itertools
 from pathlib import Path
 from typing import Iterator, List, Union
