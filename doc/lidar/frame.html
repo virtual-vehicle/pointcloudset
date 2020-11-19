@@ -114,6 +114,27 @@ class Frame:
 
         self._check_index()
 
+    @property
+    def data(self):
+        return self.__data
+
+    @data.setter
+    def data(self, df: pd.DataFrame):
+        if not isinstance(df, pd.DataFrame):
+            raise TypeError(&#34;Data argument must be a DataFrame&#34;)
+        elif not set([&#34;x&#34;, &#34;y&#34;, &#34;z&#34;]).issubset(df.columns):
+            raise ValueError(&#34;Data must have x, y and z coordinates&#34;)
+        self._update_data(df)
+        self._check_index()
+
+    def _update_data(self, df: pd.DataFrame):
+        &#34;&#34;&#34;Utility function. Implicitly called when self.data is assigned.&#34;&#34;&#34;
+        self.__data = df
+        self.timestamp = rospy.rostime.Time()
+        self.points = pyntcloud.PyntCloud(self.__data[[&#34;x&#34;, &#34;y&#34;, &#34;z&#34;]], mesh=None)
+        self.measurments = self.__data.drop([&#34;x&#34;, &#34;y&#34;, &#34;z&#34;], axis=1)
+        self.orig_file = &#34;&#34;
+
     def __repr__(self) -&gt; str:
         return f&#34;{self.__class__.__name__}({self.data}, {self.timestamp}, {self.orig_file})&#34;
 
@@ -211,7 +232,7 @@ class Frame:
             self.data = self.data.merge(diff_df, on=&#34;original_id&#34;, how=&#34;left&#34;)
             return self
         else:
-            raise ValueError(&#34;no intersection fraund between the frames.&#34;)
+            raise ValueError(&#34;no intersection found between the frames.&#34;)
 
     def add_column(self, column_name: str, values: np.array) -&gt; Frame:
         &#34;&#34;&#34;Adding a new column with a scalar value to the data of the frame.
@@ -599,6 +620,27 @@ testframe = testset[0]</p></div>
 
         self._check_index()
 
+    @property
+    def data(self):
+        return self.__data
+
+    @data.setter
+    def data(self, df: pd.DataFrame):
+        if not isinstance(df, pd.DataFrame):
+            raise TypeError(&#34;Data argument must be a DataFrame&#34;)
+        elif not set([&#34;x&#34;, &#34;y&#34;, &#34;z&#34;]).issubset(df.columns):
+            raise ValueError(&#34;Data must have x, y and z coordinates&#34;)
+        self._update_data(df)
+        self._check_index()
+
+    def _update_data(self, df: pd.DataFrame):
+        &#34;&#34;&#34;Utility function. Implicitly called when self.data is assigned.&#34;&#34;&#34;
+        self.__data = df
+        self.timestamp = rospy.rostime.Time()
+        self.points = pyntcloud.PyntCloud(self.__data[[&#34;x&#34;, &#34;y&#34;, &#34;z&#34;]], mesh=None)
+        self.measurments = self.__data.drop([&#34;x&#34;, &#34;y&#34;, &#34;z&#34;], axis=1)
+        self.orig_file = &#34;&#34;
+
     def __repr__(self) -&gt; str:
         return f&#34;{self.__class__.__name__}({self.data}, {self.timestamp}, {self.orig_file})&#34;
 
@@ -696,7 +738,7 @@ testframe = testset[0]</p></div>
             self.data = self.data.merge(diff_df, on=&#34;original_id&#34;, how=&#34;left&#34;)
             return self
         else:
-            raise ValueError(&#34;no intersection fraund between the frames.&#34;)
+            raise ValueError(&#34;no intersection found between the frames.&#34;)
 
     def add_column(self, column_name: str, values: np.array) -&gt; Frame:
         &#34;&#34;&#34;Adding a new column with a scalar value to the data of the frame.
@@ -1166,7 +1208,7 @@ of the frame. (frame - frameB)</p>
         self.data = self.data.merge(diff_df, on=&#34;original_id&#34;, how=&#34;left&#34;)
         return self
     else:
-        raise ValueError(&#34;no intersection fraund between the frames.&#34;)</code></pre>
+        raise ValueError(&#34;no intersection found between the frames.&#34;)</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.calculate_distance_to_origin"><code class="name flex">
