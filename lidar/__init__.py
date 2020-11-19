@@ -72,4 +72,4 @@ from .dataset import Dataset
 from .file.frame_from_file import from_file
 from .frame import Frame
 
-__version__ = "dev_0.2.1"
+__version__ = "0.1.5 (dev_0.2.0)"
