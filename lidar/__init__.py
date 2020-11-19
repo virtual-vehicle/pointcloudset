@@ -72,4 +72,4 @@ from .dataset import Dataset
 from .file.frame_from_file import from_file
 from .frame import Frame
 
-__version__ = "pyntcloud_core2"
+__version__ = "dev_0.2.1"
