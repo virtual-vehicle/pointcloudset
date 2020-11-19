@@ -73,6 +73,27 @@ class Frame:
 
         self._check_index()
 
+    @property
+    def data(self):
+        return self.__data
+
+    @data.setter
+    def data(self, df: pd.DataFrame):
+        if not isinstance(df, pd.DataFrame):
+            raise TypeError("Data argument must be a DataFrame")
+        elif not set(["x", "y", "z"]).issubset(df.columns):
+            raise ValueError("Data must have x, y and z coordinates")
+        self._update_data(df)
+        self._check_index()
+
+    def _update_data(self, df: pd.DataFrame):
+        """Utility function. Implicitly called when self.data is assigned."""
+        self.__data = df
+        self.timestamp = rospy.rostime.Time()
+        self.points = pyntcloud.PyntCloud(self.__data[["x", "y", "z"]], mesh=None)
+        self.measurments = self.__data.drop(["x", "y", "z"], axis=1)
+        self.orig_file = ""
+
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.data}, {self.timestamp}, {self.orig_file})"
 

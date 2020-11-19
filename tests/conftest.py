@@ -14,6 +14,11 @@ def testbag1():
 
 
 @pytest.fixture()
+def testlas1():
+    return Path(__file__).parent.absolute() / "testdata/diamond.las"
+
+
+@pytest.fixture()
 def testset(testbag1):
     return Dataset(testbag1, topic="/os1_cloud_node/points", keep_zeros=False)
 
@@ -105,4 +110,3 @@ def testframe_mini_real0(testframe0):
         .limit("z", -1, 1)
         .limit("intensity", 0, 10)
     )
-
