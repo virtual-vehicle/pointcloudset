@@ -188,7 +188,7 @@ class Dataset:
 
     def apply_pipeline(
         self,
-        pipeline: Callable[[Frame], Frame],
+        pipeline: Callable[[Frame, int], Frame],
         start_frame_number: Optional[int] = 0,
         end_frame_number: Optional[int] = None,
     ) -> List:
@@ -196,7 +196,7 @@ class Dataset:
 
         Example:
 
-        def pipeline1(frame: Frame):
+        def pipeline1(frame: Frame, frame_number: int):
             return frame.limit("x", 0, 1)
 
         test_dataset.apply_pipeline(pipeline1, 0, 10)
@@ -217,7 +217,7 @@ class Dataset:
         for frame_number in tqdm(range(start_frame_number, end_frame_number, 1)):
             message = next(sliced_messages)
             frame = frame_from_message(self, message)
-            result_list.append(pipeline(frame))
+            result_list.append(pipeline(frame, frame_number))
         return result_list
 
     def _slice_messages(self, frame_number: slice) -> Iterator:
