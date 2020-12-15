@@ -4,6 +4,7 @@ Used mainly by Frame.plot_interactive() but could also be used on its own.
 import numpy as np
 import plotly.express as px
 import plotly.graph_objs as go
+from typing import List
 
 intensity_scale = [[0, "black"], [0.1, "blue"], [0.2, "green"], [1, "red"]]
 colorscales = {
@@ -13,7 +14,12 @@ colorscales = {
 
 
 def plotly_3d(
-    frame, color: str, point_size: float = 2, prepend_id: str = "", **kwargs,
+    frame,
+    color: str,
+    point_size: float = 2,
+    prepend_id: str = "",
+    hover_data: List[str] = [],
+    **kwargs,
 ):
     """Plot a Frame as a 3D scatter plot with plotly.
 
@@ -23,6 +29,8 @@ def plotly_3d(
         frame (Frame): the frame to plot
         color (str): Which column to plot. For example "intensity"
         point_size (float, optional): Size of each point. Defaults to 2.
+        prepend_id (str, optional): string before point id to display in hover
+        hover data (list, optional): data columns to display in hover. Default is all of them.
 
     Raises:
         ValueError: if the color is not in the data
@@ -30,10 +38,16 @@ def plotly_3d(
     Returns:
         Plotly plot: The interactive plotly plot, best use inside a jupyter notebook.
     """
-    if color != None and color not in frame.data.columns:
+    if color is not None and color not in frame.data.columns:
         raise ValueError(f"choose any of {list(frame.data.columns)} or None")
 
     ids = [prepend_id + "id=" + str(i) for i in range(0, frame.data.shape[0])]
+
+    if hover_data == []:
+        hover_data = frame.data.columns
+
+    if not all([x in frame.data.columns for x in hover_data]):
+        raise ValueError(f"choose a list of {list(frame.data.columns)} or []")
 
     fig = px.scatter_3d(
         frame.data,
@@ -42,14 +56,16 @@ def plotly_3d(
         z="z",
         color=color,
         hover_name=ids,
-        hover_data=frame.measurments.columns,
+        hover_data=hover_data,
         title=frame.convert_timestamp(),
         **kwargs,
     )
     fig.update_traces(
         marker=dict(size=point_size, line=dict(width=0)), selector=dict(mode="markers")
     )
-    fig.update_layout(scene_aspectmode="data",)
+    fig.update_layout(
+        scene_aspectmode="data",
+    )
     return fig
 
 
