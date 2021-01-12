@@ -210,8 +210,10 @@ class Frame:
         to the data of the frame. Uses the plane equation a x + b y + c z + d = 0
 
         Args:
-            plane_model (np.array): [a, b, c, d], could be provided by plane_segmentation
-            absolute_values (bool, optional): Calculate absolute distances if True. Defaults to True.
+            plane_model (np.array): [a, b, c, d], could be provided by
+                plane_segmentation.
+            absolute_values (bool, optional): Calculate absolute distances if True.
+                Defaults to True.
         """
         points = self.points.xyz
         distances = np.asarray(
@@ -236,8 +238,7 @@ class Frame:
         return self
 
     def describe(self) -> pd.DataFrame:
-        """Generate descriptive statistics based on .data.describe().
-        """
+        """Generate descriptive statistics based on .data.describe()."""
         return self.data.describe()
 
     def get_open3d_points(self) -> o3d.open3d_pybind.geometry.PointCloud:
@@ -285,9 +286,7 @@ class Frame:
 
     def plot_interactive(
         self, backend: str = "plotly", color: str = "intensity", **kwargs
-    ) -> Union[
-        plotly.graph_objs._figure.Figure, IPython.lib.display.IFrame,
-    ]:
+    ) -> Union[plotly.graph_objs._figure.Figure, IPython.lib.display.IFrame]:
         """Generate either a plotly or pyntcloud 3D plot.
         (Note: Plotly plots also give index of datapoint in pandas array when hovering
         over datapoint)
@@ -429,7 +428,7 @@ class Frame:
         return self.apply_filter(bool_array)
 
     def remove_radius_outlier(self, nb_points: int, radius: float) -> Frame:
-        """    Function to remove points that have less than nb_points in a given
+        """Function to remove points that have less than nb_points in a given
         sphere of a given radius Parameters.
         Args:
             nb_points (int) – Number of points within the radius.
@@ -475,13 +474,17 @@ class Frame:
         Based on open3D plane segmentation.
 
         Args:
-            distance_threshold (float): Max distance a point can be from the plane model, and still be considered an inlier.
-            ransac_n (int):  Number of initial points to be considered inliers in each iteration.
+            distance_threshold (float): Max distance a point can be from the plane
+                        model, and still be considered an inlier.
+            ransac_n (int):  Number of initial points to be considered inliers in
+                        each iteration.
             num_iterations (int): Number of iterations.
-            return_plane_model (bool, optional): Return also plane model parameters. Defaults to False.
+            return_plane_model (bool, optional): Return also plane model parameters.
+                        Defaults to False.
 
         Returns:
-            Frame or dict: Frame with inliers or a dict of Frame with inliers and the plane parameters.
+            Frame or dict: Frame with inliers or a dict of Frame with inliers and the
+            plane parameters.
         """
         pcd = self.get_open3d_points()
         plane_model, inliers = pcd.segment_plane(
@@ -516,8 +519,7 @@ class Frame:
         self.data.to_csv(destination_folder, index=False)
 
     def _check_index(self):
-        """A private function to check if the index of self.data is sane.
-        """
+        """A private function to check if the index of self.data is sane."""
         if len(self) > 0:
             assert self.data.index[0] == 0, "index should start with 0"
             assert self.data.index[-1] + 1 == len(
