@@ -5,8 +5,8 @@ import pyntcloud
 from ..frame import Frame
 
 
-def from_file(file_path: Path, **kwargs) -> Frame:
-    """Generate a frame from a file. Any filltype supported by pyntcloud is also
+def frame_from_file(file_path: Path, **kwargs) -> Frame:
+    """Generate a frame from a file. Any filetype supported by pyntcloud is also
     supported here.
 
     Args:
