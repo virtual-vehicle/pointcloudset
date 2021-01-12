@@ -24,11 +24,13 @@
 		"autoDocstring.docstringFormat": "google",
 		"python.linting.pylintPath": "/opt/conda/bin/pylint",
 		"cSpell.maxNumberOfProblems": 500,
-		"python.testing.pytestEnabled": true
+		"python.testing.pytestEnabled": true,
+		"jupyter.alwaysTrustNotebooks": true
 	},
 	"postCreateCommand": "pip install -e .",
 	"extensions": [
 		"ms-python.python",
+		"ms-python.vscode-pylance",
 		"njpwerner.autodocstring",
 		"ms-azuretools.vscode-docker",
 		"mhutchie.git-graph",
