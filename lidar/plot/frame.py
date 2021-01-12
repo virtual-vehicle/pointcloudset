@@ -121,6 +121,7 @@ def plot_overlay_plane(orig_frame, plane_dict: dict):
         trace2 = p2.data[0]
         p1.add_trace(trace2)
         i = i + 1
+    p1.update_layout(scene_aspectmode="data")
     return p1
 
 
