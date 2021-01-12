@@ -7,7 +7,6 @@ from lidar import Frame
 
 
 def test_from_file_las(testlas1: Path):
-    frame = lidar.from_file(testlas1)
+    frame = lidar.frame_from_file(testlas1)
     check.equal(type(frame), Frame)
     check.equal(frame.orig_file, "/workspaces/lidar/tests/testdata/diamond.las")
-
