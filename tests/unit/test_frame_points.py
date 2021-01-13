@@ -150,5 +150,6 @@ def test_point_all_difference(testframe0: Frame, testframe_mini_real: Frame):
         res.data[res.data["original_id"] == 9701]["x difference"].values[0], manual_diff
     )
     check.equal(
-        len(res.data.columns.values), 19,
+        len(res.data.columns.values),
+        19,
     )

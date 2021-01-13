@@ -22,5 +22,12 @@ def test_distance_to_point_error1():
 def test_distance_to_point_error2():
     with pytest.raises(ValueError):
         plane.distance_to_point(
-            point=np.array([1, 0, 0]), plane_model=np.array([1, 0, 0,])
+            point=np.array([1, 0, 0]),
+            plane_model=np.array(
+                [
+                    1,
+                    0,
+                    0,
+                ]
+            ),
         )

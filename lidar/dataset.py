@@ -25,7 +25,10 @@ from .frame import Frame
 
 class Dataset:
     def __init__(
-        self, bagfile: Path, topic: str, keep_zeros: bool = False,
+        self,
+        bagfile: Path,
+        topic: str,
+        keep_zeros: bool = False,
     ):
         """The Dataset.
 
@@ -65,25 +68,20 @@ class Dataset:
 
     @property
     def types_and_topics_in_bag(self):
-        """Types and Topics in the original ROS bagfile as rosbag.bag.TypesAndTopicsTuple
-        """
+        """Types and Topics in the original ROS bagfile as rosbag.bag.TypesAndTopicsTuple"""
         return self.bag.get_type_and_topic_info()
 
     @property
     def topics_in_bag(self) -> dict:
-        """Topics in the ROS bagfile as a dict.
-        """
         return self.types_and_topics_in_bag.topics
 
     @property
     def size(self) -> int:
-        """Size on disk as an int.
-        """
+        """Size on disk as an int."""
         return self.bag.size
 
     def __len__(self) -> int:
-        """Number of available frames (i.e. Lidar messages)
-        """
+        """Number of available frames (i.e. Lidar messages)"""
         return self._len
 
     def __str__(self):

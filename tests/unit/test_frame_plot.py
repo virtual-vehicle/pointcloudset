@@ -15,7 +15,8 @@ def test_plot1(testframe_mini: Frame):
 def test_plot_plotly(testframe_mini: Frame):
     plot = testframe_mini.plot_interactive(backend="plotly")
     check.equal(
-        type(plot), plotly.graph_objs._figure.Figure,
+        type(plot),
+        plotly.graph_objs._figure.Figure,
     )
 
 

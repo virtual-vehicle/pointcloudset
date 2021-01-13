@@ -24,7 +24,13 @@ def get_version(rel_path):
 
 setup(
     name="lidar",
-    packages=["lidar", "lidar.file", "lidar.convert", "lidar.plot", "lidar.geometry",],
+    packages=[
+        "lidar",
+        "lidar.file",
+        "lidar.convert",
+        "lidar.plot",
+        "lidar.geometry",
+    ],
     version=get_version("lidar/__init__.py"),
     author="Thomas Gölles, Sarah Haas",
     author_email="thomas.goelles@v2c2.at",
