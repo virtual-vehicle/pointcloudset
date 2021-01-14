@@ -18,21 +18,16 @@ Frame object is generated at each processing stage.
 from __future__ import annotations
 
 import operator
-import traceback
 import warnings
-from datetime import datetime
 from pathlib import Path
-from typing import List, Union
+from typing import Union
 
-import IPython
 import numpy as np
-import open3d as o3d
 import pandas as pd
 import plotly
-import pyntcloud
-import rospy
+import IPython
 
-from .convert import convert
+from .frame_core import FrameCore
 from .geometry import plane
 from .plot.frame import plot_overlay, plot_overlay_plane, plotly_3d, pyntcloud_3d
 
@@ -43,184 +38,6 @@ ops = {
     "<=": operator.le,
     "==": operator.eq,
 }
-
-
-class FrameCore:
-    def __init__(
-        self,
-        data: pd.DataFrame,
-        orig_file: str = "",
-        timestamp: rospy.rostime.Time = rospy.rostime.Time(),
-    ):
-        """One Frame of lidar measurements.
-
-        Example:
-        testbag = Path().cwd().parent.joinpath("tests/testdata/test.bag")
-        testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
-        testframe = testset[0]
-
-        """
-        self.data = data
-        """All the data, x,y.z and intensity, range and more"""
-        self.timestamp = timestamp
-        """ROS timestamp"""
-        self.points = pyntcloud.PyntCloud(self.data[["x", "y", "z"]], mesh=None)
-        """Pyntcloud object with x,y,z coordinates"""
-        self.measurments = self.data.drop(["x", "y", "z"], axis=1)
-        """Measurments aka. scalar field of values at each point"""
-        self.orig_file = orig_file
-        """Path to bag file. Defaults to empty"""
-
-        self._check_index()
-
-    @property
-    def timestamp_str(self) -> str:
-        """Convert ROS timestamp to human readable date and time.
-
-        Returns:
-            str: date time string
-        """
-        return datetime.fromtimestamp(self.timestamp.to_sec()).strftime(
-            "%A, %B %d, %Y %I:%M:%S"
-        )
-
-    @property
-    def data(self):
-        return self.__data
-
-    @data.setter
-    def data(self, df: pd.DataFrame):
-        if not isinstance(df, pd.DataFrame):
-            raise TypeError("Data argument must be a DataFrame")
-        elif not set(["x", "y", "z"]).issubset(df.columns):
-            raise ValueError("Data must have x, y and z coordinates")
-        self._update_data(df)
-        self._check_index()
-
-    def _update_data(self, df: pd.DataFrame):
-        """Utility function. Implicitly called when self.data is assigned."""
-        self.__data = df
-        self.timestamp = rospy.rostime.Time()
-        self.points = pyntcloud.PyntCloud(self.__data[["x", "y", "z"]], mesh=None)
-        self.measurments = self.__data.drop(["x", "y", "z"], axis=1)
-        self.orig_file = ""
-
-    def _check_index(self):
-        """A private function to check if the index of self.data is sane."""
-        if len(self) > 0:
-            assert self.data.index[0] == 0, "index should start with 0"
-            assert self.data.index[-1] + 1 == len(
-                self
-            ), "index should be as long as the data"
-            assert (
-                self.data.index.is_monotonic_increasing
-            ), "index should be monotonic increasing"
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.data}, {self.timestamp}, {self.orig_file})"
-
-    def __str__(self) -> str:
-        return f"pointcloud: with {len(self)} points, data:{list(self.data.columns)}, from {self.timestamp_str}"
-
-    def __len__(self) -> int:
-        return len(self.data)
-
-    def __getitem__(self, id: Union[int, slice]) -> pd.DataFrame:
-        if isinstance(id, slice):
-            return self.data.iloc[id]
-        elif isinstance(id, int):
-            return self.data.iloc[[id]]
-        else:
-            raise TypeError("Wrong type {}".format(type(id).__name__))
-
-    def _add_column(self, column_name: str, values: np.array) -> FrameCore:
-        """Adding a new column with a scalar value to the data of the frame.
-
-        Args:
-            column_name (str): name of the new column.
-            values (np.array): Values of the new column.
-        """
-        self.data[column_name] = values
-        return self
-
-    def describe(self) -> pd.DataFrame:
-        """Generate descriptive statistics based on .data.describe()."""
-        return self.data.describe()
-
-    def _has_data(self) -> bool:
-        """Check if lidar frame has data. Data here means point coordinates and
-        measruments at each point of the pointcloud.
-
-        Returns:
-            bool: `True`` if the lidar frame contains measurment data.
-        """
-        return not self.data.empty
-
-    def extract_point(self, id: int, use_orginal_id: bool = False) -> pd.DataFrame:
-        """Extract a specific point from the Frame defined by the point id. The id
-        can be the current index of the data from the Frame or the original_id.
-
-        Args:
-            id (int): Id number
-            use_orginal_id (bool, optional): Use normal index or the orginal_id.
-            Defaults to False.
-
-        Returns:
-            pd.DataFrame: a frame which only containse the defined points.
-        """
-        try:
-            if use_orginal_id:
-                point = self.data[self.data["original_id"] == id]
-                if len(point) == 0:
-                    raise IndexError
-                elif len(point) != 1:
-                    raise Exception()
-            else:
-                point = self[id]
-        except IndexError:
-            raise IndexError(f"point with {id} does note exist.")
-        except Exception:
-            print(traceback.print_exc())
-        return point.reset_index(drop=True)
-
-    def _get_open3d_points(self) -> o3d.open3d_pybind.geometry.PointCloud:
-        """Extract points as open3D PointCloud object. Needed for processing with the
-        open3d package.
-
-        Returns:
-            o3d.open3d_pybind.geometry.PointCloud: the pointcloud
-        """
-        converted = convert.convert_df2pcd(self.points.points)
-        assert len(np.asarray(converted.points)) == len(
-            self
-        ), "len of open3d points should be the same as len of the Frame"
-        return convert.convert_df2pcd(self.points.points)
-
-    def _contains_original_id_number(self, original_id: int) -> bool:
-        """Check if lidar frame contains a specific orginal_id.
-
-        Args:
-            original_id (int): the orginal_id to check
-
-        Returns:
-            bool: True if the original_id exists.
-        """
-        return original_id in self.data["original_id"].values
-
-    def _select_by_index(self, index_to_keep: List[int]) -> Frame:
-        """Generating a new Frame by keeping index_to_keep.
-
-        Usefull for open3d generate index lists. Similar to the the select_by_index
-        function of open3d.
-
-        Args:
-            index_to_keep (List[int]): List of indices to keep
-
-        Returns:
-            Frame: Frame with kept rows and reindexed data and points
-        """
-        new_data = self.data.iloc[index_to_keep].reset_index(drop=True)
-        return Frame(new_data, timestamp=self.timestamp)
 
 
 class Frame(FrameCore):
@@ -441,7 +258,7 @@ class Frame(FrameCore):
         bool_array = (cluster_labels["cluster"] == cluster_number).values
         return self.apply_filter(bool_array)
 
-    def remove_radius_outlier(self, nb_points: int, radius: float) -> Frame:
+    def remove_radius_outlier(self, nb_points: int, radius: float) -> FrameCore:
         """Function to remove points that have less than nb_points in a given
         sphere of a given radius Parameters.
         Args:
@@ -483,7 +300,7 @@ class Frame(FrameCore):
         ransac_n: int,
         num_iterations: int,
         return_plane_model: bool = False,
-    ) -> Union[dict, Frame]:
+    ) -> Union[dict, FrameCore]:
         """Segments a plane in the point cloud using the RANSAC algorithm.
         Based on open3D plane segmentation.
 

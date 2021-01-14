@@ -1,8 +1,7 @@
-import numpy as np
-import pytest
 import pytest_check as check
 
 from lidar import Frame
+from lidar.frame_core import FrameCore
 
 
 def test_plane_segmentation_of_open3d(testframe):
@@ -42,7 +41,7 @@ def test_plane_segmentation(testframe):
         num_iterations=50,
         return_plane_model=False,
     )
-    check.equal(type(plane), Frame)
+    check.equal(type(plane), FrameCore)
     check.equal(len(plane), 387)
 
 
@@ -53,7 +52,7 @@ def test_plane_segmentation_2(testframe):
         num_iterations=50,
         return_plane_model=False,
     )
-    check.equal(type(plane), Frame)
+    check.equal(type(plane), FrameCore)
     check.equal(len(plane), 387)
 
 
