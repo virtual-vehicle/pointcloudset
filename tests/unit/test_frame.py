@@ -37,7 +37,7 @@ def test_points(testframe_mini):
 
 
 def test_get_open3d_points(testframe_mini):
-    pointcloud = testframe_mini.get_open3d_points()
+    pointcloud = testframe_mini._get_open3d_points()
     check.equal(type(pointcloud), o3d.open3d_pybind.geometry.PointCloud)
     check.equal(pointcloud.has_points(), True)
     check.equal(len(np.asarray(pointcloud.points)), len(testframe_mini))
@@ -244,7 +244,7 @@ def test_testframe_withzero_data(
 def test_testframe_pointcloud(
     testframe_withzero: Frame, reference_pointcloud_withzero_dataframe: pd.DataFrame
 ):
-    pointcloud = testframe_withzero.get_open3d_points()
+    pointcloud = testframe_withzero._get_open3d_points()
     array = np.asarray(pointcloud.points)
     pointcloud_df = pd.DataFrame(array)
     # pointcloud_df.to_pickle(

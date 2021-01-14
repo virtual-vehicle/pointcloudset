@@ -183,7 +183,7 @@ class FrameCore:
             print(traceback.print_exc())
         return point.reset_index(drop=True)
 
-    def get_open3d_points(self) -> o3d.open3d_pybind.geometry.PointCloud:
+    def _get_open3d_points(self) -> o3d.open3d_pybind.geometry.PointCloud:
         """Extract points as open3D PointCloud object. Needed for processing with the
         open3d package.
 
@@ -421,7 +421,7 @@ class Frame(FrameCore):
             pd.DataFrame: Dataframe with list of clusters.
         """
         labels = np.array(
-            self.get_open3d_points().cluster_dbscan(
+            self._get_open3d_points().cluster_dbscan(
                 eps=eps, min_points=min_points, print_progress=False
             )
         )
@@ -450,7 +450,7 @@ class Frame(FrameCore):
         Returns:
             Tuple[open3d.geometry.PointCloud, List[int]] :
         """
-        pcd = self.get_open3d_points()
+        pcd = self._get_open3d_points()
         cl, index_to_keep = pcd.remove_radius_outlier(
             nb_points=nb_points, radius=radius
         )
@@ -500,7 +500,7 @@ class Frame(FrameCore):
             Frame or dict: Frame with inliers or a dict of Frame with inliers and the
             plane parameters.
         """
-        pcd = self.get_open3d_points()
+        pcd = self._get_open3d_points()
         plane_model, inliers = pcd.segment_plane(
             distance_threshold=distance_threshold,
             ransac_n=ransac_n,
