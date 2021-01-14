@@ -19,7 +19,7 @@ def test_init(testframe_mini_df: pd.DataFrame):
 
 
 def test_has_data(testframe_mini):
-    check.equal(testframe_mini.has_data(), True)
+    check.equal(testframe_mini._has_data(), True)
 
 
 def test_contains_original_id_number(testframe: Frame):
@@ -120,7 +120,7 @@ def test_repr(testframe_mini: Frame):
 
 
 def test_add_column(testframe_mini: Frame):
-    newframe = testframe_mini.add_column("test", testframe_mini.data["x"])
+    newframe = testframe_mini._add_column("test", testframe_mini.data["x"])
     check.equal(type(newframe), Frame)
     after_columns = list(testframe_mini.data.columns.values)
     check.equal(
@@ -166,14 +166,14 @@ def test_describe(testframe: Frame):
 # test with actual data
 def test_testframe_1_with_zero(testframe_withzero: Frame):
     check.equal(len(testframe_withzero), 131072)
-    check.equal(testframe_withzero.has_data(), True)
+    check.equal(testframe_withzero._has_data(), True)
     check.equal(testframe_withzero.timestamp.to_time(), 1592833242.7559116)
 
 
 def test_testframe_1(testframe: Frame):
     # testframe.data.to_pickle("/workspaces/lidar/tests/testdata/testframe_dataframe.pkl")
     check.equal(len(testframe), 45809)
-    check.equal(testframe.has_data(), True)
+    check.equal(testframe._has_data(), True)
     check.equal(testframe.timestamp.to_time(), 1592833242.7559116)
     check.equal(len(testframe), 45809)
 
@@ -186,7 +186,7 @@ def test_testframe_index(testframe):
 
 def test_testframe_2(testframe_mini: Frame):
     check.equal(len(testframe_mini), 8)
-    check.equal(testframe_mini.has_data(), True)
+    check.equal(testframe_mini._has_data(), True)
 
 
 def test_testframe_data(testframe: Frame):

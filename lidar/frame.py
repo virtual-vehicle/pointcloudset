@@ -133,7 +133,7 @@ class FrameCore:
         else:
             raise TypeError("Wrong type {}".format(type(id).__name__))
 
-    def add_column(self, column_name: str, values: np.array) -> FrameCore:
+    def _add_column(self, column_name: str, values: np.array) -> FrameCore:
         """Adding a new column with a scalar value to the data of the frame.
 
         Args:
@@ -147,7 +147,7 @@ class FrameCore:
         """Generate descriptive statistics based on .data.describe()."""
         return self.data.describe()
 
-    def has_data(self) -> bool:
+    def _has_data(self) -> bool:
         """Check if lidar frame has data. Data here means point coordinates and
         measruments at each point of the pointcloud.
 
@@ -300,7 +300,7 @@ class Frame(FrameCore):
         plane_str = np.array2string(
             plane_model, formatter={"float_kind": lambda x: "%.4f" % x}
         )
-        self.add_column(f"distance to plane: {plane_str}", distances)
+        self._add_column(f"distance to plane: {plane_str}", distances)
         return self
 
     def calculate_distance_to_origin(self) -> Frame:
@@ -310,7 +310,7 @@ class Frame(FrameCore):
         point_a = np.array((0.0, 0.0, 0.0))
         points = self.points.xyz
         distances = np.array([np.linalg.norm(point_a - point) for point in points])
-        self.add_column("distance to origin", distances)
+        self._add_column("distance to origin", distances)
         return self
 
     def plot_interactive(
