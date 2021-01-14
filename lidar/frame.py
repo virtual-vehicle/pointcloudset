@@ -195,7 +195,7 @@ class FrameCore:
             "%A, %B %d, %Y %I:%M:%S"
         )
 
-    def contains_original_id_number(self, original_id: int) -> bool:
+    def _contains_original_id_number(self, original_id: int) -> bool:
         """Check if lidar frame contains a specific orginal_id.
 
         Args:
@@ -206,7 +206,7 @@ class FrameCore:
         """
         return original_id in self.data["original_id"].values
 
-    def select_by_index(self, index_to_keep: List[int]) -> Frame:
+    def _select_by_index(self, index_to_keep: List[int]) -> Frame:
         """Generating a new Frame by keeping index_to_keep.
 
         Usefull for open3d generate index lists. Similar to the the select_by_index
@@ -453,7 +453,7 @@ class Frame(FrameCore):
         cl, index_to_keep = pcd.remove_radius_outlier(
             nb_points=nb_points, radius=radius
         )
-        return self.select_by_index(index_to_keep)
+        return self._select_by_index(index_to_keep)
 
     def quantile_filter(
         self, dim: str, relation: str = ">=", cut_quantile: float = 0.5
@@ -511,7 +511,7 @@ class Frame(FrameCore):
                 is high. Try to reduce the area of interesst before using
                 plane_segmentation. Caused by open3D."""
             )
-        inlier_Frame = self.select_by_index(inliers)
+        inlier_Frame = self._select_by_index(inliers)
         if return_plane_model:
             return {"Frame": inlier_Frame, "plane_model": plane_model}
         else:
