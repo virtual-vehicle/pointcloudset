@@ -57,7 +57,7 @@ def plotly_3d(
         color=color,
         hover_name=ids,
         hover_data=hover_data,
-        title=frame.convert_timestamp(),
+        title=frame.timestamp_str,
         **kwargs,
     )
     fig.update_traces(

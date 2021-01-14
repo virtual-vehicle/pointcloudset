@@ -74,6 +74,17 @@ class FrameCore:
         self._check_index()
 
     @property
+    def timestamp_str(self) -> str:
+        """Convert ROS timestamp to human readable date and time.
+
+        Returns:
+            str: date time string
+        """
+        return datetime.fromtimestamp(self.timestamp.to_sec()).strftime(
+            "%A, %B %d, %Y %I:%M:%S"
+        )
+
+    @property
     def data(self):
         return self.__data
 
@@ -109,7 +120,7 @@ class FrameCore:
         return f"{self.__class__.__name__}({self.data}, {self.timestamp}, {self.orig_file})"
 
     def __str__(self) -> str:
-        return f"pointcloud: with {len(self)} points, data:{list(self.data.columns)}, from {self.convert_timestamp()}"
+        return f"pointcloud: with {len(self)} points, data:{list(self.data.columns)}, from {self.timestamp_str}"
 
     def __len__(self) -> int:
         return len(self.data)
@@ -184,16 +195,6 @@ class FrameCore:
             self
         ), "len of open3d points should be the same as len of the Frame"
         return convert.convert_df2pcd(self.points.points)
-
-    def convert_timestamp(self) -> str:
-        """Convert ROS timestamp to human readable date and time.
-
-        Returns:
-            str: date time string
-        """
-        return datetime.fromtimestamp(self.timestamp.to_sec()).strftime(
-            "%A, %B %d, %Y %I:%M:%S"
-        )
 
     def _contains_original_id_number(self, original_id: int) -> bool:
         """Check if lidar frame contains a specific orginal_id.
