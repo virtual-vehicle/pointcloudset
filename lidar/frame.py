@@ -4,7 +4,7 @@
 For one lidar measurement frame. Typically an automotive lidar records many frames per
 second.
 
-One Frame consists mainly of pyntcloud pointcloud (.pointcloud) and a pandas dataframe
+One Frame consists mainly of pyntcloud pointcloud (.points) and a pandas dataframe
 (.data) with all the associated data.
 
 Note that the index of the points is not preserved when applying processing. This
@@ -45,7 +45,7 @@ ops = {
 }
 
 
-class Frame:
+class FrameCore:
     def __init__(
         self,
         data: pd.DataFrame,
@@ -94,6 +94,17 @@ class Frame:
         self.measurments = self.__data.drop(["x", "y", "z"], axis=1)
         self.orig_file = ""
 
+    def _check_index(self):
+        """A private function to check if the index of self.data is sane."""
+        if len(self) > 0:
+            assert self.data.index[0] == 0, "index should start with 0"
+            assert self.data.index[-1] + 1 == len(
+                self
+            ), "index should be as long as the data"
+            assert (
+                self.data.index.is_monotonic_increasing
+            ), "index should be monotonic increasing"
+
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.data}, {self.timestamp}, {self.orig_file})"
 
@@ -110,6 +121,29 @@ class Frame:
             return self.data.iloc[[id]]
         else:
             raise TypeError("Wrong type {}".format(type(id).__name__))
+
+    def add_column(self, column_name: str, values: np.array) -> FrameCore:
+        """Adding a new column with a scalar value to the data of the frame.
+
+        Args:
+            column_name (str): name of the new column.
+            values (np.array): Values of the new column.
+        """
+        self.data[column_name] = values
+        return self
+
+    def describe(self) -> pd.DataFrame:
+        """Generate descriptive statistics based on .data.describe()."""
+        return self.data.describe()
+
+    def has_data(self) -> bool:
+        """Check if lidar frame has data. Data here means point coordinates and
+        measruments at each point of the pointcloud.
+
+        Returns:
+            bool: `True`` if the lidar frame contains measurment data.
+        """
+        return not self.data.empty
 
     def extract_point(self, id: int, use_orginal_id: bool = False) -> pd.DataFrame:
         """Extract a specific point from the Frame defined by the point id. The id
@@ -138,6 +172,57 @@ class Frame:
             print(traceback.print_exc())
         return point.reset_index(drop=True)
 
+    def get_open3d_points(self) -> o3d.open3d_pybind.geometry.PointCloud:
+        """Extract points as open3D PointCloud object. Needed for processing with the
+        open3d package.
+
+        Returns:
+            o3d.open3d_pybind.geometry.PointCloud: the pointcloud
+        """
+        converted = convert.convert_df2pcd(self.points.points)
+        assert len(np.asarray(converted.points)) == len(
+            self
+        ), "len of open3d points should be the same as len of the Frame"
+        return convert.convert_df2pcd(self.points.points)
+
+    def convert_timestamp(self) -> str:
+        """Convert ROS timestamp to human readable date and time.
+
+        Returns:
+            str: date time string
+        """
+        return datetime.fromtimestamp(self.timestamp.to_sec()).strftime(
+            "%A, %B %d, %Y %I:%M:%S"
+        )
+
+    def contains_original_id_number(self, original_id: int) -> bool:
+        """Check if lidar frame contains a specific orginal_id.
+
+        Args:
+            original_id (int): the orginal_id to check
+
+        Returns:
+            bool: True if the original_id exists.
+        """
+        return original_id in self.data["original_id"].values
+
+    def select_by_index(self, index_to_keep: List[int]) -> Frame:
+        """Generating a new Frame by keeping index_to_keep.
+
+        Usefull for open3d generate index lists. Similar to the the select_by_index
+        function of open3d.
+
+        Args:
+            index_to_keep (List[int]): List of indices to keep
+
+        Returns:
+            Frame: Frame with kept rows and reindexed data and points
+        """
+        new_data = self.data.iloc[index_to_keep].reset_index(drop=True)
+        return Frame(new_data, timestamp=self.timestamp)
+
+
+class Frame(FrameCore):
     def calculate_single_point_difference(
         self, frameB: Frame, original_id: int
     ) -> pd.DataFrame:
@@ -193,16 +278,6 @@ class Frame:
         else:
             raise ValueError("no intersection found between the frames.")
 
-    def add_column(self, column_name: str, values: np.array) -> Frame:
-        """Adding a new column with a scalar value to the data of the frame.
-
-        Args:
-            column_name (str): name of the new column.
-            values (np.array): Values of the new column.
-        """
-        self.data[column_name] = values
-        return self
-
     def calculate_distance_to_plane(
         self, plane_model: np.array, absolute_values: bool = True
     ) -> Frame:
@@ -236,53 +311,6 @@ class Frame:
         distances = np.array([np.linalg.norm(point_a - point) for point in points])
         self.add_column("distance to origin", distances)
         return self
-
-    def describe(self) -> pd.DataFrame:
-        """Generate descriptive statistics based on .data.describe()."""
-        return self.data.describe()
-
-    def get_open3d_points(self) -> o3d.open3d_pybind.geometry.PointCloud:
-        """Extract points as open3D PointCloud object. Needed for processing with the
-        open3d package.
-
-        Returns:
-            o3d.open3d_pybind.geometry.PointCloud: the pointcloud
-        """
-        converted = convert.convert_df2pcd(self.points.points)
-        assert len(np.asarray(converted.points)) == len(
-            self
-        ), "len of open3d points should be the same as len of the Frame"
-        return convert.convert_df2pcd(self.points.points)
-
-    def convert_timestamp(self) -> str:
-        """Convert ROS timestamp to human readable date and time.
-
-        Returns:
-            str: date time string
-        """
-        return datetime.fromtimestamp(self.timestamp.to_sec()).strftime(
-            "%A, %B %d, %Y %I:%M:%S"
-        )
-
-    def has_data(self) -> bool:
-        """Check if lidar frame has data. Data here means point coordinates and
-        measruments at each point of the pointcloud.
-
-        Returns:
-            bool: `True`` if the lidar frame contains measurment data.
-        """
-        return not self.data.empty
-
-    def contains_original_id_number(self, original_id: int) -> bool:
-        """Check if lidar frame contains a specific orginal_id.
-
-        Args:
-            original_id (int): the orginal_id to check
-
-        Returns:
-            bool: True if the original_id exists.
-        """
-        return original_id in self.data["original_id"].values
 
     def plot_interactive(
         self, backend: str = "plotly", color: str = "intensity", **kwargs
@@ -356,21 +384,6 @@ class Frame:
             Frame: Frame with filterd rows and reindexed data and points.
         """
         new_data = self.data.loc[boolean_array].reset_index(drop=True)
-        return Frame(new_data, timestamp=self.timestamp)
-
-    def select_by_index(self, index_to_keep: List[int]) -> Frame:
-        """Generating a new Frame by keeping index_to_keep.
-
-        Usefull for open3d generate index lists. Similar to the the select_by_index
-        function of open3d.
-
-        Args:
-            index_to_keep (List[int]): List of indices to keep
-
-        Returns:
-            Frame: Frame with kept rows and reindexed data and points
-        """
-        new_data = self.data.iloc[index_to_keep].reset_index(drop=True)
         return Frame(new_data, timestamp=self.timestamp)
 
     def limit(self, dim: "str", minvalue: float, maxvalue: float) -> Frame:
@@ -517,14 +530,3 @@ class Frame:
         else:
             destination_folder = path
         self.data.to_csv(destination_folder, index=False)
-
-    def _check_index(self):
-        """A private function to check if the index of self.data is sane."""
-        if len(self) > 0:
-            assert self.data.index[0] == 0, "index should start with 0"
-            assert self.data.index[-1] + 1 == len(
-                self
-            ), "index should be as long as the data"
-            assert (
-                self.data.index.is_monotonic_increasing
-            ), "index should be monotonic increasing"
