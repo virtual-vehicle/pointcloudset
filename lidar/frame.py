@@ -20,15 +20,16 @@ from __future__ import annotations
 import operator
 import warnings
 from pathlib import Path
-from typing import Union
+from typing import Union, List
 
 import numpy as np
 import pandas as pd
 import plotly
+import plotly.express as px
 
 from .frame_core import FrameCore
 from .geometry import plane
-from .plot.frame import plotly_3d
+from .plot.frame import plot_overlay
 
 ops = {
     ">": operator.gt,
@@ -39,21 +40,83 @@ ops = {
 }
 
 
+def is_documented_by(original):
+    """A decorator to get the docstring from anoter function."""
+
+    def wrapper(target):
+        target.__doc__ = original.__doc__
+        return target
+
+    return wrapper
+
+
 class Frame(FrameCore):
-    def plot(self, **kwargs) -> plotly.graph_objs._figure.Figure:
-        """Generate either a plotly or pyntcloud 3D plot.
-        (Note: Plotly plots also give index of datapoint in pandas array when hovering
-        over datapoint)
+    def plot(
+        self,
+        color: Union[None, str] = None,
+        overlay: dict = {},
+        point_size: float = 2,
+        prepend_id: str = "",
+        hover_data: List[str] = [],
+        **kwargs,
+    ) -> plotly.graph_objs._figure.Figure:
+        """Plot a Frame as a 3D scatter plot with plotly. It handles plots of single
+        frames and overlay with other objects, such as other frames from clustering or
+        planes from plane segmentation.
+
+        You can also pass arguments to the plotly express function scatter_3D.
 
         Args:
-            color (str): name of the column in the data that should be used as color
-            array for plotly plots
-            MORE HERE FORM
+            frame (Frame): the frame to plot
+            color (str or None): Which column to plot. For example "intensity"
+            overlay (dict, optional): Dict with of rames to overlay
+                {"Cluster 1": cluster1,"plan1 1": plane_model}
+            point_size (float, optional): Size of each point. Defaults to 2.
+            prepend_id (str, optional): string before point id to display in hover
+            hover data (list, optional): data columns to display in hover. Default is
+                all of them.
+
+        Raises:
+            ValueError: if the color column name is not in the data
 
         Returns:
-            Plot
+            Plotly plot: The interactive plotly plot, best used inside a jupyter
+            notebook.
         """
-        return plotly_3d(self, **kwargs)
+        if color is not None and color not in self.data.columns:
+            raise ValueError(f"choose any of {list(self.data.columns)} or None")
+
+        ids = [prepend_id + "id=" + str(i) for i in range(0, self.data.shape[0])]
+
+        if hover_data == []:
+            hover_data = self.data.columns
+
+        if not all([x in self.data.columns for x in hover_data]):
+            raise ValueError(f"choose a list of {list(self.data.columns)} or []")
+
+        fig = px.scatter_3d(
+            self.data,
+            x="x",
+            y="y",
+            z="z",
+            color=color,
+            hover_name=ids,
+            hover_data=hover_data,
+            title=self.timestamp_str,
+            **kwargs,
+        )
+        fig.update_traces(
+            marker=dict(size=point_size, line=dict(width=0)),
+            selector=dict(mode="markers"),
+        )
+
+        if len(overlay) > 0:
+            fig = plot_overlay(fig, self, overlay)
+
+        fig.update_layout(
+            scene_aspectmode="data",
+        )
+        return fig
 
     def calculate_single_point_difference(
         self, frameB: Frame, original_id: int
