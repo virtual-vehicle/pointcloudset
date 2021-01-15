@@ -25,11 +25,10 @@ from typing import Union
 import numpy as np
 import pandas as pd
 import plotly
-import IPython
 
 from .frame_core import FrameCore
 from .geometry import plane
-from .plot.frame import plot_overlay, plot_overlay_plane, plotly_3d, pyntcloud_3d
+from .plot.frame import plotly_3d
 
 ops = {
     ">": operator.gt,
@@ -41,6 +40,21 @@ ops = {
 
 
 class Frame(FrameCore):
+    def plot(self, **kwargs) -> plotly.graph_objs._figure.Figure:
+        """Generate either a plotly or pyntcloud 3D plot.
+        (Note: Plotly plots also give index of datapoint in pandas array when hovering
+        over datapoint)
+
+        Args:
+            color (str): name of the column in the data that should be used as color
+            array for plotly plots
+            MORE HERE FORM
+
+        Returns:
+            Plot
+        """
+        return plotly_3d(self, **kwargs)
+
     def calculate_single_point_difference(
         self, frameB: Frame, original_id: int
     ) -> pd.DataFrame:
@@ -129,67 +143,6 @@ class Frame(FrameCore):
         distances = np.array([np.linalg.norm(point_a - point) for point in points])
         self._add_column("distance to origin", distances)
         return self
-
-    def plot_interactive(
-        self, backend: str = "plotly", color: str = "intensity", **kwargs
-    ) -> Union[plotly.graph_objs._figure.Figure, IPython.lib.display.IFrame]:
-        """Generate either a plotly or pyntcloud 3D plot.
-        (Note: Plotly plots also give index of datapoint in pandas array when hovering
-        over datapoint)
-
-        Args:
-            backend (str): specify either "plotly" or "pyntcloud" as plot environment
-            color (str): name of the column in the data that should be used as color
-            array for plotly plots
-
-        Returns:
-            np.array: List of distances for each point
-        """
-        args = locals()
-        args.update(kwargs)
-        backend = args.pop("backend")
-        if backend == "pyntcloud":
-            return pyntcloud_3d(self, **kwargs)
-        elif backend == "plotly":
-            return plotly_3d(self, color=color, **kwargs)
-        else:
-            raise ValueError("wrong backend")
-
-    def plot_overlay(self, frames_dict: dict) -> plotly.graph_objs._figure.Figure:
-        """Overlay the Frame with the plot(s) of other Frames. For example overlay the
-        plot with a frame which contains a cluster. Best used with smaller pointclouds.
-
-        Example:
-
-        testframe.plot_overlay({"Cluster 1": cluster1, "Cluster 2": cluster2})
-
-        Args:
-            frames_dict (dict): A dictionary in the form {"Name" : Frame}.
-            Can be arbitrarly long,
-
-        Returns:
-            plotly.graph_objs._figure.Figure: The interactive plot with overlays.
-        """
-        return plot_overlay(self, frames_dict=frames_dict)
-
-    def plot_overlay_plane(self, plane_dict: dict) -> plotly.graph_objs._figure.Figure:
-        """Overlay the Frame with plot(s) of plane surfaces. Fore
-
-        Example:
-
-        plane = frame.plane_segmentation(0.05,5,100,return_plane_model=True)
-        frame.plot_overlay_plane({"Plane 1": plane["plane_model"]})
-
-        Args:
-            plane_dict (dict): A dictionary in the form {"Name" : plane_model}.
-            Plane model as given by plane_segementations: as a numpy array of the
-            paramters a,b,c and d.
-            Can be arbitrarly long.
-
-        Returns:
-            plotly.graph_objs._figure.Figure: The interactive plot with overlays.
-        """
-        return plot_overlay_plane(self, plane_dict=plane_dict)
 
     def apply_filter(self, boolean_array: np.ndarray) -> Frame:
         """Generating a new Frame by removing points where filter is False.
