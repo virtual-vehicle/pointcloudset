@@ -28,8 +28,8 @@ import plotly
 import plotly.express as px
 
 from .frame_core import FrameCore
-from .geometry import plane
 from .plot.frame import plot_overlay
+from .diff.frame import calculate_all_point_differences
 
 ops = {
     ">": operator.gt,
@@ -118,84 +118,8 @@ class Frame(FrameCore):
         )
         return fig
 
-    def calculate_single_point_difference(
-        self, frameB: Frame, original_id: int
-    ) -> pd.DataFrame:
-        """Calculate the difference of one element of a Point in the current Frame to
-        the correspoing point in Frame B. Both frames must contain the same orginal_id.
-
-        Args:
-            frameB (Frame): Frame which contains the point to comapare to.
-            original_id (int): Orginal ID of the point.
-
-        Returns:
-            pd.DataFrame: A single row DataFrame with the differences (A - B).
-        """
-        pointA = self.extract_point(original_id, use_orginal_id=True)
-        try:
-            pointB = frameB.extract_point(original_id, use_orginal_id=True)
-            difference = pointA - pointB
-        except IndexError:
-            # there is no point with the orignal_id in frameB
-            difference = pointA
-            difference.loc[:] = np.nan
-        difference = difference.drop(["original_id"], axis=1)
-        difference.columns = [f"{column} difference" for column in difference.columns]
-        difference["original_id"] = pointA["original_id"]
-        return difference
-
-    def calculate_all_point_differences(self, frameB: Frame) -> Frame:
-        """Calculate the point differences for each point which is also in frameB. Only
-        points with the same orginal_id are compared. The results are added to the data
-        of the frame. (frame - frameB)
-
-        Args:
-            frameB (Frame): A Frame object to compute the differences.
-
-        Raises:
-            ValueError: If there are no points in FrameB with the same orginal_id
-        """
-        refrence_orginial_ids = self.data.original_id.values
-        frameB_original_ids = frameB.data.original_id.values
-        intersection = np.intersect1d(refrence_orginial_ids, frameB_original_ids)
-        if len(intersection) > 0:
-            diff_list = [
-                self.calculate_single_point_difference(frameB, id)
-                for id in intersection
-            ]
-            orginal_types = [str(types) for types in diff_list[0].dtypes.values]
-            target_type_dict = dict(zip(diff_list[0].columns.values, orginal_types))
-            diff_df = pd.concat(diff_list)
-            diff_df = diff_df.astype(target_type_dict)
-            diff_df = diff_df.reset_index(drop=True)
-            self.data = self.data.merge(diff_df, on="original_id", how="left")
-            return self
-        else:
-            raise ValueError("no intersection found between the frames.")
-
-    def calculate_distance_to_plane(
-        self, plane_model: np.array, absolute_values: bool = True
-    ) -> Frame:
-        """Calculates the distance of each point to a plane and adds it as a column
-        to the data of the frame. Uses the plane equation a x + b y + c z + d = 0
-
-        Args:
-            plane_model (np.array): [a, b, c, d], could be provided by
-                plane_segmentation.
-            absolute_values (bool, optional): Calculate absolute distances if True.
-                Defaults to True.
-        """
-        points = self.points.xyz
-        distances = np.asarray(
-            [plane.distance_to_point(point, plane_model) for point in points]
-        )
-        if absolute_values:
-            distances = np.absolute(distances)
-        plane_str = np.array2string(
-            plane_model, formatter={"float_kind": lambda x: "%.4f" % x}
-        )
-        self._add_column(f"distance to plane: {plane_str}", distances)
-        return self
+    def __sub__(self, other):
+        return calculate_all_point_differences(self, other)
 
     def calculate_distance_to_origin(self) -> Frame:
         """For each point in the pointcloud calculate the euclidian distance
