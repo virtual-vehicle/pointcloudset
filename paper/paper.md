@@ -1,46 +1,51 @@
 ---
-title: 'Gala: A Python package for galactic dynamics'
+title: 'PyLidarMulti: A python data pipeline for importing, processing, and exporting mutliple lidar point clouds'
 tags:
   - Python
-  - astronomy
-  - dynamics
-  - galactic dynamics
-  - milky way
+  - lidar
+  - ROS
+  - Ouster OS1
 authors:
-  - name: Adrian M. Price-Whelan^[Custom footnotes for e.g. denoting who the corresponding author is can be included like this.]
-    orcid: 0000-0003-0872-7098
-    affiliation: "1, 2" # (Multiple affiliations must be quoted)
-  - name: Author Without ORCID
-    affiliation: 2
-  - name: Author with no affiliation
-    affiliation: 3
+  - name: Thomas Goelles^[corresponding author Thomas.Goelles@v2c2.at]
+    orcid: 0000-0002-3925-6260
+    affiliation: 1
+  - name: Stefan Muckenhuber
+    orcid: 0000-0003-1920-8437
+    affiliation: "1,2"
+  - name: Birgit Schlager
+    orcid: 0000-0003-3290-5333
+    affiliation: 1
+  - name: Sarah Haas
+    affiliation: 1
+  - name: Tobias Hammer
+    affiliation: 1
 affiliations:
- - name: Lyman Spitzer, Jr. Fellow, Princeton University
+ - name: Virtual Vehicle Research GmbH, Inffeldgasse 21A, 8010 Graz, Austria
    index: 1
- - name: Institution Name
+ - name: University of Graz, Heinrichstrasse 36, 8010 Graz, Austria
    index: 2
- - name: Independent Researcher
-   index: 3
-date: 13 August 2017
+date: 1 February 2021
 bibliography: paper.bib
-
-# Optional fields if submitting to a AAS journal too, see this blog post:
-# https://blog.joss.theoj.org/2018/12/a-new-collaboration-with-aas-publishing
-aas-doi: 10.3847/xxxxx <- update this with the DOI from AAS once you know it.
-aas-journal: Astrophysical Journal <- The name of the AAS journal.
 ---
 
 # Summary
 
-The forces on stars, galaxies, and dark matter under external gravitational
-fields lead to the dynamical evolution of structures in the universe. The orbits
-of these bodies are therefore key to understanding the formation, history, and
-future state of galaxies. The field of "galactic dynamics," which aims to model
-the gravitating components of galaxies to study their structure and evolution,
-is now well-established, commonly taught, and frequently used in astronomy.
-Aside from toy problems and demonstrations, the majority of problems require
-efficient numerical tools, many of which require the same base code (e.g., for
-performing numerical orbit integration).
+
+
+
+* pointclouds from lidar: Automotive lidar and terrestial lidar
+* support for pointclouds over time - grouped in datasets
+* apply processing pipeline to each frame in the dataset
+* each point has x,y,z and an arbitrary amount of additional scalar variables (like intensity, and so on)
+* data analytics - not online processing
+* TODO: optional support for georeferenced point. i.e. each point has a geographical coordinate (3D). (Issue 46 & 47). Also support for caves without GPS signal.
+* works on pointcloud2 messages from rosbags with any lidar (from ROS1 at the moment). (Currently Ouster OS1)
+* possiblity to produce plots for publications
+* static Comparison of lidar point clouds with "orginal_id"
+* Comparison of pointcloud to "ground truth" of geometric primitives like planes, sphere ( and in future also to a mesh? )
+* Support for pointclouds of lidars sensos where the beam is always send in the same direction (like the Ouster OS ). This makes computations easier.
+* TODO: DIFFERENCES BETWEEN FrameA from one sensor and FrameB from another?? (Hausdorff distance between them? )
+
 
 # Statement of need
 
