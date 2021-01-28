@@ -1,11 +1,10 @@
-"""
-# Difference to coordinate system orgin.
+"""# Difference to coordinate system orgin.
 """
 
 import numpy as np
 
 
-def calculate_distance_to_origin(frame):
+def calculate_distance_to_origin(frame, target=None):
     """For each point in the pointcloud calculate the euclidian distance
     to the origin (0,0,0). Adds a new column to the data with the values.
     """

@@ -129,36 +129,6 @@ def test_add_column(testframe_mini: Frame):
     )
 
 
-def test_calculate_distance_to_plane1(testframe_mini: Frame):
-    newframe = testframe_mini.calculate_distance_to_plane(
-        plane_model=np.array([1, 0, 0, 0]), absolute_values=False
-    )
-    check.equal(type(newframe), Frame)
-    check.equal(
-        str(list(testframe_mini.data.columns.values)),
-        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [1 0 0 0]']",
-    )
-    check.equal(testframe_mini.data["distance to plane: [1 0 0 0]"][1], 1.0)
-
-
-def test_calculate_distance_to_plane2(testframe_mini: Frame):
-    testframe_mini.calculate_distance_to_plane(
-        plane_model=np.array([-1, 0, 0, 0]), absolute_values=False
-    )
-    check.equal(
-        str(list(testframe_mini.data.columns.values)),
-        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [-1  0  0  0]']",
-    )
-    check.equal(testframe_mini.data["distance to plane: [-1  0  0  0]"][1], -1.0)
-
-
-def test_calculate_distance_to_plane3(testframe_mini: Frame):
-    testframe_mini.calculate_distance_to_plane(
-        plane_model=np.array([-1, 0, 0, 0]), absolute_values=True
-    )
-    check.equal(testframe_mini.data["distance to plane: [-1  0  0  0]"][1], 1.0)
-
-
 def test_describe(testframe: Frame):
     check.equal(type(testframe.describe()), pd.DataFrame)
 
@@ -257,29 +227,6 @@ def test_testframe_pointcloud(
     check.equal(np.sum(sub_array), 108.0019814982079)
     check.equal(np.sum(array), 60573.190267673606)
     assert_frame_equal(pointcloud_df, reference_pointcloud_withzero_dataframe)
-
-
-def test_distances_to_origin(testframe_mini: Frame):
-    newframe = testframe_mini.calculate_distance_to_origin()
-    check.equal(type(newframe), Frame)
-    check.equal(
-        np.allclose(
-            testframe_mini.data["distance to origin"].values,
-            np.asarray(
-                [
-                    0.0,
-                    1.73205081,
-                    1.73205081,
-                    937.15579489,
-                    1058.09727232,
-                    906.10064672,
-                    991.83926827,
-                    475.99837556,
-                ]
-            ),
-        ),
-        True,
-    )
 
 
 def test_to_csv(testframe: Frame, tmp_path: Path):

@@ -118,7 +118,9 @@ class Frame(FrameCore):
         )
         return fig
 
-    def diff(self, name: str, target: Union[Frame, np.ndarray], **kwargs) -> Frame:
+    def diff(
+        self, name: str, target: Union[None, Frame, np.ndarray] = None, **kwargs
+    ) -> Frame:
         if name in ALL_DIFF:
             ALL_DIFF[name](frame=self, target=target, **kwargs)
             return self
