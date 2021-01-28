@@ -3,7 +3,6 @@ import pytest_check as check
 
 from lidar import Frame
 
-
 # def test_point_difference(testframe: Frame):
 #     difference = testframe.calculate_single_point_difference(testframe, 4624)
 #     check.equal(len(difference), 1)
@@ -102,7 +101,7 @@ def test_distances_to_origin(testframe_mini: Frame):
     check.equal(type(newframe), Frame)
     check.equal(
         np.allclose(
-            testframe_mini.data["distance to origin"].values,
+            testframe_mini.data["distance to point: [0 0 0]"].values,
             np.asarray(
                 [
                     0.0,
@@ -120,31 +119,42 @@ def test_distances_to_origin(testframe_mini: Frame):
     )
 
 
-# def test_calculate_distance_to_plane1(testframe_mini: Frame):
-#     newframe = testframe_mini.calculate_distance_to_plane(
-#         plane_model=np.array([1, 0, 0, 0]), absolute_values=False
-#     )
-#     check.equal(type(newframe), Frame)
-#     check.equal(
-#         str(list(testframe_mini.data.columns.values)),
-#         "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [1 0 0 0]']",
-#     )
-#     check.equal(testframe_mini.data["distance to plane: [1 0 0 0]"][1], 1.0)
+def test_calculate_distance_to_plane1(testframe_mini: Frame):
+    newframe = testframe_mini.diff(
+        "plane", target=np.array([1, 0, 0, 0]), absolute_values=False
+    )
+    check.equal(type(newframe), Frame)
+    check.equal(
+        str(list(testframe_mini.data.columns.values)),
+        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [1 0 0 0]']",
+    )
+    check.equal(testframe_mini.data["distance to plane: [1 0 0 0]"][1], 1.0)
 
 
-# def test_calculate_distance_to_plane2(testframe_mini: Frame):
-#     testframe_mini.calculate_distance_to_plane(
-#         plane_model=np.array([-1, 0, 0, 0]), absolute_values=False
-#     )
-#     check.equal(
-#         str(list(testframe_mini.data.columns.values)),
-#         "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [-1  0  0  0]']",
-#     )
-#     check.equal(testframe_mini.data["distance to plane: [-1  0  0  0]"][1], -1.0)
+def test_calculate_distance_to_plane1_2(testframe_mini: Frame):
+    newframe = testframe_mini.diff("plane", np.array([1, 0, 0, 0]))
+    check.equal(type(newframe), Frame)
+    check.equal(
+        str(list(testframe_mini.data.columns.values)),
+        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [1 0 0 0]']",
+    )
+    check.equal(testframe_mini.data["distance to plane: [1 0 0 0]"][1], 1.0)
 
 
-# def test_calculate_distance_to_plane3(testframe_mini: Frame):
-#     testframe_mini.calculate_distance_to_plane(
-#         plane_model=np.array([-1, 0, 0, 0]), absolute_values=True
-#     )
-#     check.equal(testframe_mini.data["distance to plane: [-1  0  0  0]"][1], 1.0)
+def test_calculate_distance_to_plane2(testframe_mini: Frame):
+    testframe_mini.diff("plane", target=np.array([-1, 0, 0, 0]), absolute_values=False)
+    check.equal(
+        str(list(testframe_mini.data.columns.values)),
+        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [-1  0  0  0]']",
+    )
+    check.equal(testframe_mini.data["distance to plane: [-1  0  0  0]"][1], -1.0)
+
+
+def test_calculate_distance_to_plane3(testframe_mini: Frame):
+    testframe_mini.diff("plane", target=np.array([-1, 0, 0, 0]), absolute_values=True)
+    check.equal(testframe_mini.data["distance to plane: [-1  0  0  0]"][1], 1.0)
+
+
+def test_calculate_distance_to_point(testframe_mini: Frame):
+    testframe_mini.diff("point", target=np.array([-1, 0, 0]))
+    check.equal(testframe_mini.data["distance to point: [-1  0  0]"][0], 1.0)

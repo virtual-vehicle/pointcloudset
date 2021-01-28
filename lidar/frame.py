@@ -20,16 +20,19 @@ from __future__ import annotations
 import operator
 import warnings
 from pathlib import Path
-from typing import Union, List
+from typing import List, Union
 
 import numpy as np
 import pandas as pd
 import plotly
 import plotly.express as px
+import pyntcloud
+from pyntcloud.io import FROM_FILE
+import rospy
 
+from .diff import ALL_DIFF
 from .frame_core import FrameCore
 from .plot.frame import plot_overlay
-from .diff import ALL_DIFF
 
 ops = {
     ">": operator.gt,
@@ -51,6 +54,32 @@ def is_documented_by(original):
 
 
 class Frame(FrameCore):
+    @classmethod
+    def from_file(cls, file_path: Path, **kwargs):
+        """Extract data from file and construct a Frame with it. Uses Pynthcloud as
+        backend.
+
+        Args:
+            file_path (Path): pathlib Path of file to read
+
+        Raises:
+            ValueError: For unsupported files
+
+        Returns:
+            Frame: lidar frame with current timestamp.
+        """
+        ext = file_path.suffix[1:].upper()
+        if ext not in FROM_FILE:
+            raise ValueError(
+                "Unsupported file format; supported formats are: {}".format(
+                    list(FROM_FILE)
+                )
+            )
+        else:
+            file_path_str = file_path.as_posix()
+            pyntcloud_in = pyntcloud.PyntCloud.from_file(file_path_str, **kwargs)
+            return cls(data=pyntcloud_in.points, orig_file=file_path_str)
+
     def plot(
         self,
         color: Union[None, str] = None,
@@ -121,6 +150,18 @@ class Frame(FrameCore):
     def diff(
         self, name: str, target: Union[None, Frame, np.ndarray] = None, **kwargs
     ) -> Frame:
+        """Calculate differences and distances to the origin, plane, point and frame.
+
+        Args:
+            name (str): "orgin", "plane", "frame", "point"
+            target (Union[None, Frame, np.ndarray], optional): [description]. Defaults to None,
+
+        Raises:
+            ValueError: If name is not supported.
+
+        Returns:
+            Frame: New frame with added column of the differences
+        """
         if name in ALL_DIFF:
             ALL_DIFF[name](frame=self, target=target, **kwargs)
             return self

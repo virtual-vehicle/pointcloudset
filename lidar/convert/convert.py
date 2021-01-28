@@ -1,8 +1,11 @@
+from typing import TYPE_CHECKING
+
 import open3d as o3d
 import pandas as pd
 import pyntcloud
 
-from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from ..frame import Frame
 
 
 def convert_df2pcd(df: pd.DataFrame) -> o3d.open3d_pybind.geometry.PointCloud:
@@ -27,7 +30,7 @@ def convert_open3d2frame(df: pd.DataFrame):
     pass
 
 
-def convert_pyntcloud2frame(pyntcloud_in: pyntcloud.PyntCloud):
+def convert_pyntcloud2frame(frame, pyntcloud_in: pyntcloud.PyntCloud) -> "Frame":
     """Converts a pyntcloud to a lidar Frame.
 
     Args:
@@ -36,5 +39,5 @@ def convert_pyntcloud2frame(pyntcloud_in: pyntcloud.PyntCloud):
     Returns:
         Frame: Frame object from pyntcloud
     """
-    data = pyntcloud_in.points
-    return Frame(data=data)
+    frame.data = pyntcloud_in.points
+    return frame

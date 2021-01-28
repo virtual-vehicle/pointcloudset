@@ -69,7 +69,6 @@ docker login registry-gitlab.v2c2.at -u <vornamenachname> -p <token>
 """
 
 from .dataset import Dataset
-from .file.frame_from_file import frame_from_file
 from .frame import Frame
 
 __version__ = "0.1.6 (dev_0.2.0)"
