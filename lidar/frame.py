@@ -29,7 +29,7 @@ import plotly.express as px
 
 from .frame_core import FrameCore
 from .plot.frame import plot_overlay
-from .diff.frame import calculate_all_point_differences
+from .diff import ALL_DIFF
 
 ops = {
     ">": operator.gt,
@@ -118,18 +118,12 @@ class Frame(FrameCore):
         )
         return fig
 
-    def __sub__(self, other):
-        return calculate_all_point_differences(self, other)
-
-    def calculate_distance_to_origin(self) -> Frame:
-        """For each point in the pointcloud calculate the euclidian distance
-        to the origin (0,0,0). Adds a new column to the data with the values.
-        """
-        point_a = np.array((0.0, 0.0, 0.0))
-        points = self.points.xyz
-        distances = np.array([np.linalg.norm(point_a - point) for point in points])
-        self._add_column("distance to origin", distances)
-        return self
+    def diff(self, name: str, target: Union[Frame, np.ndarray], **kwargs) -> Frame:
+        if name in ALL_DIFF:
+            ALL_DIFF[name](frame=self, target=target, **kwargs)
+            return self
+        else:
+            raise ValueError("Unsupported diff. Check docstring")
 
     def apply_filter(self, boolean_array: np.ndarray) -> Frame:
         """Generating a new Frame by removing points where filter is False.

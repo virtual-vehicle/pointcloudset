@@ -1,1 +1,1 @@
-"""Utiliy functions for geometry calculations"""
+"""Utiliy functions for primitive geometry calculations"""
