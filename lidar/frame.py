@@ -66,7 +66,7 @@ class Frame(FrameCore):
             ValueError: For unsupported files
 
         Returns:
-            Frame: lidar frame with current timestamp.
+            Frame: lidar frame with timestamp last modified.
         """
         ext = file_path.suffix[1:].upper()
         if ext not in FROM_FILE:
@@ -77,8 +77,11 @@ class Frame(FrameCore):
             )
         else:
             file_path_str = file_path.as_posix()
+            timestamp = rospy.Time(file_path.stat().st_mtime)
             pyntcloud_in = pyntcloud.PyntCloud.from_file(file_path_str, **kwargs)
-            return cls(data=pyntcloud_in.points, orig_file=file_path_str)
+            return cls(
+                data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
+            )
 
     def plot(
         self,
