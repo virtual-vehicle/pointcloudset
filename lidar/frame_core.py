@@ -119,9 +119,18 @@ class FrameCore:
         measruments at each point of the pointcloud.
 
         Returns:
-            bool: `True`` if the lidar frame contains measurment data.
+            bool: `True`` if the lidar frame contains data.
         """
         return not self.data.empty
+
+    def _has_original_id(self) -> bool:
+        """Checks if orginal_id column is present in the data.
+        Original_id identifies a lidar point and makes them coparable.
+
+        Returns:
+            bool: `True`` if the lidar frame contains orginal_id data.
+        """
+        return "original_id" in self.data.columns
 
     def _contains_original_id_number(self, original_id: int) -> bool:
         """Check if lidar frame contains a specific orginal_id.
