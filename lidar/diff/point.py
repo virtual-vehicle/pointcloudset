@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 
 
 def calculate_distance_to_point(frame, target: np.ndarray, **kwargs):
