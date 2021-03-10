@@ -39,8 +39,6 @@ class FrameCore:
         """ROS timestamp"""
         self.points = pyntcloud.PyntCloud(self.data[["x", "y", "z"]], mesh=None)
         """Pyntcloud object with x,y,z coordinates"""
-        self.measurments = self.data.drop(["x", "y", "z"], axis=1)
-        """Measurments aka. scalar field of values at each point"""
         self.orig_file = orig_file
         """Path to bag file. Defaults to empty"""
 
@@ -48,7 +46,7 @@ class FrameCore:
 
     @property
     def timestamp_str(self) -> str:
-        """Convert ROS timestamp to human readable date and time.
+        """Converted ROS timestamp to human readable date and time.
 
         Returns:
             str: date time string

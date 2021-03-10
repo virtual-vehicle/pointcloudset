@@ -45,11 +45,6 @@ def test_get_open3d_points(testframe_mini):
     print(testlist)
 
 
-def test_measurments(testframe_mini):
-    measurements = testframe_mini.measurments
-    check.equal(type(measurements), pd.DataFrame)
-
-
 def test_timestamp(testframe_mini):
     check.equal(type(testframe_mini.timestamp), rospy.rostime.Time)
 
