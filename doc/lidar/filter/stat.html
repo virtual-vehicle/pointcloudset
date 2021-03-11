@@ -28,11 +28,18 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Frame filters based on statisitcics&#34;&#34;&#34;
-
+from __future__ import annotations
 from lidar.config import OPS
 
+from typing import TYPE_CHECKING
 
-def quantile_filter(frame, dim: str, relation: str = &#34;&gt;=&#34;, cut_quantile: float = 0.5):
+if TYPE_CHECKING:
+    from lidar import Frame
+
+
+def quantile_filter(
+    frame, dim: str, relation: str = &#34;&gt;=&#34;, cut_quantile: float = 0.5
+) -&gt; Frame:
     &#34;&#34;&#34;Filtering based on quantile values of dimension dim of the data.
 
     Example:
@@ -52,7 +59,7 @@ def quantile_filter(frame, dim: str, relation: str = &#34;&gt;=&#34;, cut_quanti
     return frame.apply_filter(filter_array.to_numpy())
 
 
-def value_filter(frame, dim: &#34;str&#34;, relation: str, value: float):
+def value_filter(frame, dim: &#34;str&#34;, relation: str, value: float) -&gt; Frame:
     &#34;&#34;&#34;Limit the range of certain values in lidar Frame.
 
     Example:
@@ -69,7 +76,21 @@ def value_filter(frame, dim: &#34;str&#34;, relation: str, value: float):
     &#34;&#34;&#34;
 
     bool_array = (OPS[relation](frame.data[dim], value)).to_numpy()
-    return frame.apply_filter(bool_array)</code></pre>
+    return frame.apply_filter(bool_array)
+
+
+def remove_radius_outlier(frame: Frame, nb_points: int, radius: float) -&gt; Frame:
+    &#34;&#34;&#34;Function to remove points that have less than nb_points in a given
+    sphere of a given radius Parameters.
+    Args:
+        nb_points (int) – Number of points within the radius.
+        radius (float) – Radius of the sphere.
+    Returns:
+        Frame: without the outliers  :
+    &#34;&#34;&#34;
+    pcd = frame.to_instance(&#34;open3d&#34;)
+    cl, index_to_keep = pcd.remove_radius_outlier(nb_points=nb_points, radius=radius)
+    return frame.apply_filter(index_to_keep)</code></pre>
 </details>
 </section>
 <section>
@@ -80,7 +101,7 @@ def value_filter(frame, dim: &#34;str&#34;, relation: str, value: float):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="lidar.filter.stat.quantile_filter"><code class="name flex">
-<span>def <span class="ident">quantile_filter</span></span>(<span>frame, dim: str, relation: str = &#x27;&gt;=&#x27;, cut_quantile: float = 0.5)</span>
+<span>def <span class="ident">quantile_filter</span></span>(<span>frame, dim: str, relation: str = &#x27;&gt;=&#x27;, cut_quantile: float = 0.5) ‑> Frame</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Filtering based on quantile values of dimension dim of the data.</p>
@@ -104,7 +125,9 @@ def value_filter(frame, dim: &#34;str&#34;, relation: str, value: float):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def quantile_filter(frame, dim: str, relation: str = &#34;&gt;=&#34;, cut_quantile: float = 0.5):
+<pre><code class="python">def quantile_filter(
+    frame, dim: str, relation: str = &#34;&gt;=&#34;, cut_quantile: float = 0.5
+) -&gt; Frame:
     &#34;&#34;&#34;Filtering based on quantile values of dimension dim of the data.
 
     Example:
@@ -124,8 +147,41 @@ def value_filter(frame, dim: &#34;str&#34;, relation: str, value: float):
     return frame.apply_filter(filter_array.to_numpy())</code></pre>
 </details>
 </dd>
+<dt id="lidar.filter.stat.remove_radius_outlier"><code class="name flex">
+<span>def <span class="ident">remove_radius_outlier</span></span>(<span>frame: Frame, nb_points: int, radius: float) ‑> Frame</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Function to remove points that have less than nb_points in a given
+sphere of a given radius Parameters.</p>
+<h2 id="args">Args</h2>
+<p>nb_points (int) – Number of points within the radius.
+radius (float) – Radius of the sphere.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Frame</code></dt>
+<dd>without the outliers
+:</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_radius_outlier(frame: Frame, nb_points: int, radius: float) -&gt; Frame:
+    &#34;&#34;&#34;Function to remove points that have less than nb_points in a given
+    sphere of a given radius Parameters.
+    Args:
+        nb_points (int) – Number of points within the radius.
+        radius (float) – Radius of the sphere.
+    Returns:
+        Frame: without the outliers  :
+    &#34;&#34;&#34;
+    pcd = frame.to_instance(&#34;open3d&#34;)
+    cl, index_to_keep = pcd.remove_radius_outlier(nb_points=nb_points, radius=radius)
+    return frame.apply_filter(index_to_keep)</code></pre>
+</details>
+</dd>
 <dt id="lidar.filter.stat.value_filter"><code class="name flex">
-<span>def <span class="ident">value_filter</span></span>(<span>frame, dim: str, relation: str, value: float)</span>
+<span>def <span class="ident">value_filter</span></span>(<span>frame, dim: "'str'", relation: str, value: float) ‑> Frame</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Limit the range of certain values in lidar Frame.</p>
@@ -150,7 +206,7 @@ def value_filter(frame, dim: &#34;str&#34;, relation: str, value: float):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def value_filter(frame, dim: &#34;str&#34;, relation: str, value: float):
+<pre><code class="python">def value_filter(frame, dim: &#34;str&#34;, relation: str, value: float) -&gt; Frame:
     &#34;&#34;&#34;Limit the range of certain values in lidar Frame.
 
     Example:
@@ -189,6 +245,7 @@ def value_filter(frame, dim: &#34;str&#34;, relation: str, value: float):
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="lidar.filter.stat.quantile_filter" href="#lidar.filter.stat.quantile_filter">quantile_filter</a></code></li>
+<li><code><a title="lidar.filter.stat.remove_radius_outlier" href="#lidar.filter.stat.remove_radius_outlier">remove_radius_outlier</a></code></li>
 <li><code><a title="lidar.filter.stat.value_filter" href="#lidar.filter.stat.value_filter">value_filter</a></code></li>
 </ul>
 </li>

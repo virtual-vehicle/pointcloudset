@@ -1,9 +1,16 @@
 """Frame filters based on statisitcics"""
-
+from __future__ import annotations
 from lidar.config import OPS
 
+from typing import TYPE_CHECKING
 
-def quantile_filter(frame, dim: str, relation: str = ">=", cut_quantile: float = 0.5):
+if TYPE_CHECKING:
+    from lidar import Frame
+
+
+def quantile_filter(
+    frame, dim: str, relation: str = ">=", cut_quantile: float = 0.5
+) -> Frame:
     """Filtering based on quantile values of dimension dim of the data.
 
     Example:
@@ -23,7 +30,7 @@ def quantile_filter(frame, dim: str, relation: str = ">=", cut_quantile: float =
     return frame.apply_filter(filter_array.to_numpy())
 
 
-def value_filter(frame, dim: "str", relation: str, value: float):
+def value_filter(frame, dim: "str", relation: str, value: float) -> Frame:
     """Limit the range of certain values in lidar Frame.
 
     Example:
@@ -41,3 +48,17 @@ def value_filter(frame, dim: "str", relation: str, value: float):
 
     bool_array = (OPS[relation](frame.data[dim], value)).to_numpy()
     return frame.apply_filter(bool_array)
+
+
+def remove_radius_outlier(frame: Frame, nb_points: int, radius: float) -> Frame:
+    """Function to remove points that have less than nb_points in a given
+    sphere of a given radius Parameters.
+    Args:
+        nb_points (int) – Number of points within the radius.
+        radius (float) – Radius of the sphere.
+    Returns:
+        Frame: without the outliers  :
+    """
+    pcd = frame.to_instance("open3d")
+    cl, index_to_keep = pcd.remove_radius_outlier(nb_points=nb_points, radius=radius)
+    return frame.apply_filter(index_to_keep)

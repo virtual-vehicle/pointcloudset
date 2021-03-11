@@ -6,12 +6,12 @@ from lidar import Frame
 
 
 def test_rro1(testframe_mini_real):
-    test = testframe_mini_real.remove_radius_outlier(nb_points=500, radius=0.1)
+    test = testframe_mini_real.filter("radiusoutlier", nb_points=500, radius=0.1)
     check.equal(test._has_data(), False)
 
 
 def test_rro2(testframe_mini_real):
-    test = testframe_mini_real.remove_radius_outlier(nb_points=10, radius=0.2)
+    test = testframe_mini_real.filter("radiusoutlier", nb_points=10, radius=0.2)
     check.equal(test._has_data(), True)
     check.equal(len(test), 4)
     test_x = test.data["x"].to_list()

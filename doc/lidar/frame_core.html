@@ -172,21 +172,6 @@ class FrameCore:
         &#34;&#34;&#34;
         return original_id in self.data[&#34;original_id&#34;].values
 
-    def _select_by_index(self, index_to_keep: List[int]) -&gt; FrameCore:
-        &#34;&#34;&#34;Generating a new Frame by keeping index_to_keep.
-
-        Usefull for open3d generate index lists. Similar to the the select_by_index
-        function of open3d.
-
-        Args:
-            index_to_keep (List[int]): List of indices to keep
-
-        Returns:
-            Frame: Frame with kept rows and reindexed data and points
-        &#34;&#34;&#34;
-        new_data = self.data.iloc[index_to_keep].reset_index(drop=True)
-        return FrameCore(new_data, timestamp=self.timestamp)
-
     def describe(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;Generate descriptive statistics based on .data.describe().&#34;&#34;&#34;
         return self.data.describe()
@@ -366,21 +351,6 @@ testframe = testset[0]</p></div>
             bool: True if the original_id exists.
         &#34;&#34;&#34;
         return original_id in self.data[&#34;original_id&#34;].values
-
-    def _select_by_index(self, index_to_keep: List[int]) -&gt; FrameCore:
-        &#34;&#34;&#34;Generating a new Frame by keeping index_to_keep.
-
-        Usefull for open3d generate index lists. Similar to the the select_by_index
-        function of open3d.
-
-        Args:
-            index_to_keep (List[int]): List of indices to keep
-
-        Returns:
-            Frame: Frame with kept rows and reindexed data and points
-        &#34;&#34;&#34;
-        new_data = self.data.iloc[index_to_keep].reset_index(drop=True)
-        return FrameCore(new_data, timestamp=self.timestamp)
 
     def describe(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;Generate descriptive statistics based on .data.describe().&#34;&#34;&#34;

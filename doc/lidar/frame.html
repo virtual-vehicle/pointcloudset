@@ -295,6 +295,7 @@ class Frame(FrameCore):
             raise ValueError(&#34;Unsupported diff. Check docstring&#34;)
 
     def filter(self, name: str, *args, **kwargs) -&gt; Frame:
+        name = name.upper()
         if name in ALL_FILTERS:
             return ALL_FILTERS[name](self, *args, **kwargs)
         else:
@@ -321,17 +322,28 @@ class Frame(FrameCore):
             &#34;value&#34;, dim, &#34;&lt;=&#34;, maxvalue
         )
 
-    def apply_filter(self, boolean_array: np.ndarray) -&gt; Frame:
-        &#34;&#34;&#34;Generating a new Frame by removing points where filter is False.
-        Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.
+    def apply_filter(self, filter_result: Union[np.ndarray, List[int]]) -&gt; Frame:
+        &#34;&#34;&#34;Generating a new Frame by removing points where filter
 
         Args:
-            boolean_array (np.ndarray): True where the point should remain.
+            filter_result (Union[np.ndarray, List[int]]): Filter result
+
+        Raises:
+            TypeError: If the filter_result has the wrong type
 
         Returns:
-            Frame: Frame with filterd rows and reindexed data and points.
+            Frame: rame with filterd rows and reindexed data and points.
         &#34;&#34;&#34;
-        new_data = self.data.loc[boolean_array].reset_index(drop=True)
+        if isinstance(filter_result, np.ndarray):
+            # dataframe and pyntcloud based filters
+            new_data = self.data.loc[filter_result].reset_index(drop=True)
+        elif isinstance(filter_result, list):
+            # from open3d filters
+            new_data = self.data.iloc[filter_result].reset_index(drop=True)
+        else:
+            raise TypeError(
+                &#34;Wrong filter_result expeciting array with boolean values or list of intices&#34;
+            )
         return Frame(new_data, timestamp=self.timestamp)
 
     def get_cluster(self, eps: float, min_points: int) -&gt; pd.DataFrame:
@@ -365,21 +377,6 @@ class Frame(FrameCore):
         &#34;&#34;&#34;
         bool_array = (cluster_labels[&#34;cluster&#34;] == cluster_number).values
         return self.apply_filter(bool_array)
-
-    def remove_radius_outlier(self, nb_points: int, radius: float) -&gt; FrameCore:
-        &#34;&#34;&#34;Function to remove points that have less than nb_points in a given
-        sphere of a given radius Parameters.
-        Args:
-            nb_points (int) – Number of points within the radius.
-            radius (float) – Radius of the sphere.
-        Returns:
-            Tuple[open3d.geometry.PointCloud, List[int]] :
-        &#34;&#34;&#34;
-        pcd = self.to_instance(&#34;open3d&#34;)
-        cl, index_to_keep = pcd.remove_radius_outlier(
-            nb_points=nb_points, radius=radius
-        )
-        return self._select_by_index(index_to_keep)
 
     def plane_segmentation(
         self,
@@ -416,7 +413,7 @@ class Frame(FrameCore):
                 is high. Try to reduce the area of interesst before using
                 plane_segmentation. Caused by open3D.&#34;&#34;&#34;
             )
-        inlier_Frame = self._select_by_index(inliers)
+        inlier_Frame = self.apply_filter(inliers)
         if return_plane_model:
             return {&#34;Frame&#34;: inlier_Frame, &#34;plane_model&#34;: plane_model}
         else:
@@ -676,6 +673,7 @@ testframe = testset[0]</p></div>
             raise ValueError(&#34;Unsupported diff. Check docstring&#34;)
 
     def filter(self, name: str, *args, **kwargs) -&gt; Frame:
+        name = name.upper()
         if name in ALL_FILTERS:
             return ALL_FILTERS[name](self, *args, **kwargs)
         else:
@@ -702,17 +700,28 @@ testframe = testset[0]</p></div>
             &#34;value&#34;, dim, &#34;&lt;=&#34;, maxvalue
         )
 
-    def apply_filter(self, boolean_array: np.ndarray) -&gt; Frame:
-        &#34;&#34;&#34;Generating a new Frame by removing points where filter is False.
-        Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.
+    def apply_filter(self, filter_result: Union[np.ndarray, List[int]]) -&gt; Frame:
+        &#34;&#34;&#34;Generating a new Frame by removing points where filter
 
         Args:
-            boolean_array (np.ndarray): True where the point should remain.
+            filter_result (Union[np.ndarray, List[int]]): Filter result
+
+        Raises:
+            TypeError: If the filter_result has the wrong type
 
         Returns:
-            Frame: Frame with filterd rows and reindexed data and points.
+            Frame: rame with filterd rows and reindexed data and points.
         &#34;&#34;&#34;
-        new_data = self.data.loc[boolean_array].reset_index(drop=True)
+        if isinstance(filter_result, np.ndarray):
+            # dataframe and pyntcloud based filters
+            new_data = self.data.loc[filter_result].reset_index(drop=True)
+        elif isinstance(filter_result, list):
+            # from open3d filters
+            new_data = self.data.iloc[filter_result].reset_index(drop=True)
+        else:
+            raise TypeError(
+                &#34;Wrong filter_result expeciting array with boolean values or list of intices&#34;
+            )
         return Frame(new_data, timestamp=self.timestamp)
 
     def get_cluster(self, eps: float, min_points: int) -&gt; pd.DataFrame:
@@ -746,21 +755,6 @@ testframe = testset[0]</p></div>
         &#34;&#34;&#34;
         bool_array = (cluster_labels[&#34;cluster&#34;] == cluster_number).values
         return self.apply_filter(bool_array)
-
-    def remove_radius_outlier(self, nb_points: int, radius: float) -&gt; FrameCore:
-        &#34;&#34;&#34;Function to remove points that have less than nb_points in a given
-        sphere of a given radius Parameters.
-        Args:
-            nb_points (int) – Number of points within the radius.
-            radius (float) – Radius of the sphere.
-        Returns:
-            Tuple[open3d.geometry.PointCloud, List[int]] :
-        &#34;&#34;&#34;
-        pcd = self.to_instance(&#34;open3d&#34;)
-        cl, index_to_keep = pcd.remove_radius_outlier(
-            nb_points=nb_points, radius=radius
-        )
-        return self._select_by_index(index_to_keep)
 
     def plane_segmentation(
         self,
@@ -797,7 +791,7 @@ testframe = testset[0]</p></div>
                 is high. Try to reduce the area of interesst before using
                 plane_segmentation. Caused by open3D.&#34;&#34;&#34;
             )
-        inlier_Frame = self._select_by_index(inliers)
+        inlier_Frame = self.apply_filter(inliers)
         if return_plane_model:
             return {&#34;Frame&#34;: inlier_Frame, &#34;plane_model&#34;: plane_model}
         else:
@@ -928,36 +922,51 @@ def from_instance(
 <h3>Methods</h3>
 <dl>
 <dt id="lidar.frame.Frame.apply_filter"><code class="name flex">
-<span>def <span class="ident">apply_filter</span></span>(<span>self, boolean_array: np.ndarray) ‑> <a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></span>
+<span>def <span class="ident">apply_filter</span></span>(<span>self, filter_result: Union[np.ndarray, List[int]]) ‑> <a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Generating a new Frame by removing points where filter is False.
-Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.</p>
+<div class="desc"><p>Generating a new Frame by removing points where filter</p>
 <h2 id="args">Args</h2>
 <dl>
-<dt><strong><code>boolean_array</code></strong> :&ensp;<code>np.ndarray</code></dt>
-<dd>True where the point should remain.</dd>
+<dt><strong><code>filter_result</code></strong> :&ensp;<code>Union[np.ndarray, List[int]]</code></dt>
+<dd>Filter result</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>TypeError</code></dt>
+<dd>If the filter_result has the wrong type</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code><a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></code></dt>
-<dd>Frame with filterd rows and reindexed data and points.</dd>
+<dd>rame with filterd rows and reindexed data and points.</dd>
 </dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def apply_filter(self, boolean_array: np.ndarray) -&gt; Frame:
-    &#34;&#34;&#34;Generating a new Frame by removing points where filter is False.
-    Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.
+<pre><code class="python">def apply_filter(self, filter_result: Union[np.ndarray, List[int]]) -&gt; Frame:
+    &#34;&#34;&#34;Generating a new Frame by removing points where filter
 
     Args:
-        boolean_array (np.ndarray): True where the point should remain.
+        filter_result (Union[np.ndarray, List[int]]): Filter result
+
+    Raises:
+        TypeError: If the filter_result has the wrong type
 
     Returns:
-        Frame: Frame with filterd rows and reindexed data and points.
+        Frame: rame with filterd rows and reindexed data and points.
     &#34;&#34;&#34;
-    new_data = self.data.loc[boolean_array].reset_index(drop=True)
+    if isinstance(filter_result, np.ndarray):
+        # dataframe and pyntcloud based filters
+        new_data = self.data.loc[filter_result].reset_index(drop=True)
+    elif isinstance(filter_result, list):
+        # from open3d filters
+        new_data = self.data.iloc[filter_result].reset_index(drop=True)
+    else:
+        raise TypeError(
+            &#34;Wrong filter_result expeciting array with boolean values or list of intices&#34;
+        )
     return Frame(new_data, timestamp=self.timestamp)</code></pre>
 </details>
 </dd>
@@ -1019,6 +1028,7 @@ Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def filter(self, name: str, *args, **kwargs) -&gt; Frame:
+    name = name.upper()
     if name in ALL_FILTERS:
         return ALL_FILTERS[name](self, *args, **kwargs)
     else:
@@ -1180,7 +1190,7 @@ Defaults to False.</dd>
             is high. Try to reduce the area of interesst before using
             plane_segmentation. Caused by open3D.&#34;&#34;&#34;
         )
-    inlier_Frame = self._select_by_index(inliers)
+    inlier_Frame = self.apply_filter(inliers)
     if return_plane_model:
         return {&#34;Frame&#34;: inlier_Frame, &#34;plane_model&#34;: plane_model}
     else:
@@ -1291,37 +1301,6 @@ all of them.</p>
         scene_aspectmode=&#34;data&#34;,
     )
     return fig</code></pre>
-</details>
-</dd>
-<dt id="lidar.frame.Frame.remove_radius_outlier"><code class="name flex">
-<span>def <span class="ident">remove_radius_outlier</span></span>(<span>self, nb_points: int, radius: float) ‑> <a title="lidar.frame_core.FrameCore" href="frame_core.html#lidar.frame_core.FrameCore">FrameCore</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Function to remove points that have less than nb_points in a given
-sphere of a given radius Parameters.</p>
-<h2 id="args">Args</h2>
-<p>nb_points (int) – Number of points within the radius.
-radius (float) – Radius of the sphere.</p>
-<h2 id="returns">Returns</h2>
-<p>Tuple[open3d.geometry.PointCloud, List[int]] :</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def remove_radius_outlier(self, nb_points: int, radius: float) -&gt; FrameCore:
-    &#34;&#34;&#34;Function to remove points that have less than nb_points in a given
-    sphere of a given radius Parameters.
-    Args:
-        nb_points (int) – Number of points within the radius.
-        radius (float) – Radius of the sphere.
-    Returns:
-        Tuple[open3d.geometry.PointCloud, List[int]] :
-    &#34;&#34;&#34;
-    pcd = self.to_instance(&#34;open3d&#34;)
-    cl, index_to_keep = pcd.remove_radius_outlier(
-        nb_points=nb_points, radius=radius
-    )
-    return self._select_by_index(index_to_keep)</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.take_cluster"><code class="name flex">
@@ -1503,7 +1482,7 @@ using this function.</p>
 <ul>
 <li>
 <h4><code><a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="lidar.frame.Frame.apply_filter" href="#lidar.frame.Frame.apply_filter">apply_filter</a></code></li>
 <li><code><a title="lidar.frame.Frame.diff" href="#lidar.frame.Frame.diff">diff</a></code></li>
 <li><code><a title="lidar.frame.Frame.filter" href="#lidar.frame.Frame.filter">filter</a></code></li>
@@ -1513,7 +1492,6 @@ using this function.</p>
 <li><code><a title="lidar.frame.Frame.limit" href="#lidar.frame.Frame.limit">limit</a></code></li>
 <li><code><a title="lidar.frame.Frame.plane_segmentation" href="#lidar.frame.Frame.plane_segmentation">plane_segmentation</a></code></li>
 <li><code><a title="lidar.frame.Frame.plot" href="#lidar.frame.Frame.plot">plot</a></code></li>
-<li><code><a title="lidar.frame.Frame.remove_radius_outlier" href="#lidar.frame.Frame.remove_radius_outlier">remove_radius_outlier</a></code></li>
 <li><code><a title="lidar.frame.Frame.take_cluster" href="#lidar.frame.Frame.take_cluster">take_cluster</a></code></li>
 <li><code><a title="lidar.frame.Frame.to_file" href="#lidar.frame.Frame.to_file">to_file</a></code></li>
 <li><code><a title="lidar.frame.Frame.to_instance" href="#lidar.frame.Frame.to_instance">to_instance</a></code></li>

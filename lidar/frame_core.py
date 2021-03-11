@@ -141,21 +141,6 @@ class FrameCore:
         """
         return original_id in self.data["original_id"].values
 
-    def _select_by_index(self, index_to_keep: List[int]) -> FrameCore:
-        """Generating a new Frame by keeping index_to_keep.
-
-        Usefull for open3d generate index lists. Similar to the the select_by_index
-        function of open3d.
-
-        Args:
-            index_to_keep (List[int]): List of indices to keep
-
-        Returns:
-            Frame: Frame with kept rows and reindexed data and points
-        """
-        new_data = self.data.iloc[index_to_keep].reset_index(drop=True)
-        return FrameCore(new_data, timestamp=self.timestamp)
-
     def describe(self) -> pd.DataFrame:
         """Generate descriptive statistics based on .data.describe()."""
         return self.data.describe()

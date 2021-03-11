@@ -29,9 +29,13 @@
 </summary>
 <pre><code class="python">&#34;&#34;&#34;Utiliy functions for filtering of frames.&#34;&#34;&#34;
 
-from .stat import quantile_filter, value_filter
+from .stat import quantile_filter, value_filter, remove_radius_outlier
 
-ALL_FILTERS = {&#34;quantile&#34;: quantile_filter, &#34;value&#34;: value_filter}</code></pre>
+ALL_FILTERS = {
+    &#34;QUANTILE&#34;: quantile_filter,
+    &#34;VALUE&#34;: value_filter,
+    &#34;RADIUSOUTLIER&#34;: remove_radius_outlier,
+}</code></pre>
 </details>
 </section>
 <section>

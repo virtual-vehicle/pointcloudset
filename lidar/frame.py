@@ -254,6 +254,7 @@ class Frame(FrameCore):
             raise ValueError("Unsupported diff. Check docstring")
 
     def filter(self, name: str, *args, **kwargs) -> Frame:
+        name = name.upper()
         if name in ALL_FILTERS:
             return ALL_FILTERS[name](self, *args, **kwargs)
         else:
@@ -280,17 +281,28 @@ class Frame(FrameCore):
             "value", dim, "<=", maxvalue
         )
 
-    def apply_filter(self, boolean_array: np.ndarray) -> Frame:
-        """Generating a new Frame by removing points where filter is False.
-        Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.
+    def apply_filter(self, filter_result: Union[np.ndarray, List[int]]) -> Frame:
+        """Generating a new Frame by removing points where filter
 
         Args:
-            boolean_array (np.ndarray): True where the point should remain.
+            filter_result (Union[np.ndarray, List[int]]): Filter result
+
+        Raises:
+            TypeError: If the filter_result has the wrong type
 
         Returns:
-            Frame: Frame with filterd rows and reindexed data and points.
+            Frame: rame with filterd rows and reindexed data and points.
         """
-        new_data = self.data.loc[boolean_array].reset_index(drop=True)
+        if isinstance(filter_result, np.ndarray):
+            # dataframe and pyntcloud based filters
+            new_data = self.data.loc[filter_result].reset_index(drop=True)
+        elif isinstance(filter_result, list):
+            # from open3d filters
+            new_data = self.data.iloc[filter_result].reset_index(drop=True)
+        else:
+            raise TypeError(
+                "Wrong filter_result expeciting array with boolean values or list of intices"
+            )
         return Frame(new_data, timestamp=self.timestamp)
 
     def get_cluster(self, eps: float, min_points: int) -> pd.DataFrame:
@@ -324,21 +336,6 @@ class Frame(FrameCore):
         """
         bool_array = (cluster_labels["cluster"] == cluster_number).values
         return self.apply_filter(bool_array)
-
-    def remove_radius_outlier(self, nb_points: int, radius: float) -> FrameCore:
-        """Function to remove points that have less than nb_points in a given
-        sphere of a given radius Parameters.
-        Args:
-            nb_points (int) – Number of points within the radius.
-            radius (float) – Radius of the sphere.
-        Returns:
-            Tuple[open3d.geometry.PointCloud, List[int]] :
-        """
-        pcd = self.to_instance("open3d")
-        cl, index_to_keep = pcd.remove_radius_outlier(
-            nb_points=nb_points, radius=radius
-        )
-        return self._select_by_index(index_to_keep)
 
     def plane_segmentation(
         self,
@@ -375,7 +372,7 @@ class Frame(FrameCore):
                 is high. Try to reduce the area of interesst before using
                 plane_segmentation. Caused by open3D."""
             )
-        inlier_Frame = self._select_by_index(inliers)
+        inlier_Frame = self.apply_filter(inliers)
         if return_plane_model:
             return {"Frame": inlier_Frame, "plane_model": plane_model}
         else:

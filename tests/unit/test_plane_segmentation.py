@@ -41,7 +41,7 @@ def test_plane_segmentation(testframe):
         num_iterations=50,
         return_plane_model=False,
     )
-    check.equal(type(plane), FrameCore)
+    check.equal(type(plane), Frame)
     check.equal(len(plane), 387)
 
 
@@ -52,7 +52,7 @@ def test_plane_segmentation_2(testframe):
         num_iterations=50,
         return_plane_model=False,
     )
-    check.equal(type(plane), FrameCore)
+    check.equal(type(plane), Frame)
     check.equal(len(plane), 387)
 
 
