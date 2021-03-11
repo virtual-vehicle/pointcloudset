@@ -22,3 +22,21 @@ def test_from_file_las(testlas1: Path):
     check.equal(type(frame), Frame)
     check.equal(frame.orig_file, "/workspaces/lidar/tests/testdata/diamond.las")
     check.equal(frame.timestamp_str, "Tuesday, December 01, 2020 11:32:41")
+    check.equal(
+        list(frame.data.columns),
+        [
+            "x",
+            "y",
+            "z",
+            "intensity",
+            "flag_byte",
+            "raw_classification",
+            "scan_angle_rank",
+            "user_data",
+            "pt_src_id",
+            "gps_time",
+            "red",
+            "green",
+            "blue",
+        ],
+    )

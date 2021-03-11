@@ -30,7 +30,7 @@ import rospy
 
 from .diff import ALL_DIFFS
 from .filter import ALL_FILTERS
-from .io import FRAME_FROM_FILE, FRAME_FROM_INSTANCE
+from .io import FRAME_FROM_FILE, FRAME_FROM_INSTANCE, FRAME_TO_INSTANCE
 from .frame_core import FrameCore
 from .plot.frame import plot_overlay
 
@@ -88,6 +88,17 @@ class Frame(FrameCore):
             )
         else:
             return cls(**FRAME_FROM_INSTANCE[library](instance, **kwargs))
+
+    def to_instance(self, library, **kwargs):
+        library = library.upper()
+        if library not in FRAME_TO_INSTANCE:
+            raise ValueError(
+                "Unsupported library; supported linraries are: {}".format(
+                    list(FRAME_TO_INSTANCE)
+                )
+            )
+
+        return FRAME_TO_INSTANCE[library](self, **kwargs)
 
     def plot(
         self,
@@ -229,7 +240,7 @@ class Frame(FrameCore):
             pd.DataFrame: Dataframe with list of clusters.
         """
         labels = np.array(
-            self._get_open3d_points().cluster_dbscan(
+            self.to_instance("open3d").cluster_dbscan(
                 eps=eps, min_points=min_points, print_progress=False
             )
         )
@@ -258,7 +269,7 @@ class Frame(FrameCore):
         Returns:
             Tuple[open3d.geometry.PointCloud, List[int]] :
         """
-        pcd = self._get_open3d_points()
+        pcd = self.to_instance("open3d")
         cl, index_to_keep = pcd.remove_radius_outlier(
             nb_points=nb_points, radius=radius
         )
@@ -287,7 +298,7 @@ class Frame(FrameCore):
             Frame or dict: Frame with inliers or a dict of Frame with inliers and the
             plane parameters.
         """
-        pcd = self._get_open3d_points()
+        pcd = self.to_instance("open3d")
         plane_model, inliers = pcd.segment_plane(
             distance_threshold=distance_threshold,
             ransac_n=ransac_n,

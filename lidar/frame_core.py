@@ -15,8 +15,6 @@ import pandas as pd
 import pyntcloud
 import rospy
 
-from .convert import convert
-
 
 class FrameCore:
     def __init__(
@@ -37,7 +35,7 @@ class FrameCore:
         """All the data, x,y.z and intensity, range and more"""
         self.timestamp = timestamp
         """ROS timestamp"""
-        self.points = pyntcloud.PyntCloud(self.data[["x", "y", "z"]], mesh=None)
+        self.points = pyntcloud.PyntCloud(self.data, mesh=None)
         """Pyntcloud object with x,y,z coordinates"""
         self.orig_file = orig_file
         """Path to bag file. Defaults to empty"""
@@ -157,19 +155,6 @@ class FrameCore:
         """
         new_data = self.data.iloc[index_to_keep].reset_index(drop=True)
         return FrameCore(new_data, timestamp=self.timestamp)
-
-    def _get_open3d_points(self) -> o3d.open3d_pybind.geometry.PointCloud:
-        """Extract points as open3D PointCloud object. Needed for processing with the
-        open3d package.
-
-        Returns:
-            o3d.open3d_pybind.geometry.PointCloud: the pointcloud
-        """
-        converted = convert.convert_df2pcd(self.points.points)
-        assert len(np.asarray(converted.points)) == len(
-            self
-        ), "len of open3d points should be the same as len of the Frame"
-        return convert.convert_df2pcd(self.points.points)
 
     def describe(self) -> pd.DataFrame:
         """Generate descriptive statistics based on .data.describe()."""

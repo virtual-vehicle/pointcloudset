@@ -8,6 +8,7 @@ import pytest_check as check
 import rospy
 from lidar import Frame
 from pandas._testing import assert_frame_equal
+from pyntcloud import PyntCloud
 
 
 def test_init(testframe_mini_df: pd.DataFrame):
@@ -36,18 +37,16 @@ def test_contains_original_id_number(testframe: Frame):
 
 
 def test_points(testframe_mini):
-    points = testframe_mini.points.points
-    check.equal(type(points), pd.DataFrame)
-    check.equal(list(points.columns), ["x", "y", "z"])
+    points = testframe_mini.points
+    check.is_instance(points, PyntCloud)
 
 
-def test_get_open3d_points(testframe_mini):
-    pointcloud = testframe_mini._get_open3d_points()
-    check.equal(type(pointcloud), o3d.open3d_pybind.geometry.PointCloud)
-    check.equal(pointcloud.has_points(), True)
-    check.equal(len(np.asarray(pointcloud.points)), len(testframe_mini))
-    testlist = list(np.asarray(pointcloud.points))
-    print(testlist)
+def test_points2(testframe_mini):
+    points = testframe_mini.points
+    check.equal(
+        list(points.points.columns),
+        ["x", "y", "z", "intensity", "t", "reflectivity", "ring", "noise", "range"],
+    )
 
 
 def test_timestamp(testframe_mini):
@@ -214,7 +213,7 @@ def test_testframe_withzero_data(
 def test_testframe_pointcloud(
     testframe_withzero: Frame, reference_pointcloud_withzero_dataframe: pd.DataFrame
 ):
-    pointcloud = testframe_withzero._get_open3d_points()
+    pointcloud = testframe_withzero.to_instance("open3d")
     array = np.asarray(pointcloud.points)
     pointcloud_df = pd.DataFrame(array)
     # pointcloud_df.to_pickle(

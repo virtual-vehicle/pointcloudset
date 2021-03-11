@@ -19,9 +19,9 @@ def calculate_distance_to_frame(frame, target):
     Raises:
         ValueError: If there are no points in FrameB with the same orginal_id
     """
-    if not frame._has_original_id():
+    if not frame.has_original_id():
         raise ValueError("Frame does not contain original_id.")
-    if not target._has_original_id():
+    if not target.has_original_id():
         raise ValueError("Target does not contain original_id.")
     refrence_orginial_ids = frame.data.original_id.values
     target_orginal_ids = target.data.original_id.values
