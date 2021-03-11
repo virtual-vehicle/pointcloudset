@@ -17,7 +17,6 @@ Frame object is generated at each processing stage.
 """
 from __future__ import annotations
 
-import operator
 import warnings
 from pathlib import Path
 from typing import List, Union
@@ -30,17 +29,10 @@ import pyntcloud
 from pyntcloud.io import FROM_FILE
 import rospy
 
-from .diff import ALL_DIFF
+from .diff import ALL_DIFFS
+from .filter import ALL_FILTERS
 from .frame_core import FrameCore
 from .plot.frame import plot_overlay
-
-ops = {
-    ">": operator.gt,
-    "<": operator.lt,
-    ">=": operator.ge,
-    "<=": operator.le,
-    "==": operator.eq,
-}
 
 
 def is_documented_by(original):
@@ -165,11 +157,17 @@ class Frame(FrameCore):
         Returns:
             Frame: New frame with added column of the differences
         """
-        if name in ALL_DIFF:
-            ALL_DIFF[name](frame=self, target=target, **kwargs)
+        if name in ALL_DIFFS:
+            ALL_DIFFS[name](frame=self, target=target, **kwargs)
             return self
         else:
             raise ValueError("Unsupported diff. Check docstring")
+
+    def filter(self, name, *args, **kwargs):
+        if name in ALL_FILTERS:
+            return ALL_FILTERS[name](self, *args, **kwargs)
+        else:
+            raise ValueError("Unsupported filter. Check docstring")
 
     def apply_filter(self, boolean_array: np.ndarray) -> Frame:
         """Generating a new Frame by removing points where filter is False.
@@ -252,27 +250,6 @@ class Frame(FrameCore):
             nb_points=nb_points, radius=radius
         )
         return self._select_by_index(index_to_keep)
-
-    def quantile_filter(
-        self, dim: str, relation: str = ">=", cut_quantile: float = 0.5
-    ) -> Frame:
-        """Filtering based on quantile values of dimension dim of the data.
-
-        Example:
-
-        testframe.quantile_filter("intensity","==",0.5)
-
-        Args:
-            dim (str): column in data, for example "intensity"
-            relation (str, optional): Any operator as string. Defaults to ">=".
-            cut_quantile (float, optional): Qunatile to compare to. Defaults to 0.5.
-
-        Returns:
-            Frame: Frame which fullfils the criteria.
-        """
-        cut_value = self.data[dim].quantile(cut_quantile)
-        filter_array = ops[relation](self.data[dim], cut_value)
-        return self.apply_filter(filter_array.to_numpy())
 
     def plane_segmentation(
         self,
