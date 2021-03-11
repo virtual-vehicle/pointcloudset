@@ -1,3 +1,5 @@
+"""Global definitions for the library."""
+
 import operator
 
 OPS = {

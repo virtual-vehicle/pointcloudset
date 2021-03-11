@@ -26,6 +26,7 @@ import pandas as pd
 import plotly
 import plotly.express as px
 import pyntcloud
+import open3d as o3d
 import rospy
 
 from .diff import ALL_DIFFS
@@ -77,7 +78,15 @@ class Frame(FrameCore):
                 data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
             )
 
-    def to_file(self, file_path: Path, **kwargs):
+    def to_file(self, file_path: Path = Path(), **kwargs) -> None:
+        """Exports the frame as a csv for use with cloud compare or similar tools.
+        Currently not all attributes of a frame are saved so some information is lost when
+        using this function.
+
+        Args:
+            file_path (Path, optional): Destination. Defaults to the folder of
+            the bag file and csv with the timestamp of the frame.
+        """
         ext = file_path.suffix[1:].upper()
         if ext not in FRAME_TO_FILE:
             raise ValueError(
@@ -85,13 +94,41 @@ class Frame(FrameCore):
                     list(FRAME_TO_FILE)
                 )
             )
-        kwargs["file_path"] = file_path
+
+        orig_file_name = Path(self.orig_file).stem
+        if file_path == Path():
+            # defaulting to csv file
+            filename = f"{orig_file_name}_timestamp_{self.timestamp}.csv"
+            destination_folder = Path(self.orig_file).parent.joinpath(filename)
+        else:
+            destination_folder = file_path
+
+        kwargs["file_path"] = destination_folder
         kwargs["frame"] = self
 
         FRAME_TO_FILE[ext](**kwargs)
 
     @classmethod
-    def from_instance(cls, library, instance, **kwargs):
+    def from_instance(
+        cls,
+        library: str,
+        instance: Union[
+            pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud
+        ],
+        **kwargs,
+    ) -> Frame:
+        """Converts a libaries instance to a lidar Frame.
+
+        Args:
+            library (str): name of the libary
+            instance (Union[ pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud ]): [description]
+
+        Raises:
+            ValueError: If instance is not supported.
+
+        Returns:
+            Frame: derived from the instance
+        """
         library = library.upper()
         if library not in FRAME_FROM_INSTANCE:
             raise ValueError(
@@ -102,11 +139,26 @@ class Frame(FrameCore):
         else:
             return cls(**FRAME_FROM_INSTANCE[library](instance, **kwargs))
 
-    def to_instance(self, library, **kwargs):
+    def to_instance(
+        self, library: str, **kwargs
+    ) -> Union[
+        pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud
+    ]:
+        """Convert Frame to another librarie instance.
+
+        Args:
+            library (str): name of the libary
+
+        Raises:
+            ValueError: If libary is not suppored
+
+        Returns:
+            Union[ pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud ]: The derived instance
+        """
         library = library.upper()
         if library not in FRAME_TO_INSTANCE:
             raise ValueError(
-                "Unsupported library; supported linraries are: {}".format(
+                "Unsupported library; supported libraries are: {}".format(
                     list(FRAME_TO_INSTANCE)
                 )
             )
@@ -201,7 +253,7 @@ class Frame(FrameCore):
         else:
             raise ValueError("Unsupported diff. Check docstring")
 
-    def filter(self, name, *args, **kwargs):
+    def filter(self, name: str, *args, **kwargs) -> Frame:
         if name in ALL_FILTERS:
             return ALL_FILTERS[name](self, *args, **kwargs)
         else:

@@ -67,6 +67,7 @@ import pandas as pd
 import plotly
 import plotly.express as px
 import pyntcloud
+import open3d as o3d
 import rospy
 
 from .diff import ALL_DIFFS
@@ -118,7 +119,15 @@ class Frame(FrameCore):
                 data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
             )
 
-    def to_file(self, file_path: Path, **kwargs):
+    def to_file(self, file_path: Path = Path(), **kwargs) -&gt; None:
+        &#34;&#34;&#34;Exports the frame as a csv for use with cloud compare or similar tools.
+        Currently not all attributes of a frame are saved so some information is lost when
+        using this function.
+
+        Args:
+            file_path (Path, optional): Destination. Defaults to the folder of
+            the bag file and csv with the timestamp of the frame.
+        &#34;&#34;&#34;
         ext = file_path.suffix[1:].upper()
         if ext not in FRAME_TO_FILE:
             raise ValueError(
@@ -126,13 +135,41 @@ class Frame(FrameCore):
                     list(FRAME_TO_FILE)
                 )
             )
-        kwargs[&#34;file_path&#34;] = file_path
+
+        orig_file_name = Path(self.orig_file).stem
+        if file_path == Path():
+            # defaulting to csv file
+            filename = f&#34;{orig_file_name}_timestamp_{self.timestamp}.csv&#34;
+            destination_folder = Path(self.orig_file).parent.joinpath(filename)
+        else:
+            destination_folder = file_path
+
+        kwargs[&#34;file_path&#34;] = destination_folder
         kwargs[&#34;frame&#34;] = self
 
         FRAME_TO_FILE[ext](**kwargs)
 
     @classmethod
-    def from_instance(cls, library, instance, **kwargs):
+    def from_instance(
+        cls,
+        library: str,
+        instance: Union[
+            pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud
+        ],
+        **kwargs,
+    ) -&gt; Frame:
+        &#34;&#34;&#34;Converts a libaries instance to a lidar Frame.
+
+        Args:
+            library (str): name of the libary
+            instance (Union[ pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud ]): [description]
+
+        Raises:
+            ValueError: If instance is not supported.
+
+        Returns:
+            Frame: derived from the instance
+        &#34;&#34;&#34;
         library = library.upper()
         if library not in FRAME_FROM_INSTANCE:
             raise ValueError(
@@ -143,11 +180,26 @@ class Frame(FrameCore):
         else:
             return cls(**FRAME_FROM_INSTANCE[library](instance, **kwargs))
 
-    def to_instance(self, library, **kwargs):
+    def to_instance(
+        self, library: str, **kwargs
+    ) -&gt; Union[
+        pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud
+    ]:
+        &#34;&#34;&#34;Convert Frame to another librarie instance.
+
+        Args:
+            library (str): name of the libary
+
+        Raises:
+            ValueError: If libary is not suppored
+
+        Returns:
+            Union[ pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud ]: The derived instance
+        &#34;&#34;&#34;
         library = library.upper()
         if library not in FRAME_TO_INSTANCE:
             raise ValueError(
-                &#34;Unsupported library; supported linraries are: {}&#34;.format(
+                &#34;Unsupported library; supported libraries are: {}&#34;.format(
                     list(FRAME_TO_INSTANCE)
                 )
             )
@@ -242,7 +294,7 @@ class Frame(FrameCore):
         else:
             raise ValueError(&#34;Unsupported diff. Check docstring&#34;)
 
-    def filter(self, name, *args, **kwargs):
+    def filter(self, name: str, *args, **kwargs) -&gt; Frame:
         if name in ALL_FILTERS:
             return ALL_FILTERS[name](self, *args, **kwargs)
         else:
@@ -448,7 +500,15 @@ testframe = testset[0]</p></div>
                 data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
             )
 
-    def to_file(self, file_path: Path, **kwargs):
+    def to_file(self, file_path: Path = Path(), **kwargs) -&gt; None:
+        &#34;&#34;&#34;Exports the frame as a csv for use with cloud compare or similar tools.
+        Currently not all attributes of a frame are saved so some information is lost when
+        using this function.
+
+        Args:
+            file_path (Path, optional): Destination. Defaults to the folder of
+            the bag file and csv with the timestamp of the frame.
+        &#34;&#34;&#34;
         ext = file_path.suffix[1:].upper()
         if ext not in FRAME_TO_FILE:
             raise ValueError(
@@ -456,13 +516,41 @@ testframe = testset[0]</p></div>
                     list(FRAME_TO_FILE)
                 )
             )
-        kwargs[&#34;file_path&#34;] = file_path
+
+        orig_file_name = Path(self.orig_file).stem
+        if file_path == Path():
+            # defaulting to csv file
+            filename = f&#34;{orig_file_name}_timestamp_{self.timestamp}.csv&#34;
+            destination_folder = Path(self.orig_file).parent.joinpath(filename)
+        else:
+            destination_folder = file_path
+
+        kwargs[&#34;file_path&#34;] = destination_folder
         kwargs[&#34;frame&#34;] = self
 
         FRAME_TO_FILE[ext](**kwargs)
 
     @classmethod
-    def from_instance(cls, library, instance, **kwargs):
+    def from_instance(
+        cls,
+        library: str,
+        instance: Union[
+            pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud
+        ],
+        **kwargs,
+    ) -&gt; Frame:
+        &#34;&#34;&#34;Converts a libaries instance to a lidar Frame.
+
+        Args:
+            library (str): name of the libary
+            instance (Union[ pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud ]): [description]
+
+        Raises:
+            ValueError: If instance is not supported.
+
+        Returns:
+            Frame: derived from the instance
+        &#34;&#34;&#34;
         library = library.upper()
         if library not in FRAME_FROM_INSTANCE:
             raise ValueError(
@@ -473,11 +561,26 @@ testframe = testset[0]</p></div>
         else:
             return cls(**FRAME_FROM_INSTANCE[library](instance, **kwargs))
 
-    def to_instance(self, library, **kwargs):
+    def to_instance(
+        self, library: str, **kwargs
+    ) -&gt; Union[
+        pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud
+    ]:
+        &#34;&#34;&#34;Convert Frame to another librarie instance.
+
+        Args:
+            library (str): name of the libary
+
+        Raises:
+            ValueError: If libary is not suppored
+
+        Returns:
+            Union[ pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud ]: The derived instance
+        &#34;&#34;&#34;
         library = library.upper()
         if library not in FRAME_TO_INSTANCE:
             raise ValueError(
-                &#34;Unsupported library; supported linraries are: {}&#34;.format(
+                &#34;Unsupported library; supported libraries are: {}&#34;.format(
                     list(FRAME_TO_INSTANCE)
                 )
             )
@@ -572,7 +675,7 @@ testframe = testset[0]</p></div>
         else:
             raise ValueError(&#34;Unsupported diff. Check docstring&#34;)
 
-    def filter(self, name, *args, **kwargs):
+    def filter(self, name: str, *args, **kwargs) -&gt; Frame:
         if name in ALL_FILTERS:
             return ALL_FILTERS[name](self, *args, **kwargs)
         else:
@@ -764,16 +867,52 @@ def from_file(cls, file_path: Path, **kwargs):
 </details>
 </dd>
 <dt id="lidar.frame.Frame.from_instance"><code class="name flex">
-<span>def <span class="ident">from_instance</span></span>(<span>library, instance, **kwargs)</span>
+<span>def <span class="ident">from_instance</span></span>(<span>library: str, instance: Union[pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud], **kwargs) ‑> <a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Converts a libaries instance to a lidar Frame.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>library</code></strong> :&ensp;<code>str</code></dt>
+<dd>name of the libary</dd>
+<dt><strong><code>instance</code></strong> :&ensp;<code>Union[ pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud ]</code></dt>
+<dd>[description]</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ValueError</code></dt>
+<dd>If instance is not supported.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></code></dt>
+<dd>derived from the instance</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@classmethod
-def from_instance(cls, library, instance, **kwargs):
+def from_instance(
+    cls,
+    library: str,
+    instance: Union[
+        pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud
+    ],
+    **kwargs,
+) -&gt; Frame:
+    &#34;&#34;&#34;Converts a libaries instance to a lidar Frame.
+
+    Args:
+        library (str): name of the libary
+        instance (Union[ pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud ]): [description]
+
+    Raises:
+        ValueError: If instance is not supported.
+
+    Returns:
+        Frame: derived from the instance
+    &#34;&#34;&#34;
     library = library.upper()
     if library not in FRAME_FROM_INSTANCE:
         raise ValueError(
@@ -871,7 +1010,7 @@ Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.</p>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.filter"><code class="name flex">
-<span>def <span class="ident">filter</span></span>(<span>self, name, *args, **kwargs)</span>
+<span>def <span class="ident">filter</span></span>(<span>self, name: str, *args, **kwargs) ‑> <a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -879,7 +1018,7 @@ Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def filter(self, name, *args, **kwargs):
+<pre><code class="python">def filter(self, name: str, *args, **kwargs) -&gt; Frame:
     if name in ALL_FILTERS:
         return ALL_FILTERS[name](self, *args, **kwargs)
     else:
@@ -1221,15 +1360,31 @@ radius (float) – Radius of the sphere.</p>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.to_file"><code class="name flex">
-<span>def <span class="ident">to_file</span></span>(<span>self, file_path: Path, **kwargs)</span>
+<span>def <span class="ident">to_file</span></span>(<span>self, file_path: Path = PosixPath('.'), **kwargs) ‑> NoneType</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Exports the frame as a csv for use with cloud compare or similar tools.
+Currently not all attributes of a frame are saved so some information is lost when
+using this function.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>file_path</code></strong> :&ensp;<code>Path</code>, optional</dt>
+<dd>Destination. Defaults to the folder of</dd>
+</dl>
+<p>the bag file and csv with the timestamp of the frame.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def to_file(self, file_path: Path, **kwargs):
+<pre><code class="python">def to_file(self, file_path: Path = Path(), **kwargs) -&gt; None:
+    &#34;&#34;&#34;Exports the frame as a csv for use with cloud compare or similar tools.
+    Currently not all attributes of a frame are saved so some information is lost when
+    using this function.
+
+    Args:
+        file_path (Path, optional): Destination. Defaults to the folder of
+        the bag file and csv with the timestamp of the frame.
+    &#34;&#34;&#34;
     ext = file_path.suffix[1:].upper()
     if ext not in FRAME_TO_FILE:
         raise ValueError(
@@ -1237,26 +1392,65 @@ radius (float) – Radius of the sphere.</p>
                 list(FRAME_TO_FILE)
             )
         )
-    kwargs[&#34;file_path&#34;] = file_path
+
+    orig_file_name = Path(self.orig_file).stem
+    if file_path == Path():
+        # defaulting to csv file
+        filename = f&#34;{orig_file_name}_timestamp_{self.timestamp}.csv&#34;
+        destination_folder = Path(self.orig_file).parent.joinpath(filename)
+    else:
+        destination_folder = file_path
+
+    kwargs[&#34;file_path&#34;] = destination_folder
     kwargs[&#34;frame&#34;] = self
 
     FRAME_TO_FILE[ext](**kwargs)</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.to_instance"><code class="name flex">
-<span>def <span class="ident">to_instance</span></span>(<span>self, library, **kwargs)</span>
+<span>def <span class="ident">to_instance</span></span>(<span>self, library: str, **kwargs) ‑> Union[pandas.core.frame.DataFrame, pyntcloud.core_class.PyntCloud, open3d.open3d_pybind.geometry.PointCloud]</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Convert Frame to another librarie instance.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>library</code></strong> :&ensp;<code>str</code></dt>
+<dd>name of the libary</dd>
+</dl>
+<h2 id="raises">Raises</h2>
+<dl>
+<dt><code>ValueError</code></dt>
+<dd>If libary is not suppored</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Union[ pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud ]</code></dt>
+<dd>The derived instance</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def to_instance(self, library, **kwargs):
+<pre><code class="python">def to_instance(
+    self, library: str, **kwargs
+) -&gt; Union[
+    pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud
+]:
+    &#34;&#34;&#34;Convert Frame to another librarie instance.
+
+    Args:
+        library (str): name of the libary
+
+    Raises:
+        ValueError: If libary is not suppored
+
+    Returns:
+        Union[ pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud ]: The derived instance
+    &#34;&#34;&#34;
     library = library.upper()
     if library not in FRAME_TO_INSTANCE:
         raise ValueError(
-            &#34;Unsupported library; supported linraries are: {}&#34;.format(
+            &#34;Unsupported library; supported libraries are: {}&#34;.format(
                 list(FRAME_TO_INSTANCE)
             )
         )

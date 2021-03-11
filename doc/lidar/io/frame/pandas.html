@@ -22,12 +22,62 @@
 <h1 class="title">Module <code>lidar.io.frame.pandas</code></h1>
 </header>
 <section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+import pandas as pd
+
+if TYPE_CHECKING:
+    from lidar import Frame
+
+
+def from_dataframe(df: pd.DataFrame) -&gt; dict:
+    return {&#34;data&#34;: df}
+
+
+def to_dataframe(frame: Frame) -&gt; pd.DataFrame:
+    return frame.data</code></pre>
+</details>
 </section>
 <section>
 </section>
 <section>
 </section>
 <section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="lidar.io.frame.pandas.from_dataframe"><code class="name flex">
+<span>def <span class="ident">from_dataframe</span></span>(<span>df: pd.DataFrame) ‑> dict</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def from_dataframe(df: pd.DataFrame) -&gt; dict:
+    return {&#34;data&#34;: df}</code></pre>
+</details>
+</dd>
+<dt id="lidar.io.frame.pandas.to_dataframe"><code class="name flex">
+<span>def <span class="ident">to_dataframe</span></span>(<span>frame: Frame) ‑> pd.DataFrame</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_dataframe(frame: Frame) -&gt; pd.DataFrame:
+    return frame.data</code></pre>
+</details>
+</dd>
+</dl>
 </section>
 <section>
 </section>
@@ -41,6 +91,12 @@
 <li><h3>Super-module</h3>
 <ul>
 <li><code><a title="lidar.io.frame" href="index.html">lidar.io.frame</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="lidar.io.frame.pandas.from_dataframe" href="#lidar.io.frame.pandas.from_dataframe">from_dataframe</a></code></li>
+<li><code><a title="lidar.io.frame.pandas.to_dataframe" href="#lidar.io.frame.pandas.to_dataframe">to_dataframe</a></code></li>
 </ul>
 </li>
 </ul>

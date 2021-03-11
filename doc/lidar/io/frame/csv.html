@@ -35,22 +35,15 @@ if TYPE_CHECKING:
     from lidar import Frame
 
 
-def write_csv(frame: Frame, file_path: Path = Path()) -&gt; None:
+def write_csv(frame: Frame, file_path: Path) -&gt; None:
     &#34;&#34;&#34;Exports the frame as a csv for use with cloud compare or similar tools.
     Currently not all attributes of a frame are saved so some information is lost when
     using this function.
 
     Args:
-        file_path (Path, optional): Destination. Defaults to the folder of
-        the bag fiile with the timestamp of the frame.
+        file_path (Path): Destination.
     &#34;&#34;&#34;
-    orig_file_name = Path(frame.orig_file).stem
-    if file_path == Path():
-        filename = f&#34;{orig_file_name}_timestamp_{frame.timestamp}.csv&#34;
-        destination_folder = Path(frame.orig_file).parent.joinpath(filename)
-    else:
-        destination_folder = file_path
-    frame.data.to_csv(destination_folder, index=False)</code></pre>
+    frame.data.to_csv(file_path, index=False)</code></pre>
 </details>
 </section>
 <section>
@@ -61,7 +54,7 @@ def write_csv(frame: Frame, file_path: Path = Path()) -&gt; None:
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="lidar.io.frame.csv.write_csv"><code class="name flex">
-<span>def <span class="ident">write_csv</span></span>(<span>frame: Frame, file_path: Path = PosixPath('.')) ‑> None</span>
+<span>def <span class="ident">write_csv</span></span>(<span>frame: Frame, file_path: Path) ‑> None</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Exports the frame as a csv for use with cloud compare or similar tools.
@@ -69,30 +62,22 @@ Currently not all attributes of a frame are saved so some information is lost wh
 using this function.</p>
 <h2 id="args">Args</h2>
 <dl>
-<dt><strong><code>file_path</code></strong> :&ensp;<code>Path</code>, optional</dt>
-<dd>Destination. Defaults to the folder of</dd>
-</dl>
-<p>the bag fiile with the timestamp of the frame.</p></div>
+<dt><strong><code>file_path</code></strong> :&ensp;<code>Path</code></dt>
+<dd>Destination.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def write_csv(frame: Frame, file_path: Path = Path()) -&gt; None:
+<pre><code class="python">def write_csv(frame: Frame, file_path: Path) -&gt; None:
     &#34;&#34;&#34;Exports the frame as a csv for use with cloud compare or similar tools.
     Currently not all attributes of a frame are saved so some information is lost when
     using this function.
 
     Args:
-        file_path (Path, optional): Destination. Defaults to the folder of
-        the bag fiile with the timestamp of the frame.
+        file_path (Path): Destination.
     &#34;&#34;&#34;
-    orig_file_name = Path(frame.orig_file).stem
-    if file_path == Path():
-        filename = f&#34;{orig_file_name}_timestamp_{frame.timestamp}.csv&#34;
-        destination_folder = Path(frame.orig_file).parent.joinpath(filename)
-    else:
-        destination_folder = file_path
-    frame.data.to_csv(destination_folder, index=False)</code></pre>
+    frame.data.to_csv(file_path, index=False)</code></pre>
 </details>
 </dd>
 </dl>
