@@ -1,14 +1,16 @@
 import numpy as np
+import pandas as pd
 import pytest
 import pytest_check as check
 from lidar import Dataset, Frame
+from lidar.diff.frame import _calculate_single_point_difference
 
 
 def test_frame_difference_equal(testframe_mini_real: Frame):
     res = testframe_mini_real.diff("frame", testframe_mini_real)
     x_test = res.data["x difference"].values
-    y_test = res.data["x difference"].values
-    z_test = res.data["x difference"].values
+    y_test = res.data["y difference"].values
+    z_test = res.data["z difference"].values
     check.equal(type(res), Frame)
     check.equal(len(res), len(testframe_mini_real))
     check.equal(
@@ -54,55 +56,37 @@ def test_frame_difference1_no_orignal_id2(
         testframe_mini_real.diff("frame", testframe_mini)
 
 
-def test_frame_difference1(testframe0: Frame, testframe_mini: Frame):
-    res = testframe_mini.diff("frame", testframe0)
+def test_frame_difference1(
+    testframe_mini_real: Frame, testframe_mini_real_plus1: Frame
+):
+    res = testframe_mini_real.diff("frame", testframe_mini_real_plus1)
     check.equal(type(res), Frame)
-    check.equal(len(res), len(testframe_mini))
+    check.equal(len(res), len(testframe_mini_real))
     x_test = res.data["x difference"].values
-    y_test = res.data["x difference"].values
-    z_test = res.data["x difference"].values
-    check.equal(
-        list(res.data.columns),
-        [
-            "x",
-            "y",
-            "z",
-            "intensity",
-            "t",
-            "reflectivity",
-            "ring",
-            "noise",
-            "range",
-            "original_id",
-            "x difference",
-            "y difference",
-            "z difference",
-            "intensity difference",
-            "t difference",
-            "reflectivity difference",
-            "ring difference",
-            "noise difference",
-            "range difference",
-        ],
+    y_test = res.data["y difference"].values
+    z_test = res.data["z difference"].values
+    check.equal(np.all(np.isclose(x_test, -1.0)), True)
+    check.equal(np.all(np.isclose(y_test, -1.0)), True)
+    check.equal(np.all(np.isclose(z_test, -1.0)), True)
+
+
+def test_frame_difference_no_intersection(
+    testframe_mini_real: Frame, testframe_mini_real_other_original_id: Frame
+):
+    with pytest.raises(ValueError):
+        testframe_mini_real.diff("frame", testframe_mini_real_other_original_id)
+
+
+def test__calculate_single_point_difference_no_overlap(
+    testframe_mini_real: Frame,
+    testframe_mini_real_other_original_id: Frame,
+):
+    res = _calculate_single_point_difference(
+        testframe_mini_real, testframe_mini_real_other_original_id, original_id=6008
     )
-
-
-def test_frame_difference(testframe0: Frame, testframe_mini_real: Frame):
-    res = testframe_mini_real.diff("frame", testframe0)
-    # check.equal(len(res), len(testframe_mini_real))
-    # manual_diff = (
-    #     testframe_mini_real.data[testframe_mini_real.data["original_id"] == 9701][
-    #         "x"
-    #     ].values
-    #     - testframe0.data[testframe0.data["original_id"] == 9701]["x"].values
-    # )[0]
-    # check.equal(
-    #     res.data[res.data["original_id"] == 9701]["x difference"].values[0], manual_diff
-    # )
-    # check.equal(
-    #     len(res.data.columns.values),
-    #     19,
-    # )
+    test = res.values[0]
+    check.is_instance(res, pd.DataFrame)
+    check.equal(np.alltrue(np.isnan(test)), True)
 
 
 def test_distances_to_origin(testframe_mini: Frame):

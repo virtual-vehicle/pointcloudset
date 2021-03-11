@@ -38,23 +38,27 @@ import numpy as np
 import pandas as pd
 
 
-def calculate_all_point_differences(frame, frameB):
-    &#34;&#34;&#34;Calculate the point differences for each point which is also in frameB. Only
-    points with the same orginal_id are compared. The results are added to the data
-    of the frame. (frame - frameB)
+def calculate_distance_to_frame(frame, target):
+    &#34;&#34;&#34;Calculate the point differences for each point which is also in the target fraem.
+    Only points with the same orginal_id are compared. The results are added to the#
+    data of the frame. (frame - target)
 
     Args:
-        frameB (Frame): A Frame object to compute the differences.
+        target (Frame): A Frame object to compute the differences.
 
     Raises:
         ValueError: If there are no points in FrameB with the same orginal_id
     &#34;&#34;&#34;
+    if not frame._has_original_id():
+        raise ValueError(&#34;Frame does not contain original_id.&#34;)
+    if not target._has_original_id():
+        raise ValueError(&#34;Target does not contain original_id.&#34;)
     refrence_orginial_ids = frame.data.original_id.values
-    frameB_original_ids = frameB.data.original_id.values
-    intersection = np.intersect1d(refrence_orginial_ids, frameB_original_ids)
+    target_orginal_ids = target.data.original_id.values
+    intersection = np.intersect1d(refrence_orginial_ids, target_orginal_ids)
     if len(intersection) &gt; 0:
         diff_list = [
-            calculate_single_point_difference(frame, frameB, id) for id in intersection
+            _calculate_single_point_difference(frame, target, id) for id in intersection
         ]
         orginal_types = [str(types) for types in diff_list[0].dtypes.values]
         target_type_dict = dict(zip(diff_list[0].columns.values, orginal_types))
@@ -67,7 +71,7 @@ def calculate_all_point_differences(frame, frameB):
         raise ValueError(&#34;no intersection found between the frames.&#34;)
 
 
-def calculate_single_point_difference(frame, frameB, original_id: int) -&gt; pd.DataFrame:
+def _calculate_single_point_difference(frame, frameB, original_id: int) -&gt; pd.DataFrame:
     &#34;&#34;&#34;Calculate the difference of one element of a Point in the current Frame to
     the correspoing point in Frame B. Both frames must contain the same orginal_id.
 
@@ -99,16 +103,16 @@ def calculate_single_point_difference(frame, frameB, original_id: int) -&gt; pd.
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="lidar.diff.frame.calculate_all_point_differences"><code class="name flex">
-<span>def <span class="ident">calculate_all_point_differences</span></span>(<span>frame, frameB)</span>
+<dt id="lidar.diff.frame.calculate_distance_to_frame"><code class="name flex">
+<span>def <span class="ident">calculate_distance_to_frame</span></span>(<span>frame, target)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Calculate the point differences for each point which is also in frameB. Only
-points with the same orginal_id are compared. The results are added to the data
-of the frame. (frame - frameB)</p>
+<div class="desc"><p>Calculate the point differences for each point which is also in the target fraem.
+Only points with the same orginal_id are compared. The results are added to the#
+data of the frame. (frame - target)</p>
 <h2 id="args">Args</h2>
 <dl>
-<dt><strong><code>frameB</code></strong> :&ensp;<code>Frame</code></dt>
+<dt><strong><code>target</code></strong> :&ensp;<code>Frame</code></dt>
 <dd>A Frame object to compute the differences.</dd>
 </dl>
 <h2 id="raises">Raises</h2>
@@ -120,23 +124,27 @@ of the frame. (frame - frameB)</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def calculate_all_point_differences(frame, frameB):
-    &#34;&#34;&#34;Calculate the point differences for each point which is also in frameB. Only
-    points with the same orginal_id are compared. The results are added to the data
-    of the frame. (frame - frameB)
+<pre><code class="python">def calculate_distance_to_frame(frame, target):
+    &#34;&#34;&#34;Calculate the point differences for each point which is also in the target fraem.
+    Only points with the same orginal_id are compared. The results are added to the#
+    data of the frame. (frame - target)
 
     Args:
-        frameB (Frame): A Frame object to compute the differences.
+        target (Frame): A Frame object to compute the differences.
 
     Raises:
         ValueError: If there are no points in FrameB with the same orginal_id
     &#34;&#34;&#34;
+    if not frame._has_original_id():
+        raise ValueError(&#34;Frame does not contain original_id.&#34;)
+    if not target._has_original_id():
+        raise ValueError(&#34;Target does not contain original_id.&#34;)
     refrence_orginial_ids = frame.data.original_id.values
-    frameB_original_ids = frameB.data.original_id.values
-    intersection = np.intersect1d(refrence_orginial_ids, frameB_original_ids)
+    target_orginal_ids = target.data.original_id.values
+    intersection = np.intersect1d(refrence_orginial_ids, target_orginal_ids)
     if len(intersection) &gt; 0:
         diff_list = [
-            calculate_single_point_difference(frame, frameB, id) for id in intersection
+            _calculate_single_point_difference(frame, target, id) for id in intersection
         ]
         orginal_types = [str(types) for types in diff_list[0].dtypes.values]
         target_type_dict = dict(zip(diff_list[0].columns.values, orginal_types))
@@ -147,53 +155,6 @@ of the frame. (frame - frameB)</p>
         return frame
     else:
         raise ValueError(&#34;no intersection found between the frames.&#34;)</code></pre>
-</details>
-</dd>
-<dt id="lidar.diff.frame.calculate_single_point_difference"><code class="name flex">
-<span>def <span class="ident">calculate_single_point_difference</span></span>(<span>frame, frameB, original_id: int) ‑> pandas.core.frame.DataFrame</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Calculate the difference of one element of a Point in the current Frame to
-the correspoing point in Frame B. Both frames must contain the same orginal_id.</p>
-<h2 id="args">Args</h2>
-<dl>
-<dt><strong><code>frameB</code></strong> :&ensp;<code>Frame</code></dt>
-<dd>Frame which contains the point to comapare to.</dd>
-<dt><strong><code>original_id</code></strong> :&ensp;<code>int</code></dt>
-<dd>Orginal ID of the point.</dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><code>pd.DataFrame</code></dt>
-<dd>A single row DataFrame with the differences (A - B).</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def calculate_single_point_difference(frame, frameB, original_id: int) -&gt; pd.DataFrame:
-    &#34;&#34;&#34;Calculate the difference of one element of a Point in the current Frame to
-    the correspoing point in Frame B. Both frames must contain the same orginal_id.
-
-    Args:
-        frameB (Frame): Frame which contains the point to comapare to.
-        original_id (int): Orginal ID of the point.
-
-    Returns:
-        pd.DataFrame: A single row DataFrame with the differences (A - B).
-    &#34;&#34;&#34;
-    pointA = frame.extract_point(original_id, use_orginal_id=True)
-    try:
-        pointB = frameB.extract_point(original_id, use_orginal_id=True)
-        difference = pointA - pointB
-    except IndexError:
-        # there is no point with the orignal_id in frameB
-        difference = pointA
-        difference.loc[:] = np.nan
-    difference = difference.drop([&#34;original_id&#34;], axis=1)
-    difference.columns = [f&#34;{column} difference&#34; for column in difference.columns]
-    difference[&#34;original_id&#34;] = pointA[&#34;original_id&#34;]
-    return difference</code></pre>
 </details>
 </dd>
 </dl>
@@ -216,8 +177,7 @@ the correspoing point in Frame B. Both frames must contain the same orginal_id.<
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="lidar.diff.frame.calculate_all_point_differences" href="#lidar.diff.frame.calculate_all_point_differences">calculate_all_point_differences</a></code></li>
-<li><code><a title="lidar.diff.frame.calculate_single_point_difference" href="#lidar.diff.frame.calculate_single_point_difference">calculate_single_point_difference</a></code></li>
+<li><code><a title="lidar.diff.frame.calculate_distance_to_frame" href="#lidar.diff.frame.calculate_distance_to_frame">calculate_distance_to_frame</a></code></li>
 </ul>
 </li>
 </ul>

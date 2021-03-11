@@ -31,13 +31,13 @@
 Routines for calculating differences and distances between entities.
 &#34;&#34;&#34;
 
-from .frame import calculate_all_point_differences
+from .frame import calculate_distance_to_frame
 from .origin import calculate_distance_to_origin
 from .plane import calculate_distance_to_plane
 from .point import calculate_distance_to_point
 
 ALL_DIFF = {
-    &#34;frame&#34;: calculate_all_point_differences,
+    &#34;frame&#34;: calculate_distance_to_frame,
     &#34;plane&#34;: calculate_distance_to_plane,
     &#34;point&#34;: calculate_distance_to_point,
     &#34;origin&#34;: calculate_distance_to_origin,

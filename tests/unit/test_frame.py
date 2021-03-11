@@ -1,16 +1,13 @@
 from pathlib import Path
 
-import IPython
 import numpy as np
 import open3d as o3d
 import pandas as pd
-import plotly
 import pytest
 import pytest_check as check
 import rospy
-from pandas._testing import assert_frame_equal
-
 from lidar import Frame
+from pandas._testing import assert_frame_equal
 
 
 def test_init(testframe_mini_df: pd.DataFrame):

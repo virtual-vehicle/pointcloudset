@@ -103,10 +103,15 @@ def testframe_mini_real(testframe) -> Frame:
 
 
 @pytest.fixture()
-def testframe_mini_real0(testframe0):
-    return (
-        testframe0.limit("x", -1, 1)
-        .limit("y", -1, 1)
-        .limit("z", -1, 1)
-        .limit("intensity", 0, 10)
-    )
+def testframe_mini_real_plus1(testframe_mini_real) -> Frame:
+    testdata = testframe_mini_real.data.copy(deep=True)
+    testdata = testdata + 1.0
+    testdata["original_id"] = testframe_mini_real.data["original_id"]
+    return Frame(data=testdata)
+
+
+@pytest.fixture()
+def testframe_mini_real_other_original_id(testframe_mini_real) -> Frame:
+    testdata = testframe_mini_real.data.copy(deep=True)
+    testdata["original_id"] = testdata["original_id"] + 1000000
+    return Frame(data=testdata)
