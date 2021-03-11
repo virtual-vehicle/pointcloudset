@@ -3,6 +3,7 @@ File input and output routines.
 """
 
 from pyntcloud.io import FROM_FILE as FRAME_FROM_FILE
+from .frame.pyntcloud import from_pyntcloud
 
 DATASET_FROM_FILE = {}
 DATASET_TO_FILE = {}
@@ -11,5 +12,5 @@ DATASET_TO_INSTANCE = {}
 
 
 FRAME_TO_FILE = {}
-FRAME_FROM_INSTANCE = {}
+FRAME_FROM_INSTANCE = {"PYNTCLOUD": from_pyntcloud}
 FRAME_TO_INSTANCE = {}

@@ -30,7 +30,7 @@ import rospy
 
 from .diff import ALL_DIFFS
 from .filter import ALL_FILTERS
-from .io import FRAME_FROM_FILE
+from .io import FRAME_FROM_FILE, FRAME_FROM_INSTANCE
 from .frame_core import FrameCore
 from .plot.frame import plot_overlay
 
@@ -76,6 +76,18 @@ class Frame(FrameCore):
             return cls(
                 data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
             )
+
+    @classmethod
+    def from_instance(cls, library, instance, **kwargs):
+        library = library.upper()
+        if library not in FRAME_FROM_INSTANCE:
+            raise ValueError(
+                "Unsupported library; supported libraries are: {}".format(
+                    list(FRAME_FROM_INSTANCE)
+                )
+            )
+        else:
+            return cls(**FRAME_FROM_INSTANCE[library](instance, **kwargs))
 
     def plot(
         self,
