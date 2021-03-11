@@ -26,11 +26,11 @@ import pandas as pd
 import plotly
 import plotly.express as px
 import pyntcloud
-from pyntcloud.io import FROM_FILE
 import rospy
 
 from .diff import ALL_DIFFS
 from .filter import ALL_FILTERS
+from .io import FRAME_FROM_FILE
 from .frame_core import FrameCore
 from .plot.frame import plot_overlay
 
@@ -61,10 +61,10 @@ class Frame(FrameCore):
             Frame: lidar frame with timestamp last modified.
         """
         ext = file_path.suffix[1:].upper()
-        if ext not in FROM_FILE:
+        if ext not in FRAME_FROM_FILE:
             raise ValueError(
                 "Unsupported file format; supported formats are: {}".format(
-                    list(FROM_FILE)
+                    list(FRAME_FROM_FILE)
                 )
             )
         else:

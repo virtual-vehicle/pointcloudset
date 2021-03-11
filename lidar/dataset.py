@@ -19,7 +19,7 @@ import genpy
 import rosbag
 from tqdm import tqdm
 
-from .file.bag import frame_from_message
+from .io.dataset.bag import frame_from_message
 from .frame import Frame
 
 

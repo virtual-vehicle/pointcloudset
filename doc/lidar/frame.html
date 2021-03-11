@@ -58,7 +58,6 @@ Frame object is generated at each processing stage.
 &#34;&#34;&#34;
 from __future__ import annotations
 
-import operator
 import warnings
 from pathlib import Path
 from typing import List, Union
@@ -68,20 +67,13 @@ import pandas as pd
 import plotly
 import plotly.express as px
 import pyntcloud
-from pyntcloud.io import FROM_FILE
 import rospy
 
-from .diff import ALL_DIFF
+from .diff import ALL_DIFFS
+from .filter import ALL_FILTERS
+from .io import FRAME_FROM_FILE
 from .frame_core import FrameCore
 from .plot.frame import plot_overlay
-
-ops = {
-    &#34;&gt;&#34;: operator.gt,
-    &#34;&lt;&#34;: operator.lt,
-    &#34;&gt;=&#34;: operator.ge,
-    &#34;&lt;=&#34;: operator.le,
-    &#34;==&#34;: operator.eq,
-}
 
 
 def is_documented_by(original):
@@ -110,10 +102,10 @@ class Frame(FrameCore):
             Frame: lidar frame with timestamp last modified.
         &#34;&#34;&#34;
         ext = file_path.suffix[1:].upper()
-        if ext not in FROM_FILE:
+        if ext not in FRAME_FROM_FILE:
             raise ValueError(
                 &#34;Unsupported file format; supported formats are: {}&#34;.format(
-                    list(FROM_FILE)
+                    list(FRAME_FROM_FILE)
                 )
             )
         else:
@@ -206,24 +198,17 @@ class Frame(FrameCore):
         Returns:
             Frame: New frame with added column of the differences
         &#34;&#34;&#34;
-        if name in ALL_DIFF:
-            ALL_DIFF[name](frame=self, target=target, **kwargs)
+        if name in ALL_DIFFS:
+            ALL_DIFFS[name](frame=self, target=target, **kwargs)
             return self
         else:
             raise ValueError(&#34;Unsupported diff. Check docstring&#34;)
 
-    def apply_filter(self, boolean_array: np.ndarray) -&gt; Frame:
-        &#34;&#34;&#34;Generating a new Frame by removing points where filter is False.
-        Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.
-
-        Args:
-            boolean_array (np.ndarray): True where the point should remain.
-
-        Returns:
-            Frame: Frame with filterd rows and reindexed data and points.
-        &#34;&#34;&#34;
-        new_data = self.data.loc[boolean_array].reset_index(drop=True)
-        return Frame(new_data, timestamp=self.timestamp)
+    def filter(self, name, *args, **kwargs):
+        if name in ALL_FILTERS:
+            return ALL_FILTERS[name](self, *args, **kwargs)
+        else:
+            raise ValueError(&#34;Unsupported filter. Check docstring&#34;)
 
     def limit(self, dim: &#34;str&#34;, minvalue: float, maxvalue: float) -&gt; Frame:
         &#34;&#34;&#34;Limit the range of certain values in lidar Frame. Can be chained together.
@@ -242,10 +227,22 @@ class Frame(FrameCore):
         &#34;&#34;&#34;
         if maxvalue &lt; minvalue:
             raise ValueError(&#34;maxvalue must be greater than minvalue&#34;)
-        bool_array = (
-            (self.data[dim] &lt;= maxvalue) &amp; (self.data[dim] &gt;= minvalue)
-        ).to_numpy()
-        return self.apply_filter(bool_array)
+        return self.filter(&#34;value&#34;, dim, &#34;&gt;=&#34;, minvalue).filter(
+            &#34;value&#34;, dim, &#34;&lt;=&#34;, maxvalue
+        )
+
+    def apply_filter(self, boolean_array: np.ndarray) -&gt; Frame:
+        &#34;&#34;&#34;Generating a new Frame by removing points where filter is False.
+        Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.
+
+        Args:
+            boolean_array (np.ndarray): True where the point should remain.
+
+        Returns:
+            Frame: Frame with filterd rows and reindexed data and points.
+        &#34;&#34;&#34;
+        new_data = self.data.loc[boolean_array].reset_index(drop=True)
+        return Frame(new_data, timestamp=self.timestamp)
 
     def get_cluster(self, eps: float, min_points: int) -&gt; pd.DataFrame:
         &#34;&#34;&#34;Get the clusters based on open3D cluster_dbscan. Process futher with
@@ -293,27 +290,6 @@ class Frame(FrameCore):
             nb_points=nb_points, radius=radius
         )
         return self._select_by_index(index_to_keep)
-
-    def quantile_filter(
-        self, dim: str, relation: str = &#34;&gt;=&#34;, cut_quantile: float = 0.5
-    ) -&gt; Frame:
-        &#34;&#34;&#34;Filtering based on quantile values of dimension dim of the data.
-
-        Example:
-
-        testframe.quantile_filter(&#34;intensity&#34;,&#34;==&#34;,0.5)
-
-        Args:
-            dim (str): column in data, for example &#34;intensity&#34;
-            relation (str, optional): Any operator as string. Defaults to &#34;&gt;=&#34;.
-            cut_quantile (float, optional): Qunatile to compare to. Defaults to 0.5.
-
-        Returns:
-            Frame: Frame which fullfils the criteria.
-        &#34;&#34;&#34;
-        cut_value = self.data[dim].quantile(cut_quantile)
-        filter_array = ops[relation](self.data[dim], cut_value)
-        return self.apply_filter(filter_array.to_numpy())
 
     def plane_segmentation(
         self,
@@ -432,10 +408,10 @@ testframe = testset[0]</p></div>
             Frame: lidar frame with timestamp last modified.
         &#34;&#34;&#34;
         ext = file_path.suffix[1:].upper()
-        if ext not in FROM_FILE:
+        if ext not in FRAME_FROM_FILE:
             raise ValueError(
                 &#34;Unsupported file format; supported formats are: {}&#34;.format(
-                    list(FROM_FILE)
+                    list(FRAME_FROM_FILE)
                 )
             )
         else:
@@ -528,24 +504,17 @@ testframe = testset[0]</p></div>
         Returns:
             Frame: New frame with added column of the differences
         &#34;&#34;&#34;
-        if name in ALL_DIFF:
-            ALL_DIFF[name](frame=self, target=target, **kwargs)
+        if name in ALL_DIFFS:
+            ALL_DIFFS[name](frame=self, target=target, **kwargs)
             return self
         else:
             raise ValueError(&#34;Unsupported diff. Check docstring&#34;)
 
-    def apply_filter(self, boolean_array: np.ndarray) -&gt; Frame:
-        &#34;&#34;&#34;Generating a new Frame by removing points where filter is False.
-        Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.
-
-        Args:
-            boolean_array (np.ndarray): True where the point should remain.
-
-        Returns:
-            Frame: Frame with filterd rows and reindexed data and points.
-        &#34;&#34;&#34;
-        new_data = self.data.loc[boolean_array].reset_index(drop=True)
-        return Frame(new_data, timestamp=self.timestamp)
+    def filter(self, name, *args, **kwargs):
+        if name in ALL_FILTERS:
+            return ALL_FILTERS[name](self, *args, **kwargs)
+        else:
+            raise ValueError(&#34;Unsupported filter. Check docstring&#34;)
 
     def limit(self, dim: &#34;str&#34;, minvalue: float, maxvalue: float) -&gt; Frame:
         &#34;&#34;&#34;Limit the range of certain values in lidar Frame. Can be chained together.
@@ -564,10 +533,22 @@ testframe = testset[0]</p></div>
         &#34;&#34;&#34;
         if maxvalue &lt; minvalue:
             raise ValueError(&#34;maxvalue must be greater than minvalue&#34;)
-        bool_array = (
-            (self.data[dim] &lt;= maxvalue) &amp; (self.data[dim] &gt;= minvalue)
-        ).to_numpy()
-        return self.apply_filter(bool_array)
+        return self.filter(&#34;value&#34;, dim, &#34;&gt;=&#34;, minvalue).filter(
+            &#34;value&#34;, dim, &#34;&lt;=&#34;, maxvalue
+        )
+
+    def apply_filter(self, boolean_array: np.ndarray) -&gt; Frame:
+        &#34;&#34;&#34;Generating a new Frame by removing points where filter is False.
+        Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.
+
+        Args:
+            boolean_array (np.ndarray): True where the point should remain.
+
+        Returns:
+            Frame: Frame with filterd rows and reindexed data and points.
+        &#34;&#34;&#34;
+        new_data = self.data.loc[boolean_array].reset_index(drop=True)
+        return Frame(new_data, timestamp=self.timestamp)
 
     def get_cluster(self, eps: float, min_points: int) -&gt; pd.DataFrame:
         &#34;&#34;&#34;Get the clusters based on open3D cluster_dbscan. Process futher with
@@ -615,27 +596,6 @@ testframe = testset[0]</p></div>
             nb_points=nb_points, radius=radius
         )
         return self._select_by_index(index_to_keep)
-
-    def quantile_filter(
-        self, dim: str, relation: str = &#34;&gt;=&#34;, cut_quantile: float = 0.5
-    ) -&gt; Frame:
-        &#34;&#34;&#34;Filtering based on quantile values of dimension dim of the data.
-
-        Example:
-
-        testframe.quantile_filter(&#34;intensity&#34;,&#34;==&#34;,0.5)
-
-        Args:
-            dim (str): column in data, for example &#34;intensity&#34;
-            relation (str, optional): Any operator as string. Defaults to &#34;&gt;=&#34;.
-            cut_quantile (float, optional): Qunatile to compare to. Defaults to 0.5.
-
-        Returns:
-            Frame: Frame which fullfils the criteria.
-        &#34;&#34;&#34;
-        cut_value = self.data[dim].quantile(cut_quantile)
-        filter_array = ops[relation](self.data[dim], cut_value)
-        return self.apply_filter(filter_array.to_numpy())
 
     def plane_segmentation(
         self,
@@ -738,10 +698,10 @@ def from_file(cls, file_path: Path, **kwargs):
         Frame: lidar frame with timestamp last modified.
     &#34;&#34;&#34;
     ext = file_path.suffix[1:].upper()
-    if ext not in FROM_FILE:
+    if ext not in FRAME_FROM_FILE:
         raise ValueError(
             &#34;Unsupported file format; supported formats are: {}&#34;.format(
-                list(FROM_FILE)
+                list(FRAME_FROM_FILE)
             )
         )
     else:
@@ -831,11 +791,27 @@ Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.</p>
     Returns:
         Frame: New frame with added column of the differences
     &#34;&#34;&#34;
-    if name in ALL_DIFF:
-        ALL_DIFF[name](frame=self, target=target, **kwargs)
+    if name in ALL_DIFFS:
+        ALL_DIFFS[name](frame=self, target=target, **kwargs)
         return self
     else:
         raise ValueError(&#34;Unsupported diff. Check docstring&#34;)</code></pre>
+</details>
+</dd>
+<dt id="lidar.frame.Frame.filter"><code class="name flex">
+<span>def <span class="ident">filter</span></span>(<span>self, name, *args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def filter(self, name, *args, **kwargs):
+    if name in ALL_FILTERS:
+        return ALL_FILTERS[name](self, *args, **kwargs)
+    else:
+        raise ValueError(&#34;Unsupported filter. Check docstring&#34;)</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.get_cluster"><code class="name flex">
@@ -923,10 +899,9 @@ take_cluster.</p>
     &#34;&#34;&#34;
     if maxvalue &lt; minvalue:
         raise ValueError(&#34;maxvalue must be greater than minvalue&#34;)
-    bool_array = (
-        (self.data[dim] &lt;= maxvalue) &amp; (self.data[dim] &gt;= minvalue)
-    ).to_numpy()
-    return self.apply_filter(bool_array)</code></pre>
+    return self.filter(&#34;value&#34;, dim, &#34;&gt;=&#34;, minvalue).filter(
+        &#34;value&#34;, dim, &#34;&lt;=&#34;, maxvalue
+    )</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.plane_segmentation"><code class="name flex">
@@ -1107,53 +1082,6 @@ all of them.</p>
     return fig</code></pre>
 </details>
 </dd>
-<dt id="lidar.frame.Frame.quantile_filter"><code class="name flex">
-<span>def <span class="ident">quantile_filter</span></span>(<span>self, dim: str, relation: str = &#x27;&gt;=&#x27;, cut_quantile: float = 0.5) ‑> <a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></span>
-</code></dt>
-<dd>
-<div class="desc"><p>Filtering based on quantile values of dimension dim of the data.</p>
-<p>Example:</p>
-<p>testframe.quantile_filter("intensity","==",0.5)</p>
-<h2 id="args">Args</h2>
-<dl>
-<dt><strong><code>dim</code></strong> :&ensp;<code>str</code></dt>
-<dd>column in data, for example "intensity"</dd>
-<dt><strong><code>relation</code></strong> :&ensp;<code>str</code>, optional</dt>
-<dd>Any operator as string. Defaults to "&gt;=".</dd>
-<dt><strong><code>cut_quantile</code></strong> :&ensp;<code>float</code>, optional</dt>
-<dd>Qunatile to compare to. Defaults to 0.5.</dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><code><a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a></code></dt>
-<dd>Frame which fullfils the criteria.</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def quantile_filter(
-    self, dim: str, relation: str = &#34;&gt;=&#34;, cut_quantile: float = 0.5
-) -&gt; Frame:
-    &#34;&#34;&#34;Filtering based on quantile values of dimension dim of the data.
-
-    Example:
-
-    testframe.quantile_filter(&#34;intensity&#34;,&#34;==&#34;,0.5)
-
-    Args:
-        dim (str): column in data, for example &#34;intensity&#34;
-        relation (str, optional): Any operator as string. Defaults to &#34;&gt;=&#34;.
-        cut_quantile (float, optional): Qunatile to compare to. Defaults to 0.5.
-
-    Returns:
-        Frame: Frame which fullfils the criteria.
-    &#34;&#34;&#34;
-    cut_value = self.data[dim].quantile(cut_quantile)
-    filter_array = ops[relation](self.data[dim], cut_value)
-    return self.apply_filter(filter_array.to_numpy())</code></pre>
-</details>
-</dd>
 <dt id="lidar.frame.Frame.remove_radius_outlier"><code class="name flex">
 <span>def <span class="ident">remove_radius_outlier</span></span>(<span>self, nb_points: int, radius: float) ‑> <a title="lidar.frame_core.FrameCore" href="frame_core.html#lidar.frame_core.FrameCore">FrameCore</a></span>
 </code></dt>
@@ -1297,12 +1225,12 @@ radius (float) – Radius of the sphere.</p>
 <ul class="">
 <li><code><a title="lidar.frame.Frame.apply_filter" href="#lidar.frame.Frame.apply_filter">apply_filter</a></code></li>
 <li><code><a title="lidar.frame.Frame.diff" href="#lidar.frame.Frame.diff">diff</a></code></li>
+<li><code><a title="lidar.frame.Frame.filter" href="#lidar.frame.Frame.filter">filter</a></code></li>
 <li><code><a title="lidar.frame.Frame.from_file" href="#lidar.frame.Frame.from_file">from_file</a></code></li>
 <li><code><a title="lidar.frame.Frame.get_cluster" href="#lidar.frame.Frame.get_cluster">get_cluster</a></code></li>
 <li><code><a title="lidar.frame.Frame.limit" href="#lidar.frame.Frame.limit">limit</a></code></li>
 <li><code><a title="lidar.frame.Frame.plane_segmentation" href="#lidar.frame.Frame.plane_segmentation">plane_segmentation</a></code></li>
 <li><code><a title="lidar.frame.Frame.plot" href="#lidar.frame.Frame.plot">plot</a></code></li>
-<li><code><a title="lidar.frame.Frame.quantile_filter" href="#lidar.frame.Frame.quantile_filter">quantile_filter</a></code></li>
 <li><code><a title="lidar.frame.Frame.remove_radius_outlier" href="#lidar.frame.Frame.remove_radius_outlier">remove_radius_outlier</a></code></li>
 <li><code><a title="lidar.frame.Frame.take_cluster" href="#lidar.frame.Frame.take_cluster">take_cluster</a></code></li>
 <li><code><a title="lidar.frame.Frame.to_csv" href="#lidar.frame.Frame.to_csv">to_csv</a></code></li>

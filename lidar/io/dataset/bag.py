@@ -6,7 +6,7 @@ import pandas as pd
 import rosbag
 import sensor_msgs.point_cloud2 as pc2
 
-from ..frame import Frame
+from lidar.frame import Frame
 
 PANDAS_TYPEMAPPING = {
     1: np.dtype("int8"),

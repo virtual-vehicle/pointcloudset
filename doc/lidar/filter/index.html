@@ -27,10 +27,21 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;Utiliy functions for filtering of frames.&#34;&#34;&#34;</code></pre>
+<pre><code class="python">&#34;&#34;&#34;Utiliy functions for filtering of frames.&#34;&#34;&#34;
+
+from .stat import quantile_filter, value_filter
+
+ALL_FILTERS = {&#34;quantile&#34;: quantile_filter, &#34;value&#34;: value_filter}</code></pre>
 </details>
 </section>
 <section>
+<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+<dl>
+<dt><code class="name"><a title="lidar.filter.stat" href="stat.html">lidar.filter.stat</a></code></dt>
+<dd>
+<div class="desc"><p>Frame filters based on statisitcics</p></div>
+</dd>
+</dl>
 </section>
 <section>
 </section>
@@ -48,6 +59,11 @@
 <li><h3>Super-module</h3>
 <ul>
 <li><code><a title="lidar" href="../index.html">lidar</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<ul>
+<li><code><a title="lidar.filter.stat" href="stat.html">lidar.filter.stat</a></code></li>
 </ul>
 </li>
 </ul>
