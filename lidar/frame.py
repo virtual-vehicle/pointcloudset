@@ -60,6 +60,8 @@ class Frame(FrameCore):
         Returns:
             Frame: lidar frame with timestamp last modified.
         """
+        if not isinstance(file_path, Path):
+            raise TypeError("Expectinga Path object for file_path")
         ext = file_path.suffix[1:].upper()
         if ext not in FRAME_FROM_FILE:
             raise ValueError(
