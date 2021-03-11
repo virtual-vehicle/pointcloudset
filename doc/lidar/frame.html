@@ -71,7 +71,7 @@ import rospy
 
 from .diff import ALL_DIFFS
 from .filter import ALL_FILTERS
-from .io import FRAME_FROM_FILE, FRAME_FROM_INSTANCE, FRAME_TO_INSTANCE
+from .io import FRAME_FROM_FILE, FRAME_TO_FILE, FRAME_FROM_INSTANCE, FRAME_TO_INSTANCE
 from .frame_core import FrameCore
 from .plot.frame import plot_overlay
 
@@ -117,6 +117,19 @@ class Frame(FrameCore):
             return cls(
                 data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
             )
+
+    def to_file(self, file_path: Path, **kwargs):
+        ext = file_path.suffix[1:].upper()
+        if ext not in FRAME_TO_FILE:
+            raise ValueError(
+                &#34;Unsupported file format; supported formats are: {}&#34;.format(
+                    list(FRAME_TO_FILE)
+                )
+            )
+        kwargs[&#34;file_path&#34;] = file_path
+        kwargs[&#34;frame&#34;] = self
+
+        FRAME_TO_FILE[ext](**kwargs)
 
     @classmethod
     def from_instance(cls, library, instance, **kwargs):
@@ -355,21 +368,7 @@ class Frame(FrameCore):
         if return_plane_model:
             return {&#34;Frame&#34;: inlier_Frame, &#34;plane_model&#34;: plane_model}
         else:
-            return inlier_Frame
-
-    def to_csv(self, path: Path = Path()) -&gt; None:
-        &#34;&#34;&#34;Exports the frame as a csv for use with cloud compare or similar tools.
-        Args:
-            path (Path, optional): Destination. Defaults to the folder of
-            the bag fiile with the timestamp of the frame.
-        &#34;&#34;&#34;
-        orig_file_name = Path(self.orig_file).stem
-        if path == Path():
-            filename = f&#34;{orig_file_name}_timestamp_{self.timestamp}.csv&#34;
-            destination_folder = Path(self.orig_file).parent.joinpath(filename)
-        else:
-            destination_folder = path
-        self.data.to_csv(destination_folder, index=False)</code></pre>
+            return inlier_Frame</code></pre>
 </details>
 </section>
 <section>
@@ -449,6 +448,19 @@ testframe = testset[0]</p></div>
                 data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
             )
 
+    def to_file(self, file_path: Path, **kwargs):
+        ext = file_path.suffix[1:].upper()
+        if ext not in FRAME_TO_FILE:
+            raise ValueError(
+                &#34;Unsupported file format; supported formats are: {}&#34;.format(
+                    list(FRAME_TO_FILE)
+                )
+            )
+        kwargs[&#34;file_path&#34;] = file_path
+        kwargs[&#34;frame&#34;] = self
+
+        FRAME_TO_FILE[ext](**kwargs)
+
     @classmethod
     def from_instance(cls, library, instance, **kwargs):
         library = library.upper()
@@ -686,21 +698,7 @@ testframe = testset[0]</p></div>
         if return_plane_model:
             return {&#34;Frame&#34;: inlier_Frame, &#34;plane_model&#34;: plane_model}
         else:
-            return inlier_Frame
-
-    def to_csv(self, path: Path = Path()) -&gt; None:
-        &#34;&#34;&#34;Exports the frame as a csv for use with cloud compare or similar tools.
-        Args:
-            path (Path, optional): Destination. Defaults to the folder of
-            the bag fiile with the timestamp of the frame.
-        &#34;&#34;&#34;
-        orig_file_name = Path(self.orig_file).stem
-        if path == Path():
-            filename = f&#34;{orig_file_name}_timestamp_{self.timestamp}.csv&#34;
-            destination_folder = Path(self.orig_file).parent.joinpath(filename)
-        else:
-            destination_folder = path
-        self.data.to_csv(destination_folder, index=False)</code></pre>
+            return inlier_Frame</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -1222,34 +1220,27 @@ radius (float) – Radius of the sphere.</p>
     return self.apply_filter(bool_array)</code></pre>
 </details>
 </dd>
-<dt id="lidar.frame.Frame.to_csv"><code class="name flex">
-<span>def <span class="ident">to_csv</span></span>(<span>self, path: Path = PosixPath('.')) ‑> NoneType</span>
+<dt id="lidar.frame.Frame.to_file"><code class="name flex">
+<span>def <span class="ident">to_file</span></span>(<span>self, file_path: Path, **kwargs)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Exports the frame as a csv for use with cloud compare or similar tools.</p>
-<h2 id="args">Args</h2>
-<dl>
-<dt><strong><code>path</code></strong> :&ensp;<code>Path</code>, optional</dt>
-<dd>Destination. Defaults to the folder of</dd>
-</dl>
-<p>the bag fiile with the timestamp of the frame.</p></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def to_csv(self, path: Path = Path()) -&gt; None:
-    &#34;&#34;&#34;Exports the frame as a csv for use with cloud compare or similar tools.
-    Args:
-        path (Path, optional): Destination. Defaults to the folder of
-        the bag fiile with the timestamp of the frame.
-    &#34;&#34;&#34;
-    orig_file_name = Path(self.orig_file).stem
-    if path == Path():
-        filename = f&#34;{orig_file_name}_timestamp_{self.timestamp}.csv&#34;
-        destination_folder = Path(self.orig_file).parent.joinpath(filename)
-    else:
-        destination_folder = path
-    self.data.to_csv(destination_folder, index=False)</code></pre>
+<pre><code class="python">def to_file(self, file_path: Path, **kwargs):
+    ext = file_path.suffix[1:].upper()
+    if ext not in FRAME_TO_FILE:
+        raise ValueError(
+            &#34;Unsupported file format; supported formats are: {}&#34;.format(
+                list(FRAME_TO_FILE)
+            )
+        )
+    kwargs[&#34;file_path&#34;] = file_path
+    kwargs[&#34;frame&#34;] = self
+
+    FRAME_TO_FILE[ext](**kwargs)</code></pre>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.to_instance"><code class="name flex">
@@ -1330,7 +1321,7 @@ radius (float) – Radius of the sphere.</p>
 <li><code><a title="lidar.frame.Frame.plot" href="#lidar.frame.Frame.plot">plot</a></code></li>
 <li><code><a title="lidar.frame.Frame.remove_radius_outlier" href="#lidar.frame.Frame.remove_radius_outlier">remove_radius_outlier</a></code></li>
 <li><code><a title="lidar.frame.Frame.take_cluster" href="#lidar.frame.Frame.take_cluster">take_cluster</a></code></li>
-<li><code><a title="lidar.frame.Frame.to_csv" href="#lidar.frame.Frame.to_csv">to_csv</a></code></li>
+<li><code><a title="lidar.frame.Frame.to_file" href="#lidar.frame.Frame.to_file">to_file</a></code></li>
 <li><code><a title="lidar.frame.Frame.to_instance" href="#lidar.frame.Frame.to_instance">to_instance</a></code></li>
 </ul>
 </li>

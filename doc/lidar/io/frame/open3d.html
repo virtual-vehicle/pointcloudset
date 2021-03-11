@@ -31,13 +31,15 @@
 from typing import TYPE_CHECKING
 
 import open3d as o3d
+from pyntcloud import PyntCloud
 
 if TYPE_CHECKING:
     from lidar import Frame
 
 
 def from_open3d(open3d_data: o3d.open3d_pybind.geometry.PointCloud) -&gt; dict:
-    pass
+    pyntcloud_data = PyntCloud.from_instance(&#34;open3d&#34;, open3d_data)
+    return {&#34;data&#34;: pyntcloud_data.points}
 
 
 def to_open3d(frame: Frame) -&gt; o3d.open3d_pybind.geometry.PointCloud:
@@ -71,7 +73,8 @@ def to_open3d(frame: Frame) -&gt; o3d.open3d_pybind.geometry.PointCloud:
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def from_open3d(open3d_data: o3d.open3d_pybind.geometry.PointCloud) -&gt; dict:
-    pass</code></pre>
+    pyntcloud_data = PyntCloud.from_instance(&#34;open3d&#34;, open3d_data)
+    return {&#34;data&#34;: pyntcloud_data.points}</code></pre>
 </details>
 </dd>
 <dt id="lidar.io.frame.open3d.to_open3d"><code class="name flex">

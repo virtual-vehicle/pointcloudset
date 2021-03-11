@@ -30,7 +30,7 @@ import rospy
 
 from .diff import ALL_DIFFS
 from .filter import ALL_FILTERS
-from .io import FRAME_FROM_FILE, FRAME_FROM_INSTANCE, FRAME_TO_INSTANCE
+from .io import FRAME_FROM_FILE, FRAME_TO_FILE, FRAME_FROM_INSTANCE, FRAME_TO_INSTANCE
 from .frame_core import FrameCore
 from .plot.frame import plot_overlay
 
@@ -76,6 +76,19 @@ class Frame(FrameCore):
             return cls(
                 data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
             )
+
+    def to_file(self, file_path: Path, **kwargs):
+        ext = file_path.suffix[1:].upper()
+        if ext not in FRAME_TO_FILE:
+            raise ValueError(
+                "Unsupported file format; supported formats are: {}".format(
+                    list(FRAME_TO_FILE)
+                )
+            )
+        kwargs["file_path"] = file_path
+        kwargs["frame"] = self
+
+        FRAME_TO_FILE[ext](**kwargs)
 
     @classmethod
     def from_instance(cls, library, instance, **kwargs):
@@ -315,17 +328,3 @@ class Frame(FrameCore):
             return {"Frame": inlier_Frame, "plane_model": plane_model}
         else:
             return inlier_Frame
-
-    def to_csv(self, path: Path = Path()) -> None:
-        """Exports the frame as a csv for use with cloud compare or similar tools.
-        Args:
-            path (Path, optional): Destination. Defaults to the folder of
-            the bag fiile with the timestamp of the frame.
-        """
-        orig_file_name = Path(self.orig_file).stem
-        if path == Path():
-            filename = f"{orig_file_name}_timestamp_{self.timestamp}.csv"
-            destination_folder = Path(self.orig_file).parent.joinpath(filename)
-        else:
-            destination_folder = path
-        self.data.to_csv(destination_folder, index=False)
