@@ -123,7 +123,7 @@ class FrameCore:
         """
         return not self.data.empty
 
-    def _has_original_id(self) -> bool:
+    def has_original_id(self) -> bool:
         """Checks if orginal_id column is present in the data.
         Original_id identifies a lidar point and makes them coparable.
 

@@ -20,11 +20,11 @@ def test_has_data(testframe_mini: Frame):
 
 
 def test_has_original_id(testframe_mini: Frame):
-    check.equal(testframe_mini._has_original_id(), False)
+    check.equal(testframe_mini.has_original_id(), False)
 
 
 def test_has_original_id2(testframe_mini_real: Frame):
-    check.equal(testframe_mini_real._has_original_id(), True)
+    check.equal(testframe_mini_real.has_original_id(), True)
 
 
 def test_contains_original_id_number(testframe: Frame):
