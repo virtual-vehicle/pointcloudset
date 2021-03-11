@@ -71,7 +71,7 @@ import rospy
 
 from .diff import ALL_DIFFS
 from .filter import ALL_FILTERS
-from .io import FRAME_FROM_FILE
+from .io import FRAME_FROM_FILE, FRAME_FROM_INSTANCE, FRAME_TO_INSTANCE
 from .frame_core import FrameCore
 from .plot.frame import plot_overlay
 
@@ -101,6 +101,8 @@ class Frame(FrameCore):
         Returns:
             Frame: lidar frame with timestamp last modified.
         &#34;&#34;&#34;
+        if not isinstance(file_path, Path):
+            raise TypeError(&#34;Expectinga Path object for file_path&#34;)
         ext = file_path.suffix[1:].upper()
         if ext not in FRAME_FROM_FILE:
             raise ValueError(
@@ -115,6 +117,29 @@ class Frame(FrameCore):
             return cls(
                 data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
             )
+
+    @classmethod
+    def from_instance(cls, library, instance, **kwargs):
+        library = library.upper()
+        if library not in FRAME_FROM_INSTANCE:
+            raise ValueError(
+                &#34;Unsupported library; supported libraries are: {}&#34;.format(
+                    list(FRAME_FROM_INSTANCE)
+                )
+            )
+        else:
+            return cls(**FRAME_FROM_INSTANCE[library](instance, **kwargs))
+
+    def to_instance(self, library, **kwargs):
+        library = library.upper()
+        if library not in FRAME_TO_INSTANCE:
+            raise ValueError(
+                &#34;Unsupported library; supported linraries are: {}&#34;.format(
+                    list(FRAME_TO_INSTANCE)
+                )
+            )
+
+        return FRAME_TO_INSTANCE[library](self, **kwargs)
 
     def plot(
         self,
@@ -256,7 +281,7 @@ class Frame(FrameCore):
             pd.DataFrame: Dataframe with list of clusters.
         &#34;&#34;&#34;
         labels = np.array(
-            self._get_open3d_points().cluster_dbscan(
+            self.to_instance(&#34;open3d&#34;).cluster_dbscan(
                 eps=eps, min_points=min_points, print_progress=False
             )
         )
@@ -285,7 +310,7 @@ class Frame(FrameCore):
         Returns:
             Tuple[open3d.geometry.PointCloud, List[int]] :
         &#34;&#34;&#34;
-        pcd = self._get_open3d_points()
+        pcd = self.to_instance(&#34;open3d&#34;)
         cl, index_to_keep = pcd.remove_radius_outlier(
             nb_points=nb_points, radius=radius
         )
@@ -314,7 +339,7 @@ class Frame(FrameCore):
             Frame or dict: Frame with inliers or a dict of Frame with inliers and the
             plane parameters.
         &#34;&#34;&#34;
-        pcd = self._get_open3d_points()
+        pcd = self.to_instance(&#34;open3d&#34;)
         plane_model, inliers = pcd.segment_plane(
             distance_threshold=distance_threshold,
             ransac_n=ransac_n,
@@ -407,6 +432,8 @@ testframe = testset[0]</p></div>
         Returns:
             Frame: lidar frame with timestamp last modified.
         &#34;&#34;&#34;
+        if not isinstance(file_path, Path):
+            raise TypeError(&#34;Expectinga Path object for file_path&#34;)
         ext = file_path.suffix[1:].upper()
         if ext not in FRAME_FROM_FILE:
             raise ValueError(
@@ -421,6 +448,29 @@ testframe = testset[0]</p></div>
             return cls(
                 data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
             )
+
+    @classmethod
+    def from_instance(cls, library, instance, **kwargs):
+        library = library.upper()
+        if library not in FRAME_FROM_INSTANCE:
+            raise ValueError(
+                &#34;Unsupported library; supported libraries are: {}&#34;.format(
+                    list(FRAME_FROM_INSTANCE)
+                )
+            )
+        else:
+            return cls(**FRAME_FROM_INSTANCE[library](instance, **kwargs))
+
+    def to_instance(self, library, **kwargs):
+        library = library.upper()
+        if library not in FRAME_TO_INSTANCE:
+            raise ValueError(
+                &#34;Unsupported library; supported linraries are: {}&#34;.format(
+                    list(FRAME_TO_INSTANCE)
+                )
+            )
+
+        return FRAME_TO_INSTANCE[library](self, **kwargs)
 
     def plot(
         self,
@@ -562,7 +612,7 @@ testframe = testset[0]</p></div>
             pd.DataFrame: Dataframe with list of clusters.
         &#34;&#34;&#34;
         labels = np.array(
-            self._get_open3d_points().cluster_dbscan(
+            self.to_instance(&#34;open3d&#34;).cluster_dbscan(
                 eps=eps, min_points=min_points, print_progress=False
             )
         )
@@ -591,7 +641,7 @@ testframe = testset[0]</p></div>
         Returns:
             Tuple[open3d.geometry.PointCloud, List[int]] :
         &#34;&#34;&#34;
-        pcd = self._get_open3d_points()
+        pcd = self.to_instance(&#34;open3d&#34;)
         cl, index_to_keep = pcd.remove_radius_outlier(
             nb_points=nb_points, radius=radius
         )
@@ -620,7 +670,7 @@ testframe = testset[0]</p></div>
             Frame or dict: Frame with inliers or a dict of Frame with inliers and the
             plane parameters.
         &#34;&#34;&#34;
-        pcd = self._get_open3d_points()
+        pcd = self.to_instance(&#34;open3d&#34;)
         plane_model, inliers = pcd.segment_plane(
             distance_threshold=distance_threshold,
             ransac_n=ransac_n,
@@ -697,6 +747,8 @@ def from_file(cls, file_path: Path, **kwargs):
     Returns:
         Frame: lidar frame with timestamp last modified.
     &#34;&#34;&#34;
+    if not isinstance(file_path, Path):
+        raise TypeError(&#34;Expectinga Path object for file_path&#34;)
     ext = file_path.suffix[1:].upper()
     if ext not in FRAME_FROM_FILE:
         raise ValueError(
@@ -711,6 +763,28 @@ def from_file(cls, file_path: Path, **kwargs):
         return cls(
             data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
         )</code></pre>
+</details>
+</dd>
+<dt id="lidar.frame.Frame.from_instance"><code class="name flex">
+<span>def <span class="ident">from_instance</span></span>(<span>library, instance, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@classmethod
+def from_instance(cls, library, instance, **kwargs):
+    library = library.upper()
+    if library not in FRAME_FROM_INSTANCE:
+        raise ValueError(
+            &#34;Unsupported library; supported libraries are: {}&#34;.format(
+                list(FRAME_FROM_INSTANCE)
+            )
+        )
+    else:
+        return cls(**FRAME_FROM_INSTANCE[library](instance, **kwargs))</code></pre>
 </details>
 </dd>
 </dl>
@@ -848,7 +922,7 @@ take_cluster.</p>
         pd.DataFrame: Dataframe with list of clusters.
     &#34;&#34;&#34;
     labels = np.array(
-        self._get_open3d_points().cluster_dbscan(
+        self.to_instance(&#34;open3d&#34;).cluster_dbscan(
             eps=eps, min_points=min_points, print_progress=False
         )
     )
@@ -957,7 +1031,7 @@ Defaults to False.</dd>
         Frame or dict: Frame with inliers or a dict of Frame with inliers and the
         plane parameters.
     &#34;&#34;&#34;
-    pcd = self._get_open3d_points()
+    pcd = self.to_instance(&#34;open3d&#34;)
     plane_model, inliers = pcd.segment_plane(
         distance_threshold=distance_threshold,
         ransac_n=ransac_n,
@@ -1106,7 +1180,7 @@ radius (float) – Radius of the sphere.</p>
     Returns:
         Tuple[open3d.geometry.PointCloud, List[int]] :
     &#34;&#34;&#34;
-    pcd = self._get_open3d_points()
+    pcd = self.to_instance(&#34;open3d&#34;)
     cl, index_to_keep = pcd.remove_radius_outlier(
         nb_points=nb_points, radius=radius
     )
@@ -1178,6 +1252,27 @@ radius (float) – Radius of the sphere.</p>
     self.data.to_csv(destination_folder, index=False)</code></pre>
 </details>
 </dd>
+<dt id="lidar.frame.Frame.to_instance"><code class="name flex">
+<span>def <span class="ident">to_instance</span></span>(<span>self, library, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_instance(self, library, **kwargs):
+    library = library.upper()
+    if library not in FRAME_TO_INSTANCE:
+        raise ValueError(
+            &#34;Unsupported library; supported linraries are: {}&#34;.format(
+                list(FRAME_TO_INSTANCE)
+            )
+        )
+
+    return FRAME_TO_INSTANCE[library](self, **kwargs)</code></pre>
+</details>
+</dd>
 </dl>
 <h3>Inherited members</h3>
 <ul class="hlist">
@@ -1186,6 +1281,7 @@ radius (float) – Radius of the sphere.</p>
 <li><code><a title="lidar.frame_core.FrameCore.data" href="frame_core.html#lidar.frame_core.FrameCore.data">data</a></code></li>
 <li><code><a title="lidar.frame_core.FrameCore.describe" href="frame_core.html#lidar.frame_core.FrameCore.describe">describe</a></code></li>
 <li><code><a title="lidar.frame_core.FrameCore.extract_point" href="frame_core.html#lidar.frame_core.FrameCore.extract_point">extract_point</a></code></li>
+<li><code><a title="lidar.frame_core.FrameCore.has_original_id" href="frame_core.html#lidar.frame_core.FrameCore.has_original_id">has_original_id</a></code></li>
 <li><code><a title="lidar.frame_core.FrameCore.orig_file" href="frame_core.html#lidar.frame_core.FrameCore.orig_file">orig_file</a></code></li>
 <li><code><a title="lidar.frame_core.FrameCore.points" href="frame_core.html#lidar.frame_core.FrameCore.points">points</a></code></li>
 <li><code><a title="lidar.frame_core.FrameCore.timestamp" href="frame_core.html#lidar.frame_core.FrameCore.timestamp">timestamp</a></code></li>
@@ -1227,6 +1323,7 @@ radius (float) – Radius of the sphere.</p>
 <li><code><a title="lidar.frame.Frame.diff" href="#lidar.frame.Frame.diff">diff</a></code></li>
 <li><code><a title="lidar.frame.Frame.filter" href="#lidar.frame.Frame.filter">filter</a></code></li>
 <li><code><a title="lidar.frame.Frame.from_file" href="#lidar.frame.Frame.from_file">from_file</a></code></li>
+<li><code><a title="lidar.frame.Frame.from_instance" href="#lidar.frame.Frame.from_instance">from_instance</a></code></li>
 <li><code><a title="lidar.frame.Frame.get_cluster" href="#lidar.frame.Frame.get_cluster">get_cluster</a></code></li>
 <li><code><a title="lidar.frame.Frame.limit" href="#lidar.frame.Frame.limit">limit</a></code></li>
 <li><code><a title="lidar.frame.Frame.plane_segmentation" href="#lidar.frame.Frame.plane_segmentation">plane_segmentation</a></code></li>
@@ -1234,6 +1331,7 @@ radius (float) – Radius of the sphere.</p>
 <li><code><a title="lidar.frame.Frame.remove_radius_outlier" href="#lidar.frame.Frame.remove_radius_outlier">remove_radius_outlier</a></code></li>
 <li><code><a title="lidar.frame.Frame.take_cluster" href="#lidar.frame.Frame.take_cluster">take_cluster</a></code></li>
 <li><code><a title="lidar.frame.Frame.to_csv" href="#lidar.frame.Frame.to_csv">to_csv</a></code></li>
+<li><code><a title="lidar.frame.Frame.to_instance" href="#lidar.frame.Frame.to_instance">to_instance</a></code></li>
 </ul>
 </li>
 </ul>

@@ -46,8 +46,6 @@ import pandas as pd
 import pyntcloud
 import rospy
 
-from .convert import convert
-
 
 class FrameCore:
     def __init__(
@@ -68,7 +66,7 @@ class FrameCore:
         &#34;&#34;&#34;All the data, x,y.z and intensity, range and more&#34;&#34;&#34;
         self.timestamp = timestamp
         &#34;&#34;&#34;ROS timestamp&#34;&#34;&#34;
-        self.points = pyntcloud.PyntCloud(self.data[[&#34;x&#34;, &#34;y&#34;, &#34;z&#34;]], mesh=None)
+        self.points = pyntcloud.PyntCloud(self.data, mesh=None)
         &#34;&#34;&#34;Pyntcloud object with x,y,z coordinates&#34;&#34;&#34;
         self.orig_file = orig_file
         &#34;&#34;&#34;Path to bag file. Defaults to empty&#34;&#34;&#34;
@@ -154,7 +152,7 @@ class FrameCore:
         &#34;&#34;&#34;
         return not self.data.empty
 
-    def _has_original_id(self) -&gt; bool:
+    def has_original_id(self) -&gt; bool:
         &#34;&#34;&#34;Checks if orginal_id column is present in the data.
         Original_id identifies a lidar point and makes them coparable.
 
@@ -188,19 +186,6 @@ class FrameCore:
         &#34;&#34;&#34;
         new_data = self.data.iloc[index_to_keep].reset_index(drop=True)
         return FrameCore(new_data, timestamp=self.timestamp)
-
-    def _get_open3d_points(self) -&gt; o3d.open3d_pybind.geometry.PointCloud:
-        &#34;&#34;&#34;Extract points as open3D PointCloud object. Needed for processing with the
-        open3d package.
-
-        Returns:
-            o3d.open3d_pybind.geometry.PointCloud: the pointcloud
-        &#34;&#34;&#34;
-        converted = convert.convert_df2pcd(self.points.points)
-        assert len(np.asarray(converted.points)) == len(
-            self
-        ), &#34;len of open3d points should be the same as len of the Frame&#34;
-        return convert.convert_df2pcd(self.points.points)
 
     def describe(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;Generate descriptive statistics based on .data.describe().&#34;&#34;&#34;
@@ -276,7 +261,7 @@ testframe = testset[0]</p></div>
         &#34;&#34;&#34;All the data, x,y.z and intensity, range and more&#34;&#34;&#34;
         self.timestamp = timestamp
         &#34;&#34;&#34;ROS timestamp&#34;&#34;&#34;
-        self.points = pyntcloud.PyntCloud(self.data[[&#34;x&#34;, &#34;y&#34;, &#34;z&#34;]], mesh=None)
+        self.points = pyntcloud.PyntCloud(self.data, mesh=None)
         &#34;&#34;&#34;Pyntcloud object with x,y,z coordinates&#34;&#34;&#34;
         self.orig_file = orig_file
         &#34;&#34;&#34;Path to bag file. Defaults to empty&#34;&#34;&#34;
@@ -362,7 +347,7 @@ testframe = testset[0]</p></div>
         &#34;&#34;&#34;
         return not self.data.empty
 
-    def _has_original_id(self) -&gt; bool:
+    def has_original_id(self) -&gt; bool:
         &#34;&#34;&#34;Checks if orginal_id column is present in the data.
         Original_id identifies a lidar point and makes them coparable.
 
@@ -396,19 +381,6 @@ testframe = testset[0]</p></div>
         &#34;&#34;&#34;
         new_data = self.data.iloc[index_to_keep].reset_index(drop=True)
         return FrameCore(new_data, timestamp=self.timestamp)
-
-    def _get_open3d_points(self) -&gt; o3d.open3d_pybind.geometry.PointCloud:
-        &#34;&#34;&#34;Extract points as open3D PointCloud object. Needed for processing with the
-        open3d package.
-
-        Returns:
-            o3d.open3d_pybind.geometry.PointCloud: the pointcloud
-        &#34;&#34;&#34;
-        converted = convert.convert_df2pcd(self.points.points)
-        assert len(np.asarray(converted.points)) == len(
-            self
-        ), &#34;len of open3d points should be the same as len of the Frame&#34;
-        return convert.convert_df2pcd(self.points.points)
 
     def describe(self) -&gt; pd.DataFrame:
         &#34;&#34;&#34;Generate descriptive statistics based on .data.describe().&#34;&#34;&#34;
@@ -555,6 +527,31 @@ can be the current index of the data from the Frame or the original_id.</p>
     return point.reset_index(drop=True)</code></pre>
 </details>
 </dd>
+<dt id="lidar.frame_core.FrameCore.has_original_id"><code class="name flex">
+<span>def <span class="ident">has_original_id</span></span>(<span>self) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Checks if orginal_id column is present in the data.
+Original_id identifies a lidar point and makes them coparable.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>`True`` if the lidar frame contains orginal_id data.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def has_original_id(self) -&gt; bool:
+    &#34;&#34;&#34;Checks if orginal_id column is present in the data.
+    Original_id identifies a lidar point and makes them coparable.
+
+    Returns:
+        bool: `True`` if the lidar frame contains orginal_id data.
+    &#34;&#34;&#34;
+    return &#34;original_id&#34; in self.data.columns</code></pre>
+</details>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -581,6 +578,7 @@ can be the current index of the data from the Frame or the original_id.</p>
 <li><code><a title="lidar.frame_core.FrameCore.data" href="#lidar.frame_core.FrameCore.data">data</a></code></li>
 <li><code><a title="lidar.frame_core.FrameCore.describe" href="#lidar.frame_core.FrameCore.describe">describe</a></code></li>
 <li><code><a title="lidar.frame_core.FrameCore.extract_point" href="#lidar.frame_core.FrameCore.extract_point">extract_point</a></code></li>
+<li><code><a title="lidar.frame_core.FrameCore.has_original_id" href="#lidar.frame_core.FrameCore.has_original_id">has_original_id</a></code></li>
 <li><code><a title="lidar.frame_core.FrameCore.orig_file" href="#lidar.frame_core.FrameCore.orig_file">orig_file</a></code></li>
 <li><code><a title="lidar.frame_core.FrameCore.points" href="#lidar.frame_core.FrameCore.points">points</a></code></li>
 <li><code><a title="lidar.frame_core.FrameCore.timestamp" href="#lidar.frame_core.FrameCore.timestamp">timestamp</a></code></li>
