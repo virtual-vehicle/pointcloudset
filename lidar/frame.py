@@ -169,19 +169,6 @@ class Frame(FrameCore):
         else:
             raise ValueError("Unsupported filter. Check docstring")
 
-    def apply_filter(self, boolean_array: np.ndarray) -> Frame:
-        """Generating a new Frame by removing points where filter is False.
-        Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.
-
-        Args:
-            boolean_array (np.ndarray): True where the point should remain.
-
-        Returns:
-            Frame: Frame with filterd rows and reindexed data and points.
-        """
-        new_data = self.data.loc[boolean_array].reset_index(drop=True)
-        return Frame(new_data, timestamp=self.timestamp)
-
     def limit(self, dim: "str", minvalue: float, maxvalue: float) -> Frame:
         """Limit the range of certain values in lidar Frame. Can be chained together.
 
@@ -199,10 +186,22 @@ class Frame(FrameCore):
         """
         if maxvalue < minvalue:
             raise ValueError("maxvalue must be greater than minvalue")
-        bool_array = (
-            (self.data[dim] <= maxvalue) & (self.data[dim] >= minvalue)
-        ).to_numpy()
-        return self.apply_filter(bool_array)
+        return self.filter("value", dim, ">=", minvalue).filter(
+            "value", dim, "<=", maxvalue
+        )
+
+    def apply_filter(self, boolean_array: np.ndarray) -> Frame:
+        """Generating a new Frame by removing points where filter is False.
+        Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.
+
+        Args:
+            boolean_array (np.ndarray): True where the point should remain.
+
+        Returns:
+            Frame: Frame with filterd rows and reindexed data and points.
+        """
+        new_data = self.data.loc[boolean_array].reset_index(drop=True)
+        return Frame(new_data, timestamp=self.timestamp)
 
     def get_cluster(self, eps: float, min_points: int) -> pd.DataFrame:
         """Get the clusters based on open3D cluster_dbscan. Process futher with
