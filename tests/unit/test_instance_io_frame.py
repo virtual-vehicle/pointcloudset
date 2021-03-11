@@ -5,6 +5,7 @@ from pathlib import Path
 import pytest_check as check
 import numpy as np
 import open3d as o3d
+import pandas as pd
 from pandas._testing import assert_frame_equal
 
 
@@ -54,3 +55,20 @@ def test_from_open3d(testframe_mini_real: Frame):
     frame = lidar.Frame.from_instance("open3d", open3d_data)
     test = frame.data - testframe_mini_real.data[["x", "y", "z"]]
     check.equal(set(list(test.max())).intersection([0.0, 0.0, 0.0]), {0.0})
+
+
+def test_from_dataframe(testframe_mini_df: pd.DataFrame, testframe_mini: Frame):
+    frame = lidar.Frame.from_instance("DataFrame", testframe_mini_df)
+    check.is_instance(frame, Frame)
+    test = frame.data - testframe_mini.data[["x", "y", "z"]]
+    check.equal(set(list(test.max())).intersection([0.0, 0.0, 0.0]), {0.0})
+
+
+def test_to_dataframe(testframe_mini_df: pd.DataFrame, testframe_mini: Frame):
+    df = testframe_mini.to_instance("DataFrame")
+    check.is_instance(df, pd.DataFrame)
+
+
+def test_to_dataframe2(testframe_mini_df: pd.DataFrame, testframe_mini: Frame):
+    df = testframe_mini.to_instance("pandas")
+    check.is_instance(df, pd.DataFrame)
