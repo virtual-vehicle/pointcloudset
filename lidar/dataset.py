@@ -200,12 +200,13 @@ class Dataset:
         test_dataset.apply_pipeline(pipeline1, 0, 10)
 
         Args:
-            pipeline (Callable[[Frame], Frame]): A function with a chain of processings on aframes.
+            pipeline (Callable[[Frame], Frame]): A function with a chain of processings on a frame.
             start_frame_number (int, optional): Frame number to start. Defaults to 0.
             end_frame_number (Optional, optional): Frame number to end. Defaults to None which corresponds to the end of the dataset.
 
         Returns:
-            List: A list of results. Can be a list of Frames or other objects.
+            List: A list of results. Can be a list of Frames or other objects, depending
+            on the pipeline function.
         """
         messages = self.bag.read_messages(topics=[self.topic])
         sliced_messages = itertools.islice(messages, start_frame_number, None)

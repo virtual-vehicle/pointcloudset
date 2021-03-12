@@ -32,8 +32,7 @@ import rospy
 from .diff import ALL_DIFFS
 from .filter import ALL_FILTERS
 from .frame_core import FrameCore
-from .io import (FRAME_FROM_FILE, FRAME_FROM_INSTANCE, FRAME_TO_FILE,
-                 FRAME_TO_INSTANCE)
+from .io import FRAME_FROM_FILE, FRAME_FROM_INSTANCE, FRAME_TO_FILE, FRAME_TO_INSTANCE
 from .plot.frame import plot_overlay
 
 
@@ -344,7 +343,7 @@ class Frame(FrameCore):
         ransac_n: int,
         num_iterations: int,
         return_plane_model: bool = False,
-    ) -> Union[dict, Frame]:
+    ) -> Union[Frame, dict]:
         """Segments a plane in the point cloud using the RANSAC algorithm.
         Based on open3D plane segmentation.
 
