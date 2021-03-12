@@ -6,6 +6,9 @@ from typing import Optional, List
 import rosbag
 from tqdm import tqdm
 import sensor_msgs.point_cloud2 as pc2
+from dask import delayed
+import dask.dataframe as dd
+
 
 PANDAS_TYPEMAPPING = {
     1: np.dtype("int8"),
@@ -37,7 +40,7 @@ def read_bag(
         end_frame_number = 2  # TODO fix to lenght of messages
     for frame_number in tqdm(range(start_frame_number, end_frame_number, 1)):
         message = next(sliced_messages)
-        frame = dataframe_from_message(message, keep_zeros)
+        frame = delayed(dataframe_from_message(message, keep_zeros))
         result_list.append(frame)
     return result_list
 
@@ -63,5 +66,5 @@ def dataframe_from_message(
 
 
 if __name__ == "__main__":
-    res = read_bag(bag, 0, 2, False, "/os1_cloud_node/points")
-    print(len(res))
+    lazy_dataframes = read_bag(bag, 0, 2, False, "/os1_cloud_node/points")
+    print(len(lazy_dataframes))
