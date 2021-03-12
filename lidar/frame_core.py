@@ -5,6 +5,7 @@ With all the main methods and properties of the Frame Class.
 
 from __future__ import annotations
 
+import datetime
 import traceback
 from datetime import datetime
 from typing import Union
@@ -13,7 +14,6 @@ import numpy as np
 import pandas as pd
 import pyntcloud
 import rospy
-import datetime
 
 
 class FrameCore:

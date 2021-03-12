@@ -1,14 +1,14 @@
 #!/usr/bin/env python
-import pandas as pd
-import numpy as np
 import itertools
-from typing import Optional, List
+from typing import List, Optional
+
+import dask.dataframe as dd
+import numpy as np
+import pandas as pd
 import rosbag
-from tqdm import tqdm
 import sensor_msgs.point_cloud2 as pc2
 from dask import delayed
-import dask.dataframe as dd
-
+from tqdm import tqdm
 
 PANDAS_TYPEMAPPING = {
     1: np.dtype("int8"),

@@ -34,8 +34,14 @@ import numpy as np
 import pandas as pd
 import rosbag
 import sensor_msgs.point_cloud2 as pc2
+from typing import Optional
+from tqdm import tqdm
+import itertools
+from pathlib import Path
+import datetime
 
-from lidar.frame import Frame
+from dask import delayed
+import dask.dataframe as dd
 
 PANDAS_TYPEMAPPING = {
     1: np.dtype(&#34;int8&#34;),
@@ -49,19 +55,9 @@ PANDAS_TYPEMAPPING = {
 }
 
 
-def frame_from_message(dataset, message: rosbag.bag.BagMessage) -&gt; Frame:
-    &#34;&#34;&#34;Generates a frame from one ROS pointcloud2 message. Optionally with or without
-    zero elements, i.e. points too close or too far away. Defined in the Dataset
-    property keep_zeros.
-
-    Args:
-        dataset ([lidar.Dataset]): Dataset where the message is stored
-        message (rosbag.bag.BagMessage): the message
-
-    Returns:
-        Frame: A frame with the pointcloud data
-    &#34;&#34;&#34;
-
+def dataframe_from_message(
+    message: rosbag.bag.BagMessage, keep_zeros: bool = False
+) -&gt; pd.DataFrame:
     columnnames = [item.name for item in message.message.fields]
     type_dict = {
         item.name: PANDAS_TYPEMAPPING[item.datatype] for item in message.message.fields
@@ -69,16 +65,42 @@ def frame_from_message(dataset, message: rosbag.bag.BagMessage) -&gt; Frame:
     frame_raw = pc2.read_points(message.message)
     frame_df = pd.DataFrame(np.array(list(frame_raw)), columns=columnnames)
     frame_df = frame_df.astype(type_dict)
-    if not dataset.keep_zeros:
+    if not keep_zeros:
         frame_df = frame_df[
             (frame_df[&#34;x&#34;] != 0.0) &amp; (frame_df[&#34;y&#34;] != 0.0) &amp; (frame_df[&#34;z&#34;] != 0.0)
         ]
         frame_df[&#34;original_id&#34;] = frame_df.index
         frame_df = frame_df.astype({&#34;original_id&#34;: &#34;uint32&#34;})
         frame_df = frame_df.reset_index(drop=True)
-    return Frame(
-        data=frame_df, orig_file=dataset.orig_file, timestamp=message.timestamp
-    )</code></pre>
+    return frame_df
+
+
+def dataset_from_rosbag(
+    bagfile: Path,
+    topic: str = &#34;/os1_cloud_node/points&#34;,
+    start_frame_number: int = 0,
+    end_frame_number: int = None,
+    keep_zeros: bool = False,
+) -&gt; dd.DataFrame:
+    bag = rosbag.Bag(bagfile.as_posix())
+    messages = bag.read_messages(topics=[topic])
+    sliced_messages = itertools.islice(messages, start_frame_number, None)
+    result_list = []
+    if end_frame_number is None:
+        end_frame_number = 2  # TODO fix to lenght of messages
+    timestamps = []
+    meta = {&#34;orig_file&#34;: bagfile.as_posix(), &#34;topic&#34;: topic}
+    for frame_number in tqdm(range(start_frame_number, end_frame_number, 1)):
+        message = next(sliced_messages)
+        timestamp = datetime.datetime.utcfromtimestamp(message.timestamp.to_sec())
+        timestamps.append(timestamp)
+        df = delayed(dataframe_from_message(message, keep_zeros))
+        result_list.append(df)
+    return {
+        &#34;data&#34;: dd.from_delayed(result_list),
+        &#34;timestamps&#34;: timestamps,
+        &#34;meta&#34;: meta,
+    }</code></pre>
 </details>
 </section>
 <section>
@@ -88,42 +110,18 @@ def frame_from_message(dataset, message: rosbag.bag.BagMessage) -&gt; Frame:
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="lidar.io.dataset.bag.frame_from_message"><code class="name flex">
-<span>def <span class="ident">frame_from_message</span></span>(<span>dataset, message: rosbag.bag.BagMessage) ‑> <a title="lidar.frame.Frame" href="../../frame.html#lidar.frame.Frame">Frame</a></span>
+<dt id="lidar.io.dataset.bag.dataframe_from_message"><code class="name flex">
+<span>def <span class="ident">dataframe_from_message</span></span>(<span>message: rosbag.bag.BagMessage, keep_zeros: bool = False) ‑> pandas.core.frame.DataFrame</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Generates a frame from one ROS pointcloud2 message. Optionally with or without
-zero elements, i.e. points too close or too far away. Defined in the Dataset
-property keep_zeros.</p>
-<h2 id="args">Args</h2>
-<dl>
-<dt><strong><code>dataset</code></strong> :&ensp;<code>[lidar.Dataset]</code></dt>
-<dd>Dataset where the message is stored</dd>
-<dt><strong><code>message</code></strong> :&ensp;<code>rosbag.bag.BagMessage</code></dt>
-<dd>the message</dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><code>Frame</code></dt>
-<dd>A frame with the pointcloud data</dd>
-</dl></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def frame_from_message(dataset, message: rosbag.bag.BagMessage) -&gt; Frame:
-    &#34;&#34;&#34;Generates a frame from one ROS pointcloud2 message. Optionally with or without
-    zero elements, i.e. points too close or too far away. Defined in the Dataset
-    property keep_zeros.
-
-    Args:
-        dataset ([lidar.Dataset]): Dataset where the message is stored
-        message (rosbag.bag.BagMessage): the message
-
-    Returns:
-        Frame: A frame with the pointcloud data
-    &#34;&#34;&#34;
-
+<pre><code class="python">def dataframe_from_message(
+    message: rosbag.bag.BagMessage, keep_zeros: bool = False
+) -&gt; pd.DataFrame:
     columnnames = [item.name for item in message.message.fields]
     type_dict = {
         item.name: PANDAS_TYPEMAPPING[item.datatype] for item in message.message.fields
@@ -131,16 +129,51 @@ property keep_zeros.</p>
     frame_raw = pc2.read_points(message.message)
     frame_df = pd.DataFrame(np.array(list(frame_raw)), columns=columnnames)
     frame_df = frame_df.astype(type_dict)
-    if not dataset.keep_zeros:
+    if not keep_zeros:
         frame_df = frame_df[
             (frame_df[&#34;x&#34;] != 0.0) &amp; (frame_df[&#34;y&#34;] != 0.0) &amp; (frame_df[&#34;z&#34;] != 0.0)
         ]
         frame_df[&#34;original_id&#34;] = frame_df.index
         frame_df = frame_df.astype({&#34;original_id&#34;: &#34;uint32&#34;})
         frame_df = frame_df.reset_index(drop=True)
-    return Frame(
-        data=frame_df, orig_file=dataset.orig_file, timestamp=message.timestamp
-    )</code></pre>
+    return frame_df</code></pre>
+</details>
+</dd>
+<dt id="lidar.io.dataset.bag.dataset_from_rosbag"><code class="name flex">
+<span>def <span class="ident">dataset_from_rosbag</span></span>(<span>bagfile: pathlib.Path, topic: str = '/os1_cloud_node/points', start_frame_number: int = 0, end_frame_number: int = None, keep_zeros: bool = False) ‑> dask.dataframe.core.DataFrame</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dataset_from_rosbag(
+    bagfile: Path,
+    topic: str = &#34;/os1_cloud_node/points&#34;,
+    start_frame_number: int = 0,
+    end_frame_number: int = None,
+    keep_zeros: bool = False,
+) -&gt; dd.DataFrame:
+    bag = rosbag.Bag(bagfile.as_posix())
+    messages = bag.read_messages(topics=[topic])
+    sliced_messages = itertools.islice(messages, start_frame_number, None)
+    result_list = []
+    if end_frame_number is None:
+        end_frame_number = 2  # TODO fix to lenght of messages
+    timestamps = []
+    meta = {&#34;orig_file&#34;: bagfile.as_posix(), &#34;topic&#34;: topic}
+    for frame_number in tqdm(range(start_frame_number, end_frame_number, 1)):
+        message = next(sliced_messages)
+        timestamp = datetime.datetime.utcfromtimestamp(message.timestamp.to_sec())
+        timestamps.append(timestamp)
+        df = delayed(dataframe_from_message(message, keep_zeros))
+        result_list.append(df)
+    return {
+        &#34;data&#34;: dd.from_delayed(result_list),
+        &#34;timestamps&#34;: timestamps,
+        &#34;meta&#34;: meta,
+    }</code></pre>
 </details>
 </dd>
 </dl>
@@ -161,7 +194,8 @@ property keep_zeros.</p>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="lidar.io.dataset.bag.frame_from_message" href="#lidar.io.dataset.bag.frame_from_message">frame_from_message</a></code></li>
+<li><code><a title="lidar.io.dataset.bag.dataframe_from_message" href="#lidar.io.dataset.bag.dataframe_from_message">dataframe_from_message</a></code></li>
+<li><code><a title="lidar.io.dataset.bag.dataset_from_rosbag" href="#lidar.io.dataset.bag.dataset_from_rosbag">dataset_from_rosbag</a></code></li>
 </ul>
 </li>
 </ul>

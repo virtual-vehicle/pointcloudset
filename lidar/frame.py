@@ -17,6 +17,7 @@ Frame object is generated at each processing stage.
 """
 from __future__ import annotations
 
+import datetime
 import warnings
 from pathlib import Path
 from typing import List, Union
@@ -27,12 +28,12 @@ import pandas as pd
 import plotly
 import plotly.express as px
 import pyntcloud
-import datetime
 
 from .diff import ALL_DIFFS
 from .filter import ALL_FILTERS
 from .frame_core import FrameCore
-from .io import FRAME_FROM_FILE, FRAME_FROM_INSTANCE, FRAME_TO_FILE, FRAME_TO_INSTANCE
+from .io import (FRAME_FROM_FILE, FRAME_FROM_INSTANCE, FRAME_TO_FILE,
+                 FRAME_TO_INSTANCE)
 from .plot.frame import plot_overlay
 
 

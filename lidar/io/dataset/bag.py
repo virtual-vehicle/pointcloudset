@@ -1,18 +1,18 @@
 """
 Routines for ROS bagfiles.
 """
+import datetime
+import itertools
+from pathlib import Path
+from typing import Optional
+
+import dask.dataframe as dd
 import numpy as np
 import pandas as pd
 import rosbag
 import sensor_msgs.point_cloud2 as pc2
-from typing import Optional
-from tqdm import tqdm
-import itertools
-from pathlib import Path
-import datetime
-
 from dask import delayed
-import dask.dataframe as dd
+from tqdm import tqdm
 
 PANDAS_TYPEMAPPING = {
     1: np.dtype("int8"),

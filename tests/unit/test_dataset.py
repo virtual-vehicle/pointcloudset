@@ -1,8 +1,9 @@
+import datetime
+
 import pytest
 import pytest_check as check
 
 from lidar import Dataset, Frame
-import datetime
 
 
 def test_getitem(testset: Dataset):

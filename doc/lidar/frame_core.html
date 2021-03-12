@@ -38,13 +38,13 @@ from __future__ import annotations
 
 import traceback
 from datetime import datetime
-from typing import List, Union
+from typing import Union
 
 import numpy as np
-import open3d as o3d
 import pandas as pd
 import pyntcloud
 import rospy
+import datetime
 
 
 class FrameCore:
@@ -52,7 +52,7 @@ class FrameCore:
         self,
         data: pd.DataFrame,
         orig_file: str = &#34;&#34;,
-        timestamp: rospy.rostime.Time = rospy.rostime.Time(),
+        timestamp: datetime.datetime = datetime.datetime.now(),
     ):
         &#34;&#34;&#34;One Frame of lidar measurements.
 
@@ -80,9 +80,7 @@ class FrameCore:
         Returns:
             str: date time string
         &#34;&#34;&#34;
-        return datetime.fromtimestamp(self.timestamp.to_sec()).strftime(
-            &#34;%A, %B %d, %Y %I:%M:%S&#34;
-        )
+        return self.timestamp.strftime(&#34;%A, %B %d, %Y %I:%M:%S&#34;)
 
     @property
     def data(self):
@@ -215,7 +213,7 @@ class FrameCore:
 <dl>
 <dt id="lidar.frame_core.FrameCore"><code class="flex name class">
 <span>class <span class="ident">FrameCore</span></span>
-<span>(</span><span>data: pd.DataFrame, orig_file: str = '', timestamp: rospy.rostime.Time = rospy.Time[0])</span>
+<span>(</span><span>data: pd.DataFrame, orig_file: str = '', timestamp: datetime.datetime = datetime.datetime(2021, 3, 12, 15, 31, 16, 959466))</span>
 </code></dt>
 <dd>
 <div class="desc"><p>One Frame of lidar measurements.</p>
@@ -232,7 +230,7 @@ testframe = testset[0]</p></div>
         self,
         data: pd.DataFrame,
         orig_file: str = &#34;&#34;,
-        timestamp: rospy.rostime.Time = rospy.rostime.Time(),
+        timestamp: datetime.datetime = datetime.datetime.now(),
     ):
         &#34;&#34;&#34;One Frame of lidar measurements.
 
@@ -260,9 +258,7 @@ testframe = testset[0]</p></div>
         Returns:
             str: date time string
         &#34;&#34;&#34;
-        return datetime.fromtimestamp(self.timestamp.to_sec()).strftime(
-            &#34;%A, %B %d, %Y %I:%M:%S&#34;
-        )
+        return self.timestamp.strftime(&#34;%A, %B %d, %Y %I:%M:%S&#34;)
 
     @property
     def data(self):
@@ -424,9 +420,7 @@ def timestamp_str(self) -&gt; str:
     Returns:
         str: date time string
     &#34;&#34;&#34;
-    return datetime.fromtimestamp(self.timestamp.to_sec()).strftime(
-        &#34;%A, %B %d, %Y %I:%M:%S&#34;
-    )</code></pre>
+    return self.timestamp.strftime(&#34;%A, %B %d, %Y %I:%M:%S&#34;)</code></pre>
 </details>
 </dd>
 </dl>

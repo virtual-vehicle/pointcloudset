@@ -63,17 +63,17 @@ from pathlib import Path
 from typing import List, Union
 
 import numpy as np
+import open3d as o3d
 import pandas as pd
 import plotly
 import plotly.express as px
 import pyntcloud
-import open3d as o3d
-import rospy
+import datetime
 
 from .diff import ALL_DIFFS
 from .filter import ALL_FILTERS
-from .io import FRAME_FROM_FILE, FRAME_TO_FILE, FRAME_FROM_INSTANCE, FRAME_TO_INSTANCE
 from .frame_core import FrameCore
+from .io import FRAME_FROM_FILE, FRAME_FROM_INSTANCE, FRAME_TO_FILE, FRAME_TO_INSTANCE
 from .plot.frame import plot_overlay
 
 
@@ -113,7 +113,7 @@ class Frame(FrameCore):
             )
         else:
             file_path_str = file_path.as_posix()
-            timestamp = rospy.Time(file_path.stat().st_mtime)
+            timestamp = datetime.datetime.utcfromtimestamp(file_path.stat().st_mtime)
             pyntcloud_in = pyntcloud.PyntCloud.from_file(file_path_str, **kwargs)
             return cls(
                 data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
@@ -384,7 +384,7 @@ class Frame(FrameCore):
         ransac_n: int,
         num_iterations: int,
         return_plane_model: bool = False,
-    ) -&gt; Union[dict, Frame]:
+    ) -&gt; Union[Frame, dict]:
         &#34;&#34;&#34;Segments a plane in the point cloud using the RANSAC algorithm.
         Based on open3D plane segmentation.
 
@@ -453,7 +453,7 @@ class Frame(FrameCore):
 <dl>
 <dt id="lidar.frame.Frame"><code class="flex name class">
 <span>class <span class="ident">Frame</span></span>
-<span>(</span><span>data: pd.DataFrame, orig_file: str = '', timestamp: rospy.rostime.Time = rospy.Time[0])</span>
+<span>(</span><span>data: pd.DataFrame, orig_file: str = '', timestamp: datetime.datetime = datetime.datetime(2021, 3, 12, 15, 31, 16, 959466))</span>
 </code></dt>
 <dd>
 <div class="desc"><p>One Frame of lidar measurements.</p>
@@ -491,7 +491,7 @@ testframe = testset[0]</p></div>
             )
         else:
             file_path_str = file_path.as_posix()
-            timestamp = rospy.Time(file_path.stat().st_mtime)
+            timestamp = datetime.datetime.utcfromtimestamp(file_path.stat().st_mtime)
             pyntcloud_in = pyntcloud.PyntCloud.from_file(file_path_str, **kwargs)
             return cls(
                 data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
@@ -762,7 +762,7 @@ testframe = testset[0]</p></div>
         ransac_n: int,
         num_iterations: int,
         return_plane_model: bool = False,
-    ) -&gt; Union[dict, Frame]:
+    ) -&gt; Union[Frame, dict]:
         &#34;&#34;&#34;Segments a plane in the point cloud using the RANSAC algorithm.
         Based on open3D plane segmentation.
 
@@ -853,7 +853,7 @@ def from_file(cls, file_path: Path, **kwargs):
         )
     else:
         file_path_str = file_path.as_posix()
-        timestamp = rospy.Time(file_path.stat().st_mtime)
+        timestamp = datetime.datetime.utcfromtimestamp(file_path.stat().st_mtime)
         pyntcloud_in = pyntcloud.PyntCloud.from_file(file_path_str, **kwargs)
         return cls(
             data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
@@ -1126,7 +1126,7 @@ take_cluster.</p>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.plane_segmentation"><code class="name flex">
-<span>def <span class="ident">plane_segmentation</span></span>(<span>self, distance_threshold: float, ransac_n: int, num_iterations: int, return_plane_model: bool = False) ‑> Union[dict, <a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a>]</span>
+<span>def <span class="ident">plane_segmentation</span></span>(<span>self, distance_threshold: float, ransac_n: int, num_iterations: int, return_plane_model: bool = False) ‑> Union[<a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a>, dict]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Segments a plane in the point cloud using the RANSAC algorithm.
@@ -1161,7 +1161,7 @@ Defaults to False.</dd>
     ransac_n: int,
     num_iterations: int,
     return_plane_model: bool = False,
-) -&gt; Union[dict, Frame]:
+) -&gt; Union[Frame, dict]:
     &#34;&#34;&#34;Segments a plane in the point cloud using the RANSAC algorithm.
     Based on open3D plane segmentation.
 
