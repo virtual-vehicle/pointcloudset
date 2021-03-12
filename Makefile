@@ -10,6 +10,7 @@ docserver:
 
 test:
 	coverage run -m pytest
+	pytest --nbval notebooks/usage.ipynb
 	python -m coverage report -i
 	python -m coverage html -i
 
