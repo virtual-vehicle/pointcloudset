@@ -9,6 +9,8 @@ from .frame.open3d import from_open3d, to_open3d
 from .frame.pandas import from_dataframe, to_dataframe
 from .frame.pyntcloud import from_pyntcloud, to_pyntcloud
 
+from .dataset.bag import dataset_from_rosbag
+
 FRAME_TO_FILE = {"CSV": write_csv}
 FRAME_FROM_INSTANCE = {
     "PYNTCLOUD": from_pyntcloud,
@@ -22,3 +24,5 @@ FRAME_TO_INSTANCE = {
     "DATAFRAME": to_dataframe,
     "PANDAS": to_dataframe,
 }
+
+DATASET_FROM_FILE = {"BAG": dataset_from_rosbag}

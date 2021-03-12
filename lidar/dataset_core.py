@@ -19,6 +19,14 @@ class DatasetCore:
         self.timestamps = timestamps
         self.meta = meta
 
+    @property
+    def start_time(self) -> datetime.datetime:
+        return self.timestamps[0]
+
+    @property
+    def end_time(self) -> datetime.datetime:
+        return self.timestamps[-1]
+
     def __len__(self) -> int:
         """Number of available frames (i.e. Lidar messages)"""
         return self.data.npartitions
@@ -43,13 +51,33 @@ class DatasetCore:
 
     def __getitem__(self, frame_number: Union[slice, int]) -> Union[DatasetCore, Frame]:
         if isinstance(frame_number, slice):
-            data = [delayed(self.data.get_partition(i)) for i in range(0, 10)]
+            if frame_number.step is not None:
+                data_range = range(
+                    frame_number.start, frame_number.stop, frame_number.step
+                )
+            else:
+                data_range = range(frame_number.start, frame_number.stop)
+            data = [delayed(self.data.get_partition(i)) for i in data_range]
             self.data = dd.from_delayed(data)
             self.timestamps = self.timestamps[frame_number]
             self.meta = self.meta
+            return self
         elif isinstance(frame_number, int):
             df = self.data.get_partition(frame_number).compute()
             timestamp = self.timestamps[frame_number]
             return Frame(data=df, orig_file=self.meta["orig_file"], timestamp=timestamp)
         else:
             raise TypeError("Wrong type {}".format(type(frame_number).__name__))
+
+    def has_frames(self) -> bool:
+        """Check if dataset has frames.
+
+        Returns:
+            bool: ``True`` if the dataset contains frames.
+        """
+        return len(self) > 0
+
+    def get_frames_between_timestamps(
+        self, start_time: datetime.datetime, end_time: datetime.datetime
+    ) -> DatasetCore:
+        pass

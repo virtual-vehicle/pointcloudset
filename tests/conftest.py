@@ -20,12 +20,12 @@ def testlas1():
 
 @pytest.fixture()
 def testset(testbag1):
-    return Dataset(testbag1, topic="/os1_cloud_node/points", keep_zeros=False)
+    return Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=False)
 
 
 @pytest.fixture()
 def testset_withzero(testbag1):
-    return Dataset(testbag1, topic="/os1_cloud_node/points", keep_zeros=True)
+    return Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=True)
 
 
 @pytest.fixture()

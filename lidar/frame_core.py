@@ -7,10 +7,9 @@ from __future__ import annotations
 
 import traceback
 from datetime import datetime
-from typing import List, Union
+from typing import Union
 
 import numpy as np
-import open3d as o3d
 import pandas as pd
 import pyntcloud
 import rospy
