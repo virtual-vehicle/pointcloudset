@@ -14,6 +14,7 @@ import open3d as o3d
 import pandas as pd
 import pyntcloud
 import rospy
+import datetime
 
 
 class FrameCore:
@@ -21,7 +22,7 @@ class FrameCore:
         self,
         data: pd.DataFrame,
         orig_file: str = "",
-        timestamp: rospy.rostime.Time = rospy.rostime.Time(),
+        timestamp: datetime.datetime = datetime.datetime.now(),
     ):
         """One Frame of lidar measurements.
 
