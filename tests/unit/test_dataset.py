@@ -41,7 +41,7 @@ def test_getitem_timerange(testset):
 
 
 def test_getitem_error3(testset):
-    with pytest.raises(ValueError):
+    with pytest.raises(IndexError):
         testset[2:0]
 
 
@@ -53,32 +53,25 @@ def test_str(testset: Dataset):
     check.equal(type(str(testset)), str)
     check.equal(
         str(testset),
-        "Lidar Dataset with 2 frame(s), from file /workspaces/lidar/tests/testdata/test.bag",
+        "Lidar Dataset with 2 frame(s)",
     )
 
 
 def test_repr(testset: Dataset):
     check.equal(type(str(testset)), str)
-    check.equal(repr(testset), "Dataset(/workspaces/lidar/tests/testdata/test.bag)")
-
-
-def test_testset_len_withzero(testset_withzero):
-    check.equal(testset_withzero.keep_zeros, True)
-    check.equal(len(testset_withzero), 2)
+    check.equal(repr(testset), "Dataset")
 
 
 def test_start_time(testset: Dataset):
-    check.is_instance(testset.start_time, datetime.datetime)
-
-
-def test_first_frame_time(testset: Dataset):
-    frame0 = testset[0]
-    check.equal(testset._first_frame_time, frame0.timestamp.to_sec())
+    st = testset.start_time
+    check.is_instance(st, datetime.datetime)
+    check.equal(st, datetime.datetime(2020, 6, 22, 13, 40, 42, 657267))
 
 
 def test_end_time(testset: Dataset):
-    check.equal(testset.end_time, 1592833242.7881582)
-    check.greater(testset.end_time, testset.start_time)
+    et = testset.end_time
+    check.is_instance(et, datetime.datetime)
+    check.equal(et, datetime.datetime(2020, 6, 22, 13, 40, 42, 755912))
 
 
 def test_time(testset: Dataset):

@@ -9,6 +9,7 @@ from typing import Optional
 from tqdm import tqdm
 import itertools
 from pathlib import Path
+import datetime
 
 from dask import delayed
 import dask.dataframe as dd
@@ -62,7 +63,8 @@ def dataset_from_rosbag(
     meta = {"orig_file": bagfile.as_posix(), "topic": topic}
     for frame_number in tqdm(range(start_frame_number, end_frame_number, 1)):
         message = next(sliced_messages)
-        timestamps.append(message.timestamp)
+        timestamp = datetime.datetime.utcfromtimestamp(message.timestamp.to_sec())
+        timestamps.append(timestamp)
         df = delayed(dataframe_from_message(message, keep_zeros))
         result_list.append(df)
     return {

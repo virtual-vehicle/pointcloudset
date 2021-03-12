@@ -49,9 +49,7 @@ class FrameCore:
         Returns:
             str: date time string
         """
-        return datetime.fromtimestamp(self.timestamp.to_sec()).strftime(
-            "%A, %B %d, %Y %I:%M:%S"
-        )
+        return self.timestamp.strftime("%A, %B %d, %Y %I:%M:%S")
 
     @property
     def data(self):

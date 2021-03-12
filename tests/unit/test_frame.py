@@ -137,14 +137,12 @@ def test_describe(testframe: Frame):
 def test_testframe_1_with_zero(testframe_withzero: Frame):
     check.equal(len(testframe_withzero), 131072)
     check.equal(testframe_withzero._has_data(), True)
-    check.equal(testframe_withzero.timestamp.to_time(), 1592833242.7559116)
 
 
 def test_testframe_1(testframe: Frame):
     # testframe.data.to_pickle("/workspaces/lidar/tests/testdata/testframe_dataframe.pkl")
     check.equal(len(testframe), 45809)
     check.equal(testframe._has_data(), True)
-    check.equal(testframe.timestamp.to_time(), 1592833242.7559116)
     check.equal(len(testframe), 45809)
 
 

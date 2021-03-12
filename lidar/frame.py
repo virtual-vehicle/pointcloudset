@@ -27,7 +27,7 @@ import pandas as pd
 import plotly
 import plotly.express as px
 import pyntcloud
-import rospy
+import datetime
 
 from .diff import ALL_DIFFS
 from .filter import ALL_FILTERS
@@ -72,7 +72,7 @@ class Frame(FrameCore):
             )
         else:
             file_path_str = file_path.as_posix()
-            timestamp = rospy.Time(file_path.stat().st_mtime)
+            timestamp = datetime.datetime.utcfromtimestamp(file_path.stat().st_mtime)
             pyntcloud_in = pyntcloud.PyntCloud.from_file(file_path_str, **kwargs)
             return cls(
                 data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp

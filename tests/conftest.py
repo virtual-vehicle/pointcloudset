@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
-import rospy
+import datetime
 
 from lidar import Dataset, Frame
 
@@ -87,7 +87,7 @@ def reference_pointcloud_withzero_dataframe():
 def testframe_mini(testframe_mini_df) -> Frame:
     return Frame(
         data=testframe_mini_df,
-        timestamp=rospy.rostime.Time(50),
+        timestamp=datetime.datetime(2020, 1, 1),
         orig_file="/fake/testrame_mini.bag",
     )
 
