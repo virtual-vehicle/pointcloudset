@@ -347,7 +347,7 @@ class Frame(FrameCore):
         return Frame(new_data, timestamp=self.timestamp)
 
     def get_cluster(self, eps: float, min_points: int) -&gt; pd.DataFrame:
-        &#34;&#34;&#34;Get the clusters based on open3D cluster_dbscan. Process futher with
+        &#34;&#34;&#34;Get the clusters based on open3D cluster_dbscan. Process further with
             take_cluster.
 
         Args:
@@ -384,7 +384,7 @@ class Frame(FrameCore):
         ransac_n: int,
         num_iterations: int,
         return_plane_model: bool = False,
-    ) -&gt; Union[dict, FrameCore]:
+    ) -&gt; Union[dict, Frame]:
         &#34;&#34;&#34;Segments a plane in the point cloud using the RANSAC algorithm.
         Based on open3D plane segmentation.
 
@@ -725,7 +725,7 @@ testframe = testset[0]</p></div>
         return Frame(new_data, timestamp=self.timestamp)
 
     def get_cluster(self, eps: float, min_points: int) -&gt; pd.DataFrame:
-        &#34;&#34;&#34;Get the clusters based on open3D cluster_dbscan. Process futher with
+        &#34;&#34;&#34;Get the clusters based on open3D cluster_dbscan. Process further with
             take_cluster.
 
         Args:
@@ -762,7 +762,7 @@ testframe = testset[0]</p></div>
         ransac_n: int,
         num_iterations: int,
         return_plane_model: bool = False,
-    ) -&gt; Union[dict, FrameCore]:
+    ) -&gt; Union[dict, Frame]:
         &#34;&#34;&#34;Segments a plane in the point cloud using the RANSAC algorithm.
         Based on open3D plane segmentation.
 
@@ -1039,7 +1039,7 @@ def from_instance(
 <span>def <span class="ident">get_cluster</span></span>(<span>self, eps: float, min_points: int) ‑> pandas.core.frame.DataFrame</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Get the clusters based on open3D cluster_dbscan. Process futher with
+<div class="desc"><p>Get the clusters based on open3D cluster_dbscan. Process further with
 take_cluster.</p>
 <h2 id="args">Args</h2>
 <dl>
@@ -1058,7 +1058,7 @@ take_cluster.</p>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def get_cluster(self, eps: float, min_points: int) -&gt; pd.DataFrame:
-    &#34;&#34;&#34;Get the clusters based on open3D cluster_dbscan. Process futher with
+    &#34;&#34;&#34;Get the clusters based on open3D cluster_dbscan. Process further with
         take_cluster.
 
     Args:
@@ -1126,7 +1126,7 @@ take_cluster.</p>
 </details>
 </dd>
 <dt id="lidar.frame.Frame.plane_segmentation"><code class="name flex">
-<span>def <span class="ident">plane_segmentation</span></span>(<span>self, distance_threshold: float, ransac_n: int, num_iterations: int, return_plane_model: bool = False) ‑> Union[dict, <a title="lidar.frame_core.FrameCore" href="frame_core.html#lidar.frame_core.FrameCore">FrameCore</a>]</span>
+<span>def <span class="ident">plane_segmentation</span></span>(<span>self, distance_threshold: float, ransac_n: int, num_iterations: int, return_plane_model: bool = False) ‑> Union[dict, <a title="lidar.frame.Frame" href="#lidar.frame.Frame">Frame</a>]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Segments a plane in the point cloud using the RANSAC algorithm.
@@ -1161,7 +1161,7 @@ Defaults to False.</dd>
     ransac_n: int,
     num_iterations: int,
     return_plane_model: bool = False,
-) -&gt; Union[dict, FrameCore]:
+) -&gt; Union[dict, Frame]:
     &#34;&#34;&#34;Segments a plane in the point cloud using the RANSAC algorithm.
     Based on open3D plane segmentation.
 
