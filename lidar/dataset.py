@@ -19,8 +19,8 @@ import genpy
 import rosbag
 from tqdm import tqdm
 
-from .io.dataset.bag import frame_from_message
 from .frame import Frame
+from .io.dataset.bag import frame_from_message
 
 
 class Dataset:

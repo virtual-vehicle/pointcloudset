@@ -1,12 +1,14 @@
-import lidar
-from lidar import Frame
-from pyntcloud import PyntCloud
 from pathlib import Path
-import pytest_check as check
+
 import numpy as np
 import open3d as o3d
 import pandas as pd
+import pytest_check as check
 from pandas._testing import assert_frame_equal
+from pyntcloud import PyntCloud
+
+import lidar
+from lidar import Frame
 
 
 def test_from_pyntcloud(testlas1: Path):

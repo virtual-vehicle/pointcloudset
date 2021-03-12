@@ -22,17 +22,18 @@ from pathlib import Path
 from typing import List, Union
 
 import numpy as np
+import open3d as o3d
 import pandas as pd
 import plotly
 import plotly.express as px
 import pyntcloud
-import open3d as o3d
 import rospy
 
 from .diff import ALL_DIFFS
 from .filter import ALL_FILTERS
-from .io import FRAME_FROM_FILE, FRAME_TO_FILE, FRAME_FROM_INSTANCE, FRAME_TO_INSTANCE
 from .frame_core import FrameCore
+from .io import (FRAME_FROM_FILE, FRAME_FROM_INSTANCE, FRAME_TO_FILE,
+                 FRAME_TO_INSTANCE)
 from .plot.frame import plot_overlay
 
 
@@ -306,7 +307,7 @@ class Frame(FrameCore):
         return Frame(new_data, timestamp=self.timestamp)
 
     def get_cluster(self, eps: float, min_points: int) -> pd.DataFrame:
-        """Get the clusters based on open3D cluster_dbscan. Process futher with
+        """Get the clusters based on open3D cluster_dbscan. Process further with
             take_cluster.
 
         Args:
@@ -343,7 +344,7 @@ class Frame(FrameCore):
         ransac_n: int,
         num_iterations: int,
         return_plane_model: bool = False,
-    ) -> Union[dict, FrameCore]:
+    ) -> Union[dict, Frame]:
         """Segments a plane in the point cloud using the RANSAC algorithm.
         Based on open3D plane segmentation.
 

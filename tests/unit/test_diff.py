@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 import pytest_check as check
+
 from lidar import Dataset, Frame
 from lidar.diff.frame import _calculate_single_point_difference
 

@@ -1,9 +1,9 @@
 from pathlib import Path
 
+import numpy as np
+import pandas as pd
 import pytest
 import pytest_check as check
-import pandas as pd
-import numpy as np
 
 import lidar
 from lidar import Frame

@@ -1,8 +1,9 @@
 """Frame filters based on statisitcics"""
 from __future__ import annotations
-from lidar.config import OPS
 
 from typing import TYPE_CHECKING
+
+from lidar.config import OPS
 
 if TYPE_CHECKING:
     from lidar import Frame

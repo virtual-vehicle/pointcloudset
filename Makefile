@@ -15,7 +15,7 @@ test:
 	python -m coverage html -i
 
 sort-imports:
-	isort -rc .
+	isort .
 
 clean:
 	py3clean .

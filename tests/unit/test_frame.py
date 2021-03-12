@@ -6,9 +6,10 @@ import pandas as pd
 import pytest
 import pytest_check as check
 import rospy
-from lidar import Frame
 from pandas._testing import assert_frame_equal
 from pyntcloud import PyntCloud
+
+from lidar import Frame
 
 
 def test_init(testframe_mini_df: pd.DataFrame):
