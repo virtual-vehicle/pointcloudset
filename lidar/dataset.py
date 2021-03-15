@@ -11,7 +11,7 @@ generators.
 from pathlib import Path
 
 from .dataset_core import DatasetCore
-from .io import DATASET_FROM_FILE
+from .io import DATASET_FROM_FILE, DATASET_TO_FILE
 
 from typing import Callable, TYPE_CHECKING, Optional, List, Any, Union
 import itertools
@@ -49,6 +49,12 @@ class Dataset(DatasetCore):
         else:
             res = DATASET_FROM_FILE[ext](file_path, **kwargs)
             return cls(data=res["data"], timestamps=res["timestamps"], meta=res["meta"])
+
+    def to_file(
+        self,
+        file_path: Path = Path(),
+    ) -> None:
+        DATASET_TO_FILE["FOLDER"](self, file_path=file_path)
 
     def apply_pipeline(
         self,

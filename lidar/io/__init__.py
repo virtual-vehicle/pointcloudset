@@ -5,6 +5,7 @@ File input and output routines.
 from pyntcloud.io import FROM_FILE as FRAME_FROM_FILE
 
 from .dataset.bag import dataset_from_rosbag
+from .dataset.dir import dataset_to_dir
 from .frame.csv import write_csv
 from .frame.open3d import from_open3d, to_open3d
 from .frame.pandas import from_dataframe, to_dataframe
@@ -25,3 +26,4 @@ FRAME_TO_INSTANCE = {
 }
 
 DATASET_FROM_FILE = {"BAG": dataset_from_rosbag}
+DATASET_TO_FILE = {"FOLDER": dataset_to_dir}

@@ -15,7 +15,7 @@ class DatasetCore:
         self,
         data: List[dask.delayed.DelayedLeaf],
         timestamps: List[datetime.datetime],
-        meta: dict = {},
+        meta: dict = {"orig_file": "", "topic": ""},
     ) -> None:
         self.data = data
         self.timestamps = timestamps

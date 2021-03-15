@@ -65,6 +65,8 @@ def dataset_from_rosbag(
     result_list = []
     if end_frame_number is None:
         end_frame_number = get_number_of_messages(bag, topic)
+    if end_frame_number > get_number_of_messages(bag, topic):
+        raise ValueError("end_frame_number to high")
     timestamps = []
     meta = {"orig_file": bagfile.as_posix(), "topic": topic}
     for frame_number in tqdm(range(start_frame_number, end_frame_number, 1)):
