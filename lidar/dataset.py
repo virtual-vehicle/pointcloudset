@@ -37,30 +37,35 @@ class Dataset(DatasetCore):
             res = DATASET_FROM_FILE[ext](file_path, **kwargs)
             return cls(data=res["data"], timestamps=res["timestamps"], meta=res["meta"])
 
-    # def apply_pipeline(
-    #     self,
-    #     pipeline: Callable[[Frame, int], Frame],
-    #     start_frame_number: Optional[int] = 0,
-    #     end_frame_number: Optional[int] = None,
-    # ) -> Any:
-    #     """Applies a function to all, or a given range, of Frames in the dataset.
+    def apply_pipeline(
+        self,
+        pipeline,
+        start_frame_number: Optional[int] = 0,
+        end_frame_number: Optional[int] = None,
+    ) -> Any:
+        """Applies a function to all, or a given range, of Frames in the dataset.
 
-    #     Example:
+        Example:
 
-    #     def pipeline1(frame: Frame, frame_number: int):
-    #         return frame.limit("x", 0, 1)
+        def pipeline1(frame: pd.Dataframe, frame_number: int):
+            return frame.limit("x", 0, 1)
 
-    #     test_dataset.apply_pipeline(pipeline1, 0, 10)
+        test_dataset.apply_pipeline(pipeline1, 0, 10)
 
-    #     Args:
-    #         pipeline (Callable[[Frame], Frame]): A function with a chain of processings on frames.
-    #         start_frame_number (int, optional): Frame number to start. Defaults to 0.
-    #         end_frame_number (Optional, optional): Frame number to end. Defaults to None which corresponds to the end of the dataset.
+        Args:
+            pipeline (Callable[[Frame], Frame]): A function with a chain of processings on frames.
+            start_frame_number (int, optional): Frame number to start. Defaults to 0.
+            end_frame_number (Optional, optional): Frame number to end. Defaults to None which corresponds to the end of the dataset.
 
-    #     Returns:
-    #         Any: depends on the pipeline functions
-    #     """
-    #     pass
-    #     # use dask apply
-    #     # maybe make a decorator for a pipeline function. The prefered way is that it can
-    #     # return a new Dataset
+        Returns:
+            Any: depends on the pipeline functions
+        """
+
+        # use dask apply
+        # maybe make a decorator for a pipeline function. The prefered way is that it can
+        # return a new Dataset
+        if end_frame_number is None:
+            end_frame_number = len(self)
+        self.data.map_partitions(
+            pipeline,
+        )
