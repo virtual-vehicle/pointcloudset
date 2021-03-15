@@ -61,9 +61,9 @@ def test_getitem_timerange(testset: Dataset):
     check.equal(type(dataset[0:2][0]), Frame)
 
 
-def test_getitem_error3(testset):
-    with pytest.raises(IndexError):
-        testset[2:0]
+def test_getitem_strange(testset):
+    check.equal(len(testset), 2)
+    check.equal(len(testset[2:0]), 0)
 
 
 def test_has_frames(testset: Dataset):

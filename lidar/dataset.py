@@ -13,15 +13,28 @@ from pathlib import Path
 from .dataset_core import DatasetCore
 from .io import DATASET_FROM_FILE
 
-from typing import Callable, TYPE_CHECKING, Optional, List, Any
+from typing import Callable, TYPE_CHECKING, Optional, List, Any, Union
 import itertools
 from tqdm import tqdm
 
-if TYPE_CHECKING:
-    from lidar import Frame
+
+from .frame import Frame
 
 
 class Dataset(DatasetCore):
+    def __getitem__(self, frame_number: Union[slice, int]) -> Union[DatasetCore, Frame]:
+        if isinstance(frame_number, slice):
+            data = self.data[frame_number]
+            timestamps = self.timestamps[frame_number]
+            meta = self.meta
+            return Dataset(data, timestamps, meta)
+        elif isinstance(frame_number, int):
+            df = self.data[frame_number].compute()
+            timestamp = self.timestamps[frame_number]
+            return Frame(data=df, orig_file=self.meta["orig_file"], timestamp=timestamp)
+        else:
+            raise TypeError("Wrong type {}".format(type(frame_number).__name__))
+
     @classmethod
     def from_file(cls, file_path: Path, **kwargs):
         if not isinstance(file_path, Path):

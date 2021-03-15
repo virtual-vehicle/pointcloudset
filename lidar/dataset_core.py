@@ -5,6 +5,7 @@ from typing import List, Union
 
 import dask.dataframe as dd
 from dask import delayed
+import dask
 
 from .frame import Frame
 
@@ -12,7 +13,7 @@ from .frame import Frame
 class DatasetCore:
     def __init__(
         self,
-        data: dd.DataFrame,
+        data: List[dask.delayed.DelayedLeaf],
         timestamps: List[datetime.datetime],
         meta: dict = {},
     ) -> None:
@@ -30,7 +31,7 @@ class DatasetCore:
 
     def __len__(self) -> int:
         """Number of available frames (i.e. Lidar messages)"""
-        return self.data.npartitions
+        return len(self.data)
 
     def __str__(self):
         return f"Lidar Dataset with {len(self)} frame(s)"
@@ -49,26 +50,6 @@ class DatasetCore:
             return result
         else:
             raise StopIteration
-
-    def __getitem__(self, frame_number: Union[slice, int]) -> Union[DatasetCore, Frame]:
-        if isinstance(frame_number, slice):
-            if frame_number.step is not None:
-                data_range = range(
-                    frame_number.start, frame_number.stop, frame_number.step
-                )
-            else:
-                data_range = range(frame_number.start, frame_number.stop)
-            data = [delayed(self.data.get_partition(i)) for i in data_range]
-            self.data = dd.from_delayed(data)
-            self.timestamps = self.timestamps[frame_number]
-            self.meta = self.meta
-            return self
-        elif isinstance(frame_number, int):
-            df = self.data.get_partition(frame_number).compute()
-            timestamp = self.timestamps[frame_number]
-            return Frame(data=df, orig_file=self.meta["orig_file"], timestamp=timestamp)
-        else:
-            raise TypeError("Wrong type {}".format(type(frame_number).__name__))
 
     def has_frames(self) -> bool:
         """Check if dataset has frames.

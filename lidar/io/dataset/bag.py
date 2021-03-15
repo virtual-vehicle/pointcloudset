@@ -74,7 +74,7 @@ def dataset_from_rosbag(
         df = delayed(dataframe_from_message(message, keep_zeros))
         result_list.append(df)
     return {
-        "data": dd.from_delayed(result_list),
+        "data": result_list,
         "timestamps": timestamps,
         "meta": meta,
     }
