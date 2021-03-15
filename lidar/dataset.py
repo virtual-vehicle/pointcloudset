@@ -40,11 +40,11 @@ class Dataset(DatasetCore):
         if not isinstance(file_path, Path):
             raise TypeError("Expectinga Path object for file_path")
         ext = file_path.suffix[1:].upper()
+        if ext == "":
+            ext = "DIR"
         if ext not in DATASET_FROM_FILE:
             raise ValueError(
-                "Unsupported file format; supported formats are: {}".format(
-                    list(DATASET_FROM_FILE)
-                )
+                f"Unsupported file format {ext}; supported formats are: {DATASET_FROM_FILE.keys()}"
             )
         else:
             res = DATASET_FROM_FILE[ext](file_path, **kwargs)
@@ -54,7 +54,7 @@ class Dataset(DatasetCore):
         self,
         file_path: Path = Path(),
     ) -> None:
-        DATASET_TO_FILE["FOLDER"](self, file_path=file_path)
+        DATASET_TO_FILE["DIR"](self, file_path=file_path)
 
     def apply_pipeline(
         self,
