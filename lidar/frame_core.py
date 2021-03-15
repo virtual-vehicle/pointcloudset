@@ -21,7 +21,7 @@ class FrameCore:
         self,
         data: pd.DataFrame,
         orig_file: str = "",
-        timestamp: datetime.datetime = datetime.datetime.now(),
+        timestamp: datetime = datetime.now(),
     ):
         """One Frame of lidar measurements.
 

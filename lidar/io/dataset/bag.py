@@ -46,6 +46,12 @@ def dataframe_from_message(
     return frame_df
 
 
+def get_number_of_messages(bag: rosbag.Bag, topic: str) -> int:
+    return (bag.get_type_and_topic_info().topics)[
+        "/os1_cloud_node/points"
+    ].message_count
+
+
 def dataset_from_rosbag(
     bagfile: Path,
     topic: str = "/os1_cloud_node/points",
@@ -58,7 +64,7 @@ def dataset_from_rosbag(
     sliced_messages = itertools.islice(messages, start_frame_number, None)
     result_list = []
     if end_frame_number is None:
-        end_frame_number = 2  # TODO fix to lenght of messages
+        end_frame_number = get_number_of_messages(bag, topic)
     timestamps = []
     meta = {"orig_file": bagfile.as_posix(), "topic": topic}
     for frame_number in tqdm(range(start_frame_number, end_frame_number, 1)):

@@ -81,4 +81,26 @@ class DatasetCore:
     def get_frames_between_timestamps(
         self, start_time: datetime.datetime, end_time: datetime.datetime
     ) -> DatasetCore:
-        pass
+        if not start_time < end_time:
+            raise ValueError("start_time must be smaller than end_time")
+        start_i = self._get_frame_number_from_time(start_time)
+        end_i = self._get_frame_number_from_time(end_time) + 1
+        return self[start_i:end_i]
+
+    def _get_frame_number_from_time(self, time: datetime.datetime) -> int:
+        """Get the frame number from a timestamp.
+
+        Args:
+            time (datetime.datetime): The time of interest
+
+        Raises:
+            ValueError: If time is outside of range.
+
+        Returns:
+            int: Frame number
+        """
+        if time < self.start_time or time > self.end_time:
+            raise ValueError("time is outside of range")
+        return min(
+            range(len(self.timestamps)), key=lambda i: abs(self.timestamps[i] - time)
+        )

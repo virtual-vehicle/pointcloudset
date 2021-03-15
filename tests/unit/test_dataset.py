@@ -4,6 +4,16 @@ import pytest
 import pytest_check as check
 
 from lidar import Dataset, Frame
+import rosbag
+
+
+def test_dataset_len(testbag1: str, testset: Dataset):
+    bag = rosbag.Bag(testbag1)
+    len_bag = (bag.get_type_and_topic_info().topics)[
+        "/os1_cloud_node/points"
+    ].message_count
+    check.equal(len_bag, len(testset))
+    check.equal(len(testset), 2)
 
 
 def test_getitem(testset: Dataset):
@@ -33,11 +43,21 @@ def test_getitem_error(testset: Dataset):
         testset["fake"]
 
 
-def test_getitem_timerange(testset):
+def test_get_frame_number_from_time(testset):
+    res = testset._get_frame_number_from_time(testset.start_time)
+    check.equal(res, 0)
+    res2 = testset._get_frame_number_from_time(testset.end_time)
+    check.equal(res2 + 1, len(testset))
+
+
+def test_getitem_timerange(testset: Dataset):
+    check.equal(len(testset), 2)
     dataset = testset.get_frames_between_timestamps(
-        1592833242.6053855, 1592833242.7881582
+        datetime.datetime(2020, 6, 22, 13, 40, 42, 657267),
+        datetime.datetime(2020, 6, 22, 13, 40, 42, 755912),
     )
-    check.equal(type(dataset[0:2]), list)
+    check.equal(len(dataset), 2)
+    check.equal(type(dataset[0:2]), Dataset)
     check.equal(type(dataset[0:2][0]), Frame)
 
 

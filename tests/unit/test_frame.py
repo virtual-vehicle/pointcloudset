@@ -8,6 +8,7 @@ import pytest_check as check
 import rospy
 from pandas._testing import assert_frame_equal
 from pyntcloud import PyntCloud
+from datetime import datetime
 
 from lidar import Frame
 
@@ -51,7 +52,7 @@ def test_points2(testframe_mini):
 
 
 def test_timestamp(testframe_mini):
-    check.equal(type(testframe_mini.timestamp), rospy.rostime.Time)
+    check.equal(type(testframe_mini.timestamp), datetime)
 
 
 def test_org_file(testframe):
@@ -116,7 +117,7 @@ def test_str(testframe: Frame):
 
 def test_repr(testframe_mini: Frame):
     check.equal(type(repr(testframe_mini)), str)
-    check.equal(len(repr(testframe_mini)), 777)
+    check.equal(len(repr(testframe_mini)), 785)
 
 
 def test_add_column(testframe_mini: Frame):
