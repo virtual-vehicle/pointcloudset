@@ -122,3 +122,25 @@ class Dataset(DatasetCore):
             return Dataset(data=res, timestamps=self.timestamps, meta=self.meta)
         else:
             return dask.compute(*res)
+
+    def extend(self, dataset: Dataset) -> Dataset:
+        """Extends the dataset by another one.
+
+        Args:
+            dataset (Dataset): [description]
+
+        Returns:
+            Dataset: [description]
+        """
+        key = "extended"
+        meta = self.meta
+        if key in meta:
+            new = meta[key]
+            new.extend(dataset.meta)
+            meta[key] = new
+        else:
+            meta[key] = [dataset.meta]
+        self.data.extend(dataset.data)
+        self.timestamps.extend(dataset.timestamps)
+        self._check()
+        return self

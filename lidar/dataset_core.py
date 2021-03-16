@@ -13,8 +13,8 @@ from .frame import Frame
 class DatasetCore:
     def __init__(
         self,
-        data: List[dask.delayed.DelayedLeaf],
-        timestamps: List[datetime.datetime],
+        data: List[dask.delayed.DelayedLeaf] = [],
+        timestamps: List[datetime.datetime] = [],
         meta: dict = {"orig_file": "", "topic": ""},
     ) -> None:
         self.data = data
@@ -38,7 +38,9 @@ class DatasetCore:
         return f"Lidar Dataset with {len(self)} frame(s)"
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}"
+        return (
+            f"""{self.__class__.__name__}({self.data},{self.timestamps},{self.meta})"""
+        )
 
     def __iter__(self):
         self.n = 0
@@ -88,9 +90,12 @@ class DatasetCore:
         )
 
     def _check(self):
-        assert len(self.timestamps) == len(self.data)
-        assert all(
-            self.timestamps[i] <= self.timestamps[i + 1]
-            for i in range(len(self.timestamps) - 1)
-        )
-        assert "orig_file" in self.meta
+        assert "orig_file" in self.meta, "meta data does not contain orig_file"
+        if len(self) > 0:
+            assert len(self.timestamps) == len(
+                self.data
+            ), "Lenght of timestamps do not match the data"
+            assert all(
+                self.timestamps[i] < self.timestamps[i + 1]
+                for i in range(len(self.timestamps) - 1)
+            ), "Timestamps are not monotonic increasing"

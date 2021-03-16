@@ -81,8 +81,9 @@ def test_str(testset: Dataset):
 
 
 def test_repr(testset: Dataset):
-    check.equal(type(str(testset)), str)
-    check.equal(repr(testset), "Dataset")
+    repr = testset.__repr__()
+    check.equal(type(repr), str)
+    check.equal(len(repr), 326)
 
 
 def test_start_time(testset: Dataset):
