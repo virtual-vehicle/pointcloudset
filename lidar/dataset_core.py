@@ -44,7 +44,7 @@ class DatasetCore:
         return self
 
     def __next__(self):
-        if self.n <= len(self):
+        if self.n < len(self):
             result = self[self.n]
             self.n += 1
             return result
