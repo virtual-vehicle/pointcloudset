@@ -3,9 +3,9 @@ from __future__ import annotations
 import datetime
 from typing import List, Union
 
+import dask
 import dask.dataframe as dd
 from dask import delayed
-import dask
 
 from .frame import Frame
 
@@ -20,6 +20,7 @@ class DatasetCore:
         self.data = data
         self.timestamps = timestamps
         self.meta = meta
+        self._check()
 
     @property
     def start_time(self) -> datetime.datetime:
@@ -85,3 +86,11 @@ class DatasetCore:
         return min(
             range(len(self.timestamps)), key=lambda i: abs(self.timestamps[i] - time)
         )
+
+    def _check(self):
+        assert len(self.timestamps) == len(self.data)
+        assert all(
+            self.timestamps[i] <= self.timestamps[i + 1]
+            for i in range(len(self.timestamps) - 1)
+        )
+        assert "orig_file" in self.meta

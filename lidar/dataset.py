@@ -9,17 +9,16 @@ For more details on how to use it please refer to the usage.ipynb Notebook for a
 generators.
 """
 from __future__ import annotations
+
 from pathlib import Path
+from typing import Any, Callable, Optional, Union, get_type_hints
+
+import dask
+from dask import delayed
 
 from .dataset_core import DatasetCore
-from .io import DATASET_FROM_FILE, DATASET_TO_FILE
-
-from typing import Callable, Optional, Union, get_type_hints, Any
-from dask import delayed
-import dask
-
-
 from .frame import Frame
+from .io import DATASET_FROM_FILE, DATASET_TO_FILE
 
 
 def _is_pipline_returing_frame(pipeline) -> bool:
@@ -72,8 +71,6 @@ class Dataset(DatasetCore):
     def apply(
         self,
         func: Union[Callable[[Frame], Frame], Callable[[Frame], Any]],
-        start_frame_number: int = 0,
-        end_frame_number: Optional[int] = None,
     ) -> Union[Dataset, tuple]:
         """Applies a function onto the dataset.
 
@@ -95,8 +92,6 @@ class Dataset(DatasetCore):
 
         Args:
             func (Union[Callable[[Frame], Frame], Callable[[Frame], Any]]): [description]
-            start_frame_number (int, optional): Frame number of where to start. Defaults to 0.
-            end_frame_number (Optional[int], optional): Frame number to stop. Defaults to None.
 
         Returns:
             Union[Dataset, Any]: A dataset if the function retunrs a Frame object or tuple
@@ -118,10 +113,8 @@ class Dataset(DatasetCore):
                 frame = Frame(element_in)
                 return func(frame)
 
-        if end_frame_number is None:
-            end_frame_number = len(self)
         res = []
-        for i in range(start_frame_number, end_frame_number):
+        for i in range(0, len(self)):
             item = delayed(pipeline_delayed)(self.data[i])
             res.append(item)
 

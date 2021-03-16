@@ -58,6 +58,7 @@ Frame object is generated at each processing stage.
 &#34;&#34;&#34;
 from __future__ import annotations
 
+import datetime
 import warnings
 from pathlib import Path
 from typing import List, Union
@@ -68,12 +69,12 @@ import pandas as pd
 import plotly
 import plotly.express as px
 import pyntcloud
-import datetime
 
 from .diff import ALL_DIFFS
 from .filter import ALL_FILTERS
 from .frame_core import FrameCore
-from .io import FRAME_FROM_FILE, FRAME_FROM_INSTANCE, FRAME_TO_FILE, FRAME_TO_INSTANCE
+from .io import (FRAME_FROM_FILE, FRAME_FROM_INSTANCE, FRAME_TO_FILE,
+                 FRAME_TO_INSTANCE)
 from .plot.frame import plot_overlay
 
 
@@ -453,7 +454,7 @@ class Frame(FrameCore):
 <dl>
 <dt id="lidar.frame.Frame"><code class="flex name class">
 <span>class <span class="ident">Frame</span></span>
-<span>(</span><span>data: pd.DataFrame, orig_file: str = '', timestamp: datetime.datetime = datetime.datetime(2021, 3, 12, 15, 31, 16, 959466))</span>
+<span>(</span><span>data: pd.DataFrame, orig_file: str = '', timestamp: datetime = datetime.datetime(2021, 3, 16, 9, 12, 38, 474539))</span>
 </code></dt>
 <dd>
 <div class="desc"><p>One Frame of lidar measurements.</p>

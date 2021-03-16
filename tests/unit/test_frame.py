@@ -1,3 +1,4 @@
+from datetime import datetime
 from pathlib import Path
 
 import numpy as np
@@ -8,7 +9,6 @@ import pytest_check as check
 import rospy
 from pandas._testing import assert_frame_equal
 from pyntcloud import PyntCloud
-from datetime import datetime
 
 from lidar import Frame
 

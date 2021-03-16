@@ -30,18 +30,18 @@
 <pre><code class="python">&#34;&#34;&#34;
 Routines for ROS bagfiles.
 &#34;&#34;&#34;
+import datetime
+import itertools
+from pathlib import Path
+from typing import Optional
+
+import dask.dataframe as dd
 import numpy as np
 import pandas as pd
 import rosbag
 import sensor_msgs.point_cloud2 as pc2
-from typing import Optional
-from tqdm import tqdm
-import itertools
-from pathlib import Path
-import datetime
-
 from dask import delayed
-import dask.dataframe as dd
+from tqdm import tqdm
 
 PANDAS_TYPEMAPPING = {
     1: np.dtype(&#34;int8&#34;),
@@ -75,6 +75,12 @@ def dataframe_from_message(
     return frame_df
 
 
+def get_number_of_messages(bag: rosbag.Bag, topic: str) -&gt; int:
+    return (bag.get_type_and_topic_info().topics)[
+        &#34;/os1_cloud_node/points&#34;
+    ].message_count
+
+
 def dataset_from_rosbag(
     bagfile: Path,
     topic: str = &#34;/os1_cloud_node/points&#34;,
@@ -87,7 +93,9 @@ def dataset_from_rosbag(
     sliced_messages = itertools.islice(messages, start_frame_number, None)
     result_list = []
     if end_frame_number is None:
-        end_frame_number = 2  # TODO fix to lenght of messages
+        end_frame_number = get_number_of_messages(bag, topic)
+    if end_frame_number &gt; get_number_of_messages(bag, topic):
+        raise ValueError(&#34;end_frame_number to high&#34;)
     timestamps = []
     meta = {&#34;orig_file&#34;: bagfile.as_posix(), &#34;topic&#34;: topic}
     for frame_number in tqdm(range(start_frame_number, end_frame_number, 1)):
@@ -97,7 +105,7 @@ def dataset_from_rosbag(
         df = delayed(dataframe_from_message(message, keep_zeros))
         result_list.append(df)
     return {
-        &#34;data&#34;: dd.from_delayed(result_list),
+        &#34;data&#34;: result_list,
         &#34;timestamps&#34;: timestamps,
         &#34;meta&#34;: meta,
     }</code></pre>
@@ -160,7 +168,9 @@ def dataset_from_rosbag(
     sliced_messages = itertools.islice(messages, start_frame_number, None)
     result_list = []
     if end_frame_number is None:
-        end_frame_number = 2  # TODO fix to lenght of messages
+        end_frame_number = get_number_of_messages(bag, topic)
+    if end_frame_number &gt; get_number_of_messages(bag, topic):
+        raise ValueError(&#34;end_frame_number to high&#34;)
     timestamps = []
     meta = {&#34;orig_file&#34;: bagfile.as_posix(), &#34;topic&#34;: topic}
     for frame_number in tqdm(range(start_frame_number, end_frame_number, 1)):
@@ -170,10 +180,25 @@ def dataset_from_rosbag(
         df = delayed(dataframe_from_message(message, keep_zeros))
         result_list.append(df)
     return {
-        &#34;data&#34;: dd.from_delayed(result_list),
+        &#34;data&#34;: result_list,
         &#34;timestamps&#34;: timestamps,
         &#34;meta&#34;: meta,
     }</code></pre>
+</details>
+</dd>
+<dt id="lidar.io.dataset.bag.get_number_of_messages"><code class="name flex">
+<span>def <span class="ident">get_number_of_messages</span></span>(<span>bag: rosbag.bag.Bag, topic: str) ‑> int</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_number_of_messages(bag: rosbag.Bag, topic: str) -&gt; int:
+    return (bag.get_type_and_topic_info().topics)[
+        &#34;/os1_cloud_node/points&#34;
+    ].message_count</code></pre>
 </details>
 </dd>
 </dl>
@@ -196,6 +221,7 @@ def dataset_from_rosbag(
 <ul class="">
 <li><code><a title="lidar.io.dataset.bag.dataframe_from_message" href="#lidar.io.dataset.bag.dataframe_from_message">dataframe_from_message</a></code></li>
 <li><code><a title="lidar.io.dataset.bag.dataset_from_rosbag" href="#lidar.io.dataset.bag.dataset_from_rosbag">dataset_from_rosbag</a></code></li>
+<li><code><a title="lidar.io.dataset.bag.get_number_of_messages" href="#lidar.io.dataset.bag.get_number_of_messages">get_number_of_messages</a></code></li>
 </ul>
 </li>
 </ul>

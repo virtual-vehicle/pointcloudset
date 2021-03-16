@@ -33,12 +33,12 @@ File input and output routines.
 
 from pyntcloud.io import FROM_FILE as FRAME_FROM_FILE
 
+from .dataset.bag import dataset_from_rosbag
+from .dataset.dir import dataset_to_dir, dataset_from_dir
 from .frame.csv import write_csv
 from .frame.open3d import from_open3d, to_open3d
 from .frame.pandas import from_dataframe, to_dataframe
 from .frame.pyntcloud import from_pyntcloud, to_pyntcloud
-
-from .dataset.bag import dataset_from_rosbag
 
 FRAME_TO_FILE = {&#34;CSV&#34;: write_csv}
 FRAME_FROM_INSTANCE = {
@@ -54,7 +54,8 @@ FRAME_TO_INSTANCE = {
     &#34;PANDAS&#34;: to_dataframe,
 }
 
-DATASET_FROM_FILE = {&#34;BAG&#34;: dataset_from_rosbag}</code></pre>
+DATASET_FROM_FILE = {&#34;BAG&#34;: dataset_from_rosbag, &#34;DIR&#34;: dataset_from_dir}
+DATASET_TO_FILE = {&#34;DIR&#34;: dataset_to_dir}</code></pre>
 </details>
 </section>
 <section>

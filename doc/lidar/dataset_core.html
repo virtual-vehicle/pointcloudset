@@ -28,24 +28,27 @@
 </summary>
 <pre><code class="python">from __future__ import annotations
 
+import datetime
+from typing import List, Union
 
 import dask.dataframe as dd
 from dask import delayed
+import dask
+
 from .frame import Frame
-from typing import Union, List
-import datetime
 
 
 class DatasetCore:
     def __init__(
         self,
-        data: dd.DataFrame,
+        data: List[dask.delayed.DelayedLeaf],
         timestamps: List[datetime.datetime],
-        meta: dict = {},
+        meta: dict = {&#34;orig_file&#34;: &#34;&#34;, &#34;topic&#34;: &#34;&#34;},
     ) -&gt; None:
         self.data = data
         self.timestamps = timestamps
         self.meta = meta
+        self._check()
 
     @property
     def start_time(self) -&gt; datetime.datetime:
@@ -57,7 +60,7 @@ class DatasetCore:
 
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;Number of available frames (i.e. Lidar messages)&#34;&#34;&#34;
-        return self.data.npartitions
+        return len(self.data)
 
     def __str__(self):
         return f&#34;Lidar Dataset with {len(self)} frame(s)&#34;
@@ -70,32 +73,12 @@ class DatasetCore:
         return self
 
     def __next__(self):
-        if self.n &lt;= len(self):
+        if self.n &lt; len(self):
             result = self[self.n]
             self.n += 1
             return result
         else:
             raise StopIteration
-
-    def __getitem__(self, frame_number: Union[slice, int]) -&gt; Union[DatasetCore, Frame]:
-        if isinstance(frame_number, slice):
-            if frame_number.step is not None:
-                data_range = range(
-                    frame_number.start, frame_number.stop, frame_number.step
-                )
-            else:
-                data_range = range(frame_number.start, frame_number.stop)
-            data = [delayed(self.data.get_partition(i)) for i in data_range]
-            self.data = dd.from_delayed(data)
-            self.timestamps = self.timestamps[frame_number]
-            self.meta = self.meta
-            return self
-        elif isinstance(frame_number, int):
-            df = self.data.get_partition(frame_number).compute()
-            timestamp = self.timestamps[frame_number]
-            return Frame(data=df, orig_file=self.meta[&#34;orig_file&#34;], timestamp=timestamp)
-        else:
-            raise TypeError(&#34;Wrong type {}&#34;.format(type(frame_number).__name__))
 
     def has_frames(self) -&gt; bool:
         &#34;&#34;&#34;Check if dataset has frames.
@@ -108,7 +91,37 @@ class DatasetCore:
     def get_frames_between_timestamps(
         self, start_time: datetime.datetime, end_time: datetime.datetime
     ) -&gt; DatasetCore:
-        pass</code></pre>
+        if not start_time &lt; end_time:
+            raise ValueError(&#34;start_time must be smaller than end_time&#34;)
+        start_i = self._get_frame_number_from_time(start_time)
+        end_i = self._get_frame_number_from_time(end_time) + 1
+        return self[start_i:end_i]
+
+    def _get_frame_number_from_time(self, time: datetime.datetime) -&gt; int:
+        &#34;&#34;&#34;Get the frame number from a timestamp.
+
+        Args:
+            time (datetime.datetime): The time of interest
+
+        Raises:
+            ValueError: If time is outside of range.
+
+        Returns:
+            int: Frame number
+        &#34;&#34;&#34;
+        if time &lt; self.start_time or time &gt; self.end_time:
+            raise ValueError(&#34;time is outside of range&#34;)
+        return min(
+            range(len(self.timestamps)), key=lambda i: abs(self.timestamps[i] - time)
+        )
+
+    def _check(self):
+        assert len(self.timestamps) == len(self.data)
+        assert all(
+            self.timestamps[i] &lt;= self.timestamps[i + 1]
+            for i in range(len(self.timestamps) - 1)
+        )
+        assert &#34;orig_file&#34; in self.meta</code></pre>
 </details>
 </section>
 <section>
@@ -122,7 +135,7 @@ class DatasetCore:
 <dl>
 <dt id="lidar.dataset_core.DatasetCore"><code class="flex name class">
 <span>class <span class="ident">DatasetCore</span></span>
-<span>(</span><span>data: dd.DataFrame, timestamps: List[datetime.datetime], meta: dict = {})</span>
+<span>(</span><span>data: List[dask.delayed.DelayedLeaf], timestamps: List[datetime.datetime], meta: dict = {'orig_file': '', 'topic': ''})</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -133,13 +146,14 @@ class DatasetCore:
 <pre><code class="python">class DatasetCore:
     def __init__(
         self,
-        data: dd.DataFrame,
+        data: List[dask.delayed.DelayedLeaf],
         timestamps: List[datetime.datetime],
-        meta: dict = {},
+        meta: dict = {&#34;orig_file&#34;: &#34;&#34;, &#34;topic&#34;: &#34;&#34;},
     ) -&gt; None:
         self.data = data
         self.timestamps = timestamps
         self.meta = meta
+        self._check()
 
     @property
     def start_time(self) -&gt; datetime.datetime:
@@ -151,7 +165,7 @@ class DatasetCore:
 
     def __len__(self) -&gt; int:
         &#34;&#34;&#34;Number of available frames (i.e. Lidar messages)&#34;&#34;&#34;
-        return self.data.npartitions
+        return len(self.data)
 
     def __str__(self):
         return f&#34;Lidar Dataset with {len(self)} frame(s)&#34;
@@ -164,32 +178,12 @@ class DatasetCore:
         return self
 
     def __next__(self):
-        if self.n &lt;= len(self):
+        if self.n &lt; len(self):
             result = self[self.n]
             self.n += 1
             return result
         else:
             raise StopIteration
-
-    def __getitem__(self, frame_number: Union[slice, int]) -&gt; Union[DatasetCore, Frame]:
-        if isinstance(frame_number, slice):
-            if frame_number.step is not None:
-                data_range = range(
-                    frame_number.start, frame_number.stop, frame_number.step
-                )
-            else:
-                data_range = range(frame_number.start, frame_number.stop)
-            data = [delayed(self.data.get_partition(i)) for i in data_range]
-            self.data = dd.from_delayed(data)
-            self.timestamps = self.timestamps[frame_number]
-            self.meta = self.meta
-            return self
-        elif isinstance(frame_number, int):
-            df = self.data.get_partition(frame_number).compute()
-            timestamp = self.timestamps[frame_number]
-            return Frame(data=df, orig_file=self.meta[&#34;orig_file&#34;], timestamp=timestamp)
-        else:
-            raise TypeError(&#34;Wrong type {}&#34;.format(type(frame_number).__name__))
 
     def has_frames(self) -&gt; bool:
         &#34;&#34;&#34;Check if dataset has frames.
@@ -202,7 +196,37 @@ class DatasetCore:
     def get_frames_between_timestamps(
         self, start_time: datetime.datetime, end_time: datetime.datetime
     ) -&gt; DatasetCore:
-        pass</code></pre>
+        if not start_time &lt; end_time:
+            raise ValueError(&#34;start_time must be smaller than end_time&#34;)
+        start_i = self._get_frame_number_from_time(start_time)
+        end_i = self._get_frame_number_from_time(end_time) + 1
+        return self[start_i:end_i]
+
+    def _get_frame_number_from_time(self, time: datetime.datetime) -&gt; int:
+        &#34;&#34;&#34;Get the frame number from a timestamp.
+
+        Args:
+            time (datetime.datetime): The time of interest
+
+        Raises:
+            ValueError: If time is outside of range.
+
+        Returns:
+            int: Frame number
+        &#34;&#34;&#34;
+        if time &lt; self.start_time or time &gt; self.end_time:
+            raise ValueError(&#34;time is outside of range&#34;)
+        return min(
+            range(len(self.timestamps)), key=lambda i: abs(self.timestamps[i] - time)
+        )
+
+    def _check(self):
+        assert len(self.timestamps) == len(self.data)
+        assert all(
+            self.timestamps[i] &lt;= self.timestamps[i + 1]
+            for i in range(len(self.timestamps) - 1)
+        )
+        assert &#34;orig_file&#34; in self.meta</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
@@ -249,7 +273,11 @@ def start_time(self) -&gt; datetime.datetime:
 <pre><code class="python">def get_frames_between_timestamps(
     self, start_time: datetime.datetime, end_time: datetime.datetime
 ) -&gt; DatasetCore:
-    pass</code></pre>
+    if not start_time &lt; end_time:
+        raise ValueError(&#34;start_time must be smaller than end_time&#34;)
+    start_i = self._get_frame_number_from_time(start_time)
+    end_i = self._get_frame_number_from_time(end_time) + 1
+    return self[start_i:end_i]</code></pre>
 </details>
 </dd>
 <dt id="lidar.dataset_core.DatasetCore.has_frames"><code class="name flex">

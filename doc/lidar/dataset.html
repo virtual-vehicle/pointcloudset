@@ -45,27 +45,121 @@ For more details on how to use it please refer to the usage.ipynb Notebook for a
 * The important stuff happens in the __getitem__ method. Only then the rosbag is actually read with the help of
 generators.
 &#34;&#34;&#34;
-from .dataset_core import DatasetCore
-
+from __future__ import annotations
 from pathlib import Path
-from .io import DATASET_FROM_FILE
+
+from .dataset_core import DatasetCore
+from .io import DATASET_FROM_FILE, DATASET_TO_FILE
+
+from typing import Callable, Optional, Union, get_type_hints, Any
+from dask import delayed
+import dask
+
+
+from .frame import Frame
+
+
+def _is_pipline_returing_frame(pipeline) -&gt; bool:
+    type_hints = get_type_hints(pipeline)
+    res = False
+    if &#34;return&#34; in type_hints:
+        res = get_type_hints(pipeline)[&#34;return&#34;] == Frame
+    else:
+        print(
+            &#34;No return type was defined of the pipeline: will not return a new datset&#34;
+        )
+    return res
 
 
 class Dataset(DatasetCore):
+    def __getitem__(self, frame_number: Union[slice, int]) -&gt; Union[DatasetCore, Frame]:
+        if isinstance(frame_number, slice):
+            data = self.data[frame_number]
+            timestamps = self.timestamps[frame_number]
+            meta = self.meta
+            return Dataset(data, timestamps, meta)
+        elif isinstance(frame_number, int):
+            df = self.data[frame_number].compute()
+            timestamp = self.timestamps[frame_number]
+            return Frame(data=df, orig_file=self.meta[&#34;orig_file&#34;], timestamp=timestamp)
+        else:
+            raise TypeError(&#34;Wrong type {}&#34;.format(type(frame_number).__name__))
+
     @classmethod
     def from_file(cls, file_path: Path, **kwargs):
         if not isinstance(file_path, Path):
             raise TypeError(&#34;Expectinga Path object for file_path&#34;)
         ext = file_path.suffix[1:].upper()
+        if ext == &#34;&#34;:
+            ext = &#34;DIR&#34;
         if ext not in DATASET_FROM_FILE:
             raise ValueError(
-                &#34;Unsupported file format; supported formats are: {}&#34;.format(
-                    list(DATASET_FROM_FILE)
-                )
+                f&#34;Unsupported file format {ext}; supported formats are: {DATASET_FROM_FILE.keys()}&#34;
             )
         else:
             res = DATASET_FROM_FILE[ext](file_path, **kwargs)
-            return cls(data=res[&#34;data&#34;], timestamps=res[&#34;timestamps&#34;], meta=res[&#34;meta&#34;])</code></pre>
+            return cls(data=res[&#34;data&#34;], timestamps=res[&#34;timestamps&#34;], meta=res[&#34;meta&#34;])
+
+    def to_file(
+        self,
+        file_path: Path = Path(),
+    ) -&gt; None:
+        DATASET_TO_FILE[&#34;DIR&#34;](self, file_path=file_path)
+
+    def apply(
+        self,
+        func: Union[Callable[[Frame], Frame], Callable[[Frame], Any]],
+    ) -&gt; Union[Dataset, tuple]:
+        &#34;&#34;&#34;Applies a function onto the dataset.
+
+        Example:
+
+        def func(frame:lidar.Frame) -&gt; lidar.Frame:
+            return frame.limit(x,0,1)
+
+        dataset.apply(func)
+
+        This results in a new dataset
+
+        Example2:
+
+        def func(frame:lidar.Frame) -&gt; float:
+            return frame.data.x.max()
+
+        dataset.apply(func)
+
+        Args:
+            func (Union[Callable[[Frame], Frame], Callable[[Frame], Any]]): [description]
+
+        Returns:
+            Union[Dataset, Any]: A dataset if the function retunrs a Frame object or tuple
+            with the results
+        &#34;&#34;&#34;
+
+        returns_frame = _is_pipline_returing_frame(func)
+
+        if returns_frame:
+
+            def pipeline_delayed(element_in):
+                frame = Frame(element_in)
+                frame = func(frame)
+                return frame.data
+
+        else:
+
+            def pipeline_delayed(element_in):
+                frame = Frame(element_in)
+                return func(frame)
+
+        res = []
+        for i in range(0, len(self)):
+            item = delayed(pipeline_delayed)(self.data[i])
+            res.append(item)
+
+        if returns_frame:
+            return Dataset(data=res, timestamps=self.timestamps, meta=self.meta)
+        else:
+            return dask.compute(*res)</code></pre>
 </details>
 </section>
 <section>
@@ -79,7 +173,7 @@ class Dataset(DatasetCore):
 <dl>
 <dt id="lidar.dataset.Dataset"><code class="flex name class">
 <span>class <span class="ident">Dataset</span></span>
-<span>(</span><span>data: dd.DataFrame, timestamps: List[datetime.datetime], meta: dict = {})</span>
+<span>(</span><span>data: List[dask.delayed.DelayedLeaf], timestamps: List[datetime.datetime], meta: dict = {'orig_file': '', 'topic': ''})</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -88,20 +182,94 @@ class Dataset(DatasetCore):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Dataset(DatasetCore):
+    def __getitem__(self, frame_number: Union[slice, int]) -&gt; Union[DatasetCore, Frame]:
+        if isinstance(frame_number, slice):
+            data = self.data[frame_number]
+            timestamps = self.timestamps[frame_number]
+            meta = self.meta
+            return Dataset(data, timestamps, meta)
+        elif isinstance(frame_number, int):
+            df = self.data[frame_number].compute()
+            timestamp = self.timestamps[frame_number]
+            return Frame(data=df, orig_file=self.meta[&#34;orig_file&#34;], timestamp=timestamp)
+        else:
+            raise TypeError(&#34;Wrong type {}&#34;.format(type(frame_number).__name__))
+
     @classmethod
     def from_file(cls, file_path: Path, **kwargs):
         if not isinstance(file_path, Path):
             raise TypeError(&#34;Expectinga Path object for file_path&#34;)
         ext = file_path.suffix[1:].upper()
+        if ext == &#34;&#34;:
+            ext = &#34;DIR&#34;
         if ext not in DATASET_FROM_FILE:
             raise ValueError(
-                &#34;Unsupported file format; supported formats are: {}&#34;.format(
-                    list(DATASET_FROM_FILE)
-                )
+                f&#34;Unsupported file format {ext}; supported formats are: {DATASET_FROM_FILE.keys()}&#34;
             )
         else:
             res = DATASET_FROM_FILE[ext](file_path, **kwargs)
-            return cls(data=res[&#34;data&#34;], timestamps=res[&#34;timestamps&#34;], meta=res[&#34;meta&#34;])</code></pre>
+            return cls(data=res[&#34;data&#34;], timestamps=res[&#34;timestamps&#34;], meta=res[&#34;meta&#34;])
+
+    def to_file(
+        self,
+        file_path: Path = Path(),
+    ) -&gt; None:
+        DATASET_TO_FILE[&#34;DIR&#34;](self, file_path=file_path)
+
+    def apply(
+        self,
+        func: Union[Callable[[Frame], Frame], Callable[[Frame], Any]],
+    ) -&gt; Union[Dataset, tuple]:
+        &#34;&#34;&#34;Applies a function onto the dataset.
+
+        Example:
+
+        def func(frame:lidar.Frame) -&gt; lidar.Frame:
+            return frame.limit(x,0,1)
+
+        dataset.apply(func)
+
+        This results in a new dataset
+
+        Example2:
+
+        def func(frame:lidar.Frame) -&gt; float:
+            return frame.data.x.max()
+
+        dataset.apply(func)
+
+        Args:
+            func (Union[Callable[[Frame], Frame], Callable[[Frame], Any]]): [description]
+
+        Returns:
+            Union[Dataset, Any]: A dataset if the function retunrs a Frame object or tuple
+            with the results
+        &#34;&#34;&#34;
+
+        returns_frame = _is_pipline_returing_frame(func)
+
+        if returns_frame:
+
+            def pipeline_delayed(element_in):
+                frame = Frame(element_in)
+                frame = func(frame)
+                return frame.data
+
+        else:
+
+            def pipeline_delayed(element_in):
+                frame = Frame(element_in)
+                return func(frame)
+
+        res = []
+        for i in range(0, len(self)):
+            item = delayed(pipeline_delayed)(self.data[i])
+            res.append(item)
+
+        if returns_frame:
+            return Dataset(data=res, timestamps=self.timestamps, meta=self.meta)
+        else:
+            return dask.compute(*res)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -110,7 +278,7 @@ class Dataset(DatasetCore):
 <h3>Static methods</h3>
 <dl>
 <dt id="lidar.dataset.Dataset.from_file"><code class="name flex">
-<span>def <span class="ident">from_file</span></span>(<span>file_path: pathlib.Path, **kwargs)</span>
+<span>def <span class="ident">from_file</span></span>(<span>file_path: Path, **kwargs)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -123,15 +291,119 @@ def from_file(cls, file_path: Path, **kwargs):
     if not isinstance(file_path, Path):
         raise TypeError(&#34;Expectinga Path object for file_path&#34;)
     ext = file_path.suffix[1:].upper()
+    if ext == &#34;&#34;:
+        ext = &#34;DIR&#34;
     if ext not in DATASET_FROM_FILE:
         raise ValueError(
-            &#34;Unsupported file format; supported formats are: {}&#34;.format(
-                list(DATASET_FROM_FILE)
-            )
+            f&#34;Unsupported file format {ext}; supported formats are: {DATASET_FROM_FILE.keys()}&#34;
         )
     else:
         res = DATASET_FROM_FILE[ext](file_path, **kwargs)
         return cls(data=res[&#34;data&#34;], timestamps=res[&#34;timestamps&#34;], meta=res[&#34;meta&#34;])</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="lidar.dataset.Dataset.apply"><code class="name flex">
+<span>def <span class="ident">apply</span></span>(<span>self, func: Union[Callable[[Frame], Frame], Callable[[Frame], Any]]) ‑> Union[<a title="lidar.dataset.Dataset" href="#lidar.dataset.Dataset">Dataset</a>, tuple]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Applies a function onto the dataset.</p>
+<p>Example:</p>
+<p>def func(frame:lidar.Frame) -&gt; lidar.Frame:
+return frame.limit(x,0,1)</p>
+<p>dataset.apply(func)</p>
+<p>This results in a new dataset</p>
+<p>Example2:</p>
+<p>def func(frame:lidar.Frame) -&gt; float:
+return frame.data.x.max()</p>
+<p>dataset.apply(func)</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>func</code></strong> :&ensp;<code>Union[Callable[[Frame], Frame], Callable[[Frame], Any]]</code></dt>
+<dd>[description]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Union[<a title="lidar.dataset.Dataset" href="#lidar.dataset.Dataset">Dataset</a>, Any]</code></dt>
+<dd>A dataset if the function retunrs a Frame object or tuple</dd>
+</dl>
+<p>with the results</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def apply(
+    self,
+    func: Union[Callable[[Frame], Frame], Callable[[Frame], Any]],
+) -&gt; Union[Dataset, tuple]:
+    &#34;&#34;&#34;Applies a function onto the dataset.
+
+    Example:
+
+    def func(frame:lidar.Frame) -&gt; lidar.Frame:
+        return frame.limit(x,0,1)
+
+    dataset.apply(func)
+
+    This results in a new dataset
+
+    Example2:
+
+    def func(frame:lidar.Frame) -&gt; float:
+        return frame.data.x.max()
+
+    dataset.apply(func)
+
+    Args:
+        func (Union[Callable[[Frame], Frame], Callable[[Frame], Any]]): [description]
+
+    Returns:
+        Union[Dataset, Any]: A dataset if the function retunrs a Frame object or tuple
+        with the results
+    &#34;&#34;&#34;
+
+    returns_frame = _is_pipline_returing_frame(func)
+
+    if returns_frame:
+
+        def pipeline_delayed(element_in):
+            frame = Frame(element_in)
+            frame = func(frame)
+            return frame.data
+
+    else:
+
+        def pipeline_delayed(element_in):
+            frame = Frame(element_in)
+            return func(frame)
+
+    res = []
+    for i in range(0, len(self)):
+        item = delayed(pipeline_delayed)(self.data[i])
+        res.append(item)
+
+    if returns_frame:
+        return Dataset(data=res, timestamps=self.timestamps, meta=self.meta)
+    else:
+        return dask.compute(*res)</code></pre>
+</details>
+</dd>
+<dt id="lidar.dataset.Dataset.to_file"><code class="name flex">
+<span>def <span class="ident">to_file</span></span>(<span>self, file_path: Path = PosixPath('.')) ‑> NoneType</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def to_file(
+    self,
+    file_path: Path = Path(),
+) -&gt; None:
+    DATASET_TO_FILE[&#34;DIR&#34;](self, file_path=file_path)</code></pre>
 </details>
 </dd>
 </dl>
@@ -166,7 +438,9 @@ def from_file(cls, file_path: Path, **kwargs):
 <li>
 <h4><code><a title="lidar.dataset.Dataset" href="#lidar.dataset.Dataset">Dataset</a></code></h4>
 <ul class="">
+<li><code><a title="lidar.dataset.Dataset.apply" href="#lidar.dataset.Dataset.apply">apply</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.from_file" href="#lidar.dataset.Dataset.from_file">from_file</a></code></li>
+<li><code><a title="lidar.dataset.Dataset.to_file" href="#lidar.dataset.Dataset.to_file">to_file</a></code></li>
 </ul>
 </li>
 </ul>

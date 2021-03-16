@@ -2,9 +2,9 @@ import datetime
 
 import pytest
 import pytest_check as check
+import rosbag
 
 from lidar import Dataset, Frame
-import rosbag
 
 
 def test_dataset_len(testbag1: str, testset: Dataset):
@@ -33,8 +33,10 @@ def test_getitem_2times(testset):
 
 def test_getitem_slice(testset: Dataset):
     test = testset[0:2]
+    testlist = [0, 1, 2, 3]
     check.is_instance(test, Dataset)
     check.equal(len(test), 2)
+    check.equal(len(test), len(testlist[0:2]))
     check.equal(type(testset[0:2][0]), Frame)
 
 
