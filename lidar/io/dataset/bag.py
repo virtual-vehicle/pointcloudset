@@ -58,25 +58,58 @@ def dataset_from_rosbag(
     start_frame_number: int = 0,
     end_frame_number: int = None,
     keep_zeros: bool = False,
-) -> dd.DataFrame:
+) -> dict:
+    max_size = 100
     bag = rosbag.Bag(bagfile.as_posix())
+    max_messages = get_number_of_messages(bag, topic)
+
+    if end_frame_number is None:
+        end_frame_number = max_messages
+    if end_frame_number > max_messages:
+        raise ValueError("end_frame_number to high")
+
+    framelist = np.arange(start_frame_number, end_frame_number)
+
+    chunks = np.array_split(framelist, int(np.ceil(len(framelist) / max_size)))
+    data = []
+    timestamps = []
+    for chunk in chunks:
+        res = read_rosbag_part(
+            bag,
+            start_frame_number=chunk[0],
+            end_frame_number=chunk[-1] + 1,
+            keep_zeros=keep_zeros,
+        )
+        data.extend(res["data"])
+        timestamps.extend(res["timestamps"])
+    meta = {"orig_file": bagfile.as_posix(), "topic": topic}
+    return {
+        "data": data,
+        "timestamps": timestamps,
+        "meta": meta,
+    }
+
+
+def read_rosbag_part(
+    bag: rosbag.bag,
+    topic: str = "/os1_cloud_node/points",
+    start_frame_number: int = 0,
+    end_frame_number: int = None,
+    keep_zeros: bool = False,
+) -> dict:
     messages = bag.read_messages(topics=[topic])
     sliced_messages = itertools.islice(messages, start_frame_number, None)
     result_list = []
+    max_messages = get_number_of_messages(bag, topic)
     if end_frame_number is None:
-        end_frame_number = get_number_of_messages(bag, topic)
-    if end_frame_number > get_number_of_messages(bag, topic):
+        end_frame_number = max_messages
+    if end_frame_number > max_messages:
         raise ValueError("end_frame_number to high")
     timestamps = []
-    meta = {"orig_file": bagfile.as_posix(), "topic": topic}
     for frame_number in tqdm(range(start_frame_number, end_frame_number, 1)):
         message = next(sliced_messages)
         timestamp = datetime.datetime.utcfromtimestamp(message.timestamp.to_sec())
         timestamps.append(timestamp)
         df = delayed(dataframe_from_message(message, keep_zeros))
         result_list.append(df)
-    return {
-        "data": result_list,
-        "timestamps": timestamps,
-        "meta": meta,
-    }
+    return {"data": result_list, "timestamps": timestamps}
