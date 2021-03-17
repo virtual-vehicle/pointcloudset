@@ -30,17 +30,13 @@ def convert_bag2dir(
     timestamps = []
     meta = {"orig_file": bagfile.as_posix(), "topic": topic}
     chunk_number = 0
-    print(framelist)
     for chunk in chunks:
-        print("new")
         res = read_rosbag_part(
             bag,
             start_frame_number=chunk[0],
             end_frame_number=chunk[-1] + 1,
             keep_zeros=keep_zeros,
         )
-        print(chunk)
-        print(len(data))
         data = res["data"]
         timestamps = res["timestamps"]
         Dataset(data, timestamps, meta).to_file(

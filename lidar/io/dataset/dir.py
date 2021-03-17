@@ -44,15 +44,12 @@ def dataset_from_dir(dir: Path) -> dict:
     timestamps = []
     meta = []
     for path in dirs:
-        print(path)
         res = _dataset_from_single_dir(path)
         data.extend(res["data"])
         timestamps.extend(res["timestamps"])
         meta.append(res["meta"])
-        print(len(timestamps))
     meta = meta[0]
     del meta["timestamps"]
-    print(len(timestamps))
     return {
         "data": data,
         "timestamps": timestamps,

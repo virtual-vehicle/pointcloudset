@@ -63,8 +63,3 @@ def dataframe_from_message(
         frame_df = frame_df.astype({"original_id": "uint32"})
         frame_df = frame_df.reset_index(drop=True)
     return frame_df
-
-
-if __name__ == "__main__":
-    lazy_dataframes = read_bag(bag, 0, 2, False, "/os1_cloud_node/points")
-    print(len(lazy_dataframes))
