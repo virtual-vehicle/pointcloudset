@@ -3,7 +3,7 @@
 
 import numpy as np
 
-from .point import calculate_distance_to_point
+from lidar.diff.point import calculate_distance_to_point
 
 
 def calculate_distance_to_origin(frame, **kwargs):

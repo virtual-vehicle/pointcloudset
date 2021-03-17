@@ -29,12 +29,16 @@ import plotly
 import plotly.express as px
 import pyntcloud
 
-from .diff import ALL_DIFFS
-from .filter import ALL_FILTERS
-from .frame_core import FrameCore
-from .io import (FRAME_FROM_FILE, FRAME_FROM_INSTANCE, FRAME_TO_FILE,
-                 FRAME_TO_INSTANCE)
-from .plot.frame import plot_overlay
+from lidar.diff import ALL_DIFFS
+from lidar.filter import ALL_FILTERS
+from lidar.frame_core import FrameCore
+from lidar.io import (
+    FRAME_FROM_FILE,
+    FRAME_FROM_INSTANCE,
+    FRAME_TO_FILE,
+    FRAME_TO_INSTANCE,
+)
+from lidar.plot.frame import plot_overlay
 
 
 def is_documented_by(original):

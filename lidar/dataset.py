@@ -11,14 +11,14 @@ generators.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Callable, Optional, Union, get_type_hints
+from typing import Any, Callable, Union, get_type_hints
 
 import dask
 from dask import delayed
 
-from .dataset_core import DatasetCore
-from .frame import Frame
-from .io import DATASET_FROM_FILE, DATASET_TO_FILE
+from lidar.dataset_core import DatasetCore
+from lidar.frame import Frame
+from lidar.io import DATASET_FROM_FILE, DATASET_TO_FILE
 
 
 def _is_pipline_returing_frame(pipeline) -> bool:

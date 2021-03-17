@@ -2,7 +2,6 @@
 import itertools
 from typing import List, Optional
 
-import dask.dataframe as dd
 import numpy as np
 import pandas as pd
 import rosbag

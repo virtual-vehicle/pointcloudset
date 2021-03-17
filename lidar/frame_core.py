@@ -5,7 +5,6 @@ With all the main methods and properties of the Frame Class.
 
 from __future__ import annotations
 
-import datetime
 import traceback
 from datetime import datetime
 from typing import Union

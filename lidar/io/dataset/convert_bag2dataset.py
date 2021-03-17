@@ -5,7 +5,7 @@ import rosbag
 
 from lidar import Dataset
 
-from .bag import get_number_of_messages, read_rosbag_part
+from lidar.io.dataset.bag import get_number_of_messages, read_rosbag_part
 
 
 def convert_bag2dir(

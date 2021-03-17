@@ -70,6 +70,5 @@ docker login registry-gitlab.v2c2.at -u <vornamenachname> -p <token>
 
 from .dataset import Dataset
 from .frame import Frame
-from .io.dataset.convert_bag2dataset import convert_bag2dir
 
 __version__ = "0.1.6 (dev_0.2.0)"

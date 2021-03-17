@@ -4,12 +4,12 @@ File input and output routines.
 
 from pyntcloud.io import FROM_FILE as FRAME_FROM_FILE
 
-from .dataset.bag import dataset_from_rosbag
-from .dataset.dir import dataset_from_dir, dataset_to_dir
-from .frame.csv import write_csv
-from .frame.open3d import from_open3d, to_open3d
-from .frame.pandas import from_dataframe, to_dataframe
-from .frame.pyntcloud import from_pyntcloud, to_pyntcloud
+from lidar.io.dataset.bag import dataset_from_rosbag
+from lidar.io.dataset.dir import dataset_from_dir, dataset_to_dir
+from lidar.io.frame.csv import write_csv
+from lidar.io.frame.open3d import from_open3d, to_open3d
+from lidar.io.frame.pandas import from_dataframe, to_dataframe
+from lidar.io.frame.pyntcloud import from_pyntcloud, to_pyntcloud
 
 FRAME_TO_FILE = {"CSV": write_csv}
 FRAME_FROM_INSTANCE = {

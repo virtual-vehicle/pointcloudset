@@ -4,9 +4,7 @@ Routines for ROS bagfiles.
 import datetime
 import itertools
 from pathlib import Path
-from typing import Optional
 
-import dask.dataframe as dd
 import numpy as np
 import pandas as pd
 import rosbag
