@@ -37,6 +37,6 @@ setup(
     description="Analyse automotive lidar data stored in ROS bagfiles",
     python_requires=">=3.7",
     entry_points={
-        "console_scripts": ["bag2dataset = lidar.io.dataset.commandline:main"]
+        "console_scripts": ["bag2dataset = lidar.io.dataset.commandline:app"]
     },
 )

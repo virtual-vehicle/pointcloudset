@@ -51,24 +51,45 @@ def convert_bag2dir(
 @app.command()
 def get(
     bagfile: str,
-    folder_to_write: str,
-    topic: str = "/os1_cloud_node/points",
-    start_frame_number: int = 0,
-    end_frame_number: Optional[int] = None,
+    folder_to_write: str = typer.Argument("."),
+    topic: str = typer.Argument("/os1_cloud_node/points"),
+    start_frame_number: int = typer.Option(0, "--start", "-s"),
+    end_frame_number: Optional[int] = typer.Option(None, "--end", "-e"),
     keep_zeros: bool = False,
     max_size: int = 100,
 ):
-    typer.echo("starting...")
-    convert_bag2dir(
-        Path(bagfile),
-        Path(folder_to_write),
-        topic,
-        start_frame_number,
-        end_frame_number,
-        keep_zeros,
-        max_size,
-    )
-    typer.echo("done...")
+    """Convert ros bagfiles to a directore of use with the lidar package.
+
+    Args:
+        bagfile: ROS bagfile
+        folder_to_write: [description]
+        topic: [description]. Defaults to "/os1_cloud_node/points".
+        start_frame_number: [description]. Defaults to 0.
+        end_frame_number: [description]. Defaults to None.
+        keep_zeros: [description]. Defaults to False.
+        max_size: [description]. Defaults to 100.
+    """
+
+    if bagfile == ".":
+        bagfile_paths = list(Path.cwd().rglob("*.bag"))
+    else:
+        bagfile_paths = [Path(bagfile)]
+    for bagfile_path in bagfile_paths:
+        typer.echo(f"converting {bagfile_path.name} ...")
+        if folder_to_write == ".":
+            folder_to_write_path = Path.cwd().joinpath(bagfile_path.stem)
+        else:
+            folder_to_write_path = Path(folder_to_write)
+        convert_bag2dir(
+            bagfile_path,
+            folder_to_write_path,
+            topic,
+            start_frame_number,
+            end_frame_number,
+            keep_zeros,
+            max_size,
+        )
+    typer.echo("done")
 
 
 if __name__ == "__main__":
