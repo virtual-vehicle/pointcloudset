@@ -1,9 +1,9 @@
+import datetime
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pytest
-import rospy
 
 from lidar import Dataset, Frame
 
@@ -20,12 +20,12 @@ def testlas1():
 
 @pytest.fixture()
 def testset(testbag1):
-    return Dataset(testbag1, topic="/os1_cloud_node/points", keep_zeros=False)
+    return Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=False)
 
 
 @pytest.fixture()
 def testset_withzero(testbag1):
-    return Dataset(testbag1, topic="/os1_cloud_node/points", keep_zeros=True)
+    return Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=True)
 
 
 @pytest.fixture()
@@ -87,7 +87,7 @@ def reference_pointcloud_withzero_dataframe():
 def testframe_mini(testframe_mini_df) -> Frame:
     return Frame(
         data=testframe_mini_df,
-        timestamp=rospy.rostime.Time(50),
+        timestamp=datetime.datetime(2020, 1, 1),
         orig_file="/fake/testrame_mini.bag",
     )
 
@@ -103,10 +103,15 @@ def testframe_mini_real(testframe) -> Frame:
 
 
 @pytest.fixture()
-def testframe_mini_real0(testframe0):
-    return (
-        testframe0.limit("x", -1, 1)
-        .limit("y", -1, 1)
-        .limit("z", -1, 1)
-        .limit("intensity", 0, 10)
-    )
+def testframe_mini_real_plus1(testframe_mini_real) -> Frame:
+    testdata = testframe_mini_real.data.copy(deep=True)
+    testdata = testdata + 1.0
+    testdata["original_id"] = testframe_mini_real.data["original_id"]
+    return Frame(data=testdata)
+
+
+@pytest.fixture()
+def testframe_mini_real_other_original_id(testframe_mini_real) -> Frame:
+    testdata = testframe_mini_real.data.copy(deep=True)
+    testdata["original_id"] = testdata["original_id"] + 1000000
+    return Frame(data=testdata)

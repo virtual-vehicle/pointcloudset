@@ -47,239 +47,137 @@ generators.
 &#34;&#34;&#34;
 from __future__ import annotations
 
-import itertools
-import warnings
 from pathlib import Path
-from typing import Callable, Iterator, List, Optional, Union
+from typing import Any, Callable, Union, get_type_hints
 
-import genpy
-import rosbag
-from tqdm import tqdm
+import dask
+from dask import delayed
 
-from .file.bag import frame_from_message
-from .frame import Frame
+from lidar.dataset_core import DatasetCore
+from lidar.frame import Frame
+from lidar.io import DATASET_FROM_FILE, DATASET_TO_FILE
 
 
-class Dataset:
-    def __init__(
-        self,
-        bagfile: Path,
-        topic: str,
-        keep_zeros: bool = False,
-    ):
-        &#34;&#34;&#34;The Dataset.
+def _is_pipline_returing_frame(pipeline) -&gt; bool:
+    type_hints = get_type_hints(pipeline)
+    res = False
+    if &#34;return&#34; in type_hints:
+        res = get_type_hints(pipeline)[&#34;return&#34;] == Frame
+    else:
+        print(
+            &#34;No return type was defined of the pipeline: will not return a new datset&#34;
+        )
+    return res
 
-        Example:
-        testbag = Path().cwd().parent.joinpath(&#34;tests/testdata/test.bag&#34;)
-        testset = lidar.Dataset(testbag,topic=&#34;/os1_cloud_node/points&#34;,keep_zeros=False)
 
-        Args:
-            bagfile (Path): Path to ROS bag file.
-            topic (str): lidar pointcloud topic. For example &#34;/os1_cloud_node/points&#34;
-            keep_zeros (bool, optional): Keep zero elements of points in pointclouds. Defaults to False.
-        &#34;&#34;&#34;
-        self.bag = rosbag.Bag(bagfile, &#34;r&#34;)
-        &#34;&#34;&#34;ROS bag file as a rosbag.Bag object.&#34;&#34;&#34;
-        self.orig_file = bagfile.as_posix()
-        &#34;&#34;&#34;Path to bag file.&#34;&#34;&#34;
-        if topic in self.topics_in_bag:
-            self.topic = topic
-        else:
-            raise IOError(&#34;Topic {} not in bag.&#34;.format(topic))
-        &#34;&#34;&#34;The ROS Pointcloud2 topic of the lidar.&#34;&#34;&#34;
-        self.keep_zeros = keep_zeros
-        &#34;&#34;&#34;Option for keeping zero elements in Lidar Frames. Default is False&#34;&#34;&#34;
-        self._len = (self.types_and_topics_in_bag.topics)[self.topic].message_count
-        &#34;&#34;&#34;Hidden length propery&#34;&#34;&#34;
-        self._first_frame_time = self[0].timestamp.to_sec()
-        &#34;&#34;&#34;ROS Start time in the bagfile in seconds. Derifed from the first frame
-        since the bag.get_start_time() can deviate form the actual time in
-        the first frame.
-        &#34;&#34;&#34;
-        self.start_time = self.bag.get_start_time()
-        &#34;&#34;&#34;ROS start Time in the bagfile as a float.&#34;&#34;&#34;
-        self.end_time = self.bag.get_end_time()
-        &#34;&#34;&#34;ROS End Time in the bagfile as a float.&#34;&#34;&#34;
-        self.time_step = self._calc_time_step()
-        &#34;&#34;&#34;Time step between two frames. Assumed to be constant&#34;&#34;&#34;
-
-    @property
-    def types_and_topics_in_bag(self):
-        &#34;&#34;&#34;Types and Topics in the original ROS bagfile as rosbag.bag.TypesAndTopicsTuple&#34;&#34;&#34;
-        return self.bag.get_type_and_topic_info()
-
-    @property
-    def topics_in_bag(self) -&gt; dict:
-        return self.types_and_topics_in_bag.topics
-
-    @property
-    def size(self) -&gt; int:
-        &#34;&#34;&#34;Size on disk as an int.&#34;&#34;&#34;
-        return self.bag.size
-
-    def __len__(self) -&gt; int:
-        &#34;&#34;&#34;Number of available frames (i.e. Lidar messages)&#34;&#34;&#34;
-        return self._len
-
-    def __str__(self):
-        return f&#34;Lidar Dataset with {len(self)} frame(s), from file {self.orig_file}&#34;
-
-    def __repr__(self) -&gt; str:
-        return f&#34;{self.__class__.__name__}({self.orig_file})&#34;
-
-    def __iter__(self):
-        self.n = 0
-        return self
-
-    def __next__(self):
-        if self.n &lt;= len(self):
-            result = self[self.n]
-            self.n += 1
-            return result
-        else:
-            raise StopIteration
-
-    def __getitem__(self, frame_number: Union[slice, int]) -&gt; Union[List[Frame], Frame]:
+class Dataset(DatasetCore):
+    def __getitem__(self, frame_number: Union[slice, int]) -&gt; Union[DatasetCore, Frame]:
         if isinstance(frame_number, slice):
-            sliced_messages = self._slice_messages(frame_number)
-            frame_list = []
-            for message in sliced_messages:
-                frame_list.append(frame_from_message(self, message))
-            return frame_list
+            data = self.data[frame_number]
+            timestamps = self.timestamps[frame_number]
+            meta = self.meta
+            return Dataset(data, timestamps, meta)
         elif isinstance(frame_number, int):
-            if frame_number &gt; 500:
-                warnings.warn(
-                    &#34;Might take a long time, try using get_frame_fast instead&#34;,
-                    ResourceWarning,
-                )
-            messages = self.bag.read_messages(topics=[self.topic])
-            sliced_messages = itertools.islice(
-                messages, frame_number, frame_number + 1, 1
-            )
-            message = next(sliced_messages)
-            return frame_from_message(self, message)
+            df = self.data[frame_number].compute()
+            timestamp = self.timestamps[frame_number]
+            return Frame(data=df, orig_file=self.meta[&#34;orig_file&#34;], timestamp=timestamp)
         else:
             raise TypeError(&#34;Wrong type {}&#34;.format(type(frame_number).__name__))
 
-    def has_frames(self) -&gt; bool:
-        &#34;&#34;&#34;Check if dataset has frames.
+    @classmethod
+    def from_file(cls, file_path: Path, **kwargs):
+        if not isinstance(file_path, Path):
+            raise TypeError(&#34;Expectinga Path object for file_path&#34;)
+        ext = file_path.suffix[1:].upper()
+        if ext == &#34;&#34;:
+            ext = &#34;DIR&#34;
+        if ext not in DATASET_FROM_FILE:
+            raise ValueError(
+                f&#34;Unsupported file format {ext}; supported formats are: {DATASET_FROM_FILE.keys()}&#34;
+            )
+        else:
+            res = DATASET_FROM_FILE[ext](file_path, **kwargs)
+            return cls(data=res[&#34;data&#34;], timestamps=res[&#34;timestamps&#34;], meta=res[&#34;meta&#34;])
 
-        Returns:
-            bool: ``True`` if the dataset contains frames.
-        &#34;&#34;&#34;
-        return len(self) &gt; 0
+    def to_file(self, file_path: Path = Path(), **kwargs) -&gt; None:
+        DATASET_TO_FILE[&#34;DIR&#34;](self, file_path=file_path, **kwargs)
 
-    def approximate_time_of_frame(self, frame_number: int) -&gt; float:
-        &#34;&#34;&#34;Calcuate the approximate time of a specific frame number. Needed as input for
-        get_frames_between_timestamps.
-
-        Args:
-            frame_number (int): Frame step number
-
-        Returns:
-            float: The approximate time of the frame number in seconds.
-        &#34;&#34;&#34;
-        return self._first_frame_time + frame_number * self.time_step
-
-    def get_frame_fast(self, frame_number: int) -&gt; Frame:
-        &#34;&#34;&#34;Alternative to get a specific frame. Indented for larger bagfiles.
-        This method assumes that the time between frames is constant.
-        It does not replace __getitem__ fully since it relays on the method
-        approximate_time_of_frame, but should produce the same result most of the times.
-
-        Args:
-            frame_number (int): frame number
-
-        Returns:
-            Frame: equivalent to Dataset[frame_number]
-        &#34;&#34;&#34;
-        start_time = self.approximate_time_of_frame(frame_number)
-        frame_list = self.get_frames_between_timestamps(
-            start_time - 0.5 * self.time_step, start_time + 0.5 * self.time_step
-        )
-        return frame_list[0]
-
-    def get_frames_between_timestamps(
-        self, start_time: float, end_time: float
-    ) -&gt; List[Frame]:
-        &#34;&#34;&#34;Get all frames within specific time range
-
-        Args:
-            start_time: timestamp as float (ros posix time)
-            end_time: timestamp as float (ros posix time)
-
-        Returns:
-            List of frames
-        &#34;&#34;&#34;
-        messages = self.bag.read_messages(
-            topics=[self.topic],
-            start_time=genpy.Time.from_sec(start_time),
-            end_time=genpy.Time.from_sec(end_time),
-        )
-        frame_list = []
-        for message in messages:
-            frame_list.append(frame_from_message(self, message))
-        return frame_list
-
-    def apply_pipeline(
+    def apply(
         self,
-        pipeline: Callable[[Frame, int], Frame],
-        start_frame_number: Optional[int] = 0,
-        end_frame_number: Optional[int] = None,
-    ) -&gt; List:
-        &#34;&#34;&#34;Applies a function to all, or a given range, of Frames in the dataset.
+        func: Union[Callable[[Frame], Frame], Callable[[Frame], Any]],
+    ) -&gt; Union[Dataset, tuple]:
+        &#34;&#34;&#34;Applies a function onto the dataset.
 
         Example:
 
-        def pipeline1(frame: Frame, frame_number: int):
-            return frame.limit(&#34;x&#34;, 0, 1)
+        def func(frame:lidar.Frame) -&gt; lidar.Frame:
+            return frame.limit(x,0,1)
 
-        test_dataset.apply_pipeline(pipeline1, 0, 10)
+        dataset.apply(func)
 
-        Args:
-            pipeline (Callable[[Frame], Frame]): A function with a chain of processings on aframes.
-            start_frame_number (int, optional): Frame number to start. Defaults to 0.
-            end_frame_number (Optional, optional): Frame number to end. Defaults to None which corresponds to the end of the dataset.
+        This results in a new dataset
 
-        Returns:
-            List: A list of results. Can be a list of Frames or other objects.
-        &#34;&#34;&#34;
-        messages = self.bag.read_messages(topics=[self.topic])
-        sliced_messages = itertools.islice(messages, start_frame_number, None)
-        result_list = []
-        if end_frame_number is None:
-            end_frame_number = len(self)
-        for frame_number in tqdm(range(start_frame_number, end_frame_number, 1)):
-            message = next(sliced_messages)
-            frame = frame_from_message(self, message)
-            result_list.append(pipeline(frame, frame_number))
-        return result_list
+        Example2:
 
-    def _slice_messages(self, frame_number: slice) -&gt; Iterator:
-        &#34;&#34;&#34;Slice the ROS bag message generator
+        def func(frame:lidar.Frame) -&gt; float:
+            return frame.data.x.max()
+
+        dataset.apply(func)
 
         Args:
-            frame_number (slice): the slice position
-
-        Raises:
-            ValueError: if out of range
+            func (Union[Callable[[Frame], Frame], Callable[[Frame], Any]]): [description]
 
         Returns:
-            itertools.islice: sliced message, a subset of all messages
+            Union[Dataset, Any]: A dataset if the function retunrs a Frame object or tuple
+            with the results
         &#34;&#34;&#34;
-        if (frame_number.stop &gt; frame_number.start) &amp; (frame_number.stop &lt;= len(self)):
-            messages = self.bag.read_messages(topics=[self.topic])
-            return itertools.islice(
-                messages, frame_number.start, frame_number.stop, frame_number.step
-            )
+
+        returns_frame = _is_pipline_returing_frame(func)
+
+        if returns_frame:
+
+            def pipeline_delayed(element_in):
+                frame = Frame(element_in)
+                frame = func(frame)
+                return frame.data
+
         else:
-            raise ValueError(&#34;frame_end must be greater than frame_start and in range.&#34;)
 
-    def _calc_time_step(self) -&gt; float:
-        &#34;&#34;&#34;Timestep between two frames. Assumed to be constant in the whole bagfile.
-        This is currently the case for mechanical spinning lidar.
+            def pipeline_delayed(element_in):
+                frame = Frame(element_in)
+                return func(frame)
+
+        res = []
+        for i in range(0, len(self)):
+            item = delayed(pipeline_delayed)(self.data[i])
+            res.append(item)
+
+        if returns_frame:
+            return Dataset(data=res, timestamps=self.timestamps, meta=self.meta)
+        else:
+            return dask.compute(*res)
+
+    def extend(self, dataset: Dataset) -&gt; Dataset:
+        &#34;&#34;&#34;Extends the dataset by another one.
+
+        Args:
+            dataset (Dataset): [description]
+
+        Returns:
+            Dataset: [description]
         &#34;&#34;&#34;
-        return (self.end_time - self.start_time) / len(self)</code></pre>
+        key = &#34;extended&#34;
+        meta = self.meta
+        if key in meta:
+            new = meta[key]
+            new.extend(dataset.meta)
+            meta[key] = new
+        else:
+            meta[key] = [dataset.meta]
+        self.data.extend(dataset.data)
+        self.timestamps.extend(dataset.timestamps)
+        self._check()
+        return self</code></pre>
 </details>
 </section>
 <section>
@@ -293,515 +191,306 @@ class Dataset:
 <dl>
 <dt id="lidar.dataset.Dataset"><code class="flex name class">
 <span>class <span class="ident">Dataset</span></span>
-<span>(</span><span>bagfile: Path, topic: str, keep_zeros: bool = False)</span>
+<span>(</span><span>data: List[dask.delayed.DelayedLeaf] = [], timestamps: List[datetime.datetime] = [], meta: dict = {'orig_file': '', 'topic': ''})</span>
 </code></dt>
-<dd>
-<div class="desc"><p>The Dataset.</p>
-<p>Example:
-testbag = Path().cwd().parent.joinpath("tests/testdata/test.bag")
-testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)</p>
-<h2 id="args">Args</h2>
-<dl>
-<dt><strong><code>bagfile</code></strong> :&ensp;<code>Path</code></dt>
-<dd>Path to ROS bag file.</dd>
-<dt><strong><code>topic</code></strong> :&ensp;<code>str</code></dt>
-<dd>lidar pointcloud topic. For example "/os1_cloud_node/points"</dd>
-<dt><strong><code>keep_zeros</code></strong> :&ensp;<code>bool</code>, optional</dt>
-<dd>Keep zero elements of points in pointclouds. Defaults to False.</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class Dataset:
-    def __init__(
-        self,
-        bagfile: Path,
-        topic: str,
-        keep_zeros: bool = False,
-    ):
-        &#34;&#34;&#34;The Dataset.
-
-        Example:
-        testbag = Path().cwd().parent.joinpath(&#34;tests/testdata/test.bag&#34;)
-        testset = lidar.Dataset(testbag,topic=&#34;/os1_cloud_node/points&#34;,keep_zeros=False)
-
-        Args:
-            bagfile (Path): Path to ROS bag file.
-            topic (str): lidar pointcloud topic. For example &#34;/os1_cloud_node/points&#34;
-            keep_zeros (bool, optional): Keep zero elements of points in pointclouds. Defaults to False.
-        &#34;&#34;&#34;
-        self.bag = rosbag.Bag(bagfile, &#34;r&#34;)
-        &#34;&#34;&#34;ROS bag file as a rosbag.Bag object.&#34;&#34;&#34;
-        self.orig_file = bagfile.as_posix()
-        &#34;&#34;&#34;Path to bag file.&#34;&#34;&#34;
-        if topic in self.topics_in_bag:
-            self.topic = topic
-        else:
-            raise IOError(&#34;Topic {} not in bag.&#34;.format(topic))
-        &#34;&#34;&#34;The ROS Pointcloud2 topic of the lidar.&#34;&#34;&#34;
-        self.keep_zeros = keep_zeros
-        &#34;&#34;&#34;Option for keeping zero elements in Lidar Frames. Default is False&#34;&#34;&#34;
-        self._len = (self.types_and_topics_in_bag.topics)[self.topic].message_count
-        &#34;&#34;&#34;Hidden length propery&#34;&#34;&#34;
-        self._first_frame_time = self[0].timestamp.to_sec()
-        &#34;&#34;&#34;ROS Start time in the bagfile in seconds. Derifed from the first frame
-        since the bag.get_start_time() can deviate form the actual time in
-        the first frame.
-        &#34;&#34;&#34;
-        self.start_time = self.bag.get_start_time()
-        &#34;&#34;&#34;ROS start Time in the bagfile as a float.&#34;&#34;&#34;
-        self.end_time = self.bag.get_end_time()
-        &#34;&#34;&#34;ROS End Time in the bagfile as a float.&#34;&#34;&#34;
-        self.time_step = self._calc_time_step()
-        &#34;&#34;&#34;Time step between two frames. Assumed to be constant&#34;&#34;&#34;
-
-    @property
-    def types_and_topics_in_bag(self):
-        &#34;&#34;&#34;Types and Topics in the original ROS bagfile as rosbag.bag.TypesAndTopicsTuple&#34;&#34;&#34;
-        return self.bag.get_type_and_topic_info()
-
-    @property
-    def topics_in_bag(self) -&gt; dict:
-        return self.types_and_topics_in_bag.topics
-
-    @property
-    def size(self) -&gt; int:
-        &#34;&#34;&#34;Size on disk as an int.&#34;&#34;&#34;
-        return self.bag.size
-
-    def __len__(self) -&gt; int:
-        &#34;&#34;&#34;Number of available frames (i.e. Lidar messages)&#34;&#34;&#34;
-        return self._len
-
-    def __str__(self):
-        return f&#34;Lidar Dataset with {len(self)} frame(s), from file {self.orig_file}&#34;
-
-    def __repr__(self) -&gt; str:
-        return f&#34;{self.__class__.__name__}({self.orig_file})&#34;
-
-    def __iter__(self):
-        self.n = 0
-        return self
-
-    def __next__(self):
-        if self.n &lt;= len(self):
-            result = self[self.n]
-            self.n += 1
-            return result
-        else:
-            raise StopIteration
-
-    def __getitem__(self, frame_number: Union[slice, int]) -&gt; Union[List[Frame], Frame]:
-        if isinstance(frame_number, slice):
-            sliced_messages = self._slice_messages(frame_number)
-            frame_list = []
-            for message in sliced_messages:
-                frame_list.append(frame_from_message(self, message))
-            return frame_list
-        elif isinstance(frame_number, int):
-            if frame_number &gt; 500:
-                warnings.warn(
-                    &#34;Might take a long time, try using get_frame_fast instead&#34;,
-                    ResourceWarning,
-                )
-            messages = self.bag.read_messages(topics=[self.topic])
-            sliced_messages = itertools.islice(
-                messages, frame_number, frame_number + 1, 1
-            )
-            message = next(sliced_messages)
-            return frame_from_message(self, message)
-        else:
-            raise TypeError(&#34;Wrong type {}&#34;.format(type(frame_number).__name__))
-
-    def has_frames(self) -&gt; bool:
-        &#34;&#34;&#34;Check if dataset has frames.
-
-        Returns:
-            bool: ``True`` if the dataset contains frames.
-        &#34;&#34;&#34;
-        return len(self) &gt; 0
-
-    def approximate_time_of_frame(self, frame_number: int) -&gt; float:
-        &#34;&#34;&#34;Calcuate the approximate time of a specific frame number. Needed as input for
-        get_frames_between_timestamps.
-
-        Args:
-            frame_number (int): Frame step number
-
-        Returns:
-            float: The approximate time of the frame number in seconds.
-        &#34;&#34;&#34;
-        return self._first_frame_time + frame_number * self.time_step
-
-    def get_frame_fast(self, frame_number: int) -&gt; Frame:
-        &#34;&#34;&#34;Alternative to get a specific frame. Indented for larger bagfiles.
-        This method assumes that the time between frames is constant.
-        It does not replace __getitem__ fully since it relays on the method
-        approximate_time_of_frame, but should produce the same result most of the times.
-
-        Args:
-            frame_number (int): frame number
-
-        Returns:
-            Frame: equivalent to Dataset[frame_number]
-        &#34;&#34;&#34;
-        start_time = self.approximate_time_of_frame(frame_number)
-        frame_list = self.get_frames_between_timestamps(
-            start_time - 0.5 * self.time_step, start_time + 0.5 * self.time_step
-        )
-        return frame_list[0]
-
-    def get_frames_between_timestamps(
-        self, start_time: float, end_time: float
-    ) -&gt; List[Frame]:
-        &#34;&#34;&#34;Get all frames within specific time range
-
-        Args:
-            start_time: timestamp as float (ros posix time)
-            end_time: timestamp as float (ros posix time)
-
-        Returns:
-            List of frames
-        &#34;&#34;&#34;
-        messages = self.bag.read_messages(
-            topics=[self.topic],
-            start_time=genpy.Time.from_sec(start_time),
-            end_time=genpy.Time.from_sec(end_time),
-        )
-        frame_list = []
-        for message in messages:
-            frame_list.append(frame_from_message(self, message))
-        return frame_list
-
-    def apply_pipeline(
-        self,
-        pipeline: Callable[[Frame, int], Frame],
-        start_frame_number: Optional[int] = 0,
-        end_frame_number: Optional[int] = None,
-    ) -&gt; List:
-        &#34;&#34;&#34;Applies a function to all, or a given range, of Frames in the dataset.
-
-        Example:
-
-        def pipeline1(frame: Frame, frame_number: int):
-            return frame.limit(&#34;x&#34;, 0, 1)
-
-        test_dataset.apply_pipeline(pipeline1, 0, 10)
-
-        Args:
-            pipeline (Callable[[Frame], Frame]): A function with a chain of processings on aframes.
-            start_frame_number (int, optional): Frame number to start. Defaults to 0.
-            end_frame_number (Optional, optional): Frame number to end. Defaults to None which corresponds to the end of the dataset.
-
-        Returns:
-            List: A list of results. Can be a list of Frames or other objects.
-        &#34;&#34;&#34;
-        messages = self.bag.read_messages(topics=[self.topic])
-        sliced_messages = itertools.islice(messages, start_frame_number, None)
-        result_list = []
-        if end_frame_number is None:
-            end_frame_number = len(self)
-        for frame_number in tqdm(range(start_frame_number, end_frame_number, 1)):
-            message = next(sliced_messages)
-            frame = frame_from_message(self, message)
-            result_list.append(pipeline(frame, frame_number))
-        return result_list
-
-    def _slice_messages(self, frame_number: slice) -&gt; Iterator:
-        &#34;&#34;&#34;Slice the ROS bag message generator
-
-        Args:
-            frame_number (slice): the slice position
-
-        Raises:
-            ValueError: if out of range
-
-        Returns:
-            itertools.islice: sliced message, a subset of all messages
-        &#34;&#34;&#34;
-        if (frame_number.stop &gt; frame_number.start) &amp; (frame_number.stop &lt;= len(self)):
-            messages = self.bag.read_messages(topics=[self.topic])
-            return itertools.islice(
-                messages, frame_number.start, frame_number.stop, frame_number.step
-            )
-        else:
-            raise ValueError(&#34;frame_end must be greater than frame_start and in range.&#34;)
-
-    def _calc_time_step(self) -&gt; float:
-        &#34;&#34;&#34;Timestep between two frames. Assumed to be constant in the whole bagfile.
-        This is currently the case for mechanical spinning lidar.
-        &#34;&#34;&#34;
-        return (self.end_time - self.start_time) / len(self)</code></pre>
-</details>
-<h3>Instance variables</h3>
-<dl>
-<dt id="lidar.dataset.Dataset.bag"><code class="name">var <span class="ident">bag</span></code></dt>
-<dd>
-<div class="desc"><p>ROS bag file as a rosbag.Bag object.</p></div>
-</dd>
-<dt id="lidar.dataset.Dataset.end_time"><code class="name">var <span class="ident">end_time</span></code></dt>
-<dd>
-<div class="desc"><p>ROS End Time in the bagfile as a float.</p></div>
-</dd>
-<dt id="lidar.dataset.Dataset.keep_zeros"><code class="name">var <span class="ident">keep_zeros</span></code></dt>
-<dd>
-<div class="desc"><p>Option for keeping zero elements in Lidar Frames. Default is False</p></div>
-</dd>
-<dt id="lidar.dataset.Dataset.orig_file"><code class="name">var <span class="ident">orig_file</span></code></dt>
-<dd>
-<div class="desc"><p>Path to bag file.</p></div>
-</dd>
-<dt id="lidar.dataset.Dataset.size"><code class="name">var <span class="ident">size</span> : int</code></dt>
-<dd>
-<div class="desc"><p>Size on disk as an int.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">@property
-def size(self) -&gt; int:
-    &#34;&#34;&#34;Size on disk as an int.&#34;&#34;&#34;
-    return self.bag.size</code></pre>
-</details>
-</dd>
-<dt id="lidar.dataset.Dataset.start_time"><code class="name">var <span class="ident">start_time</span></code></dt>
-<dd>
-<div class="desc"><p>ROS start Time in the bagfile as a float.</p></div>
-</dd>
-<dt id="lidar.dataset.Dataset.time_step"><code class="name">var <span class="ident">time_step</span></code></dt>
-<dd>
-<div class="desc"><p>Time step between two frames. Assumed to be constant</p></div>
-</dd>
-<dt id="lidar.dataset.Dataset.topics_in_bag"><code class="name">var <span class="ident">topics_in_bag</span> : dict</code></dt>
 <dd>
 <div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@property
-def topics_in_bag(self) -&gt; dict:
-    return self.types_and_topics_in_bag.topics</code></pre>
+<pre><code class="python">class Dataset(DatasetCore):
+    def __getitem__(self, frame_number: Union[slice, int]) -&gt; Union[DatasetCore, Frame]:
+        if isinstance(frame_number, slice):
+            data = self.data[frame_number]
+            timestamps = self.timestamps[frame_number]
+            meta = self.meta
+            return Dataset(data, timestamps, meta)
+        elif isinstance(frame_number, int):
+            df = self.data[frame_number].compute()
+            timestamp = self.timestamps[frame_number]
+            return Frame(data=df, orig_file=self.meta[&#34;orig_file&#34;], timestamp=timestamp)
+        else:
+            raise TypeError(&#34;Wrong type {}&#34;.format(type(frame_number).__name__))
+
+    @classmethod
+    def from_file(cls, file_path: Path, **kwargs):
+        if not isinstance(file_path, Path):
+            raise TypeError(&#34;Expectinga Path object for file_path&#34;)
+        ext = file_path.suffix[1:].upper()
+        if ext == &#34;&#34;:
+            ext = &#34;DIR&#34;
+        if ext not in DATASET_FROM_FILE:
+            raise ValueError(
+                f&#34;Unsupported file format {ext}; supported formats are: {DATASET_FROM_FILE.keys()}&#34;
+            )
+        else:
+            res = DATASET_FROM_FILE[ext](file_path, **kwargs)
+            return cls(data=res[&#34;data&#34;], timestamps=res[&#34;timestamps&#34;], meta=res[&#34;meta&#34;])
+
+    def to_file(self, file_path: Path = Path(), **kwargs) -&gt; None:
+        DATASET_TO_FILE[&#34;DIR&#34;](self, file_path=file_path, **kwargs)
+
+    def apply(
+        self,
+        func: Union[Callable[[Frame], Frame], Callable[[Frame], Any]],
+    ) -&gt; Union[Dataset, tuple]:
+        &#34;&#34;&#34;Applies a function onto the dataset.
+
+        Example:
+
+        def func(frame:lidar.Frame) -&gt; lidar.Frame:
+            return frame.limit(x,0,1)
+
+        dataset.apply(func)
+
+        This results in a new dataset
+
+        Example2:
+
+        def func(frame:lidar.Frame) -&gt; float:
+            return frame.data.x.max()
+
+        dataset.apply(func)
+
+        Args:
+            func (Union[Callable[[Frame], Frame], Callable[[Frame], Any]]): [description]
+
+        Returns:
+            Union[Dataset, Any]: A dataset if the function retunrs a Frame object or tuple
+            with the results
+        &#34;&#34;&#34;
+
+        returns_frame = _is_pipline_returing_frame(func)
+
+        if returns_frame:
+
+            def pipeline_delayed(element_in):
+                frame = Frame(element_in)
+                frame = func(frame)
+                return frame.data
+
+        else:
+
+            def pipeline_delayed(element_in):
+                frame = Frame(element_in)
+                return func(frame)
+
+        res = []
+        for i in range(0, len(self)):
+            item = delayed(pipeline_delayed)(self.data[i])
+            res.append(item)
+
+        if returns_frame:
+            return Dataset(data=res, timestamps=self.timestamps, meta=self.meta)
+        else:
+            return dask.compute(*res)
+
+    def extend(self, dataset: Dataset) -&gt; Dataset:
+        &#34;&#34;&#34;Extends the dataset by another one.
+
+        Args:
+            dataset (Dataset): [description]
+
+        Returns:
+            Dataset: [description]
+        &#34;&#34;&#34;
+        key = &#34;extended&#34;
+        meta = self.meta
+        if key in meta:
+            new = meta[key]
+            new.extend(dataset.meta)
+            meta[key] = new
+        else:
+            meta[key] = [dataset.meta]
+        self.data.extend(dataset.data)
+        self.timestamps.extend(dataset.timestamps)
+        self._check()
+        return self</code></pre>
 </details>
-</dd>
-<dt id="lidar.dataset.Dataset.types_and_topics_in_bag"><code class="name">var <span class="ident">types_and_topics_in_bag</span></code></dt>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="lidar.dataset_core.DatasetCore" href="dataset_core.html#lidar.dataset_core.DatasetCore">DatasetCore</a></li>
+</ul>
+<h3>Static methods</h3>
+<dl>
+<dt id="lidar.dataset.Dataset.from_file"><code class="name flex">
+<span>def <span class="ident">from_file</span></span>(<span>file_path: Path, **kwargs)</span>
+</code></dt>
 <dd>
-<div class="desc"><p>Types and Topics in the original ROS bagfile as rosbag.bag.TypesAndTopicsTuple</p></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">@property
-def types_and_topics_in_bag(self):
-    &#34;&#34;&#34;Types and Topics in the original ROS bagfile as rosbag.bag.TypesAndTopicsTuple&#34;&#34;&#34;
-    return self.bag.get_type_and_topic_info()</code></pre>
+<pre><code class="python">@classmethod
+def from_file(cls, file_path: Path, **kwargs):
+    if not isinstance(file_path, Path):
+        raise TypeError(&#34;Expectinga Path object for file_path&#34;)
+    ext = file_path.suffix[1:].upper()
+    if ext == &#34;&#34;:
+        ext = &#34;DIR&#34;
+    if ext not in DATASET_FROM_FILE:
+        raise ValueError(
+            f&#34;Unsupported file format {ext}; supported formats are: {DATASET_FROM_FILE.keys()}&#34;
+        )
+    else:
+        res = DATASET_FROM_FILE[ext](file_path, **kwargs)
+        return cls(data=res[&#34;data&#34;], timestamps=res[&#34;timestamps&#34;], meta=res[&#34;meta&#34;])</code></pre>
 </details>
 </dd>
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="lidar.dataset.Dataset.apply_pipeline"><code class="name flex">
-<span>def <span class="ident">apply_pipeline</span></span>(<span>self, pipeline: Callable[[Frame, int], Frame], start_frame_number: Optional[int] = 0, end_frame_number: Optional[int] = None) ‑> List</span>
+<dt id="lidar.dataset.Dataset.apply"><code class="name flex">
+<span>def <span class="ident">apply</span></span>(<span>self, func: Union[Callable[[Frame], Frame], Callable[[Frame], Any]]) ‑> Union[<a title="lidar.dataset.Dataset" href="#lidar.dataset.Dataset">Dataset</a>, tuple]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Applies a function to all, or a given range, of Frames in the dataset.</p>
+<div class="desc"><p>Applies a function onto the dataset.</p>
 <p>Example:</p>
-<p>def pipeline1(frame: Frame, frame_number: int):
-return frame.limit("x", 0, 1)</p>
-<p>test_dataset.apply_pipeline(pipeline1, 0, 10)</p>
+<p>def func(frame:lidar.Frame) -&gt; lidar.Frame:
+return frame.limit(x,0,1)</p>
+<p>dataset.apply(func)</p>
+<p>This results in a new dataset</p>
+<p>Example2:</p>
+<p>def func(frame:lidar.Frame) -&gt; float:
+return frame.data.x.max()</p>
+<p>dataset.apply(func)</p>
 <h2 id="args">Args</h2>
 <dl>
-<dt><strong><code>pipeline</code></strong> :&ensp;<code>Callable[[Frame], Frame]</code></dt>
-<dd>A function with a chain of processings on aframes.</dd>
-<dt><strong><code>start_frame_number</code></strong> :&ensp;<code>int</code>, optional</dt>
-<dd>Frame number to start. Defaults to 0.</dd>
-<dt><strong><code>end_frame_number</code></strong> :&ensp;<code>Optional</code>, optional</dt>
-<dd>Frame number to end. Defaults to None which corresponds to the end of the dataset.</dd>
+<dt><strong><code>func</code></strong> :&ensp;<code>Union[Callable[[Frame], Frame], Callable[[Frame], Any]]</code></dt>
+<dd>[description]</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
-<dt><code>List</code></dt>
-<dd>A list of results. Can be a list of Frames or other objects.</dd>
-</dl></div>
+<dt><code>Union[<a title="lidar.dataset.Dataset" href="#lidar.dataset.Dataset">Dataset</a>, Any]</code></dt>
+<dd>A dataset if the function retunrs a Frame object or tuple</dd>
+</dl>
+<p>with the results</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def apply_pipeline(
+<pre><code class="python">def apply(
     self,
-    pipeline: Callable[[Frame, int], Frame],
-    start_frame_number: Optional[int] = 0,
-    end_frame_number: Optional[int] = None,
-) -&gt; List:
-    &#34;&#34;&#34;Applies a function to all, or a given range, of Frames in the dataset.
+    func: Union[Callable[[Frame], Frame], Callable[[Frame], Any]],
+) -&gt; Union[Dataset, tuple]:
+    &#34;&#34;&#34;Applies a function onto the dataset.
 
     Example:
 
-    def pipeline1(frame: Frame, frame_number: int):
-        return frame.limit(&#34;x&#34;, 0, 1)
+    def func(frame:lidar.Frame) -&gt; lidar.Frame:
+        return frame.limit(x,0,1)
 
-    test_dataset.apply_pipeline(pipeline1, 0, 10)
+    dataset.apply(func)
+
+    This results in a new dataset
+
+    Example2:
+
+    def func(frame:lidar.Frame) -&gt; float:
+        return frame.data.x.max()
+
+    dataset.apply(func)
 
     Args:
-        pipeline (Callable[[Frame], Frame]): A function with a chain of processings on aframes.
-        start_frame_number (int, optional): Frame number to start. Defaults to 0.
-        end_frame_number (Optional, optional): Frame number to end. Defaults to None which corresponds to the end of the dataset.
+        func (Union[Callable[[Frame], Frame], Callable[[Frame], Any]]): [description]
 
     Returns:
-        List: A list of results. Can be a list of Frames or other objects.
+        Union[Dataset, Any]: A dataset if the function retunrs a Frame object or tuple
+        with the results
     &#34;&#34;&#34;
-    messages = self.bag.read_messages(topics=[self.topic])
-    sliced_messages = itertools.islice(messages, start_frame_number, None)
-    result_list = []
-    if end_frame_number is None:
-        end_frame_number = len(self)
-    for frame_number in tqdm(range(start_frame_number, end_frame_number, 1)):
-        message = next(sliced_messages)
-        frame = frame_from_message(self, message)
-        result_list.append(pipeline(frame, frame_number))
-    return result_list</code></pre>
+
+    returns_frame = _is_pipline_returing_frame(func)
+
+    if returns_frame:
+
+        def pipeline_delayed(element_in):
+            frame = Frame(element_in)
+            frame = func(frame)
+            return frame.data
+
+    else:
+
+        def pipeline_delayed(element_in):
+            frame = Frame(element_in)
+            return func(frame)
+
+    res = []
+    for i in range(0, len(self)):
+        item = delayed(pipeline_delayed)(self.data[i])
+        res.append(item)
+
+    if returns_frame:
+        return Dataset(data=res, timestamps=self.timestamps, meta=self.meta)
+    else:
+        return dask.compute(*res)</code></pre>
 </details>
 </dd>
-<dt id="lidar.dataset.Dataset.approximate_time_of_frame"><code class="name flex">
-<span>def <span class="ident">approximate_time_of_frame</span></span>(<span>self, frame_number: int) ‑> float</span>
+<dt id="lidar.dataset.Dataset.extend"><code class="name flex">
+<span>def <span class="ident">extend</span></span>(<span>self, dataset: <a title="lidar.dataset.Dataset" href="#lidar.dataset.Dataset">Dataset</a>) ‑> <a title="lidar.dataset.Dataset" href="#lidar.dataset.Dataset">Dataset</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Calcuate the approximate time of a specific frame number. Needed as input for
-get_frames_between_timestamps.</p>
+<div class="desc"><p>Extends the dataset by another one.</p>
 <h2 id="args">Args</h2>
 <dl>
-<dt><strong><code>frame_number</code></strong> :&ensp;<code>int</code></dt>
-<dd>Frame step number</dd>
+<dt><strong><code>dataset</code></strong> :&ensp;<code><a title="lidar.dataset.Dataset" href="#lidar.dataset.Dataset">Dataset</a></code></dt>
+<dd>[description]</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
-<dt><code>float</code></dt>
-<dd>The approximate time of the frame number in seconds.</dd>
+<dt><code><a title="lidar.dataset.Dataset" href="#lidar.dataset.Dataset">Dataset</a></code></dt>
+<dd>[description]</dd>
 </dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def approximate_time_of_frame(self, frame_number: int) -&gt; float:
-    &#34;&#34;&#34;Calcuate the approximate time of a specific frame number. Needed as input for
-    get_frames_between_timestamps.
+<pre><code class="python">def extend(self, dataset: Dataset) -&gt; Dataset:
+    &#34;&#34;&#34;Extends the dataset by another one.
 
     Args:
-        frame_number (int): Frame step number
+        dataset (Dataset): [description]
 
     Returns:
-        float: The approximate time of the frame number in seconds.
+        Dataset: [description]
     &#34;&#34;&#34;
-    return self._first_frame_time + frame_number * self.time_step</code></pre>
+    key = &#34;extended&#34;
+    meta = self.meta
+    if key in meta:
+        new = meta[key]
+        new.extend(dataset.meta)
+        meta[key] = new
+    else:
+        meta[key] = [dataset.meta]
+    self.data.extend(dataset.data)
+    self.timestamps.extend(dataset.timestamps)
+    self._check()
+    return self</code></pre>
 </details>
 </dd>
-<dt id="lidar.dataset.Dataset.get_frame_fast"><code class="name flex">
-<span>def <span class="ident">get_frame_fast</span></span>(<span>self, frame_number: int) ‑> <a title="lidar.frame.Frame" href="frame.html#lidar.frame.Frame">Frame</a></span>
+<dt id="lidar.dataset.Dataset.to_file"><code class="name flex">
+<span>def <span class="ident">to_file</span></span>(<span>self, file_path: Path = PosixPath('.'), **kwargs) ‑> NoneType</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Alternative to get a specific frame. Indented for larger bagfiles.
-This method assumes that the time between frames is constant.
-It does not replace <strong>getitem</strong> fully since it relays on the method
-approximate_time_of_frame, but should produce the same result most of the times.</p>
-<h2 id="args">Args</h2>
-<dl>
-<dt><strong><code>frame_number</code></strong> :&ensp;<code>int</code></dt>
-<dd>frame number</dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><code>Frame</code></dt>
-<dd>equivalent to Dataset[frame_number]</dd>
-</dl></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def get_frame_fast(self, frame_number: int) -&gt; Frame:
-    &#34;&#34;&#34;Alternative to get a specific frame. Indented for larger bagfiles.
-    This method assumes that the time between frames is constant.
-    It does not replace __getitem__ fully since it relays on the method
-    approximate_time_of_frame, but should produce the same result most of the times.
-
-    Args:
-        frame_number (int): frame number
-
-    Returns:
-        Frame: equivalent to Dataset[frame_number]
-    &#34;&#34;&#34;
-    start_time = self.approximate_time_of_frame(frame_number)
-    frame_list = self.get_frames_between_timestamps(
-        start_time - 0.5 * self.time_step, start_time + 0.5 * self.time_step
-    )
-    return frame_list[0]</code></pre>
-</details>
-</dd>
-<dt id="lidar.dataset.Dataset.get_frames_between_timestamps"><code class="name flex">
-<span>def <span class="ident">get_frames_between_timestamps</span></span>(<span>self, start_time: float, end_time: float) ‑> List[<a title="lidar.frame.Frame" href="frame.html#lidar.frame.Frame">Frame</a>]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Get all frames within specific time range</p>
-<h2 id="args">Args</h2>
-<dl>
-<dt><strong><code>start_time</code></strong></dt>
-<dd>timestamp as float (ros posix time)</dd>
-<dt><strong><code>end_time</code></strong></dt>
-<dd>timestamp as float (ros posix time)</dd>
-</dl>
-<h2 id="returns">Returns</h2>
-<p>List of frames</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def get_frames_between_timestamps(
-    self, start_time: float, end_time: float
-) -&gt; List[Frame]:
-    &#34;&#34;&#34;Get all frames within specific time range
-
-    Args:
-        start_time: timestamp as float (ros posix time)
-        end_time: timestamp as float (ros posix time)
-
-    Returns:
-        List of frames
-    &#34;&#34;&#34;
-    messages = self.bag.read_messages(
-        topics=[self.topic],
-        start_time=genpy.Time.from_sec(start_time),
-        end_time=genpy.Time.from_sec(end_time),
-    )
-    frame_list = []
-    for message in messages:
-        frame_list.append(frame_from_message(self, message))
-    return frame_list</code></pre>
-</details>
-</dd>
-<dt id="lidar.dataset.Dataset.has_frames"><code class="name flex">
-<span>def <span class="ident">has_frames</span></span>(<span>self) ‑> bool</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Check if dataset has frames.</p>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><code>bool</code></dt>
-<dd><code>True</code> if the dataset contains frames.</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def has_frames(self) -&gt; bool:
-    &#34;&#34;&#34;Check if dataset has frames.
-
-    Returns:
-        bool: ``True`` if the dataset contains frames.
-    &#34;&#34;&#34;
-    return len(self) &gt; 0</code></pre>
+<pre><code class="python">def to_file(self, file_path: Path = Path(), **kwargs) -&gt; None:
+    DATASET_TO_FILE[&#34;DIR&#34;](self, file_path=file_path, **kwargs)</code></pre>
 </details>
 </dd>
 </dl>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="lidar.dataset_core.DatasetCore" href="dataset_core.html#lidar.dataset_core.DatasetCore">DatasetCore</a></b></code>:
+<ul class="hlist">
+<li><code><a title="lidar.dataset_core.DatasetCore.has_frames" href="dataset_core.html#lidar.dataset_core.DatasetCore.has_frames">has_frames</a></code></li>
+</ul>
+</li>
+</ul>
 </dd>
 </dl>
 </section>
@@ -825,20 +514,10 @@ approximate_time_of_frame, but should produce the same result most of the times.
 <li>
 <h4><code><a title="lidar.dataset.Dataset" href="#lidar.dataset.Dataset">Dataset</a></code></h4>
 <ul class="">
-<li><code><a title="lidar.dataset.Dataset.apply_pipeline" href="#lidar.dataset.Dataset.apply_pipeline">apply_pipeline</a></code></li>
-<li><code><a title="lidar.dataset.Dataset.approximate_time_of_frame" href="#lidar.dataset.Dataset.approximate_time_of_frame">approximate_time_of_frame</a></code></li>
-<li><code><a title="lidar.dataset.Dataset.bag" href="#lidar.dataset.Dataset.bag">bag</a></code></li>
-<li><code><a title="lidar.dataset.Dataset.end_time" href="#lidar.dataset.Dataset.end_time">end_time</a></code></li>
-<li><code><a title="lidar.dataset.Dataset.get_frame_fast" href="#lidar.dataset.Dataset.get_frame_fast">get_frame_fast</a></code></li>
-<li><code><a title="lidar.dataset.Dataset.get_frames_between_timestamps" href="#lidar.dataset.Dataset.get_frames_between_timestamps">get_frames_between_timestamps</a></code></li>
-<li><code><a title="lidar.dataset.Dataset.has_frames" href="#lidar.dataset.Dataset.has_frames">has_frames</a></code></li>
-<li><code><a title="lidar.dataset.Dataset.keep_zeros" href="#lidar.dataset.Dataset.keep_zeros">keep_zeros</a></code></li>
-<li><code><a title="lidar.dataset.Dataset.orig_file" href="#lidar.dataset.Dataset.orig_file">orig_file</a></code></li>
-<li><code><a title="lidar.dataset.Dataset.size" href="#lidar.dataset.Dataset.size">size</a></code></li>
-<li><code><a title="lidar.dataset.Dataset.start_time" href="#lidar.dataset.Dataset.start_time">start_time</a></code></li>
-<li><code><a title="lidar.dataset.Dataset.time_step" href="#lidar.dataset.Dataset.time_step">time_step</a></code></li>
-<li><code><a title="lidar.dataset.Dataset.topics_in_bag" href="#lidar.dataset.Dataset.topics_in_bag">topics_in_bag</a></code></li>
-<li><code><a title="lidar.dataset.Dataset.types_and_topics_in_bag" href="#lidar.dataset.Dataset.types_and_topics_in_bag">types_and_topics_in_bag</a></code></li>
+<li><code><a title="lidar.dataset.Dataset.apply" href="#lidar.dataset.Dataset.apply">apply</a></code></li>
+<li><code><a title="lidar.dataset.Dataset.extend" href="#lidar.dataset.Dataset.extend">extend</a></code></li>
+<li><code><a title="lidar.dataset.Dataset.from_file" href="#lidar.dataset.Dataset.from_file">from_file</a></code></li>
+<li><code><a title="lidar.dataset.Dataset.to_file" href="#lidar.dataset.Dataset.to_file">to_file</a></code></li>
 </ul>
 </li>
 </ul>

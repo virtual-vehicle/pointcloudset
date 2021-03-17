@@ -4,7 +4,7 @@
 For one lidar measurement frame. Typically an automotive lidar records many frames per
 second.
 
-One Frame consists mainly of pyntcloud pointcloud (.pointcloud) and a pandas dataframe
+One Frame consists mainly of pyntcloud pointcloud (.points) and a pandas dataframe
 (.data) with all the associated data.
 
 Note that the index of the points is not preserved when applying processing. This
@@ -17,361 +17,249 @@ Frame object is generated at each processing stage.
 """
 from __future__ import annotations
 
-import operator
-import traceback
+import datetime
 import warnings
-from datetime import datetime
 from pathlib import Path
 from typing import List, Union
 
-import IPython
 import numpy as np
 import open3d as o3d
 import pandas as pd
 import plotly
+import plotly.express as px
 import pyntcloud
-import rospy
 
-from .convert import convert
-from .geometry import plane
-from .plot.frame import plot_overlay, plot_overlay_plane, plotly_3d, pyntcloud_3d
-
-ops = {
-    ">": operator.gt,
-    "<": operator.lt,
-    ">=": operator.ge,
-    "<=": operator.le,
-    "==": operator.eq,
-}
+from lidar.diff import ALL_DIFFS
+from lidar.filter import ALL_FILTERS
+from lidar.frame_core import FrameCore
+from lidar.io import (FRAME_FROM_FILE, FRAME_FROM_INSTANCE, FRAME_TO_FILE,
+                      FRAME_TO_INSTANCE)
+from lidar.plot.frame import plot_overlay
 
 
-class Frame:
-    def __init__(
-        self,
-        data: pd.DataFrame,
-        orig_file: str = "",
-        timestamp: rospy.rostime.Time = rospy.rostime.Time(),
-    ):
-        """One Frame of lidar measurements.
+def is_documented_by(original):
+    """A decorator to get the docstring from anoter function."""
 
-        Example:
-        testbag = Path().cwd().parent.joinpath("tests/testdata/test.bag")
-        testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
-        testframe = testset[0]
+    def wrapper(target):
+        target.__doc__ = original.__doc__
+        return target
 
-        """
-        self.data = data
-        """All the data, x,y.z and intensity, range and more"""
-        self.timestamp = timestamp
-        """ROS timestamp"""
-        self.points = pyntcloud.PyntCloud(self.data[["x", "y", "z"]], mesh=None)
-        """Pyntcloud object with x,y,z coordinates"""
-        self.measurments = self.data.drop(["x", "y", "z"], axis=1)
-        """Measurments aka. scalar field of values at each point"""
-        self.orig_file = orig_file
-        """Path to bag file. Defaults to empty"""
+    return wrapper
 
-        self._check_index()
 
-    @property
-    def data(self):
-        return self.__data
-
-    @data.setter
-    def data(self, df: pd.DataFrame):
-        if not isinstance(df, pd.DataFrame):
-            raise TypeError("Data argument must be a DataFrame")
-        elif not set(["x", "y", "z"]).issubset(df.columns):
-            raise ValueError("Data must have x, y and z coordinates")
-        self._update_data(df)
-        self._check_index()
-
-    def _update_data(self, df: pd.DataFrame):
-        """Utility function. Implicitly called when self.data is assigned."""
-        self.__data = df
-        self.timestamp = rospy.rostime.Time()
-        self.points = pyntcloud.PyntCloud(self.__data[["x", "y", "z"]], mesh=None)
-        self.measurments = self.__data.drop(["x", "y", "z"], axis=1)
-        self.orig_file = ""
-
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.data}, {self.timestamp}, {self.orig_file})"
-
-    def __str__(self) -> str:
-        return f"pointcloud: with {len(self)} points, data:{list(self.data.columns)}, from {self.convert_timestamp()}"
-
-    def __len__(self) -> int:
-        return len(self.data)
-
-    def __getitem__(self, id: Union[int, slice]) -> pd.DataFrame:
-        if isinstance(id, slice):
-            return self.data.iloc[id]
-        elif isinstance(id, int):
-            return self.data.iloc[[id]]
-        else:
-            raise TypeError("Wrong type {}".format(type(id).__name__))
-
-    def extract_point(self, id: int, use_orginal_id: bool = False) -> pd.DataFrame:
-        """Extract a specific point from the Frame defined by the point id. The id
-        can be the current index of the data from the Frame or the original_id.
+class Frame(FrameCore):
+    @classmethod
+    def from_file(cls, file_path: Path, **kwargs):
+        """Extract data from file and construct a Frame with it. Uses Pynthcloud as
+        backend.
 
         Args:
-            id (int): Id number
-            use_orginal_id (bool, optional): Use normal index or the orginal_id.
-            Defaults to False.
-
-        Returns:
-            pd.DataFrame: a frame which only containse the defined points.
-        """
-        try:
-            if use_orginal_id:
-                point = self.data[self.data["original_id"] == id]
-                if len(point) == 0:
-                    raise IndexError
-                elif len(point) != 1:
-                    raise Exception()
-            else:
-                point = self[id]
-        except IndexError:
-            raise IndexError(f"point with {id} does note exist.")
-        except Exception:
-            print(traceback.print_exc())
-        return point.reset_index(drop=True)
-
-    def calculate_single_point_difference(
-        self, frameB: Frame, original_id: int
-    ) -> pd.DataFrame:
-        """Calculate the difference of one element of a Point in the current Frame to
-        the correspoing point in Frame B. Both frames must contain the same orginal_id.
-
-        Args:
-            frameB (Frame): Frame which contains the point to comapare to.
-            original_id (int): Orginal ID of the point.
-
-        Returns:
-            pd.DataFrame: A single row DataFrame with the differences (A - B).
-        """
-        pointA = self.extract_point(original_id, use_orginal_id=True)
-        try:
-            pointB = frameB.extract_point(original_id, use_orginal_id=True)
-            difference = pointA - pointB
-        except IndexError:
-            # there is no point with the orignal_id in frameB
-            difference = pointA
-            difference.loc[:] = np.nan
-        difference = difference.drop(["original_id"], axis=1)
-        difference.columns = [f"{column} difference" for column in difference.columns]
-        difference["original_id"] = pointA["original_id"]
-        return difference
-
-    def calculate_all_point_differences(self, frameB: Frame) -> Frame:
-        """Calculate the point differences for each point which is also in frameB. Only
-        points with the same orginal_id are compared. The results are added to the data
-        of the frame. (frame - frameB)
-
-        Args:
-            frameB (Frame): A Frame object to compute the differences.
+            file_path (Path): pathlib Path of file to read
 
         Raises:
-            ValueError: If there are no points in FrameB with the same orginal_id
+            ValueError: For unsupported files
+
+        Returns:
+            Frame: lidar frame with timestamp last modified.
         """
-        refrence_orginial_ids = self.data.original_id.values
-        frameB_original_ids = frameB.data.original_id.values
-        intersection = np.intersect1d(refrence_orginial_ids, frameB_original_ids)
-        if len(intersection) > 0:
-            diff_list = [
-                self.calculate_single_point_difference(frameB, id)
-                for id in intersection
-            ]
-            orginal_types = [str(types) for types in diff_list[0].dtypes.values]
-            target_type_dict = dict(zip(diff_list[0].columns.values, orginal_types))
-            diff_df = pd.concat(diff_list)
-            diff_df = diff_df.astype(target_type_dict)
-            diff_df = diff_df.reset_index(drop=True)
-            self.data = self.data.merge(diff_df, on="original_id", how="left")
+        if not isinstance(file_path, Path):
+            raise TypeError("Expectinga Path object for file_path")
+        ext = file_path.suffix[1:].upper()
+        if ext not in FRAME_FROM_FILE:
+            raise ValueError(
+                "Unsupported file format; supported formats are: {}".format(
+                    list(FRAME_FROM_FILE)
+                )
+            )
+        else:
+            file_path_str = file_path.as_posix()
+            timestamp = datetime.datetime.utcfromtimestamp(file_path.stat().st_mtime)
+            pyntcloud_in = pyntcloud.PyntCloud.from_file(file_path_str, **kwargs)
+            return cls(
+                data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
+            )
+
+    def to_file(self, file_path: Path = Path(), **kwargs) -> None:
+        """Exports the frame as a csv for use with cloud compare or similar tools.
+        Currently not all attributes of a frame are saved so some information is lost when
+        using this function.
+
+        Args:
+            file_path (Path, optional): Destination. Defaults to the folder of
+            the bag file and csv with the timestamp of the frame.
+        """
+        ext = file_path.suffix[1:].upper()
+        if ext not in FRAME_TO_FILE:
+            raise ValueError(
+                "Unsupported file format; supported formats are: {}".format(
+                    list(FRAME_TO_FILE)
+                )
+            )
+
+        orig_file_name = Path(self.orig_file).stem
+        if file_path == Path():
+            # defaulting to csv file
+            filename = f"{orig_file_name}_timestamp_{self.timestamp}.csv"
+            destination_folder = Path(self.orig_file).parent.joinpath(filename)
+        else:
+            destination_folder = file_path
+
+        kwargs["file_path"] = destination_folder
+        kwargs["frame"] = self
+
+        FRAME_TO_FILE[ext](**kwargs)
+
+    @classmethod
+    def from_instance(
+        cls,
+        library: str,
+        instance: Union[
+            pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud
+        ],
+        **kwargs,
+    ) -> Frame:
+        """Converts a libaries instance to a lidar Frame.
+
+        Args:
+            library (str): name of the libary
+            instance (Union[ pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud ]): [description]
+
+        Raises:
+            ValueError: If instance is not supported.
+
+        Returns:
+            Frame: derived from the instance
+        """
+        library = library.upper()
+        if library not in FRAME_FROM_INSTANCE:
+            raise ValueError(
+                "Unsupported library; supported libraries are: {}".format(
+                    list(FRAME_FROM_INSTANCE)
+                )
+            )
+        else:
+            return cls(**FRAME_FROM_INSTANCE[library](instance, **kwargs))
+
+    def to_instance(
+        self, library: str, **kwargs
+    ) -> Union[
+        pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud
+    ]:
+        """Convert Frame to another librarie instance.
+
+        Args:
+            library (str): name of the libary
+
+        Raises:
+            ValueError: If libary is not suppored
+
+        Returns:
+            Union[ pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud ]: The derived instance
+        """
+        library = library.upper()
+        if library not in FRAME_TO_INSTANCE:
+            raise ValueError(
+                "Unsupported library; supported libraries are: {}".format(
+                    list(FRAME_TO_INSTANCE)
+                )
+            )
+
+        return FRAME_TO_INSTANCE[library](self, **kwargs)
+
+    def plot(
+        self,
+        color: Union[None, str] = None,
+        overlay: dict = {},
+        point_size: float = 2,
+        prepend_id: str = "",
+        hover_data: List[str] = [],
+        **kwargs,
+    ) -> plotly.graph_objs._figure.Figure:
+        """Plot a Frame as a 3D scatter plot with plotly. It handles plots of single
+        frames and overlay with other objects, such as other frames from clustering or
+        planes from plane segmentation.
+
+        You can also pass arguments to the plotly express function scatter_3D.
+
+        Args:
+            frame (Frame): the frame to plot
+            color (str or None): Which column to plot. For example "intensity"
+            overlay (dict, optional): Dict with of rames to overlay
+                {"Cluster 1": cluster1,"plan1 1": plane_model}
+            point_size (float, optional): Size of each point. Defaults to 2.
+            prepend_id (str, optional): string before point id to display in hover
+            hover data (list, optional): data columns to display in hover. Default is
+                all of them.
+
+        Raises:
+            ValueError: if the color column name is not in the data
+
+        Returns:
+            Plotly plot: The interactive plotly plot, best used inside a jupyter
+            notebook.
+        """
+        if color is not None and color not in self.data.columns:
+            raise ValueError(f"choose any of {list(self.data.columns)} or None")
+
+        ids = [prepend_id + "id=" + str(i) for i in range(0, self.data.shape[0])]
+
+        if hover_data == []:
+            hover_data = self.data.columns
+
+        if not all([x in self.data.columns for x in hover_data]):
+            raise ValueError(f"choose a list of {list(self.data.columns)} or []")
+
+        fig = px.scatter_3d(
+            self.data,
+            x="x",
+            y="y",
+            z="z",
+            color=color,
+            hover_name=ids,
+            hover_data=hover_data,
+            title=self.timestamp_str,
+            **kwargs,
+        )
+        fig.update_traces(
+            marker=dict(size=point_size, line=dict(width=0)),
+            selector=dict(mode="markers"),
+        )
+
+        if len(overlay) > 0:
+            fig = plot_overlay(fig, self, overlay)
+
+        fig.update_layout(
+            scene_aspectmode="data",
+        )
+        return fig
+
+    def diff(
+        self, name: str, target: Union[None, Frame, np.ndarray] = None, **kwargs
+    ) -> Frame:
+        """Calculate differences and distances to the origin, plane, point and frame.
+
+        Args:
+            name (str): "orgin", "plane", "frame", "point"
+            target (Union[None, Frame, np.ndarray], optional): [description]. Defaults to None,
+
+        Raises:
+            ValueError: If name is not supported.
+
+        Returns:
+            Frame: New frame with added column of the differences
+        """
+        if name in ALL_DIFFS:
+            ALL_DIFFS[name](frame=self, target=target, **kwargs)
             return self
         else:
-            raise ValueError("no intersection found between the frames.")
+            raise ValueError("Unsupported diff. Check docstring")
 
-    def add_column(self, column_name: str, values: np.array) -> Frame:
-        """Adding a new column with a scalar value to the data of the frame.
-
-        Args:
-            column_name (str): name of the new column.
-            values (np.array): Values of the new column.
-        """
-        self.data[column_name] = values
-        return self
-
-    def calculate_distance_to_plane(
-        self, plane_model: np.array, absolute_values: bool = True
-    ) -> Frame:
-        """Calculates the distance of each point to a plane and adds it as a column
-        to the data of the frame. Uses the plane equation a x + b y + c z + d = 0
-
-        Args:
-            plane_model (np.array): [a, b, c, d], could be provided by
-                plane_segmentation.
-            absolute_values (bool, optional): Calculate absolute distances if True.
-                Defaults to True.
-        """
-        points = self.points.xyz
-        distances = np.asarray(
-            [plane.distance_to_point(point, plane_model) for point in points]
-        )
-        if absolute_values:
-            distances = np.absolute(distances)
-        plane_str = np.array2string(
-            plane_model, formatter={"float_kind": lambda x: "%.4f" % x}
-        )
-        self.add_column(f"distance to plane: {plane_str}", distances)
-        return self
-
-    def calculate_distance_to_origin(self) -> Frame:
-        """For each point in the pointcloud calculate the euclidian distance
-        to the origin (0,0,0). Adds a new column to the data with the values.
-        """
-        point_a = np.array((0.0, 0.0, 0.0))
-        points = self.points.xyz
-        distances = np.array([np.linalg.norm(point_a - point) for point in points])
-        self.add_column("distance to origin", distances)
-        return self
-
-    def describe(self) -> pd.DataFrame:
-        """Generate descriptive statistics based on .data.describe()."""
-        return self.data.describe()
-
-    def get_open3d_points(self) -> o3d.open3d_pybind.geometry.PointCloud:
-        """Extract points as open3D PointCloud object. Needed for processing with the
-        open3d package.
-
-        Returns:
-            o3d.open3d_pybind.geometry.PointCloud: the pointcloud
-        """
-        converted = convert.convert_df2pcd(self.points.points)
-        assert len(np.asarray(converted.points)) == len(
-            self
-        ), "len of open3d points should be the same as len of the Frame"
-        return convert.convert_df2pcd(self.points.points)
-
-    def convert_timestamp(self) -> str:
-        """Convert ROS timestamp to human readable date and time.
-
-        Returns:
-            str: date time string
-        """
-        return datetime.fromtimestamp(self.timestamp.to_sec()).strftime(
-            "%A, %B %d, %Y %I:%M:%S"
-        )
-
-    def has_data(self) -> bool:
-        """Check if lidar frame has data. Data here means point coordinates and
-        measruments at each point of the pointcloud.
-
-        Returns:
-            bool: `True`` if the lidar frame contains measurment data.
-        """
-        return not self.data.empty
-
-    def contains_original_id_number(self, original_id: int) -> bool:
-        """Check if lidar frame contains a specific orginal_id.
-
-        Args:
-            original_id (int): the orginal_id to check
-
-        Returns:
-            bool: True if the original_id exists.
-        """
-        return original_id in self.data["original_id"].values
-
-    def plot_interactive(
-        self, backend: str = "plotly", color: str = "intensity", **kwargs
-    ) -> Union[plotly.graph_objs._figure.Figure, IPython.lib.display.IFrame]:
-        """Generate either a plotly or pyntcloud 3D plot.
-        (Note: Plotly plots also give index of datapoint in pandas array when hovering
-        over datapoint)
-
-        Args:
-            backend (str): specify either "plotly" or "pyntcloud" as plot environment
-            color (str): name of the column in the data that should be used as color
-            array for plotly plots
-
-        Returns:
-            np.array: List of distances for each point
-        """
-        args = locals()
-        args.update(kwargs)
-        backend = args.pop("backend")
-        if backend == "pyntcloud":
-            return pyntcloud_3d(self, **kwargs)
-        elif backend == "plotly":
-            return plotly_3d(self, color=color, **kwargs)
+    def filter(self, name: str, *args, **kwargs) -> Frame:
+        name = name.upper()
+        if name in ALL_FILTERS:
+            return ALL_FILTERS[name](self, *args, **kwargs)
         else:
-            raise ValueError("wrong backend")
-
-    def plot_overlay(self, frames_dict: dict) -> plotly.graph_objs._figure.Figure:
-        """Overlay the Frame with the plot(s) of other Frames. For example overlay the
-        plot with a frame which contains a cluster. Best used with smaller pointclouds.
-
-        Example:
-
-        testframe.plot_overlay({"Cluster 1": cluster1, "Cluster 2": cluster2})
-
-        Args:
-            frames_dict (dict): A dictionary in the form {"Name" : Frame}.
-            Can be arbitrarly long,
-
-        Returns:
-            plotly.graph_objs._figure.Figure: The interactive plot with overlays.
-        """
-        return plot_overlay(self, frames_dict=frames_dict)
-
-    def plot_overlay_plane(self, plane_dict: dict) -> plotly.graph_objs._figure.Figure:
-        """Overlay the Frame with plot(s) of plane surfaces. Fore
-
-        Example:
-
-        plane = frame.plane_segmentation(0.05,5,100,return_plane_model=True)
-        frame.plot_overlay_plane({"Plane 1": plane["plane_model"]})
-
-        Args:
-            plane_dict (dict): A dictionary in the form {"Name" : plane_model}.
-            Plane model as given by plane_segementations: as a numpy array of the
-            paramters a,b,c and d.
-            Can be arbitrarly long.
-
-        Returns:
-            plotly.graph_objs._figure.Figure: The interactive plot with overlays.
-        """
-        return plot_overlay_plane(self, plane_dict=plane_dict)
-
-    def apply_filter(self, boolean_array: np.ndarray) -> Frame:
-        """Generating a new Frame by removing points where filter is False.
-        Usefull for pyntcloud generate boolean arrays and by filtering DataFrames.
-
-        Args:
-            boolean_array (np.ndarray): True where the point should remain.
-
-        Returns:
-            Frame: Frame with filterd rows and reindexed data and points.
-        """
-        new_data = self.data.loc[boolean_array].reset_index(drop=True)
-        return Frame(new_data, timestamp=self.timestamp)
-
-    def select_by_index(self, index_to_keep: List[int]) -> Frame:
-        """Generating a new Frame by keeping index_to_keep.
-
-        Usefull for open3d generate index lists. Similar to the the select_by_index
-        function of open3d.
-
-        Args:
-            index_to_keep (List[int]): List of indices to keep
-
-        Returns:
-            Frame: Frame with kept rows and reindexed data and points
-        """
-        new_data = self.data.iloc[index_to_keep].reset_index(drop=True)
-        return Frame(new_data, timestamp=self.timestamp)
+            raise ValueError("Unsupported filter. Check docstring")
 
     def limit(self, dim: "str", minvalue: float, maxvalue: float) -> Frame:
         """Limit the range of certain values in lidar Frame. Can be chained together.
@@ -390,13 +278,36 @@ class Frame:
         """
         if maxvalue < minvalue:
             raise ValueError("maxvalue must be greater than minvalue")
-        bool_array = (
-            (self.data[dim] <= maxvalue) & (self.data[dim] >= minvalue)
-        ).to_numpy()
-        return self.apply_filter(bool_array)
+        return self.filter("value", dim, ">=", minvalue).filter(
+            "value", dim, "<=", maxvalue
+        )
+
+    def apply_filter(self, filter_result: Union[np.ndarray, List[int]]) -> Frame:
+        """Generating a new Frame by removing points where filter
+
+        Args:
+            filter_result (Union[np.ndarray, List[int]]): Filter result
+
+        Raises:
+            TypeError: If the filter_result has the wrong type
+
+        Returns:
+            Frame: rame with filterd rows and reindexed data and points.
+        """
+        if isinstance(filter_result, np.ndarray):
+            # dataframe and pyntcloud based filters
+            new_data = self.data.loc[filter_result].reset_index(drop=True)
+        elif isinstance(filter_result, list):
+            # from open3d filters
+            new_data = self.data.iloc[filter_result].reset_index(drop=True)
+        else:
+            raise TypeError(
+                "Wrong filter_result expeciting array with boolean values or list of intices"
+            )
+        return Frame(new_data, timestamp=self.timestamp)
 
     def get_cluster(self, eps: float, min_points: int) -> pd.DataFrame:
-        """Get the clusters based on open3D cluster_dbscan. Process futher with
+        """Get the clusters based on open3D cluster_dbscan. Process further with
             take_cluster.
 
         Args:
@@ -407,7 +318,7 @@ class Frame:
             pd.DataFrame: Dataframe with list of clusters.
         """
         labels = np.array(
-            self.get_open3d_points().cluster_dbscan(
+            self.to_instance("open3d").cluster_dbscan(
                 eps=eps, min_points=min_points, print_progress=False
             )
         )
@@ -427,49 +338,13 @@ class Frame:
         bool_array = (cluster_labels["cluster"] == cluster_number).values
         return self.apply_filter(bool_array)
 
-    def remove_radius_outlier(self, nb_points: int, radius: float) -> Frame:
-        """Function to remove points that have less than nb_points in a given
-        sphere of a given radius Parameters.
-        Args:
-            nb_points (int) – Number of points within the radius.
-            radius (float) – Radius of the sphere.
-        Returns:
-            Tuple[open3d.geometry.PointCloud, List[int]] :
-        """
-        pcd = self.get_open3d_points()
-        cl, index_to_keep = pcd.remove_radius_outlier(
-            nb_points=nb_points, radius=radius
-        )
-        return self.select_by_index(index_to_keep)
-
-    def quantile_filter(
-        self, dim: str, relation: str = ">=", cut_quantile: float = 0.5
-    ) -> Frame:
-        """Filtering based on quantile values of dimension dim of the data.
-
-        Example:
-
-        testframe.quantile_filter("intensity","==",0.5)
-
-        Args:
-            dim (str): column in data, for example "intensity"
-            relation (str, optional): Any operator as string. Defaults to ">=".
-            cut_quantile (float, optional): Qunatile to compare to. Defaults to 0.5.
-
-        Returns:
-            Frame: Frame which fullfils the criteria.
-        """
-        cut_value = self.data[dim].quantile(cut_quantile)
-        filter_array = ops[relation](self.data[dim], cut_value)
-        return self.apply_filter(filter_array.to_numpy())
-
     def plane_segmentation(
         self,
         distance_threshold: float,
         ransac_n: int,
         num_iterations: int,
         return_plane_model: bool = False,
-    ) -> Union[dict, Frame]:
+    ) -> Union[Frame, dict]:
         """Segments a plane in the point cloud using the RANSAC algorithm.
         Based on open3D plane segmentation.
 
@@ -486,7 +361,7 @@ class Frame:
             Frame or dict: Frame with inliers or a dict of Frame with inliers and the
             plane parameters.
         """
-        pcd = self.get_open3d_points()
+        pcd = self.to_instance("open3d")
         plane_model, inliers = pcd.segment_plane(
             distance_threshold=distance_threshold,
             ransac_n=ransac_n,
@@ -498,33 +373,8 @@ class Frame:
                 is high. Try to reduce the area of interesst before using
                 plane_segmentation. Caused by open3D."""
             )
-        inlier_Frame = self.select_by_index(inliers)
+        inlier_Frame = self.apply_filter(inliers)
         if return_plane_model:
             return {"Frame": inlier_Frame, "plane_model": plane_model}
         else:
             return inlier_Frame
-
-    def to_csv(self, path: Path = Path()) -> None:
-        """Exports the frame as a csv for use with cloud compare or similar tools.
-        Args:
-            path (Path, optional): Destination. Defaults to the folder of
-            the bag fiile with the timestamp of the frame.
-        """
-        orig_file_name = Path(self.orig_file).stem
-        if path == Path():
-            filename = f"{orig_file_name}_timestamp_{self.timestamp}.csv"
-            destination_folder = Path(self.orig_file).parent.joinpath(filename)
-        else:
-            destination_folder = path
-        self.data.to_csv(destination_folder, index=False)
-
-    def _check_index(self):
-        """A private function to check if the index of self.data is sane."""
-        if len(self) > 0:
-            assert self.data.index[0] == 0, "index should start with 0"
-            assert self.data.index[-1] + 1 == len(
-                self
-            ), "index should be as long as the data"
-            assert (
-                self.data.index.is_monotonic_increasing
-            ), "index should be monotonic increasing"

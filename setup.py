@@ -1,6 +1,5 @@
 import codecs
 import os
-import sys
 
 from setuptools import setup
 
@@ -26,14 +25,18 @@ setup(
     name="lidar",
     packages=[
         "lidar",
-        "lidar.file",
-        "lidar.convert",
-        "lidar.plot",
+        "lidar.diff",
+        "lidar.filter",
         "lidar.geometry",
+        "lidar.io",
+        "lidar.plot",
     ],
     version=get_version("lidar/__init__.py"),
-    author="Thomas Gölles, Sarah Haas",
+    author="VIRTUAL VEHICLE Research GmbH",
     author_email="thomas.goelles@v2c2.at",
     description="Analyse automotive lidar data stored in ROS bagfiles",
     python_requires=">=3.7",
+    entry_points={
+        "console_scripts": ["bag2dataset = lidar.io.dataset.commandline:app"]
+    },
 )

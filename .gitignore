@@ -100,3 +100,6 @@ pyntcloud_plot*
 ~$*
 notebooks/dev*
 
+tests/testdata/big.bag
+*.lock
+*.dirlock

@@ -1,14 +1,14 @@
+from datetime import datetime
 from pathlib import Path
 
-import IPython
 import numpy as np
 import open3d as o3d
 import pandas as pd
-import plotly
 import pytest
 import pytest_check as check
 import rospy
 from pandas._testing import assert_frame_equal
+from pyntcloud import PyntCloud
 
 from lidar import Frame
 
@@ -18,40 +18,41 @@ def test_init(testframe_mini_df: pd.DataFrame):
     check.equal(type(frame), Frame)
 
 
-def test_has_data(testframe_mini):
-    check.equal(testframe_mini.has_data(), True)
+def test_has_data(testframe_mini: Frame):
+    check.equal(testframe_mini._has_data(), True)
+
+
+def test_has_original_id(testframe_mini: Frame):
+    check.equal(testframe_mini.has_original_id(), False)
+
+
+def test_has_original_id2(testframe_mini_real: Frame):
+    check.equal(testframe_mini_real.has_original_id(), True)
 
 
 def test_contains_original_id_number(testframe: Frame):
-    check.equal(testframe.contains_original_id_number(4700), True)
-    check.equal(testframe.contains_original_id_number(100000000), False)
-    check.equal(testframe.contains_original_id_number(1), False)
-    check.equal(testframe.contains_original_id_number(0), False)
-    check.equal(testframe.contains_original_id_number(-1000), False)
+    check.equal(testframe._contains_original_id_number(4700), True)
+    check.equal(testframe._contains_original_id_number(100000000), False)
+    check.equal(testframe._contains_original_id_number(1), False)
+    check.equal(testframe._contains_original_id_number(0), False)
+    check.equal(testframe._contains_original_id_number(-1000), False)
 
 
 def test_points(testframe_mini):
-    points = testframe_mini.points.points
-    check.equal(type(points), pd.DataFrame)
-    check.equal(list(points.columns), ["x", "y", "z"])
+    points = testframe_mini.points
+    check.is_instance(points, PyntCloud)
 
 
-def test_get_open3d_points(testframe_mini):
-    pointcloud = testframe_mini.get_open3d_points()
-    check.equal(type(pointcloud), o3d.open3d_pybind.geometry.PointCloud)
-    check.equal(pointcloud.has_points(), True)
-    check.equal(len(np.asarray(pointcloud.points)), len(testframe_mini))
-    testlist = list(np.asarray(pointcloud.points))
-    print(testlist)
-
-
-def test_measurments(testframe_mini):
-    measurements = testframe_mini.measurments
-    check.equal(type(measurements), pd.DataFrame)
+def test_points2(testframe_mini):
+    points = testframe_mini.points
+    check.equal(
+        list(points.points.columns),
+        ["x", "y", "z", "intensity", "t", "reflectivity", "ring", "noise", "range"],
+    )
 
 
 def test_timestamp(testframe_mini):
-    check.equal(type(testframe_mini.timestamp), rospy.rostime.Time)
+    check.equal(type(testframe_mini.timestamp), datetime)
 
 
 def test_org_file(testframe):
@@ -116,47 +117,17 @@ def test_str(testframe: Frame):
 
 def test_repr(testframe_mini: Frame):
     check.equal(type(repr(testframe_mini)), str)
-    check.equal(len(repr(testframe_mini)), 777)
+    check.equal(len(repr(testframe_mini)), 785)
 
 
 def test_add_column(testframe_mini: Frame):
-    newframe = testframe_mini.add_column("test", testframe_mini.data["x"])
+    newframe = testframe_mini._add_column("test", testframe_mini.data["x"])
     check.equal(type(newframe), Frame)
     after_columns = list(testframe_mini.data.columns.values)
     check.equal(
         str(after_columns),
         "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'test']",
     )
-
-
-def test_calculate_distance_to_plane1(testframe_mini: Frame):
-    newframe = testframe_mini.calculate_distance_to_plane(
-        plane_model=np.array([1, 0, 0, 0]), absolute_values=False
-    )
-    check.equal(type(newframe), Frame)
-    check.equal(
-        str(list(testframe_mini.data.columns.values)),
-        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [1 0 0 0]']",
-    )
-    check.equal(testframe_mini.data["distance to plane: [1 0 0 0]"][1], 1.0)
-
-
-def test_calculate_distance_to_plane2(testframe_mini: Frame):
-    testframe_mini.calculate_distance_to_plane(
-        plane_model=np.array([-1, 0, 0, 0]), absolute_values=False
-    )
-    check.equal(
-        str(list(testframe_mini.data.columns.values)),
-        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [-1  0  0  0]']",
-    )
-    check.equal(testframe_mini.data["distance to plane: [-1  0  0  0]"][1], -1.0)
-
-
-def test_calculate_distance_to_plane3(testframe_mini: Frame):
-    testframe_mini.calculate_distance_to_plane(
-        plane_model=np.array([-1, 0, 0, 0]), absolute_values=True
-    )
-    check.equal(testframe_mini.data["distance to plane: [-1  0  0  0]"][1], 1.0)
 
 
 def test_describe(testframe: Frame):
@@ -166,15 +137,13 @@ def test_describe(testframe: Frame):
 # test with actual data
 def test_testframe_1_with_zero(testframe_withzero: Frame):
     check.equal(len(testframe_withzero), 131072)
-    check.equal(testframe_withzero.has_data(), True)
-    check.equal(testframe_withzero.timestamp.to_time(), 1592833242.7559116)
+    check.equal(testframe_withzero._has_data(), True)
 
 
 def test_testframe_1(testframe: Frame):
     # testframe.data.to_pickle("/workspaces/lidar/tests/testdata/testframe_dataframe.pkl")
     check.equal(len(testframe), 45809)
-    check.equal(testframe.has_data(), True)
-    check.equal(testframe.timestamp.to_time(), 1592833242.7559116)
+    check.equal(testframe._has_data(), True)
     check.equal(len(testframe), 45809)
 
 
@@ -186,7 +155,7 @@ def test_testframe_index(testframe):
 
 def test_testframe_2(testframe_mini: Frame):
     check.equal(len(testframe_mini), 8)
-    check.equal(testframe_mini.has_data(), True)
+    check.equal(testframe_mini._has_data(), True)
 
 
 def test_testframe_data(testframe: Frame):
@@ -244,7 +213,7 @@ def test_testframe_withzero_data(
 def test_testframe_pointcloud(
     testframe_withzero: Frame, reference_pointcloud_withzero_dataframe: pd.DataFrame
 ):
-    pointcloud = testframe_withzero.get_open3d_points()
+    pointcloud = testframe_withzero.to_instance("open3d")
     array = np.asarray(pointcloud.points)
     pointcloud_df = pd.DataFrame(array)
     # pointcloud_df.to_pickle(
@@ -257,77 +226,3 @@ def test_testframe_pointcloud(
     check.equal(np.sum(sub_array), 108.0019814982079)
     check.equal(np.sum(array), 60573.190267673606)
     assert_frame_equal(pointcloud_df, reference_pointcloud_withzero_dataframe)
-
-
-def test_distances_to_origin(testframe_mini: Frame):
-    newframe = testframe_mini.calculate_distance_to_origin()
-    check.equal(type(newframe), Frame)
-    check.equal(
-        np.allclose(
-            testframe_mini.data["distance to origin"].values,
-            np.asarray(
-                [
-                    0.0,
-                    1.73205081,
-                    1.73205081,
-                    937.15579489,
-                    1058.09727232,
-                    906.10064672,
-                    991.83926827,
-                    475.99837556,
-                ]
-            ),
-        ),
-        True,
-    )
-
-
-def test_to_csv(testframe: Frame, tmp_path: Path):
-    testfile_name = tmp_path.joinpath("just_test.csv")
-    testframe.to_csv(testfile_name)
-    check.equal(testfile_name.exists(), True)
-    read_frame = pd.read_csv(testfile_name)
-    test_values = read_frame.iloc[0].values
-    np.testing.assert_allclose(
-        [
-            1.4383683e00,
-            -4.0477440e-01,
-            2.1055990e-01,
-            1.1000000e01,
-            +3.5151600e06,
-            2.0000000e00,
-            1.6000000e01,
-            3.5000000e01,
-            +1.5090000e03,
-            4.624000e03,
-        ],
-        test_values,
-        rtol=1e-10,
-        atol=0,
-    )
-
-
-def test_to_csv2(testframe: Frame, tmp_path: Path):
-    testframe.orig_file = tmp_path.joinpath("fake.bag").as_posix()
-    testfile_name = tmp_path.joinpath("fake_timestamp_1592833242755911566.csv")
-    testframe.to_csv()
-    check.equal(testfile_name.exists(), True)
-    read_frame = pd.read_csv(testfile_name)
-    test_values = read_frame.iloc[0].values
-    np.testing.assert_allclose(
-        [
-            1.4383683e00,
-            -4.0477440e-01,
-            2.1055990e-01,
-            1.1000000e01,
-            +3.5151600e06,
-            2.0000000e00,
-            1.6000000e01,
-            3.5000000e01,
-            +1.5090000e03,
-            4.624000e03,
-        ],
-        test_values,
-        rtol=1e-10,
-        atol=0,
-    )

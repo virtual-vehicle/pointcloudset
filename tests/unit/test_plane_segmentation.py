@@ -1,12 +1,11 @@
-import numpy as np
-import pytest
 import pytest_check as check
 
 from lidar import Frame
+from lidar.frame_core import FrameCore
 
 
 def test_plane_segmentation_of_open3d(testframe):
-    pcd = testframe.limit("intensity", 500, 510).get_open3d_points()
+    pcd = testframe.limit("intensity", 500, 510).to_instance("open3d")
     plane_model, inliers = pcd.segment_plane(
         distance_threshold=0.05,
         ransac_n=3,
@@ -16,7 +15,7 @@ def test_plane_segmentation_of_open3d(testframe):
 
 
 def test_plane_segmentation_of_open3d_2(testframe):
-    pcd = testframe.limit("intensity", 500, 510).get_open3d_points()
+    pcd = testframe.limit("intensity", 500, 510).to_instance("open3d")
     plane_model, inliers = pcd.segment_plane(
         distance_threshold=0.05,
         ransac_n=3,
@@ -26,7 +25,7 @@ def test_plane_segmentation_of_open3d_2(testframe):
 
 
 def test_plane_segmentation_of_open3d_3(testframe):
-    pcd = testframe.limit("intensity", 500, 510).get_open3d_points()
+    pcd = testframe.limit("intensity", 500, 510).to_instance("open3d")
     plane_model, inliers = pcd.segment_plane(
         distance_threshold=0.05,
         ransac_n=3,
