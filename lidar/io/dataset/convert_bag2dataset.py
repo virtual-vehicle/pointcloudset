@@ -4,7 +4,6 @@ import numpy as np
 import rosbag
 
 from lidar import Dataset
-
 from lidar.io.dataset.bag import get_number_of_messages, read_rosbag_part
 
 

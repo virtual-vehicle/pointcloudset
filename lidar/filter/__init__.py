@@ -1,6 +1,7 @@
 """Utiliy functions for filtering of frames."""
 
-from lidar.filter.stat import quantile_filter, remove_radius_outlier, value_filter
+from lidar.filter.stat import (quantile_filter, remove_radius_outlier,
+                               value_filter)
 
 ALL_FILTERS = {
     "QUANTILE": quantile_filter,

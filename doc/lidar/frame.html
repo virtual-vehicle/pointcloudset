@@ -70,12 +70,12 @@ import plotly
 import plotly.express as px
 import pyntcloud
 
-from .diff import ALL_DIFFS
-from .filter import ALL_FILTERS
-from .frame_core import FrameCore
-from .io import (FRAME_FROM_FILE, FRAME_FROM_INSTANCE, FRAME_TO_FILE,
-                 FRAME_TO_INSTANCE)
-from .plot.frame import plot_overlay
+from lidar.diff import ALL_DIFFS
+from lidar.filter import ALL_FILTERS
+from lidar.frame_core import FrameCore
+from lidar.io import (FRAME_FROM_FILE, FRAME_FROM_INSTANCE, FRAME_TO_FILE,
+                      FRAME_TO_INSTANCE)
+from lidar.plot.frame import plot_overlay
 
 
 def is_documented_by(original):
@@ -454,7 +454,7 @@ class Frame(FrameCore):
 <dl>
 <dt id="lidar.frame.Frame"><code class="flex name class">
 <span>class <span class="ident">Frame</span></span>
-<span>(</span><span>data: pd.DataFrame, orig_file: str = '', timestamp: datetime = datetime.datetime(2021, 3, 17, 14, 7, 59, 927144))</span>
+<span>(</span><span>data: pd.DataFrame, orig_file: str = '', timestamp: datetime = datetime.datetime(2021, 3, 17, 17, 19, 32, 121530))</span>
 </code></dt>
 <dd>
 <div class="desc"><p>One Frame of lidar measurements.</p>

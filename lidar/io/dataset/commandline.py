@@ -1,10 +1,12 @@
-import typer
-import lidar
 from pathlib import Path
 from typing import Optional
-import rosbag
-from lidar.io.dataset.bag import get_number_of_messages, read_rosbag_part
+
 import numpy as np
+import rosbag
+import typer
+
+import lidar
+from lidar.io.dataset.bag import get_number_of_messages, read_rosbag_part
 
 app = typer.Typer()
 
