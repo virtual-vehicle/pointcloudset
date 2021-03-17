@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 import dask.dataframe as dd
 import numpy as np
 
-
 datetime_format = "%Y-%m-%d %H:%M:%S.%f"
 delimiter = ";"
 

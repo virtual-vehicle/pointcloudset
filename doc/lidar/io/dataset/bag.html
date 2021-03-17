@@ -87,28 +87,61 @@ def dataset_from_rosbag(
     start_frame_number: int = 0,
     end_frame_number: int = None,
     keep_zeros: bool = False,
-) -&gt; dd.DataFrame:
+) -&gt; dict:
+    max_size = 100
     bag = rosbag.Bag(bagfile.as_posix())
+    max_messages = get_number_of_messages(bag, topic)
+
+    if end_frame_number is None:
+        end_frame_number = max_messages
+    if end_frame_number &gt; max_messages:
+        raise ValueError(&#34;end_frame_number to high&#34;)
+
+    framelist = np.arange(start_frame_number, end_frame_number)
+
+    chunks = np.array_split(framelist, int(np.ceil(len(framelist) / max_size)))
+    data = []
+    timestamps = []
+    for chunk in chunks:
+        res = read_rosbag_part(
+            bag,
+            start_frame_number=chunk[0],
+            end_frame_number=chunk[-1] + 1,
+            keep_zeros=keep_zeros,
+        )
+        data.extend(res[&#34;data&#34;])
+        timestamps.extend(res[&#34;timestamps&#34;])
+    meta = {&#34;orig_file&#34;: bagfile.as_posix(), &#34;topic&#34;: topic}
+    return {
+        &#34;data&#34;: data,
+        &#34;timestamps&#34;: timestamps,
+        &#34;meta&#34;: meta,
+    }
+
+
+def read_rosbag_part(
+    bag: rosbag.bag,
+    topic: str = &#34;/os1_cloud_node/points&#34;,
+    start_frame_number: int = 0,
+    end_frame_number: int = None,
+    keep_zeros: bool = False,
+) -&gt; dict:
     messages = bag.read_messages(topics=[topic])
     sliced_messages = itertools.islice(messages, start_frame_number, None)
     result_list = []
+    max_messages = get_number_of_messages(bag, topic)
     if end_frame_number is None:
-        end_frame_number = get_number_of_messages(bag, topic)
-    if end_frame_number &gt; get_number_of_messages(bag, topic):
+        end_frame_number = max_messages
+    if end_frame_number &gt; max_messages:
         raise ValueError(&#34;end_frame_number to high&#34;)
     timestamps = []
-    meta = {&#34;orig_file&#34;: bagfile.as_posix(), &#34;topic&#34;: topic}
     for frame_number in tqdm(range(start_frame_number, end_frame_number, 1)):
         message = next(sliced_messages)
         timestamp = datetime.datetime.utcfromtimestamp(message.timestamp.to_sec())
         timestamps.append(timestamp)
         df = delayed(dataframe_from_message(message, keep_zeros))
         result_list.append(df)
-    return {
-        &#34;data&#34;: result_list,
-        &#34;timestamps&#34;: timestamps,
-        &#34;meta&#34;: meta,
-    }</code></pre>
+    return {&#34;data&#34;: result_list, &#34;timestamps&#34;: timestamps}</code></pre>
 </details>
 </section>
 <section>
@@ -148,7 +181,7 @@ def dataset_from_rosbag(
 </details>
 </dd>
 <dt id="lidar.io.dataset.bag.dataset_from_rosbag"><code class="name flex">
-<span>def <span class="ident">dataset_from_rosbag</span></span>(<span>bagfile: pathlib.Path, topic: str = '/os1_cloud_node/points', start_frame_number: int = 0, end_frame_number: int = None, keep_zeros: bool = False) ‑> dask.dataframe.core.DataFrame</span>
+<span>def <span class="ident">dataset_from_rosbag</span></span>(<span>bagfile: pathlib.Path, topic: str = '/os1_cloud_node/points', start_frame_number: int = 0, end_frame_number: int = None, keep_zeros: bool = False) ‑> dict</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -162,25 +195,33 @@ def dataset_from_rosbag(
     start_frame_number: int = 0,
     end_frame_number: int = None,
     keep_zeros: bool = False,
-) -&gt; dd.DataFrame:
+) -&gt; dict:
+    max_size = 100
     bag = rosbag.Bag(bagfile.as_posix())
-    messages = bag.read_messages(topics=[topic])
-    sliced_messages = itertools.islice(messages, start_frame_number, None)
-    result_list = []
+    max_messages = get_number_of_messages(bag, topic)
+
     if end_frame_number is None:
-        end_frame_number = get_number_of_messages(bag, topic)
-    if end_frame_number &gt; get_number_of_messages(bag, topic):
+        end_frame_number = max_messages
+    if end_frame_number &gt; max_messages:
         raise ValueError(&#34;end_frame_number to high&#34;)
+
+    framelist = np.arange(start_frame_number, end_frame_number)
+
+    chunks = np.array_split(framelist, int(np.ceil(len(framelist) / max_size)))
+    data = []
     timestamps = []
+    for chunk in chunks:
+        res = read_rosbag_part(
+            bag,
+            start_frame_number=chunk[0],
+            end_frame_number=chunk[-1] + 1,
+            keep_zeros=keep_zeros,
+        )
+        data.extend(res[&#34;data&#34;])
+        timestamps.extend(res[&#34;timestamps&#34;])
     meta = {&#34;orig_file&#34;: bagfile.as_posix(), &#34;topic&#34;: topic}
-    for frame_number in tqdm(range(start_frame_number, end_frame_number, 1)):
-        message = next(sliced_messages)
-        timestamp = datetime.datetime.utcfromtimestamp(message.timestamp.to_sec())
-        timestamps.append(timestamp)
-        df = delayed(dataframe_from_message(message, keep_zeros))
-        result_list.append(df)
     return {
-        &#34;data&#34;: result_list,
+        &#34;data&#34;: data,
         &#34;timestamps&#34;: timestamps,
         &#34;meta&#34;: meta,
     }</code></pre>
@@ -199,6 +240,40 @@ def dataset_from_rosbag(
     return (bag.get_type_and_topic_info().topics)[
         &#34;/os1_cloud_node/points&#34;
     ].message_count</code></pre>
+</details>
+</dd>
+<dt id="lidar.io.dataset.bag.read_rosbag_part"><code class="name flex">
+<span>def <span class="ident">read_rosbag_part</span></span>(<span>bag: <module 'rosbag.bag' from '/opt/conda/lib/python3.7/site-packages/rosbag/bag.py'>, topic: str = '/os1_cloud_node/points', start_frame_number: int = 0, end_frame_number: int = None, keep_zeros: bool = False) ‑> dict</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def read_rosbag_part(
+    bag: rosbag.bag,
+    topic: str = &#34;/os1_cloud_node/points&#34;,
+    start_frame_number: int = 0,
+    end_frame_number: int = None,
+    keep_zeros: bool = False,
+) -&gt; dict:
+    messages = bag.read_messages(topics=[topic])
+    sliced_messages = itertools.islice(messages, start_frame_number, None)
+    result_list = []
+    max_messages = get_number_of_messages(bag, topic)
+    if end_frame_number is None:
+        end_frame_number = max_messages
+    if end_frame_number &gt; max_messages:
+        raise ValueError(&#34;end_frame_number to high&#34;)
+    timestamps = []
+    for frame_number in tqdm(range(start_frame_number, end_frame_number, 1)):
+        message = next(sliced_messages)
+        timestamp = datetime.datetime.utcfromtimestamp(message.timestamp.to_sec())
+        timestamps.append(timestamp)
+        df = delayed(dataframe_from_message(message, keep_zeros))
+        result_list.append(df)
+    return {&#34;data&#34;: result_list, &#34;timestamps&#34;: timestamps}</code></pre>
 </details>
 </dd>
 </dl>
@@ -222,6 +297,7 @@ def dataset_from_rosbag(
 <li><code><a title="lidar.io.dataset.bag.dataframe_from_message" href="#lidar.io.dataset.bag.dataframe_from_message">dataframe_from_message</a></code></li>
 <li><code><a title="lidar.io.dataset.bag.dataset_from_rosbag" href="#lidar.io.dataset.bag.dataset_from_rosbag">dataset_from_rosbag</a></code></li>
 <li><code><a title="lidar.io.dataset.bag.get_number_of_messages" href="#lidar.io.dataset.bag.get_number_of_messages">get_number_of_messages</a></code></li>
+<li><code><a title="lidar.io.dataset.bag.read_rosbag_part" href="#lidar.io.dataset.bag.read_rosbag_part">read_rosbag_part</a></code></li>
 </ul>
 </li>
 </ul>

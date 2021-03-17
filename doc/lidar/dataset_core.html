@@ -31,9 +31,9 @@
 import datetime
 from typing import List, Union
 
+import dask
 import dask.dataframe as dd
 from dask import delayed
-import dask
 
 from .frame import Frame
 
@@ -41,8 +41,8 @@ from .frame import Frame
 class DatasetCore:
     def __init__(
         self,
-        data: List[dask.delayed.DelayedLeaf],
-        timestamps: List[datetime.datetime],
+        data: List[dask.delayed.DelayedLeaf] = [],
+        timestamps: List[datetime.datetime] = [],
         meta: dict = {&#34;orig_file&#34;: &#34;&#34;, &#34;topic&#34;: &#34;&#34;},
     ) -&gt; None:
         self.data = data
@@ -66,7 +66,9 @@ class DatasetCore:
         return f&#34;Lidar Dataset with {len(self)} frame(s)&#34;
 
     def __repr__(self) -&gt; str:
-        return f&#34;{self.__class__.__name__}&#34;
+        return (
+            f&#34;&#34;&#34;{self.__class__.__name__}({self.data},{self.timestamps},{self.meta})&#34;&#34;&#34;
+        )
 
     def __iter__(self):
         self.n = 0
@@ -116,12 +118,15 @@ class DatasetCore:
         )
 
     def _check(self):
-        assert len(self.timestamps) == len(self.data)
-        assert all(
-            self.timestamps[i] &lt;= self.timestamps[i + 1]
-            for i in range(len(self.timestamps) - 1)
-        )
-        assert &#34;orig_file&#34; in self.meta</code></pre>
+        assert &#34;orig_file&#34; in self.meta, &#34;meta data does not contain orig_file&#34;
+        if len(self) &gt; 0:
+            assert len(self.timestamps) == len(
+                self.data
+            ), &#34;Lenght of timestamps do not match the data&#34;
+            assert all(
+                self.timestamps[i] &lt; self.timestamps[i + 1]
+                for i in range(len(self.timestamps) - 1)
+            ), &#34;Timestamps are not monotonic increasing&#34;</code></pre>
 </details>
 </section>
 <section>
@@ -135,7 +140,7 @@ class DatasetCore:
 <dl>
 <dt id="lidar.dataset_core.DatasetCore"><code class="flex name class">
 <span>class <span class="ident">DatasetCore</span></span>
-<span>(</span><span>data: List[dask.delayed.DelayedLeaf], timestamps: List[datetime.datetime], meta: dict = {'orig_file': '', 'topic': ''})</span>
+<span>(</span><span>data: List[dask.delayed.DelayedLeaf] = [], timestamps: List[datetime.datetime] = [], meta: dict = {'orig_file': '', 'topic': ''})</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -146,8 +151,8 @@ class DatasetCore:
 <pre><code class="python">class DatasetCore:
     def __init__(
         self,
-        data: List[dask.delayed.DelayedLeaf],
-        timestamps: List[datetime.datetime],
+        data: List[dask.delayed.DelayedLeaf] = [],
+        timestamps: List[datetime.datetime] = [],
         meta: dict = {&#34;orig_file&#34;: &#34;&#34;, &#34;topic&#34;: &#34;&#34;},
     ) -&gt; None:
         self.data = data
@@ -171,7 +176,9 @@ class DatasetCore:
         return f&#34;Lidar Dataset with {len(self)} frame(s)&#34;
 
     def __repr__(self) -&gt; str:
-        return f&#34;{self.__class__.__name__}&#34;
+        return (
+            f&#34;&#34;&#34;{self.__class__.__name__}({self.data},{self.timestamps},{self.meta})&#34;&#34;&#34;
+        )
 
     def __iter__(self):
         self.n = 0
@@ -221,12 +228,15 @@ class DatasetCore:
         )
 
     def _check(self):
-        assert len(self.timestamps) == len(self.data)
-        assert all(
-            self.timestamps[i] &lt;= self.timestamps[i + 1]
-            for i in range(len(self.timestamps) - 1)
-        )
-        assert &#34;orig_file&#34; in self.meta</code></pre>
+        assert &#34;orig_file&#34; in self.meta, &#34;meta data does not contain orig_file&#34;
+        if len(self) &gt; 0:
+            assert len(self.timestamps) == len(
+                self.data
+            ), &#34;Lenght of timestamps do not match the data&#34;
+            assert all(
+                self.timestamps[i] &lt; self.timestamps[i + 1]
+                for i in range(len(self.timestamps) - 1)
+            ), &#34;Timestamps are not monotonic increasing&#34;</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">

@@ -46,17 +46,16 @@ For more details on how to use it please refer to the usage.ipynb Notebook for a
 generators.
 &#34;&#34;&#34;
 from __future__ import annotations
+
 from pathlib import Path
+from typing import Any, Callable, Optional, Union, get_type_hints
+
+import dask
+from dask import delayed
 
 from .dataset_core import DatasetCore
-from .io import DATASET_FROM_FILE, DATASET_TO_FILE
-
-from typing import Callable, Optional, Union, get_type_hints, Any
-from dask import delayed
-import dask
-
-
 from .frame import Frame
+from .io import DATASET_FROM_FILE, DATASET_TO_FILE
 
 
 def _is_pipline_returing_frame(pipeline) -&gt; bool:
@@ -100,11 +99,8 @@ class Dataset(DatasetCore):
             res = DATASET_FROM_FILE[ext](file_path, **kwargs)
             return cls(data=res[&#34;data&#34;], timestamps=res[&#34;timestamps&#34;], meta=res[&#34;meta&#34;])
 
-    def to_file(
-        self,
-        file_path: Path = Path(),
-    ) -&gt; None:
-        DATASET_TO_FILE[&#34;DIR&#34;](self, file_path=file_path)
+    def to_file(self, file_path: Path = Path(), **kwargs) -&gt; None:
+        DATASET_TO_FILE[&#34;DIR&#34;](self, file_path=file_path, **kwargs)
 
     def apply(
         self,
@@ -159,7 +155,29 @@ class Dataset(DatasetCore):
         if returns_frame:
             return Dataset(data=res, timestamps=self.timestamps, meta=self.meta)
         else:
-            return dask.compute(*res)</code></pre>
+            return dask.compute(*res)
+
+    def extend(self, dataset: Dataset) -&gt; Dataset:
+        &#34;&#34;&#34;Extends the dataset by another one.
+
+        Args:
+            dataset (Dataset): [description]
+
+        Returns:
+            Dataset: [description]
+        &#34;&#34;&#34;
+        key = &#34;extended&#34;
+        meta = self.meta
+        if key in meta:
+            new = meta[key]
+            new.extend(dataset.meta)
+            meta[key] = new
+        else:
+            meta[key] = [dataset.meta]
+        self.data.extend(dataset.data)
+        self.timestamps.extend(dataset.timestamps)
+        self._check()
+        return self</code></pre>
 </details>
 </section>
 <section>
@@ -173,7 +191,7 @@ class Dataset(DatasetCore):
 <dl>
 <dt id="lidar.dataset.Dataset"><code class="flex name class">
 <span>class <span class="ident">Dataset</span></span>
-<span>(</span><span>data: List[dask.delayed.DelayedLeaf], timestamps: List[datetime.datetime], meta: dict = {'orig_file': '', 'topic': ''})</span>
+<span>(</span><span>data: List[dask.delayed.DelayedLeaf] = [], timestamps: List[datetime.datetime] = [], meta: dict = {'orig_file': '', 'topic': ''})</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -210,11 +228,8 @@ class Dataset(DatasetCore):
             res = DATASET_FROM_FILE[ext](file_path, **kwargs)
             return cls(data=res[&#34;data&#34;], timestamps=res[&#34;timestamps&#34;], meta=res[&#34;meta&#34;])
 
-    def to_file(
-        self,
-        file_path: Path = Path(),
-    ) -&gt; None:
-        DATASET_TO_FILE[&#34;DIR&#34;](self, file_path=file_path)
+    def to_file(self, file_path: Path = Path(), **kwargs) -&gt; None:
+        DATASET_TO_FILE[&#34;DIR&#34;](self, file_path=file_path, **kwargs)
 
     def apply(
         self,
@@ -269,7 +284,29 @@ class Dataset(DatasetCore):
         if returns_frame:
             return Dataset(data=res, timestamps=self.timestamps, meta=self.meta)
         else:
-            return dask.compute(*res)</code></pre>
+            return dask.compute(*res)
+
+    def extend(self, dataset: Dataset) -&gt; Dataset:
+        &#34;&#34;&#34;Extends the dataset by another one.
+
+        Args:
+            dataset (Dataset): [description]
+
+        Returns:
+            Dataset: [description]
+        &#34;&#34;&#34;
+        key = &#34;extended&#34;
+        meta = self.meta
+        if key in meta:
+            new = meta[key]
+            new.extend(dataset.meta)
+            meta[key] = new
+        else:
+            meta[key] = [dataset.meta]
+        self.data.extend(dataset.data)
+        self.timestamps.extend(dataset.timestamps)
+        self._check()
+        return self</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -390,8 +427,50 @@ return frame.data.x.max()</p>
         return dask.compute(*res)</code></pre>
 </details>
 </dd>
+<dt id="lidar.dataset.Dataset.extend"><code class="name flex">
+<span>def <span class="ident">extend</span></span>(<span>self, dataset: <a title="lidar.dataset.Dataset" href="#lidar.dataset.Dataset">Dataset</a>) ‑> <a title="lidar.dataset.Dataset" href="#lidar.dataset.Dataset">Dataset</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Extends the dataset by another one.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>dataset</code></strong> :&ensp;<code><a title="lidar.dataset.Dataset" href="#lidar.dataset.Dataset">Dataset</a></code></dt>
+<dd>[description]</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code><a title="lidar.dataset.Dataset" href="#lidar.dataset.Dataset">Dataset</a></code></dt>
+<dd>[description]</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def extend(self, dataset: Dataset) -&gt; Dataset:
+    &#34;&#34;&#34;Extends the dataset by another one.
+
+    Args:
+        dataset (Dataset): [description]
+
+    Returns:
+        Dataset: [description]
+    &#34;&#34;&#34;
+    key = &#34;extended&#34;
+    meta = self.meta
+    if key in meta:
+        new = meta[key]
+        new.extend(dataset.meta)
+        meta[key] = new
+    else:
+        meta[key] = [dataset.meta]
+    self.data.extend(dataset.data)
+    self.timestamps.extend(dataset.timestamps)
+    self._check()
+    return self</code></pre>
+</details>
+</dd>
 <dt id="lidar.dataset.Dataset.to_file"><code class="name flex">
-<span>def <span class="ident">to_file</span></span>(<span>self, file_path: Path = PosixPath('.')) ‑> NoneType</span>
+<span>def <span class="ident">to_file</span></span>(<span>self, file_path: Path = PosixPath('.'), **kwargs) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -399,11 +478,8 @@ return frame.data.x.max()</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def to_file(
-    self,
-    file_path: Path = Path(),
-) -&gt; None:
-    DATASET_TO_FILE[&#34;DIR&#34;](self, file_path=file_path)</code></pre>
+<pre><code class="python">def to_file(self, file_path: Path = Path(), **kwargs) -&gt; None:
+    DATASET_TO_FILE[&#34;DIR&#34;](self, file_path=file_path, **kwargs)</code></pre>
 </details>
 </dd>
 </dl>
@@ -439,6 +515,7 @@ return frame.data.x.max()</p>
 <h4><code><a title="lidar.dataset.Dataset" href="#lidar.dataset.Dataset">Dataset</a></code></h4>
 <ul class="">
 <li><code><a title="lidar.dataset.Dataset.apply" href="#lidar.dataset.Dataset.apply">apply</a></code></li>
+<li><code><a title="lidar.dataset.Dataset.extend" href="#lidar.dataset.Dataset.extend">extend</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.from_file" href="#lidar.dataset.Dataset.from_file">from_file</a></code></li>
 <li><code><a title="lidar.dataset.Dataset.to_file" href="#lidar.dataset.Dataset.to_file">to_file</a></code></li>
 </ul>
