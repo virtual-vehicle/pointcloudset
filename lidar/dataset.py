@@ -62,11 +62,8 @@ class Dataset(DatasetCore):
             res = DATASET_FROM_FILE[ext](file_path, **kwargs)
             return cls(data=res["data"], timestamps=res["timestamps"], meta=res["meta"])
 
-    def to_file(
-        self,
-        file_path: Path = Path(),
-    ) -> None:
-        DATASET_TO_FILE["DIR"](self, file_path=file_path)
+    def to_file(self, file_path: Path = Path(), **kwargs) -> None:
+        DATASET_TO_FILE["DIR"](self, file_path=file_path, **kwargs)
 
     def apply(
         self,
