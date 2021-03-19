@@ -34,6 +34,8 @@ def _is_pipline_returing_frame(pipeline) -> bool:
 
 
 class Dataset(DatasetCore):
+    """Lidar Dataset which contains individual frames, timestamps and meta data."""
+
     def __getitem__(self, frame_number: Union[slice, int]) -> Union[DatasetCore, Frame]:
         if isinstance(frame_number, slice):
             data = self.data[frame_number]

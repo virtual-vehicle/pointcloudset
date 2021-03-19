@@ -32,8 +32,12 @@ import pyntcloud
 from lidar.diff import ALL_DIFFS
 from lidar.filter import ALL_FILTERS
 from lidar.frame_core import FrameCore
-from lidar.io import (FRAME_FROM_FILE, FRAME_FROM_INSTANCE, FRAME_TO_FILE,
-                      FRAME_TO_INSTANCE)
+from lidar.io import (
+    FRAME_FROM_FILE,
+    FRAME_FROM_INSTANCE,
+    FRAME_TO_FILE,
+    FRAME_TO_INSTANCE,
+)
 from lidar.plot.frame import plot_overlay
 
 
@@ -48,6 +52,8 @@ def is_documented_by(original):
 
 
 class Frame(FrameCore):
+    """One lidar frame."""
+
     @classmethod
     def from_file(cls, file_path: Path, **kwargs):
         """Extract data from file and construct a Frame with it. Uses Pynthcloud as
