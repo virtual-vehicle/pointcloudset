@@ -13,8 +13,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Callable, Union, get_type_hints
 
-import dask
 from dask import delayed
+from lidar.pipeline.delayed_result import DelayedResult
 
 from lidar.dataset_core import DatasetCore
 from lidar.frame import Frame
@@ -28,14 +28,9 @@ def _is_pipline_returing_frame(pipeline) -> bool:
         res = get_type_hints(pipeline)["return"] == Frame
     else:
         print(
-            "No return type was defined of the pipeline: will not return a new datset"
+            f"No return type was defined in {pipeline.__name__}: will not return a new dataset"
         )
     return res
-
-
-class DelayedResult(list):
-    def compute(self) -> list:
-        return list(dask.compute(*self))
 
 
 class Dataset(DatasetCore):
