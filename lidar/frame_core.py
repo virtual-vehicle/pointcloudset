@@ -85,7 +85,6 @@ class FrameCore:
         self.__data = df
         self.timestamp = rospy.rostime.Time()
         self.points = pyntcloud.PyntCloud(self.__data[["x", "y", "z"]], mesh=None)
-        self.measurments = self.__data.drop(["x", "y", "z"], axis=1)
         self.orig_file = ""
 
     def _check_index(self):
