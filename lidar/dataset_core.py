@@ -4,6 +4,7 @@ import datetime
 from typing import List
 
 import dask
+import warnings
 
 
 class DatasetCore:
@@ -91,7 +92,8 @@ class DatasetCore:
             assert len(self.timestamps) == len(
                 self.data
             ), "Lenght of timestamps do not match the data"
-            assert all(
+            if not all(
                 self.timestamps[i] < self.timestamps[i + 1]
                 for i in range(len(self.timestamps) - 1)
-            ), "Timestamps are not monotonic increasing"
+            ):
+                warnings.warn("Timestamps are not monotonic increasing")
