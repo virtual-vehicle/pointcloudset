@@ -33,6 +33,11 @@ def _is_pipline_returing_frame(pipeline) -> bool:
     return res
 
 
+class DelayedResult(list):
+    def compute(self) -> list:
+        return list(dask.compute(*self))
+
+
 class Dataset(DatasetCore):
     """Lidar Dataset which contains individual frames, timestamps and meta data."""
 
@@ -70,7 +75,7 @@ class Dataset(DatasetCore):
     def apply(
         self,
         func: Union[Callable[[Frame], Frame], Callable[[Frame], Any]],
-    ) -> Union[Dataset, tuple]:
+    ) -> Union[Dataset, DelayedResult]:
         """Applies a function onto the dataset.
 
         Example:
@@ -93,7 +98,7 @@ class Dataset(DatasetCore):
             func (Union[Callable[[Frame], Frame], Callable[[Frame], Any]]): [description]
 
         Returns:
-            Union[Dataset, Any]: A dataset if the function retunrs a Frame object or tuple
+            Union[Dataset, DelayedResult]: A dataset if the function retunrs a Frame object or tuple
             with the results
         """
 
@@ -120,7 +125,7 @@ class Dataset(DatasetCore):
         if returns_frame:
             return Dataset(data=res, timestamps=self.timestamps, meta=self.meta)
         else:
-            return dask.compute(*res)
+            return DelayedResult(res)
 
     def extend(self, dataset: Dataset) -> Dataset:
         """Extends the dataset by another one.
