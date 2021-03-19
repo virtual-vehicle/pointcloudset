@@ -1,7 +1,14 @@
+from __future__ import annotations
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import lidar
 
 
-def calculate_distance_to_point(frame, target: np.ndarray, **kwargs):
+def calculate_distance_to_point(
+    frame: lidar.Frame, target: np.ndarray, **kwargs
+) -> lidar.Frame:
     """For each point in the pointcloud calculate the euclidian distance
     to the point. Adds a new column to the data with the values.
     """
