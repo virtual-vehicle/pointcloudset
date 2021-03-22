@@ -73,8 +73,12 @@ import pyntcloud
 from lidar.diff import ALL_DIFFS
 from lidar.filter import ALL_FILTERS
 from lidar.frame_core import FrameCore
-from lidar.io import (FRAME_FROM_FILE, FRAME_FROM_INSTANCE, FRAME_TO_FILE,
-                      FRAME_TO_INSTANCE)
+from lidar.io import (
+    FRAME_FROM_FILE,
+    FRAME_FROM_INSTANCE,
+    FRAME_TO_FILE,
+    FRAME_TO_INSTANCE,
+)
 from lidar.plot.frame import plot_overlay
 
 
@@ -89,6 +93,8 @@ def is_documented_by(original):
 
 
 class Frame(FrameCore):
+    &#34;&#34;&#34;One lidar frame.&#34;&#34;&#34;
+
     @classmethod
     def from_file(cls, file_path: Path, **kwargs):
         &#34;&#34;&#34;Extract data from file and construct a Frame with it. Uses Pynthcloud as
@@ -454,10 +460,11 @@ class Frame(FrameCore):
 <dl>
 <dt id="lidar.frame.Frame"><code class="flex name class">
 <span>class <span class="ident">Frame</span></span>
-<span>(</span><span>data: pd.DataFrame, orig_file: str = '', timestamp: datetime = datetime.datetime(2021, 3, 17, 17, 19, 32, 121530))</span>
+<span>(</span><span>data: pd.DataFrame, orig_file: str = '', timestamp: datetime = datetime.datetime(2021, 3, 22, 7, 31, 9, 515650))</span>
 </code></dt>
 <dd>
-<div class="desc"><p>One Frame of lidar measurements.</p>
+<div class="desc"><p>One lidar frame.</p>
+<p>One Frame of lidar measurements.</p>
 <p>Example:
 testbag = Path().cwd().parent.joinpath("tests/testdata/test.bag")
 testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
@@ -467,6 +474,8 @@ testframe = testset[0]</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Frame(FrameCore):
+    &#34;&#34;&#34;One lidar frame.&#34;&#34;&#34;
+
     @classmethod
     def from_file(cls, file_path: Path, **kwargs):
         &#34;&#34;&#34;Extract data from file and construct a Frame with it. Uses Pynthcloud as

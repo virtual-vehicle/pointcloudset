@@ -116,7 +116,6 @@ class FrameCore:
         self.__data = df
         self.timestamp = rospy.rostime.Time()
         self.points = pyntcloud.PyntCloud(self.__data[[&#34;x&#34;, &#34;y&#34;, &#34;z&#34;]], mesh=None)
-        self.measurments = self.__data.drop([&#34;x&#34;, &#34;y&#34;, &#34;z&#34;], axis=1)
         self.orig_file = &#34;&#34;
 
     def _check_index(self):
@@ -212,7 +211,7 @@ class FrameCore:
 <dl>
 <dt id="lidar.frame_core.FrameCore"><code class="flex name class">
 <span>class <span class="ident">FrameCore</span></span>
-<span>(</span><span>data: pd.DataFrame, orig_file: str = '', timestamp: datetime = datetime.datetime(2021, 3, 17, 17, 19, 32, 121530))</span>
+<span>(</span><span>data: pd.DataFrame, orig_file: str = '', timestamp: datetime = datetime.datetime(2021, 3, 22, 7, 31, 9, 515650))</span>
 </code></dt>
 <dd>
 <div class="desc"><p>One Frame of lidar measurements.</p>
@@ -294,7 +293,6 @@ testframe = testset[0]</p></div>
         self.__data = df
         self.timestamp = rospy.rostime.Time()
         self.points = pyntcloud.PyntCloud(self.__data[[&#34;x&#34;, &#34;y&#34;, &#34;z&#34;]], mesh=None)
-        self.measurments = self.__data.drop([&#34;x&#34;, &#34;y&#34;, &#34;z&#34;], axis=1)
         self.orig_file = &#34;&#34;
 
     def _check_index(self):

@@ -32,6 +32,7 @@ import datetime
 from typing import List
 
 import dask
+import warnings
 
 
 class DatasetCore:
@@ -119,10 +120,11 @@ class DatasetCore:
             assert len(self.timestamps) == len(
                 self.data
             ), &#34;Lenght of timestamps do not match the data&#34;
-            assert all(
+            if not all(
                 self.timestamps[i] &lt; self.timestamps[i + 1]
                 for i in range(len(self.timestamps) - 1)
-            ), &#34;Timestamps are not monotonic increasing&#34;</code></pre>
+            ):
+                warnings.warn(&#34;Timestamps are not monotonic increasing&#34;)</code></pre>
 </details>
 </section>
 <section>
@@ -229,10 +231,11 @@ class DatasetCore:
             assert len(self.timestamps) == len(
                 self.data
             ), &#34;Lenght of timestamps do not match the data&#34;
-            assert all(
+            if not all(
                 self.timestamps[i] &lt; self.timestamps[i + 1]
                 for i in range(len(self.timestamps) - 1)
-            ), &#34;Timestamps are not monotonic increasing&#34;</code></pre>
+            ):
+                warnings.warn(&#34;Timestamps are not monotonic increasing&#34;)</code></pre>
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
