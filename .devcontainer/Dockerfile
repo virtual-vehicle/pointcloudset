@@ -2,5 +2,5 @@
 # The docker image lives on our internal docker registry in gitlab
 FROM registry-gitlab.v2c2.at/thomasgoelles/vifscience:py3.7_3
 
-RUN pip install laspy nbval
+RUN pip install laspy nbval typer
 RUN /opt/conda/bin/conda install dask fastparquet
