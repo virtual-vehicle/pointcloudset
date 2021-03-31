@@ -98,20 +98,20 @@ class Dataset(DatasetCore):
 
         if returns_frame:
 
-            def pipeline_delayed(element_in):
-                frame = Frame(element_in)
+            def pipeline_delayed(element_in, timestamp):
+                frame = Frame(data=element_in, timestamp=timestamp)
                 frame = func(frame)
                 return frame.data
 
         else:
 
-            def pipeline_delayed(element_in):
-                frame = Frame(element_in)
+            def pipeline_delayed(element_in, timestamp):
+                frame = Frame(data=element_in, timestamp=timestamp)
                 return func(frame)
 
         res = []
         for i in range(0, len(self)):
-            item = delayed(pipeline_delayed)(self.data[i])
+            item = delayed(pipeline_delayed)(self.data[i], self.timestamps[i])
             res.append(item)
 
         if returns_frame:

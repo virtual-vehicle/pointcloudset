@@ -2,6 +2,7 @@ import pytest_check as check
 
 from lidar import Dataset, Frame
 from lidar.pipeline.delayed_result import DelayedResult
+import datetime
 
 
 def test_apply1(testset: Dataset):
@@ -50,3 +51,13 @@ def test_apply3(testset: Dataset):
     testset_result = testset2.apply(func=pipeline1)
     check.equal(type(testset_result), Dataset)
     check.equal(len(testset_result), 2)
+
+
+def test_apply_time(testset: Dataset):
+    def pipeline1(frame: Frame):
+        return frame.timestamp
+
+    testset2 = testset[0:2]
+    testset_result = testset2.apply(func=pipeline1).compute()
+    check.equal(testset_result[0], datetime.datetime(2020, 6, 22, 13, 40, 42, 657267))
+    check.equal(testset_result[0] < testset_result[1], True)
