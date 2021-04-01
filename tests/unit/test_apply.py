@@ -61,3 +61,12 @@ def test_apply_time(testset: Dataset):
     testset_result = testset2.apply(func=pipeline1).compute()
     check.equal(testset_result[0], datetime.datetime(2020, 6, 22, 13, 40, 42, 657267))
     check.equal(testset_result[0] < testset_result[1], True)
+
+
+def test_apply_with_args(testset: Dataset):
+    def pipeline1(frame: Frame, test):
+        return test
+
+    testset2 = testset[0:2]
+    testset_result = testset2.apply(func=pipeline1, test=1).compute()
+    check.equal(testset_result, [1, 1])

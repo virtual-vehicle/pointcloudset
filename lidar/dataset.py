@@ -65,10 +65,10 @@ class Dataset(DatasetCore):
         DATASET_TO_FILE["DIR"](self, file_path=file_path, **kwargs)
 
     def apply(
-        self,
-        func: Union[Callable[[Frame], Frame], Callable[[Frame], Any]],
+        self, func: Union[Callable[[Frame], Frame], Callable[[Frame], Any]], **kwargs
     ) -> Union[Dataset, DelayedResult]:
-        """Applies a function onto the dataset.
+        """Applies a function onto the dataset. It is also possible to pass keyword
+        arguments
 
         Example:
 
@@ -86,12 +86,20 @@ class Dataset(DatasetCore):
 
         dataset.apply(func)
 
+
+        Example3:
+
+        def func(frame:lidar.Frame, test: float) -> float:
+            return frame.data.x.max() + test
+
+        dataset.apply(func, test=10)
+
         Args:
             func (Union[Callable[[Frame], Frame], Callable[[Frame], Any]]): [description]
 
         Returns:
-            Union[Dataset, DelayedResult]: A dataset if the function retunrs a Frame object or tuple
-            with the results
+            Union[Dataset, DelayedResult]: A dataset if the function returns a Frame, or
+            a DelayedResult object which is a tuple of dask delayed objects.
         """
 
         returns_frame = _is_pipline_returing_frame(func)
@@ -100,14 +108,14 @@ class Dataset(DatasetCore):
 
             def pipeline_delayed(element_in, timestamp):
                 frame = Frame(data=element_in, timestamp=timestamp)
-                frame = func(frame)
+                frame = func(frame, **kwargs)
                 return frame.data
 
         else:
 
             def pipeline_delayed(element_in, timestamp):
                 frame = Frame(data=element_in, timestamp=timestamp)
-                return func(frame)
+                return func(frame, **kwargs)
 
         res = []
         for i in range(0, len(self)):
