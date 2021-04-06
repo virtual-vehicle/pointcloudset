@@ -100,3 +100,11 @@ def test_end_time(testset: Dataset):
 
 def test_time(testset: Dataset):
     check.greater(testset.end_time, testset.start_time)
+
+
+def test_extend(testbag1):
+    ds1 = Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=True)
+    len_old = len(ds1)
+    ds2 = Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=True)
+    ds1.extend(ds2)
+    check.equal(len(ds1), len_old * 2)
