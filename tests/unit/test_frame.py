@@ -2,11 +2,10 @@ from datetime import datetime
 from pathlib import Path
 
 import numpy as np
-import open3d as o3d
 import pandas as pd
 import pytest
 import pytest_check as check
-import rospy
+
 from pandas._testing import assert_frame_equal
 from pyntcloud import PyntCloud
 
@@ -14,7 +13,7 @@ from lidar import Frame
 
 
 def test_init(testframe_mini_df: pd.DataFrame):
-    frame = Frame(testframe_mini_df, rospy.rostime.Time(50))
+    frame = Frame(testframe_mini_df, datetime(2020, 1, 1))
     check.equal(type(frame), Frame)
 
 

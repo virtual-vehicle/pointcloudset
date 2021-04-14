@@ -12,7 +12,6 @@ from typing import Union
 import numpy as np
 import pandas as pd
 import pyntcloud
-import rospy
 
 
 class FrameCore:
@@ -33,7 +32,7 @@ class FrameCore:
         self.data = data
         """All the data, x,y.z and intensity, range and more"""
         self.timestamp = timestamp
-        """ROS timestamp"""
+        """timestamp"""
         self.points = pyntcloud.PyntCloud(self.data, mesh=None)
         """Pyntcloud object with x,y,z coordinates"""
         self.orig_file = orig_file
@@ -83,7 +82,7 @@ class FrameCore:
     def _update_data(self, df: pd.DataFrame):
         """Utility function. Implicitly called when self.data is assigned."""
         self.__data = df
-        self.timestamp = rospy.rostime.Time()
+        self.timestamp = datetime.now()
         self.points = pyntcloud.PyntCloud(self.__data[["x", "y", "z"]], mesh=None)
         self.orig_file = ""
 
