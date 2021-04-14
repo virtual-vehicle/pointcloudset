@@ -10,7 +10,7 @@ from lidar.io.dataset.bag import get_number_of_messages, read_rosbag_part
 def convert_bag2dir(
     bagfile: Path,
     folder_to_write: Path,
-    topic: str = "/os1_cloud_node/points",
+    topic: str,
     start_frame_number: int = 0,
     end_frame_number: int = None,
     keep_zeros: bool = False,

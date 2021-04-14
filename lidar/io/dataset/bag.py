@@ -72,6 +72,7 @@ def dataset_from_rosbag(
     for chunk in chunks:
         res = read_rosbag_part(
             bag,
+            topic=topic,
             start_frame_number=chunk[0],
             end_frame_number=chunk[-1] + 1,
             keep_zeros=keep_zeros,
@@ -88,7 +89,7 @@ def dataset_from_rosbag(
 
 def read_rosbag_part(
     bag: rosbag.bag,
-    topic: str = "/os1_cloud_node/points",
+    topic: str,
     start_frame_number: int = 0,
     end_frame_number: int = None,
     keep_zeros: bool = False,

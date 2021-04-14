@@ -49,7 +49,7 @@ class Dataset(DatasetCore):
     @classmethod
     def from_file(cls, file_path: Path, **kwargs):
         if not isinstance(file_path, Path):
-            raise TypeError("Expectinga Path object for file_path")
+            raise TypeError("Expecting a Path object for file_path")
         ext = file_path.suffix[1:].upper()
         if ext == "":
             ext = "DIR"

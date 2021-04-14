@@ -14,7 +14,7 @@ app = typer.Typer()
 def convert_bag2dir(
     bagfile: Path,
     folder_to_write: Path,
-    topic: str = "/os1_cloud_node/points",
+    topic: str,
     start_frame_number: int = 0,
     end_frame_number: int = None,
     keep_zeros: bool = False,
@@ -65,11 +65,11 @@ def get(
     Args:
         bagfile: ROS bagfile
         folder_to_write: [description]
-        topic: [description]. Defaults to "/os1_cloud_node/points".
-        start_frame_number: [description]. Defaults to 0.
-        end_frame_number: [description]. Defaults to None.
-        keep_zeros: [description]. Defaults to False.
-        max_size: [description]. Defaults to 100.
+        topic: ros lidar pointcloud topic. for example "/os1_cloud_node/points".
+        start_frame_number:  Defaults to 0.
+        end_frame_number:  Defaults to None.
+        keep_zeros: Keep elementf with zero values. Defaults to False.
+        max_size: Max size of chunk, an internal variable. Defaults to 100.
     """
 
     if bagfile == ".":
