@@ -1,6 +1,11 @@
 lidar package
 =============
 
+.. automodule:: lidar
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Subpackages
 -----------
 
@@ -16,50 +21,11 @@ Subpackages
 Submodules
 ----------
 
-lidar.config module
--------------------
+.. toctree::
+   :maxdepth: 4
 
-.. automodule:: lidar.config
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lidar.dataset module
---------------------
-
-.. automodule:: lidar.dataset
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lidar.dataset\_core module
---------------------------
-
-.. automodule:: lidar.dataset_core
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lidar.frame module
-------------------
-
-.. automodule:: lidar.frame
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-lidar.frame\_core module
-------------------------
-
-.. automodule:: lidar.frame_core
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: lidar
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   lidar.config
+   lidar.dataset
+   lidar.dataset_core
+   lidar.frame
+   lidar.frame_core
