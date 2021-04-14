@@ -3,6 +3,8 @@ Welcome to PyMultiLidar's documentation!
 
 A package to work with automotive lidar data stored in ROS bag files.
 
+.. image:: ./front.jpg
+   :height: 200
 
 Main features
 ========================================
