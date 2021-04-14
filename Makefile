@@ -19,6 +19,7 @@ sort-imports:
 
 clean:
 	py3clean .
+	cd doc/sphinx/ && make $@
 
 black:
 	black . --exclude=notebooks
@@ -26,3 +27,6 @@ black:
 
 build:
 	python3 setup.py sdist bdist_wheel
+
+html:
+	cd doc/sphinx/ && make $@
