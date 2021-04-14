@@ -45,14 +45,12 @@ def dataframe_from_message(
 
 
 def get_number_of_messages(bag: rosbag.Bag, topic: str) -> int:
-    return (bag.get_type_and_topic_info().topics)[
-        "/os1_cloud_node/points"
-    ].message_count
+    return (bag.get_type_and_topic_info().topics)[topic].message_count
 
 
 def dataset_from_rosbag(
     bagfile: Path,
-    topic: str = "/os1_cloud_node/points",
+    topic: str,
     start_frame_number: int = 0,
     end_frame_number: int = None,
     keep_zeros: bool = False,

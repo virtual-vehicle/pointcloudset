@@ -4,6 +4,12 @@ from lidar import Dataset, Frame
 from pathlib import Path
 import pandas as pd
 import dask.delayed as dd
+import pytest
+
+
+def test_from_bag_wrong_topic(testbag1):
+    with pytest.raises(KeyError):
+        ds = Dataset.from_file(testbag1, topic="/none", keep_zeros=False)
 
 
 def test_from_bag(testbag1):
