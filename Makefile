@@ -1,12 +1,9 @@
-.PHONY: doc docserver doccoverage
+.PHONY: doc doccoverage
 doc:
-	pdoc --force --html . --output-dir doc
+	sphinx-apidoc -f -e -o ./doc/sphinx/source ./lidar --module-first && cd doc/sphinx/ && make html
 
 doccoverage:
 	docstr-coverage lidar --skipmagic
-
-docserver:
-	pdoc --http : .
 
 test:
 	coverage run -m pytest
@@ -27,6 +24,3 @@ black:
 
 build:
 	python3 setup.py sdist bdist_wheel
-
-html:
-	cd doc/sphinx/ && make $@
