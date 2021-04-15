@@ -12,6 +12,7 @@
 #
 import os
 import sys
+from lidar import __version__
 
 sys.path.insert(0, os.path.abspath("../../../lidar"))
 
@@ -25,8 +26,8 @@ author = (
 )
 
 
-version = "0.2.0"
-release = "0.2.0"
+version = __version__
+release = version
 
 
 # -- General configuration ---------------------------------------------------
@@ -34,7 +35,12 @@ release = "0.2.0"
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["sphinx.ext.autodoc", "sphinx.ext.coverage", "sphinxcontrib.napoleon"]
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.coverage",
+    "sphinxcontrib.napoleon",
+    "nbsphinx",
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
