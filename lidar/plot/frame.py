@@ -6,7 +6,7 @@ import plotly.express as px
 import plotly.graph_objs as go
 
 
-def plot_overlay(fig, frame, overlay: dict):
+def plot_overlay(fig, frame, overlay: dict, **kwargs):
     """Meta function to overlay the plot with other plots. Used in the main plot function
     Not for standalone use.
 
@@ -26,7 +26,7 @@ def plot_overlay(fig, frame, overlay: dict):
     """
     fig.update_traces(opacity=0.7)
     fig.update_traces(
-        marker=dict(size=0.5, line=dict(width=0)), selector=dict(mode="markers")
+        marker=dict(size=1.5, line=dict(width=0)), selector=dict(mode="markers")
     )
     i = 1
     colors = px.colors.qualitative.Plotly
@@ -43,7 +43,7 @@ def plot_overlay(fig, frame, overlay: dict):
             )
         elif from_dict._has_data():
             fig = plot_overlay_frame(
-                fig, frame=from_dict, name=name, marker_color=marker_color
+                fig, frame=from_dict, name=name, marker_color=marker_color, **kwargs
             )
         else:
             raise ValueError(
@@ -56,7 +56,7 @@ def plot_overlay(fig, frame, overlay: dict):
     return fig
 
 
-def plot_overlay_frame(fig, frame, name: str, marker_color: str):
+def plot_overlay_frame(fig, frame, name: str, marker_color: str, **kwargs):
     """Overlay the plot with another frame.
 
     Args:
@@ -69,7 +69,7 @@ def plot_overlay_frame(fig, frame, name: str, marker_color: str):
         plotly.graph_objs._figure.Figure: Plot with overlayed Frame.
     """
     overlay_fig = frame.plot(
-        color=None, point_size=2.0, prepend_id=name + " ", opacity=0.7
+        color=None, point_size=2.0, prepend_id=name + " ", opacity=0.7, **kwargs
     )
     overlay_fig.update_traces(marker_color=marker_color)
     overlay_trace = overlay_fig.data[0]

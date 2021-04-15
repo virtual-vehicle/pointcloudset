@@ -18,7 +18,7 @@ def test_plot_plotly(testframe_mini: Frame):
 
 def test_plot_overlay(testframe: Frame):
     smaller = testframe.limit("x", -0.5, 0.0)
-    smaller2 = testframe.limit("x", -0.1, 0.0)
+    smaller2 = testframe.limit("x", -0.4, 0.0)
     check.equal(
         type(smaller.plot(overlay={"Smaller2": smaller2})),
         plotly.graph_objs._figure.Figure,

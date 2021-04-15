@@ -210,7 +210,7 @@ class Frame(FrameCore):
         ids = [prepend_id + "id=" + str(i) for i in range(0, self.data.shape[0])]
 
         if hover_data == []:
-            hover_data = self.data.columns
+            hover_data = list(self.data.columns)
 
         if not all([x in self.data.columns for x in hover_data]):
             raise ValueError(f"choose a list of {list(self.data.columns)} or []")
@@ -232,7 +232,13 @@ class Frame(FrameCore):
         )
 
         if len(overlay) > 0:
-            fig = plot_overlay(fig, self, overlay)
+            fig = plot_overlay(
+                fig,
+                self,
+                overlay,
+                hover_data=hover_data,
+                **kwargs,
+            )
 
         fig.update_layout(
             scene_aspectmode="data",
