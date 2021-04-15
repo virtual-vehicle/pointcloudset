@@ -1,4 +1,6 @@
-""" # Frame differences.
+"""#########################
+Frame differences.
+#########################
 
 Functions to calculate differences between frames.
 

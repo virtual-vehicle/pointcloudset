@@ -1,4 +1,6 @@
-""" # Plane differences.
+"""################
+Plane differences.
+################
 
 Functions to calculate differences between a frame and a plane.
 """
