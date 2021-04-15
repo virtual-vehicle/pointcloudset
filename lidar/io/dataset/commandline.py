@@ -38,6 +38,7 @@ def convert_bag2dir(
     for chunk in chunks:
         res = read_rosbag_part(
             bag,
+            topic=topic,
             start_frame_number=chunk[0],
             end_frame_number=chunk[-1] + 1,
             keep_zeros=keep_zeros,
