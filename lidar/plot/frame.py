@@ -26,7 +26,7 @@ def plot_overlay(fig, frame, overlay: dict):
     """
     fig.update_traces(opacity=0.7)
     fig.update_traces(
-        marker=dict(size=0.5, line=dict(width=0)), selector=dict(mode="markers")
+        marker=dict(size=1.5, line=dict(width=0)), selector=dict(mode="markers")
     )
     i = 1
     colors = px.colors.qualitative.Plotly
