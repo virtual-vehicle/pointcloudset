@@ -24,10 +24,16 @@ A package to work with automotive lidar data stored in ROS bag files.
    gitlab_access
 
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Tutorial
+
+   tutorial_notebooks/usage
+   
 
 .. toctree::
    :maxdepth: 5
-   :caption: Python API:
+   :caption: Python API
 
    python-api/lidar.diff
    python-api/lidar.filter
