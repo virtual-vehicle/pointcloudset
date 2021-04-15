@@ -5,5 +5,3 @@ lidar
    :maxdepth: 4
 
    lidar
-   setup
-   tests

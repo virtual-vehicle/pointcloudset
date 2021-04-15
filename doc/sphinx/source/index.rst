@@ -80,9 +80,10 @@ On your very first time accessing our gitlab docker registry you need to do the 
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 5
    :caption: Contents:
 
+   lidar
 
 
 Indices and tables
