@@ -1,6 +1,6 @@
 .PHONY: doc doccoverage
 doc:
-	sphinx-apidoc -f -e -o ./doc/sphinx/source ./lidar --module-first && cd doc/sphinx/ && make html
+	sphinx-apidoc -f -e -o ./doc/sphinx/source/python-api ./lidar --module-first && cd doc/sphinx/ && make html
 
 doccoverage:
 	docstr-coverage lidar --skipmagic
