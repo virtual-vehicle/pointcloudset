@@ -25,6 +25,10 @@ author = (
 )
 
 
+version = "0.2.0"
+release = "0.2.0"
+
+
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
