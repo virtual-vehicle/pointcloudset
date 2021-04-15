@@ -1,6 +1,5 @@
-"""################
+"""
 Point differences.
-################
 
 Functions to calculate differences between a frame and a point.
 """

@@ -1,6 +1,6 @@
-"""################
+"""
 Difference to coordinate system orgin.
-################
+
 """
 
 import numpy as np
