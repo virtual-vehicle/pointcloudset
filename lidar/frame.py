@@ -178,7 +178,7 @@ class Frame(FrameCore):
         overlay: dict = {},
         point_size: float = 2,
         prepend_id: str = "",
-        hover_data: List[str] = [],
+        hover_data: List[str] = None,
         **kwargs,
     ) -> plotly.graph_objs._figure.Figure:
         """Plot a Frame as a 3D scatter plot with plotly. It handles plots of single
@@ -194,8 +194,8 @@ class Frame(FrameCore):
                 {"Cluster 1": cluster1,"plan1 1": plane_model}
             point_size (float, optional): Size of each point. Defaults to 2.
             prepend_id (str, optional): string before point id to display in hover
-            hover data (list, optional): data columns to display in hover. Default is
-                all of them.
+            hover data (list(str), optional): data columns to display in hover. Default is
+                None.
 
         Raises:
             ValueError: if the color column name is not in the data
@@ -209,11 +209,12 @@ class Frame(FrameCore):
 
         ids = [prepend_id + "id=" + str(i) for i in range(0, self.data.shape[0])]
 
-        if hover_data == []:
-            hover_data = list(self.data.columns)
-
-        if not all([x in self.data.columns for x in hover_data]):
-            raise ValueError(f"choose a list of {list(self.data.columns)} or []")
+        show_hover = True
+        if hover_data is None:
+            show_hover = False
+        elif isinstance(hover_data, list) & len(hover_data) > 0:
+            if not all([x in self.data.columns for x in hover_data]):
+                raise ValueError(f"choose a list of {list(self.data.columns)} or []")
 
         fig = px.scatter_3d(
             self.data,
@@ -226,6 +227,7 @@ class Frame(FrameCore):
             title=self.timestamp_str,
             **kwargs,
         )
+
         fig.update_traces(
             marker=dict(size=point_size, line=dict(width=0)),
             selector=dict(mode="markers"),
@@ -239,10 +241,10 @@ class Frame(FrameCore):
                 hover_data=hover_data,
                 **kwargs,
             )
+        fig.update_layout(scene_aspectmode="data")
+        if not show_hover:
+            fig.update_layout(hovermode=False)
 
-        fig.update_layout(
-            scene_aspectmode="data",
-        )
         return fig
 
     def diff(
