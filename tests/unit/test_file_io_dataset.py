@@ -1,10 +1,11 @@
+from pathlib import Path
+
+import dask.delayed as dd
+import pandas as pd
+import pytest
 import pytest_check as check
 
 from lidar import Dataset, Frame
-from pathlib import Path
-import pandas as pd
-import dask.delayed as dd
-import pytest
 
 
 def test_from_bag_wrong_topic(testbag1):

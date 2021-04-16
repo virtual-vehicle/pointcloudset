@@ -11,11 +11,11 @@ from pathlib import Path
 from typing import Any, Callable, Union, get_type_hints
 
 from dask import delayed
-from lidar.pipeline.delayed_result import DelayedResult
 
 from lidar.dataset_core import DatasetCore
 from lidar.frame import Frame
 from lidar.io import DATASET_FROM_FILE, DATASET_TO_FILE
+from lidar.pipeline.delayed_result import DelayedResult
 
 
 def _is_pipline_returing_frame(pipeline) -> bool:
@@ -57,9 +57,8 @@ class Dataset(DatasetCore):
             raise ValueError(
                 f"Unsupported file format {ext}; supported formats are: {DATASET_FROM_FILE.keys()}"
             )
-        else:
-            res = DATASET_FROM_FILE[ext](file_path, **kwargs)
-            return cls(data=res["data"], timestamps=res["timestamps"], meta=res["meta"])
+        res = DATASET_FROM_FILE[ext](file_path, **kwargs)
+        return cls(data=res["data"], timestamps=res["timestamps"], meta=res["meta"])
 
     def to_file(self, file_path: Path = Path(), **kwargs) -> None:
         DATASET_TO_FILE["DIR"](self, file_path=file_path, **kwargs)

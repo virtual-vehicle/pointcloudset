@@ -1,10 +1,10 @@
+from datetime import datetime
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pytest
 import pytest_check as check
-from datetime import datetime
 
 import lidar
 from lidar import Frame

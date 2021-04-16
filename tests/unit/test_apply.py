@@ -1,8 +1,9 @@
+import datetime
+
 import pytest_check as check
 
 from lidar import Dataset, Frame
 from lidar.pipeline.delayed_result import DelayedResult
-import datetime
 
 
 def test_apply1(testset: Dataset):

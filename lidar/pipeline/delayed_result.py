@@ -1,7 +1,9 @@
 from __future__ import annotations
+
 from collections import UserList
+from typing import Any, Union
+
 import dask
-from typing import Union, Any
 
 
 class DelayedResult(UserList):
