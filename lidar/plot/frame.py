@@ -1,4 +1,5 @@
-""" # Frame plotting
+"""
+Functions for plotting frames.
 Used mainly by Frame.plot() but could also be used on its own.
 """
 import numpy as np

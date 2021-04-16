@@ -1,6 +1,5 @@
 """
-Difference to coordinate system origin.
-
+Functions to calculate distances of points in frame to origin.
 """
 
 import numpy as np
@@ -14,6 +13,9 @@ def calculate_distance_to_origin(frame, **kwargs):
 
     Args:
         frame (Frame): Frame for which the distance to the origin is calculated.
+
+    Returns:
+        Frame: Frame with euclidean distance to origin for each point.
     """
     point_a = np.array((0, 0, 0))
 

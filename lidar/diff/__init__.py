@@ -1,5 +1,5 @@
 """
-Routines for calculating differences and distances between entities.
+Functions for calculating differences and distances between entities.
 """
 
 from lidar.diff.frame import calculate_distance_to_frame

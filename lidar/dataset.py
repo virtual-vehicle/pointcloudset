@@ -1,6 +1,5 @@
 """
 Dataset Class
---------------
 
 The Dataset class contains multiple frames.
 

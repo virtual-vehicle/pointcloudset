@@ -1,5 +1,5 @@
 """
-# Frame Class.
+Frame Class
 
 For one lidar measurement frame. Typically an automotive lidar records many frames per
 second.
@@ -11,7 +11,7 @@ Note that the index of the points is not preserved when applying processing. Thi
 is necessary since pyntcloud does not allow to pass the index. Therefore, a new
 Frame object is generated at each processing stage.
 
-## Developer notes:
+Developer notes:
 * All operations have to act on both, pointcloud and data and keep the timestamp.
 * All processing methods need to return another Frame.
 """

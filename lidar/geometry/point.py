@@ -1,3 +1,7 @@
+"""
+Functions for geometric calculations with points.
+"""
+
 import numpy as np
 
 
@@ -9,7 +13,7 @@ def distance_to_point(point_A: np.array, point_B: np.array) -> float:
         point_B (np.array): [x, y, z]
 
     Returns:
-        [float]: Euclidean distance between two points
+        [float]: Euclidean distance between two points.
     """
     if len(point_A) != 3:
         raise ValueError("point needs to have 3 values")

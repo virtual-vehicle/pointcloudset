@@ -1,7 +1,5 @@
 """
-Point differences.
-
-Functions to calculate differences between a frame and a point.
+Functions to calculate distances between points in frame and a point.
 """
 
 from __future__ import annotations
@@ -15,8 +13,14 @@ if TYPE_CHECKING:
 def calculate_distance_to_point(
     frame: lidar.Frame, target: np.ndarray, **kwargs
 ) -> lidar.Frame:
-    """For each point in the pointcloud calculate the euclidian distance
+    """For each point in the frame calculate the euclidian distance
     to the point. Adds a new column to the data with the values.
+
+    Args:
+        target (np.ndarray): Point to which the distance calculated.
+
+    Returns:
+        Frame: Frame with distances to a point for each point.
     """
     point_a = target
     points = frame.points.xyz

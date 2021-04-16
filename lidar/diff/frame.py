@@ -1,6 +1,4 @@
 """
-Frame differences
---------------------
 Functions to calculate differences between frames.
 """
 
@@ -9,15 +7,18 @@ import pandas as pd
 
 
 def calculate_distance_to_frame(frame, target):
-    """Calculate the point differences for each point which is also in the target frame.
+    """Calculate the point differences for each point which is also in the target frame (frame - target).
     Only points with the same original_id are compared. The results are added to the
-    data of the frame. (frame - target)
+    data of the frame.
 
     Args:
         target (Frame): A Frame object to compute the differences.
 
     Raises:
         ValueError: If there are no points in FrameB with the same original_id
+
+    Returns:
+        Frame: Frame with differences to target.
     """
     if not frame.has_original_id():
         raise ValueError("Frame does not contain original_id.")
