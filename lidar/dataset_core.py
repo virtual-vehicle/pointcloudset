@@ -1,10 +1,26 @@
 from __future__ import annotations
 
 import datetime
-from typing import List
+import warnings
+from typing import List, Union
 
 import dask
-import warnings
+import pandas as pd
+
+aggdict = {
+    "mean": pd.core.groupby.groupby.Series.mean,
+    "std": pd.core.groupby.groupby.Series.std,
+    "max": pd.core.groupby.groupby.Series.max,
+    "min": pd.core.groupby.groupby.Series.min,
+    "sum": pd.core.groupby.groupby.Series.sum,
+    "median": pd.core.groupby.groupby.Series.median,
+    "count": pd.core.groupby.groupby.Series.count,
+    "var": pd.core.groupby.groupby.Series.var,
+    "sem": pd.core.groupby.groupby.Series.sem,
+    "mad": pd.core.groupby.groupby.Series.mad,
+    "skew": pd.core.groupby.groupby.Series.skew,
+    "kurt": pd.core.groupby.groupby.Series.kurt,
+}
 
 
 class DatasetCore:
@@ -27,6 +43,10 @@ class DatasetCore:
     def end_time(self) -> datetime.datetime:
         return self.timestamps[-1]
 
+    @property
+    def daskdataframe(self) -> dask.dataframe.core.DataFrame:
+        return dask.dataframe.from_delayed(self.data)
+
     def __len__(self) -> int:
         """Number of available frames (i.e. Lidar messages)"""
         return len(self.data)
@@ -44,12 +64,81 @@ class DatasetCore:
         return self
 
     def __next__(self):
-        if self.n < len(self):
-            result = self[self.n]
-            self.n += 1
-            return result
-        else:
+        if self.n >= len(self):
             raise StopIteration
+
+        result = self[self.n]
+        self.n += 1
+        return result
+
+    def agg(self, agg: str):
+        data = self.daskdataframe.groupby("original_id").agg(agg)
+        data["N"] = self.daskdataframe.groupby("original_id").size()
+        data["original_id"] = data.index
+        data = data.reset_index(drop=True)
+        return data
+
+    def _agg_explicit(
+        self, agg_type: str, depth: int = 0, agg_type_depth1: str = None
+    ) -> Union[pd.DataFrame, pd.Series]:
+        """A general aggreation function ob point or whole dataset level.
+
+        Args:
+            agg_type (str): [description]
+            depth (int, optional): 0 means on point level and 1 toal dataset level.
+            Defaults to 0.
+
+        Returns:
+            Union[pd.DataFrame, pd.Series]: [description]
+        """
+        data = self.agg(agg_type)
+        if depth == 0:
+            res = data.compute()
+        elif depth == 1:
+            if agg_type_depth1 is not None:
+                func = aggdict[agg_type_depth1]
+            else:
+                func = aggdict[agg_type]
+            data = data.drop(["N", "original_id"], axis=1)
+            res = func(data.compute())
+            res.name = agg_type
+        return res
+
+    def mean(self, depth: int = 0) -> Union[pd.DataFrame, pd.Series]:
+        return self._agg_explicit(agg_type="mean", depth=depth)
+
+    def std(self, depth: int = 0) -> pd.DataFrame:
+        return self._agg_explicit(agg_type="std", depth=depth)
+
+    def min(self, depth: int = 0) -> Union[pd.DataFrame, pd.Series]:
+        return self._agg_explicit(agg_type="min", depth=depth)
+
+    def max(self, depth: int = 0) -> pd.DataFrame:
+        return self._agg_explicit(agg_type="max", depth=depth)
+
+    def sum(self, depth: int = 0) -> pd.DataFrame:
+        return self._agg_explicit(agg_type="sum", depth=depth)
+
+    def median(self, depth: int = 0) -> pd.DataFrame:
+        return self._agg_explicit(agg_type="median", depth=depth)
+
+    def count(self, depth: int = 0) -> pd.DataFrame:
+        return self._agg_explicit(agg_type="count", depth=depth, agg_type_depth1="sum")
+
+    def var(self, depth: int = 0) -> pd.DataFrame:
+        return self._agg_explicit(agg_type="var", depth=depth)
+
+    def sem(self, depth: int = 0) -> pd.DataFrame:
+        return self._agg_explicit(agg_type="sem", depth=depth)
+
+    def mad(self, depth: int = 0) -> pd.DataFrame:
+        return self._agg_explicit(agg_type="mad", depth=depth)
+
+    def skew(self, depth: int = 0) -> pd.DataFrame:
+        return self._agg_explicit(agg_type="skew", depth=depth)
+
+    def kurt(self, depth: int = 0) -> pd.DataFrame:
+        return self._agg_explicit(agg_type="kurt", depth=depth)
 
     def has_frames(self) -> bool:
         """Check if dataset has frames.
@@ -92,8 +181,8 @@ class DatasetCore:
             assert len(self.timestamps) == len(
                 self.data
             ), "Lenght of timestamps do not match the data"
-            if not all(
-                self.timestamps[i] < self.timestamps[i + 1]
+            if any(
+                self.timestamps[i] >= self.timestamps[i + 1]
                 for i in range(len(self.timestamps) - 1)
             ):
                 warnings.warn("Timestamps are not monotonic increasing")
