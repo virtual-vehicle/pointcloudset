@@ -1,8 +1,10 @@
 """
-# Dataset Class
-The Dataset class which contains many frames.
+Dataset Class
+--------------
 
-For more details on how to use it please refer to the usage.ipynb Notebook for an interactive tuturial.
+The Dataset class contains multiple frames.
+
+For more details on how to use it please refer to the usage.ipynb notebook for an interactive tutorial.
 
 """
 from __future__ import annotations
@@ -31,7 +33,7 @@ def _is_pipline_returing_frame(pipeline) -> bool:
 
 
 class Dataset(DatasetCore):
-    """Lidar Dataset which contains individual frames, timestamps and meta data."""
+    """Lidar Dataset which contains individual frames, timestamps and metadata."""
 
     def __getitem__(self, frame_number: Union[slice, int]) -> Union[DatasetCore, Frame]:
         if isinstance(frame_number, slice):
@@ -68,9 +70,9 @@ class Dataset(DatasetCore):
         self, func: Union[Callable[[Frame], Frame], Callable[[Frame], Any]], **kwargs
     ) -> Union[Dataset, DelayedResult]:
         """Applies a function onto the dataset. It is also possible to pass keyword
-        arguments
+        arguments.
 
-        Example:
+        Example 1:
 
         def func(frame:lidar.Frame) -> lidar.Frame:
             return frame.limit(x,0,1)
@@ -79,7 +81,7 @@ class Dataset(DatasetCore):
 
         This results in a new dataset
 
-        Example2:
+        Example 2:
 
         def func(frame:lidar.Frame) -> float:
             return frame.data.x.max()
@@ -87,7 +89,7 @@ class Dataset(DatasetCore):
         dataset.apply(func)
 
 
-        Example3:
+        Example 3:
 
         def func(frame:lidar.Frame, test: float) -> float:
             return frame.data.x.max() + test
@@ -131,10 +133,10 @@ class Dataset(DatasetCore):
         """Extends the dataset by another one.
 
         Args:
-            dataset (Dataset): [description]
+            dataset (Dataset): Dataset to extend another dataset.
 
         Returns:
-            Dataset: [description]
+            Dataset: Extended dataset.
         """
         key = "extended"
         meta = self.meta
