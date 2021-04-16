@@ -33,6 +33,7 @@ A package to work with automotive lidar data stored in ROS bag files.
 
 .. toctree::
    :maxdepth: 5
+   :titlesonly:
    :caption: Python API
 
    python-api/lidar
