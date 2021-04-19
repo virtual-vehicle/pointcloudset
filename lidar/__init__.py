@@ -71,4 +71,4 @@
 from .dataset import Dataset
 from .frame import Frame
 
-__version__ = "0.1.6 (dev_0.2.0)"
+__version__ = "0.1.7 (dev_0.2.0)"
