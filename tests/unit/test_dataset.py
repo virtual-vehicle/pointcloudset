@@ -3,6 +3,7 @@ import datetime
 import pytest
 import pytest_check as check
 import rosbag
+from dask.delayed import DelayedLeaf
 
 from lidar import Dataset, Frame
 
@@ -108,3 +109,9 @@ def test_extend(testbag1):
     ds2 = Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=True)
     ds1.extend(ds2)
     check.equal(len(ds1), len_old * 2)
+
+
+def test_from_frames_list(testdataset_mini_real):
+    check.is_instance(testdataset_mini_real, Dataset)
+    check.equal(len(testdataset_mini_real), 2)
+    check.is_instance(testdataset_mini_real.data[0], DelayedLeaf)

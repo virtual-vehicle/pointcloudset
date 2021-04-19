@@ -14,7 +14,7 @@ from dask import delayed
 
 from lidar.dataset_core import DatasetCore
 from lidar.frame import Frame
-from lidar.io import DATASET_FROM_FILE, DATASET_TO_FILE
+from lidar.io import DATASET_FROM_FILE, DATASET_TO_FILE, DATASET_FROM_INSTANCE
 from lidar.pipeline.delayed_result import DelayedResult
 
 
@@ -59,6 +59,35 @@ class Dataset(DatasetCore):
             )
         res = DATASET_FROM_FILE[ext](file_path, **kwargs)
         return cls(data=res["data"], timestamps=res["timestamps"], meta=res["meta"])
+
+    @classmethod
+    def from_instance(
+        cls,
+        library: str,
+        instance: list[Frame],
+        **kwargs,
+    ) -> Dataset:
+        """Converts a libaries instance to a lidar Dataset.
+
+        Args:
+            library (str): name of the libary
+            instance (list[Frame]): instance fromw wicht to convert
+
+        Raises:
+            ValueError: If instance is not supported.
+
+        Returns:
+            Dataset: derived from the instance
+        """
+        library = library.upper()
+        if library not in DATASET_FROM_INSTANCE:
+            raise ValueError(
+                "Unsupported library; supported libraries are: {}".format(
+                    list(DATASET_FROM_INSTANCE)
+                )
+            )
+        else:
+            return cls(**DATASET_FROM_INSTANCE[library](instance, **kwargs))
 
     def to_file(self, file_path: Path = Path(), **kwargs) -> None:
         DATASET_TO_FILE["DIR"](self, file_path=file_path, **kwargs)

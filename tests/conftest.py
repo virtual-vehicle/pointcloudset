@@ -115,3 +115,9 @@ def testframe_mini_real_other_original_id(testframe_mini_real) -> Frame:
     testdata = testframe_mini_real.data.copy(deep=True)
     testdata["original_id"] = testdata["original_id"] + 1000000
     return Frame(data=testdata)
+
+
+@pytest.fixture()
+def testdataset_mini_real(testframe_mini_real, testframe_mini_real_plus1) -> Dataset:
+    frames = [testframe_mini_real, testframe_mini_real_plus1]
+    return Dataset.from_instance("FRAMES", frames)
