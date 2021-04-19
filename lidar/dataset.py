@@ -180,7 +180,14 @@ class Dataset(DatasetCore):
             Union[pd.DataFrame, pd.DataFrame, pd.Series]: [description]
         """
         if depth == "point":
-            return self._agg(agg).compute()
+            data = self._agg(agg).compute()
+            if not isinstance(agg, list):
+                data.columns = [
+                    i if i in ["N", "original_id"] else f"{i} {agg}"
+                    for i in data.columns
+                ]
+
+            return data
         elif depth == "frame":
             return self._agg_per_frame(agg)
         elif depth == "dataset":
@@ -191,6 +198,9 @@ class Dataset(DatasetCore):
             return data
         else:
             raise ValueError(f"depth needs to be dataset, frame or point")
+
+    def min(self, depth: str = "dataset"):
+        return self.agg("min", depth=depth)
 
     def _agg_per_frame(
         self, agg: Union[str, list, dict]

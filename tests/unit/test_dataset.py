@@ -232,24 +232,93 @@ def test_agg_dataset_list(testdataset_mini_real: Dataset, testframe_mini_real: F
     check.equal(test.x["min"]["min"], x_min.values[0])
 
 
-def test_dataset_min1(
+def test_agg_list1(testdataset_mini_real: Dataset, testframe_mini_real: Frame):
+    f0 = testdataset_mini_real[0].data.agg(["min", "max"])
+    f1 = testdataset_mini_real[1].data.agg(["min", "max"])
+    test = testdataset_mini_real.agg(["min", "max"], "frame")
+    check.is_instance(test, list)
+
+
+def test_agg_point(testdataset_mini_real: Dataset, testframe_mini_real: Frame):
+    test = testdataset_mini_real.agg("min", "point")
+    x_min = testframe_mini_real.data.agg({"x": "min"})
+    check.is_instance(test, pd.DataFrame)
+    check.equal(
+        list(test.columns),
+        [
+            "x min",
+            "y min",
+            "z min",
+            "intensity min",
+            "t min",
+            "reflectivity min",
+            "ring min",
+            "noise min",
+            "range min",
+            "N",
+            "original_id",
+        ],
+    )
+    check.equal(test.min()["x min"], x_min.values[0])
+
+
+def test_agg_point_list(testdataset_mini_real: Dataset, testframe_mini_real: Frame):
+    test = testdataset_mini_real.agg(["min", "max"], "point")
+    x_min = testframe_mini_real.data.agg({"x": "min"})
+    check.is_instance(test, pd.DataFrame)
+    check.equal(test.x["min"].min(), x_min.values[0])
+
+
+def test_agg_point_dict(testdataset_mini_real: Dataset, testframe_mini_real: Frame):
+    test = testdataset_mini_real.agg({"x": "min"}, "point")
+    x_min = testframe_mini_real.data.agg({"x": "min"})
+    check.is_instance(test, pd.DataFrame)
+    check.equal(
+        list(test.columns),
+        ["x {'x': 'min'}", "N", "original_id"],
+    )
+    check.equal(test.min()["x {'x': 'min'}"], x_min.values[0])
+
+
+def test_dataset_min_dataset(
     testdataset_mini_real: Dataset,
     testframe_mini_real: Frame,
     testframe_mini_real_plus1: Frame,
 ):
-    mincalc = testdataset_mini_real.min(depth=1)
-    minshould = testframe_mini_real.data.drop("original_id", axis=1).min()
+    mincalc = testdataset_mini_real.min(depth="dataset")
+    minshould = testframe_mini_real.data.min()
+    minshould.index = [f"{i} min" for i in minshould.index]
     check.is_instance(mincalc, pd.Series)
-    assert_series_equal(mincalc, minshould, check_names=False)
+    assert_series_equal(
+        mincalc.drop("N min"),
+        minshould,
+        check_names=False,
+    )
 
 
-def test_dataset_min0(
+def test_dataset_min_point(
     testdataset_mini_real: Dataset,
     testframe_mini_real: Frame,
     testframe_mini_real_plus1: Frame,
 ):
-    mincalc = testdataset_mini_real.min(depth=0)
+    mincalc = testdataset_mini_real.min(depth="point")
+    first = mincalc.drop(["N", "original_id"], axis=1).iloc[0]
     check.equal(mincalc.iloc[0].N, 2)
     check.is_instance(mincalc, pd.DataFrame)
-    should = testframe_mini_real.extract_point(6008, use_orginal_id=True).squeeze()
-    assert_series_equal(mincalc.drop("N", axis=1).iloc[0], should, check_names=False)
+    should = (
+        testframe_mini_real.extract_point(6008, use_orginal_id=True)
+        .drop(["original_id"], axis=1)
+        .squeeze()
+    )
+    should.index = [f"{i} min" for i in should.index]
+    assert_series_equal(first, should, check_names=False)
+
+
+def test_dataset_min_frame(
+    testdataset_mini_real: Dataset,
+    testframe_mini_real: Frame,
+    testframe_mini_real_plus1: Frame,
+):
+    mincalc = testdataset_mini_real.min(depth="frame")
+    x_min = testframe_mini_real.data.agg({"x": "min"})
+    check.equal(mincalc["x min"][0], x_min.values[0])
