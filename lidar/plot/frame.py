@@ -1,4 +1,5 @@
-""" # Frame plotting
+"""
+Functions for plotting frames.
 Used mainly by Frame.plot() but could also be used on its own.
 """
 import numpy as np
@@ -11,9 +12,9 @@ def plot_overlay(fig, frame, overlay: dict, **kwargs):
     Not for standalone use.
 
     Args:
-        fig (plotly fig): The orignal plot
-        frame (Frame): The orginal frame
-        overlay (dict): A dict with objects to overaly.
+        fig (plotly fig): The original plot
+        frame (Frame): The original frame
+        overlay (dict): A dict with objects to overlay.
             For example overlay={"Cluster 1": cluster1, "plane1": plane_model}
             The name of the entry is used in tooltips and the value can either
             be a Frame or a model of a plan as numpy array (a,b,c,d) of a plan.

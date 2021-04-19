@@ -1,7 +1,5 @@
 """
-Plane differences.
-
-Functions to calculate differences between a frame and a plane.
+Functions to calculate distances of points in frame and a plane.
 """
 
 import numpy as np
@@ -22,6 +20,9 @@ def calculate_distance_to_plane(
             Defaults to True.
         normal_dist (bool, optional): Calculate normal distance if True, calculate
             distance in direction of line of sight if False. Defaults to True.
+
+    Returns:
+        Frame: Frame with distance to plane for each point.
     """
     points = frame.points.xyz
     distances = np.asarray(

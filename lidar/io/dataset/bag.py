@@ -1,5 +1,5 @@
 """
-Routines for ROS bagfiles.
+Functions for ROS bagfiles.
 """
 import datetime
 import itertools

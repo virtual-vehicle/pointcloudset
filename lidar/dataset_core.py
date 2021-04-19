@@ -1,3 +1,10 @@
+"""
+DatasetCore Class
+
+With all the main methods and properties of the Dataset Class.
+"""
+
+
 from __future__ import annotations
 
 import datetime

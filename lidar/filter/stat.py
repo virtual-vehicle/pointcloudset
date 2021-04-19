@@ -1,4 +1,7 @@
-"""Frame filters based on statistics"""
+"""
+Frame filters based on statistics.
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -58,7 +61,7 @@ def remove_radius_outlier(frame: Frame, nb_points: int, radius: float) -> Frame:
         nb_points (int) – Number of points within the radius.
         radius (float) – Radius of the sphere.
     Returns:
-        Frame: without the outliers  :
+        Frame: without the outliers.
     """
     pcd = frame.to_instance("open3d")
     cl, index_to_keep = pcd.remove_radius_outlier(nb_points=nb_points, radius=radius)

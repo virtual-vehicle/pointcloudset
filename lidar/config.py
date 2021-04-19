@@ -1,4 +1,6 @@
-"""Global definitions for the library."""
+"""
+Global definitions for the library.
+"""
 
 import operator
 

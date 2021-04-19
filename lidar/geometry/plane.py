@@ -1,3 +1,7 @@
+"""
+Functions for geometric calculations with planes.
+"""
+
 import math
 
 import numpy as np
@@ -13,12 +17,12 @@ def distance_to_point(
 
     Args:
         point_A (np.array): [x, y, z]
-        plane (np.array): [a, b, c, d], could be provided by plane_segmentation
+        plane_model (np.array): [a, b, c, d], could be provided by plane_segmentation
         normal_dist (bool): Calculate normal distance if True, calculate
             distance in direction of line of sight if False. Defaults to True.
 
     Returns:
-        [float]: distance to the point
+        [float]: Distance to the point.
     """
     if len(point_A) != 3:
         raise ValueError("point needs to have 3 values")
@@ -39,14 +43,14 @@ def distance_to_point(
 
 
 def intersect_line_of_sight(line: np.array, plane_model: np.array) -> np.array:
-    """Calculate the point of intersection between a line and a plane. Uses the plane equation a x + b y + c z + d = 0
+    """Calculate the point of intersection between a line and a plane. Uses the plane equation a x + b y + c z + d = 0.
 
     Args:
         line (np.array): [lx, ly, lz]
         plane (np.array): [a, b, c, d], could be provided by plane_segmentation
 
     Returns:
-        [np.array]: point of intersection
+        [np.array]: Point of intersection.
     """
     if len(line) != 3:
         raise ValueError("line needs to have 3 values")

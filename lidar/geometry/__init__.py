@@ -1,1 +1,3 @@
-"""Utiliy functions for primitive geometry calculations"""
+"""
+Utility functions for primitive geometry calculations.
+"""

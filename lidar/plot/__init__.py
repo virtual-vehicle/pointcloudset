@@ -1,3 +1,3 @@
 """
-Plot routines.
+Plot functions.
 """

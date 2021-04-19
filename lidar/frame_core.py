@@ -1,5 +1,6 @@
 """
-# FrameCore Class
+FrameCore Class
+
 With all the main methods and properties of the Frame Class.
 """
 

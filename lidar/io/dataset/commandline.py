@@ -61,7 +61,7 @@ def get(
     keep_zeros: bool = False,
     max_size: int = 100,
 ):
-    """Convert ros bagfiles to a directore of use with the lidar package.
+    """Convert ros bagfiles to a directory of use with the lidar package.
 
     Args:
         bagfile: ROS bagfile
@@ -69,7 +69,7 @@ def get(
         topic: ros lidar pointcloud topic. for example "/os1_cloud_node/points".
         start_frame_number:  Defaults to 0.
         end_frame_number:  Defaults to None.
-        keep_zeros: Keep elementf with zero values. Defaults to False.
+        keep_zeros: Keep element with zero values. Defaults to False.
         max_size: Max size of chunk, an internal variable. Defaults to 100.
     """
 
