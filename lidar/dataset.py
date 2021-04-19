@@ -160,7 +160,7 @@ class Dataset(DatasetCore):
         self,
         agg: Union[str, list, dict],
         depth: Literal["dataset", "frame", "point"] = "dataset",
-    ) -> Union[pd.Series, pd.DataFrame, pd.DataFrame]:
+    ) -> Union[pd.Series, List[pd.DataFrame], pd.DataFrame, pd.DataFrame]:
         """Aggregate using one or more operations over the whole dataset.
         Similar to pandas agg. Used dask dataframes with parallel processing.
 
@@ -188,17 +188,23 @@ class Dataset(DatasetCore):
         else:
             raise ValueError(f"depth needs to be dataset, frame or point")
 
-    def _agg_per_frame(self, agg: Union[str, list, dict]) -> pd.DataFrame:
-        def get(frame, agg: str):
+    def _agg_per_frame(
+        self, agg: Union[str, list, dict]
+    ) -> Union[pd.DataFrame, list, pd.DataFrame]:
+        def get(frame, agg: Union[str, list, dict]):
             return frame.data.agg(agg)
 
-        res = pd.DataFrame(self.apply(get, agg=agg).compute())
-        if not isinstance(agg, dict):
-            res = res.drop("original_id", axis=1)
-        res.columns = [f"{column} {agg}" for column in res.columns]
-        res.index.name = "frame"
-        res["timestamp"] = self.timestamps
-        return res
+        res = self.apply(get, agg=agg).compute()
+        if isinstance(agg, list):
+            return res
+        else:
+            res = pd.DataFrame(res)
+            if not isinstance(agg, dict):
+                res = res.drop("original_id", axis=1)
+            res.columns = [f"{column} {agg}" for column in res.columns]
+            res.index.name = "frame"
+            res["timestamp"] = self.timestamps
+            return res
 
     def extend(self, dataset: Dataset) -> Dataset:
         """Extends the dataset by another one.

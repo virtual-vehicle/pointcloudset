@@ -73,6 +73,7 @@ class DatasetCore:
             dask.dataframe.DataFrame: use .compute to get final result.
         """
         data = self.daskdataframe.groupby("original_id").agg(agg)
+        data.columns = [f"{column} {agg}" for column in data.columns]
         data["N"] = self.daskdataframe.groupby("original_id").size()
         data["original_id"] = data.index
         data = data.reset_index(drop=True)
