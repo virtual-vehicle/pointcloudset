@@ -115,3 +115,4 @@ def test_from_frames_list(testdataset_mini_real):
     check.is_instance(testdataset_mini_real, Dataset)
     check.equal(len(testdataset_mini_real), 2)
     check.is_instance(testdataset_mini_real.data[0], DelayedLeaf)
+    check.is_instance(testdataset_mini_real[0], Frame)

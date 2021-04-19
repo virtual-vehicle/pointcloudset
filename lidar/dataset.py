@@ -14,7 +14,7 @@ from dask import delayed
 
 from lidar.dataset_core import DatasetCore
 from lidar.frame import Frame
-from lidar.io import DATASET_FROM_FILE, DATASET_TO_FILE, DATASET_FROM_INSTANCE
+from lidar.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_TO_FILE
 from lidar.pipeline.delayed_result import DelayedResult
 
 

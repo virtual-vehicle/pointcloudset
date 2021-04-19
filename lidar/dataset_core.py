@@ -3,10 +3,10 @@ from __future__ import annotations
 import datetime
 import warnings
 from typing import List, Union
-from dask.delayed import DelayedLeaf, Delayed
 
 import dask
 import pandas as pd
+from dask.delayed import Delayed, DelayedLeaf
 
 aggdict = {
     "mean": pd.core.groupby.groupby.Series.mean,

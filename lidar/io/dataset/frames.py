@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, List
+
 import dask
 
 if TYPE_CHECKING:
@@ -15,7 +17,7 @@ def dataset_from_frames(frames: List[Frame]) -> dict:
     Returns:
         dict: for convetion to dataset
     """
-    data = [dask.delayed(frame) for frame in frames]
+    data = [dask.delayed(frame.data) for frame in frames]
     timestamps = [frame.timestamp for frame in frames]
     meta = {"orig_file": "from frames list"}
     return {"data": data, "timestamps": timestamps, "meta": meta}
