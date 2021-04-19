@@ -184,7 +184,11 @@ class Dataset(DatasetCore):
         elif depth == "frame":
             return self._agg_per_frame(agg)
         elif depth == "dataset":
-            return self._agg(agg).compute().drop(["N", "original_id"], axis=1).agg(agg)
+            data = self._agg(agg).compute()
+            data = data.agg(agg)
+            if not isinstance(agg, list):
+                data.index = [f"{i} {agg}" for i in data.index]
+            return data
         else:
             raise ValueError(f"depth needs to be dataset, frame or point")
 

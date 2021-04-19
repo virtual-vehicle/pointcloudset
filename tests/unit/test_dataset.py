@@ -201,9 +201,35 @@ def test_agg_dataset(testdataset_mini_real: Dataset, testframe_mini_real: Frame)
             "ring min",
             "noise min",
             "range min",
+            "N min",
+            "original_id min",
         ],
     )
     check.equal(test["x min"], x_min.values[0])
+
+
+def test_agg_dataset_dict(testdataset_mini_real: Dataset, testframe_mini_real: Frame):
+    test = testdataset_mini_real.agg({"x": "min"}, "dataset")
+    x_min = testframe_mini_real.data.agg({"x": "min"})
+    check.is_instance(test, pd.Series)
+    check.equal(
+        list(test.index),
+        [
+            "x {'x': 'min'}",
+        ],
+    )
+    check.equal(test.values[0], x_min.values[0])
+
+
+def test_agg_dataset_list(testdataset_mini_real: Dataset, testframe_mini_real: Frame):
+    test = testdataset_mini_real.agg(["min", "max"], "dataset")
+    x_min = testframe_mini_real.data.agg({"x": "min"})
+    check.is_instance(test, pd.DataFrame)
+    check.equal(
+        list(test.index),
+        ["min", "max"],
+    )
+    check.equal(test.x["min"]["min"], x_min.values[0])
 
 
 def test_dataset_min1(
