@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime
 import warnings
-from typing import List, Union
+from typing import List, Union, Literal
 
 import dask
 import pandas as pd
@@ -22,6 +22,21 @@ aggdict = {
     "skew": pd.core.groupby.groupby.Series.skew,
     "kurt": pd.core.groupby.groupby.Series.kurt,
 }
+
+aggs = Literal[
+    "mean",
+    "std",
+    "max",
+    "min",
+    "sum",
+    "median",
+    "count",
+    "var",
+    "sem",
+    "mad",
+    "skew",
+    "kurt",
+]
 
 
 class DatasetCore:
@@ -72,7 +87,21 @@ class DatasetCore:
         self.n += 1
         return result
 
-    def agg(self, agg: str):
+    def agg(self, agg: Union[str, list, dict]) -> dask.dataframe.DataFrame:
+        """Aggregate using one or more operations over the whole dataset.
+        Similar to pandas agg. Used dask dataframes with parallel processing.
+
+        Example:
+            dataset.agg("max")
+            datset.agg(["min","max","mean","std"])
+            datset.agg({"x" : ["min","max","mean","std"]})
+
+        Args:
+            agg (Union[str, list, dict]): [description]
+
+        Returns:
+            dask.dataframe.DataFrame: use .compute to get final result.
+        """
         data = self.daskdataframe.groupby("original_id").agg(agg)
         data["N"] = self.daskdataframe.groupby("original_id").size()
         data["original_id"] = data.index
@@ -80,7 +109,7 @@ class DatasetCore:
         return data
 
     def _agg_explicit(
-        self, agg_type: str, depth: int = 0, agg_type_depth1: str = None
+        self, agg_type: aggs, depth: int = 0, agg_type_depth1: aggs = None
     ) -> Union[pd.DataFrame, pd.Series]:
         """A general aggreation function ob point or whole dataset level.
 
@@ -94,8 +123,10 @@ class DatasetCore:
         """
         data = self.agg(agg_type)
         if depth == 0:
+            # point level
             res = data.compute()
         elif depth == 1:
+            # whole dataset
             if agg_type_depth1 is not None:
                 func = aggdict[agg_type_depth1]
             else:
@@ -105,14 +136,14 @@ class DatasetCore:
             res.name = agg_type
         return res
 
+    def min(self, depth: int = 0) -> Union[pd.DataFrame, pd.Series]:
+        return self._agg_explicit(agg_type="min", depth=depth)
+
     def mean(self, depth: int = 0) -> Union[pd.DataFrame, pd.Series]:
         return self._agg_explicit(agg_type="mean", depth=depth)
 
     def std(self, depth: int = 0) -> pd.DataFrame:
         return self._agg_explicit(agg_type="std", depth=depth)
-
-    def min(self, depth: int = 0) -> Union[pd.DataFrame, pd.Series]:
-        return self._agg_explicit(agg_type="min", depth=depth)
 
     def max(self, depth: int = 0) -> pd.DataFrame:
         return self._agg_explicit(agg_type="max", depth=depth)
