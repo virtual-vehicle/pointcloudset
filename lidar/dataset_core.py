@@ -3,6 +3,7 @@ from __future__ import annotations
 import datetime
 import warnings
 from typing import List, Union
+from dask.delayed import DelayedLeaf, Delayed
 
 import dask
 import pandas as pd
@@ -186,3 +187,6 @@ class DatasetCore:
                 for i in range(len(self.timestamps) - 1)
             ):
                 warnings.warn("Timestamps are not monotonic increasing")
+            assert isinstance(
+                self.data[0], (DelayedLeaf, Delayed)
+            ), f"data needs to be a dask delayed object got {type(self.data[0])}"
