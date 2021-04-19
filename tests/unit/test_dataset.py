@@ -4,6 +4,8 @@ import pytest
 import pytest_check as check
 import rosbag
 from dask.delayed import DelayedLeaf
+from pandas.testing import assert_series_equal
+import pandas as pd
 
 from lidar import Dataset, Frame
 
@@ -116,3 +118,107 @@ def test_from_frames_list(testdataset_mini_real):
     check.equal(len(testdataset_mini_real), 2)
     check.is_instance(testdataset_mini_real.data[0], DelayedLeaf)
     check.is_instance(testdataset_mini_real[0], Frame)
+
+
+def test_agg_frame(testdataset_mini_real: Dataset, testframe_mini_real: Frame):
+    test = testdataset_mini_real._agg_per_frame("min")
+    x_min = testframe_mini_real.data.agg({"x": "min"})
+    check.is_instance(test, pd.DataFrame)
+    check.equal(len(test), len(testdataset_mini_real))
+    check.equal(
+        list(test.columns),
+        [
+            "x min",
+            "y min",
+            "z min",
+            "intensity min",
+            "t min",
+            "reflectivity min",
+            "ring min",
+            "noise min",
+            "range min",
+            "timestamp",
+        ],
+    )
+    check.equal(test.min()["x min"], x_min.values[0])
+
+
+def test_agg_1(testdataset_mini_real: Dataset, testframe_mini_real: Frame):
+    test = testdataset_mini_real.agg("min", "frame")
+    x_min = testframe_mini_real.data.agg({"x": "min"})
+    check.is_instance(test, pd.DataFrame)
+    check.equal(len(test), len(testdataset_mini_real))
+    check.equal(
+        list(test.columns),
+        [
+            "x min",
+            "y min",
+            "z min",
+            "intensity min",
+            "t min",
+            "reflectivity min",
+            "ring min",
+            "noise min",
+            "range min",
+            "timestamp",
+        ],
+    )
+    check.equal(test.min()["x min"], x_min.values[0])
+
+
+def test_agg_dict1(testdataset_mini_real: Dataset, testframe_mini_real: Frame):
+    test = testdataset_mini_real.agg({"x": "min"}, "frame")
+    x_min = testframe_mini_real.data.agg({"x": "min"})
+    check.is_instance(test, pd.DataFrame)
+    check.equal(len(test), len(testdataset_mini_real))
+    check.equal(
+        list(test.columns),
+        ["x {'x': 'min'}", "timestamp"],
+    )
+    check.equal(test.min()["x {'x': 'min'}"], x_min.values[0])
+
+
+def test_agg_dataset(testdataset_mini_real: Dataset, testframe_mini_real: Frame):
+    test = testdataset_mini_real.agg("min", "dataset")
+    x_min = testframe_mini_real.data.agg({"x": "min"})
+    check.is_instance(test, pd.DataFrame)
+    check.equal(len(test), len(testdataset_mini_real))
+    check.equal(
+        list(test.columns),
+        [
+            "x min",
+            "y min",
+            "z min",
+            "intensity min",
+            "t min",
+            "reflectivity min",
+            "ring min",
+            "noise min",
+            "range min",
+            "timestamp",
+        ],
+    )
+    check.equal(test.min()["x min"], x_min.values[0])
+
+
+def test_dataset_min1(
+    testdataset_mini_real: Dataset,
+    testframe_mini_real: Frame,
+    testframe_mini_real_plus1: Frame,
+):
+    mincalc = testdataset_mini_real.min(depth=1)
+    minshould = testframe_mini_real.data.drop("original_id", axis=1).min()
+    check.is_instance(mincalc, pd.Series)
+    assert_series_equal(mincalc, minshould, check_names=False)
+
+
+def test_dataset_min0(
+    testdataset_mini_real: Dataset,
+    testframe_mini_real: Frame,
+    testframe_mini_real_plus1: Frame,
+):
+    mincalc = testdataset_mini_real.min(depth=0)
+    check.equal(mincalc.iloc[0].N, 2)
+    check.is_instance(mincalc, pd.DataFrame)
+    should = testframe_mini_real.extract_point(6008, use_orginal_id=True).squeeze()
+    assert_series_equal(mincalc.drop("N", axis=1).iloc[0], should, check_names=False)

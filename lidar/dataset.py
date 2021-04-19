@@ -8,9 +8,10 @@ For more details on how to use it please refer to the usage.ipynb Notebook for a
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Callable, Union, get_type_hints
+from typing import Any, Callable, Union, get_type_hints, List, Literal
 
 from dask import delayed
+import pandas as pd
 
 from lidar.dataset_core import DatasetCore
 from lidar.frame import Frame
@@ -154,6 +155,50 @@ class Dataset(DatasetCore):
             return Dataset(data=res, timestamps=self.timestamps, meta=self.meta)
         else:
             return DelayedResult(res)
+
+    def agg(
+        self,
+        agg: Union[str, list, dict],
+        depth: Literal["dataset", "frame", "point"] = "dataset",
+    ) -> Union[pd.Series, pd.DataFrame, pd.DataFrame]:
+        """Aggregate using one or more operations over the whole dataset.
+        Similar to pandas agg. Used dask dataframes with parallel processing.
+
+        Example:
+            dataset.agg("max", "frame")
+            datset.agg(["min","max","mean","std"])
+            datset.agg({"x" : ["min","max","mean","std"]})
+
+        Args:
+            agg (Union[str, list, dict]): [description]
+            depth (Literal[, optional): [description]. Defaults to "dataset".
+
+        Raises:
+            ValueError: [description]
+
+        Returns:
+            Union[pd.DataFrame, pd.DataFrame, pd.Series]: [description]
+        """
+        if depth == "point":
+            return self._agg(agg).compute()
+        elif depth == "frame":
+            return self._agg_per_frame(agg)
+        elif depth == "dataset":
+            return self._agg(agg).compute().drop(["N", "original_id"], axis=1).agg(agg)
+        else:
+            raise ValueError(f"depth needs to be dataset, frame or point")
+
+    def _agg_per_frame(self, agg: Union[str, list, dict]) -> pd.DataFrame:
+        def get(frame, agg: str):
+            return frame.data.agg(agg)
+
+        res = pd.DataFrame(self.apply(get, agg=agg).compute())
+        if not isinstance(agg, dict):
+            res = res.drop("original_id", axis=1)
+        res.columns = [f"{column} {agg}" for column in res.columns]
+        res.index.name = "frame"
+        res["timestamp"] = self.timestamps
+        return res
 
     def extend(self, dataset: Dataset) -> Dataset:
         """Extends the dataset by another one.
