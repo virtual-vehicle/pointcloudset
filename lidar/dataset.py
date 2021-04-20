@@ -3,7 +3,8 @@ Dataset Class
 
 The Dataset class contains multiple frames.
 
-For more details on how to use it please refer to the usage.ipynb notebook for an interactive tutorial.
+For more details on how to use it please refer to the usage.ipynb notebook for
+an interactive tutorial.
 
 """
 from __future__ import annotations
@@ -61,7 +62,10 @@ class Dataset(DatasetCore):
             ext = "DIR"
         if ext not in DATASET_FROM_FILE:
             raise ValueError(
-                f"Unsupported file format {ext}; supported formats are: {DATASET_FROM_FILE.keys()}"
+                (
+                    f"Unsupported file format {ext}; supported formats are:"
+                    " {DATASET_FROM_FILE.keys()}"
+                )
             )
         res = DATASET_FROM_FILE[ext](file_path, **kwargs)
         return cls(data=res["data"], timestamps=res["timestamps"], meta=res["meta"])
@@ -208,7 +212,7 @@ class Dataset(DatasetCore):
                 data.index = [f"{i} {agg}" for i in data.index]
             return data
         else:
-            raise ValueError(f"depth needs to be dataset, frame or point")
+            raise ValueError("depth needs to be dataset, frame or point")
 
     def min(self, depth: str = "dataset"):
         return self.agg("min", depth=depth)

@@ -9,10 +9,9 @@ from __future__ import annotations
 
 import datetime
 import warnings
-from typing import List, Union, Literal
+from typing import List, Union
 
 import dask
-import pandas as pd
 from dask.delayed import Delayed, DelayedLeaf
 
 

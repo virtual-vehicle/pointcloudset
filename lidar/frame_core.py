@@ -64,10 +64,16 @@ class FrameCore:
         self._check_index()
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.data}, {self.timestamp}, {self.orig_file})"
+        return (
+            f"{self.__class__.__name__}({self.data}, "
+            f"{self.timestamp}, {self.orig_file})"
+        )
 
     def __str__(self) -> str:
-        return f"pointcloud: with {len(self)} points, data:{list(self.data.columns)}, from {self.timestamp_str}"
+        return (
+            f"pointcloud: with {len(self)} points, data:{list(self.data.columns)},"
+            f" from {self.timestamp_str}"
+        )
 
     def __len__(self) -> int:
         return len(self.data)

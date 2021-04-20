@@ -118,9 +118,7 @@ class Frame(FrameCore):
     def from_instance(
         cls,
         library: str,
-        instance: Union[
-            pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud
-        ],
+        instance: Union[pd.DataFrame, pyntcloud.PyntCloud, o3d.geometry.PointCloud],
         **kwargs,
     ) -> Frame:
         """Converts a libaries instance to a lidar Frame.
