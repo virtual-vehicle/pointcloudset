@@ -322,3 +322,50 @@ def test_dataset_min_frame(
     mincalc = testdataset_mini_real.min(depth="frame")
     x_min = testframe_mini_real.data.agg({"x": "min"})
     check.equal(mincalc["x min"][0], x_min.values[0])
+
+
+def test_dataset_std(testdataset_mini_real: Dataset):
+    stdres = testdataset_mini_real.std()
+    check.is_instance(stdres, pd.Series)
+
+
+def test_frame_std(testdataset_mini_real: Dataset):
+    stdres = testdataset_mini_real.std("frame")
+    check.is_instance(stdres, pd.DataFrame)
+    check.equal(len(stdres), 2)
+    check.equal(
+        list(stdres.columns),
+        [
+            "x std",
+            "y std",
+            "z std",
+            "intensity std",
+            "t std",
+            "reflectivity std",
+            "ring std",
+            "noise std",
+            "range std",
+            "timestamp",
+        ],
+    )
+
+
+def test_frame_point(testdataset_mini_real: Dataset):
+    stdres = testdataset_mini_real.std("point")
+    check.is_instance(stdres, pd.DataFrame)
+    check.equal(
+        list(stdres.columns),
+        [
+            "x std",
+            "y std",
+            "z std",
+            "intensity std",
+            "t std",
+            "reflectivity std",
+            "ring std",
+            "noise std",
+            "range std",
+            "N",
+            "original_id",
+        ],
+    )
