@@ -61,9 +61,9 @@ def _calculate_single_point_difference(frame, frameB, original_id: int) -> pd.Da
     Returns:
         pd.DataFrame: A single row DataFrame with the differences (A - B).
     """
-    pointA = frame.extract_point(original_id, use_orginal_id=True)
+    pointA = frame.extract_point(original_id, use_original_id=True)
     try:
-        pointB = frameB.extract_point(original_id, use_orginal_id=True)
+        pointB = frameB.extract_point(original_id, use_original_id=True)
         difference = pointA - pointB
     except IndexError:
         # there is no point with the orignal_id in frameB

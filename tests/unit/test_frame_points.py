@@ -7,7 +7,7 @@ from lidar import Dataset, Frame
 
 
 def test_extract_point1(testframe: Frame):
-    res = testframe.extract_point(id=1, use_orginal_id=False)
+    res = testframe.extract_point(id=1, use_original_id=False)
     check.equal(type(res), pd.DataFrame)
     check.equal(len(res), 1)
     check.equal(list(res.index.values)[0], 0)
@@ -31,11 +31,11 @@ def test_extract_point1(testframe: Frame):
 
 def test_extract_point_not_available(testframe: Frame):
     with pytest.raises(IndexError):
-        testframe.extract_point(id=10000000, use_orginal_id=False)
+        testframe.extract_point(id=10000000, use_original_id=False)
 
 
 def test_extract_point_orginal_id(testframe: Frame):
-    res = testframe.extract_point(id=4692, use_orginal_id=True)
+    res = testframe.extract_point(id=4692, use_original_id=True)
     check.equal(type(res), pd.DataFrame)
     check.equal(len(res), 1)
     check.equal(list(res.index.values)[0], 0)
@@ -59,4 +59,4 @@ def test_extract_point_orginal_id(testframe: Frame):
 
 def test_extract_point_orginal_id_not_available(testframe: Frame):
     with pytest.raises(IndexError):
-        testframe.extract_point(id=10000000, use_orginal_id=True)
+        testframe.extract_point(id=10000000, use_original_id=True)

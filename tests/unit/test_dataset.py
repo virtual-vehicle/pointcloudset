@@ -306,7 +306,7 @@ def test_dataset_min_point(
     check.equal(mincalc.iloc[0].N, 2)
     check.is_instance(mincalc, pd.DataFrame)
     should = (
-        testframe_mini_real.extract_point(6008, use_orginal_id=True)
+        testframe_mini_real.extract_point(6008, use_original_id=True)
         .drop(["original_id"], axis=1)
         .squeeze()
     )
@@ -324,9 +324,10 @@ def test_dataset_min_frame(
     check.equal(mincalc["x min"][0], x_min.values[0])
 
 
-def test_dataset_std(testdataset_mini_real: Dataset):
-    stdres = testdataset_mini_real.std()
+def test_dataset_std(testdataset_mini_same: Dataset):
+    stdres = testdataset_mini_same.std()
     check.is_instance(stdres, pd.Series)
+    check.equal(stdres["x std"], 0.0)
 
 
 def test_frame_std(testdataset_mini_real: Dataset):
@@ -369,3 +370,50 @@ def test_frame_point(testdataset_mini_real: Dataset):
             "original_id",
         ],
     )
+    check.less(abs((stdres["x std"].values - 0.707107)).max(), 1e-6)
+
+
+def test_dataset_max_dataset(
+    testdataset_mini_real: Dataset,
+    testframe_mini_real: Frame,
+    testframe_mini_real_plus1: Frame,
+):
+    calc = testdataset_mini_real.max(depth="dataset")
+    should = testframe_mini_real_plus1.data.max()
+    should.index = [f"{i} max" for i in should.index]
+    check.is_instance(calc, pd.Series)
+    assert_series_equal(
+        calc.drop("N max"),
+        should,
+        check_names=False,
+    )
+
+
+def test_dataset_max_frame(
+    testdataset_mini_real: Dataset,
+    testframe_mini_real: Frame,
+    testframe_mini_real_plus1: Frame,
+):
+    calc = testdataset_mini_real.max(depth="frame")
+    x_max0 = testframe_mini_real.data.agg({"x": "max"})
+    x_max1 = testframe_mini_real_plus1.data.agg({"x": "max"})
+    check.equal(calc["x max"][0], x_max0.values[0])
+    check.equal(calc["x max"][1], x_max1.values[0])
+
+
+def test_dataset_max_point(
+    testdataset_mini_real: Dataset,
+    testframe_mini_real: Frame,
+    testframe_mini_real_plus1: Frame,
+):
+    calc = testdataset_mini_real.max(depth="point")
+    first = calc.drop(["N", "original_id"], axis=1).iloc[0]
+    check.equal(calc.iloc[0].N, 2)
+    check.is_instance(calc, pd.DataFrame)
+    should = (
+        testframe_mini_real_plus1.extract_point(6008, use_original_id=True)
+        .drop(["original_id"], axis=1)
+        .squeeze()
+    )
+    should.index = [f"{i} max" for i in should.index]
+    assert_series_equal(first, should, check_names=False)

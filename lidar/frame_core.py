@@ -147,7 +147,7 @@ class FrameCore:
         """Generate descriptive statistics based on .data.describe()."""
         return self.data.describe()
 
-    def extract_point(self, id: int, use_orginal_id: bool = False) -> pd.DataFrame:
+    def extract_point(self, id: int, use_original_id: bool = False) -> pd.DataFrame:
         """Extract a specific point from the Frame defined by the point id. The id
         can be the current index of the data from the Frame or the original_id.
 
@@ -160,7 +160,7 @@ class FrameCore:
             pd.DataFrame: a frame which only containse the defined points.
         """
         try:
-            if use_orginal_id:
+            if use_original_id:
                 point = self.data[self.data["original_id"] == id]
                 if len(point) == 0:
                     raise IndexError
