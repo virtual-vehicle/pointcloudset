@@ -103,7 +103,7 @@ def read_rosbag_part(
     if end_frame_number > max_messages:
         raise ValueError("end_frame_number to high")
     timestamps = []
-    for frame_number in tqdm(range(start_frame_number, end_frame_number, 1)):
+    for _ in tqdm(range(start_frame_number, end_frame_number)):
         message = next(sliced_messages)
         timestamp = datetime.datetime.utcfromtimestamp(message.timestamp.to_sec())
         timestamps.append(timestamp)

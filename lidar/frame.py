@@ -86,8 +86,8 @@ class Frame(FrameCore):
 
     def to_file(self, file_path: Path = Path(), **kwargs) -> None:
         """Exports the frame as a csv for use with cloud compare or similar tools.
-        Currently not all attributes of a frame are saved so some information is lost when
-        using this function.
+        Currently not all attributes of a frame are saved so some information is lost
+        when using this function.
 
         Args:
             file_path (Path, optional): Destination. Defaults to the folder of
@@ -127,7 +127,8 @@ class Frame(FrameCore):
 
         Args:
             library (str): name of the libary
-            instance (Union[ pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud ]): [description]
+            instance (Union[ pd.DataFrame, pyntcloud.PyntCloud,
+                o3d.open3d_pybind.geometry.PointCloud ]): [description]
 
         Raises:
             ValueError: If instance is not supported.
@@ -147,9 +148,7 @@ class Frame(FrameCore):
 
     def to_instance(
         self, library: str, **kwargs
-    ) -> Union[
-        pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud
-    ]:
+    ) -> Union[pd.DataFrame, pyntcloud.PyntCloud, o3d.geometry.PointCloud]:
         """Convert Frame to another librarie instance.
 
         Args:
@@ -159,7 +158,8 @@ class Frame(FrameCore):
             ValueError: If libary is not suppored
 
         Returns:
-            Union[ pd.DataFrame, pyntcloud.PyntCloud, o3d.open3d_pybind.geometry.PointCloud ]: The derived instance
+            Union[ pd.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud ]:
+            The derived instance
         """
         library = library.upper()
         if library not in FRAME_TO_INSTANCE:
@@ -193,8 +193,8 @@ class Frame(FrameCore):
                 {"Cluster 1": cluster1,"plan1 1": plane_model}
             point_size (float, optional): Size of each point. Defaults to 2.
             prepend_id (str, optional): string before point id to display in hover
-            hover data (list(str), optional): data columns to display in hover. Default is
-                None.
+            hover data (list(str), optional): data columns to display in hover.
+            Default is None.
 
         Raises:
             ValueError: if the color column name is not in the data
@@ -255,7 +255,8 @@ class Frame(FrameCore):
 
         Args:
             name (str): "orgin", "plane", "frame", "point"
-            target (Union[None, Frame, np.ndarray], optional): [description]. Defaults to None,
+            target (Union[None, Frame, np.ndarray], optional): [description].
+                Defaults to None,
 
         Raises:
             ValueError: If name is not supported.
@@ -317,7 +318,10 @@ class Frame(FrameCore):
             new_data = self.data.iloc[filter_result].reset_index(drop=True)
         else:
             raise TypeError(
-                "Wrong filter_result expeciting array with boolean values or list of intices"
+                (
+                    "Wrong filter_result expeciting array with boolean values or"
+                    "list of intices"
+                )
             )
         return Frame(new_data, timestamp=self.timestamp)
 
@@ -337,8 +341,7 @@ class Frame(FrameCore):
                 eps=eps, min_points=min_points, print_progress=False
             )
         )
-        labels_df = pd.DataFrame(labels, columns=["cluster"])
-        return labels_df
+        return pd.DataFrame(labels, columns=["cluster"])
 
     def take_cluster(self, cluster_number: int, cluster_labels: pd.DataFrame) -> Frame:
         """Takes only the points belonging to the cluster_number.
