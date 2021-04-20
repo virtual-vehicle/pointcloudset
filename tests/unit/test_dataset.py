@@ -417,3 +417,16 @@ def test_dataset_max_point(
     )
     should.index = [f"{i} max" for i in should.index]
     assert_series_equal(first, should, check_names=False)
+
+
+def test_dataset_mean(testdataset_mini_same: Dataset, testframe_mini_real: Frame):
+    calc = testdataset_mini_same.mean()
+    should = testframe_mini_real.data.mean()
+    check.is_instance(calc, pd.Series)
+    should.index = [f"{i} mean" for i in should.index]
+    check.is_instance(calc, pd.Series)
+    assert_series_equal(
+        calc.drop("N mean"),
+        should,
+        check_names=False,
+    )
