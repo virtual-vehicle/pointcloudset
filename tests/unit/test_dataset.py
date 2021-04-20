@@ -275,9 +275,9 @@ def test_agg_point_dict(testdataset_mini_real: Dataset, testframe_mini_real: Fra
     check.is_instance(test, pd.DataFrame)
     check.equal(
         list(test.columns),
-        ["x {'x': 'min'}", "N", "original_id"],
+        ["x", "N", "original_id"],
     )
-    check.equal(test.min()["x {'x': 'min'}"], x_min.values[0])
+    check.equal(test.min()["x"], x_min.values[0])
 
 
 def test_dataset_min_dataset(

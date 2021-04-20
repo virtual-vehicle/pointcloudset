@@ -20,15 +20,19 @@ from lidar.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_TO_FILE
 from lidar.pipeline.delayed_result import DelayedResult
 
 
-def _is_pipline_returing_frame(pipeline) -> bool:
+def _is_pipline_returing_frame(pipeline, warn=True) -> bool:
     type_hints = get_type_hints(pipeline)
     res = False
     if "return" in type_hints:
         res = get_type_hints(pipeline)["return"] == Frame
     else:
-        print(
-            f"No return type was defined in {pipeline.__name__}: will not return a new dataset"
-        )
+        if warn:
+            print(
+                (
+                    f"No return type was defined in {pipeline.__name__}:"
+                    "will not return a new dataset"
+                )
+            )
     return res
 
 
@@ -95,7 +99,10 @@ class Dataset(DatasetCore):
         DATASET_TO_FILE["DIR"](self, file_path=file_path, **kwargs)
 
     def apply(
-        self, func: Union[Callable[[Frame], Frame], Callable[[Frame], Any]], **kwargs
+        self,
+        func: Union[Callable[[Frame], Frame], Callable[[Frame], Any]],
+        warn: bool = True,
+        **kwargs,
     ) -> Union[Dataset, DelayedResult]:
         """Applies a function onto the dataset. It is also possible to pass keyword
         arguments.
@@ -125,14 +132,17 @@ class Dataset(DatasetCore):
         dataset.apply(func, test=10)
 
         Args:
-            func (Union[Callable[[Frame], Frame], Callable[[Frame], Any]]): [description]
+            func (Union[Callable[[Frame], Frame], Callable[[Frame], Any]]): Function to
+                apply. If it retunrs a Frame and has the according type hint a new
+                Dataset will be generated.
+            warn (bool)
 
         Returns:
             Union[Dataset, DelayedResult]: A dataset if the function returns a Frame, or
             a DelayedResult object which is a tuple of dask delayed objects.
         """
 
-        returns_frame = _is_pipline_returing_frame(func)
+        returns_frame = _is_pipline_returing_frame(func, warn=warn)
 
         if returns_frame:
 
@@ -182,7 +192,7 @@ class Dataset(DatasetCore):
         """
         if depth == "point":
             data = self._agg(agg).compute()
-            if not isinstance(agg, list):
+            if isinstance(agg, str):
                 data.columns = [
                     i if i in ["N", "original_id"] else f"{i} {agg}"
                     for i in data.columns
@@ -203,13 +213,22 @@ class Dataset(DatasetCore):
     def min(self, depth: str = "dataset"):
         return self.agg("min", depth=depth)
 
+    def max(self, depth: str = "dataset"):
+        return self.agg("max", depth=depth)
+
+    def mean(self, depth: str = "dataset"):
+        return self.agg("mean", depth=depth)
+
+    def std(self, depth: str = "dataset"):
+        return self.agg("std", depth=depth)
+
     def _agg_per_frame(
         self, agg: Union[str, list, dict]
     ) -> Union[pd.DataFrame, list, pd.DataFrame]:
         def get(frame, agg: Union[str, list, dict]):
             return frame.data.agg(agg)
 
-        res = self.apply(get, agg=agg).compute()
+        res = self.apply(get, warn=False, agg=agg).compute()
         if isinstance(agg, list):
             return res
         else:
