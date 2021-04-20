@@ -7,22 +7,25 @@ import pandas as pd
 
 
 def calculate_distance_to_frame(frame, target):
-    """Calculate the point differences for each point which is also in the target frame
-    (frame - target).
-    Only points with the same original_id are compared. The results are added to the
-    data of the frame.
+    """Calculate the differences for each point in a frame which also exists in the target frame
+    (frame - target). Points with the same original_id are compared.
+
+    Note:
+        Adds the results to the data of the frame.
 
     Args:
-        target (Frame): A Frame object to compute the differences.
+        frame (Frame): Frame for which the differences to the target are calculated.
+        target (Frame): Frame which is substracted from frame.
 
     Raises:
-        ValueError: If there are no points in FrameB with the same original_id
+        ValueError: If there are no original_ids in frame or in target or if they have no common original_ids.
+        NotImplementedError: If difference has already been calculated.
 
     Returns:
-        Frame: Frame with differences to target.
+        Frame: Frame consisting of frame including differences to target.
     """
     if "x difference" in frame.data.columns:
-        raise NotImplementedError("differences of differences not supported")
+        raise NotImplementedError("Differences of differences are not supported.")
     if not frame.has_original_id():
         raise ValueError("Frame does not contain original_id.")
     if not target.has_original_id():
@@ -34,7 +37,7 @@ def calculate_distance_to_frame(frame, target):
         return _calculate_difference(intersection, frame, target)
 
     else:
-        raise ValueError("no intersection found between the frames.")
+        raise ValueError("No common original_ids in frame and target.")
 
 
 def _calculate_difference(intersection: np.ndarray, frame, target):
