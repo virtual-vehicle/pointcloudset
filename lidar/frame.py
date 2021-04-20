@@ -32,8 +32,12 @@ import pyntcloud
 from lidar.diff import ALL_DIFFS
 from lidar.filter import ALL_FILTERS
 from lidar.frame_core import FrameCore
-from lidar.io import (FRAME_FROM_FILE, FRAME_FROM_INSTANCE, FRAME_TO_FILE,
-                      FRAME_TO_INSTANCE)
+from lidar.io import (
+    FRAME_FROM_FILE,
+    FRAME_FROM_INSTANCE,
+    FRAME_TO_FILE,
+    FRAME_TO_INSTANCE,
+)
 from lidar.plot.frame import plot_overlay
 
 
@@ -73,13 +77,12 @@ class Frame(FrameCore):
                     list(FRAME_FROM_FILE)
                 )
             )
-        else:
-            file_path_str = file_path.as_posix()
-            timestamp = datetime.datetime.utcfromtimestamp(file_path.stat().st_mtime)
-            pyntcloud_in = pyntcloud.PyntCloud.from_file(file_path_str, **kwargs)
-            return cls(
-                data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
-            )
+        file_path_str = file_path.as_posix()
+        timestamp = datetime.datetime.utcfromtimestamp(file_path.stat().st_mtime)
+        pyntcloud_in = pyntcloud.PyntCloud.from_file(file_path_str, **kwargs)
+        return cls(
+            data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
+        )
 
     def to_file(self, file_path: Path = Path(), **kwargs) -> None:
         """Exports the frame as a csv for use with cloud compare or similar tools.
@@ -203,13 +206,15 @@ class Frame(FrameCore):
         if color is not None and color not in self.data.columns:
             raise ValueError(f"choose any of {list(self.data.columns)} or None")
 
-        ids = [prepend_id + "id=" + str(i) for i in range(0, self.data.shape[0])]
+        ids = [prepend_id + "id=" + str(i) for i in range(self.data.shape[0])]
 
         show_hover = True
         if hover_data is None:
             show_hover = False
         elif isinstance(hover_data, list) & len(hover_data) > 0:
-            if not all([x in self.data.columns for x in hover_data]):
+            default = ["original_id"]
+            hover_data = list(set(default + hover_data))
+            if any(x not in self.data.columns for x in hover_data):
                 raise ValueError(f"choose a list of {list(self.data.columns)} or []")
 
         fig = px.scatter_3d(
@@ -229,7 +234,7 @@ class Frame(FrameCore):
             selector=dict(mode="markers"),
         )
 
-        if len(overlay) > 0:
+        if overlay:
             fig = plot_overlay(
                 fig,
                 self,
