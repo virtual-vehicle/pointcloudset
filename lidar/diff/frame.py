@@ -7,7 +7,8 @@ import pandas as pd
 
 
 def calculate_distance_to_frame(frame, target):
-    """Calculate the point differences for each point which is also in the target frame (frame - target).
+    """Calculate the point differences for each point which is also in the target frame
+    (frame - target).
     Only points with the same original_id are compared. The results are added to the
     data of the frame.
 
@@ -20,6 +21,8 @@ def calculate_distance_to_frame(frame, target):
     Returns:
         Frame: Frame with differences to target.
     """
+    if "x difference" in frame.data.columns:
+        raise NotImplementedError("differences of differences not supported")
     if not frame.has_original_id():
         raise ValueError("Frame does not contain original_id.")
     if not target.has_original_id():
@@ -28,18 +31,23 @@ def calculate_distance_to_frame(frame, target):
     target_original_ids = target.data.original_id.values
     intersection = np.intersect1d(reference_original_ids, target_original_ids)
     if len(intersection) > 0:
-        diff_list = [
-            _calculate_single_point_difference(frame, target, id) for id in intersection
-        ]
-        original_types = [str(types) for types in diff_list[0].dtypes.values]
-        target_type_dict = dict(zip(diff_list[0].columns.values, original_types))
-        diff_df = pd.concat(diff_list)
-        diff_df = diff_df.astype(target_type_dict)
-        diff_df = diff_df.reset_index(drop=True)
-        frame.data = frame.data.merge(diff_df, on="original_id", how="left")
-        return frame
+        return _calculate_difference(intersection, frame, target)
+
     else:
         raise ValueError("no intersection found between the frames.")
+
+
+def _calculate_difference(intersection: np.ndarray, frame, target):
+    diff_list = [
+        _calculate_single_point_difference(frame, target, id) for id in intersection
+    ]
+    original_types = [str(types) for types in diff_list[0].dtypes.values]
+    target_type_dict = dict(zip(diff_list[0].columns.values, original_types))
+    diff_df = pd.concat(diff_list)
+    diff_df = diff_df.astype(target_type_dict)
+    diff_df = diff_df.reset_index(drop=True)
+    frame.data = frame.data.merge(diff_df, on="original_id", how="left")
+    return frame
 
 
 def _calculate_single_point_difference(frame, frameB, original_id: int) -> pd.DataFrame:

@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 import pytest_check as check
 
-from lidar import Dataset, Frame
+from lidar import Frame
 from lidar.diff.frame import _calculate_single_point_difference
 
 
@@ -152,3 +152,9 @@ def test_calculate_distance_to_plane3(testframe_mini: Frame):
 def test_calculate_distance_to_point(testframe_mini: Frame):
     testframe_mini.diff("point", target=np.array([-1, 0, 0]))
     check.equal(testframe_mini.data["distance to point: [-1  0  0]"][0], 1.0)
+
+
+def test_frame_diff_of_diff(testframe_mini_real: Frame):
+    res = testframe_mini_real.diff("frame", testframe_mini_real)
+    with pytest.raises(NotImplementedError):
+        res.diff("frame", testframe_mini_real)
