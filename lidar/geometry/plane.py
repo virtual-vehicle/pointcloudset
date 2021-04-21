@@ -53,7 +53,7 @@ def intersect_line_of_sight(line: np.array, plane_model: np.array) -> np.array:
 
     Args:
         line (np.array): [lx, ly, lz], line of sight through origin and point (lx,ly,lz)
-        plane (np.array): [a, b, c, d], could be provided by plane_segmentation
+        plane_model (np.array): [a, b, c, d], could be provided by plane_segmentation
 
     Raises:
         ValueError: If line does not have 3 values or if plane does not have 4 values.

@@ -12,18 +12,19 @@ def plot_overlay(fig, frame, overlay: dict, **kwargs):
     Not for standalone use.
 
     Args:
-        fig (plotly fig): The original plot
-        frame (Frame): The original frame
+        fig (plotly.graph_objects.Figure): The original plot.
+        frame (Frame): The original frame.
         overlay (dict): A dict with objects to overlay.
             For example overlay={"Cluster 1": cluster1, "plane1": plane_model}
             The name of the entry is used in tooltips and the value can either
-            be a Frame or a model of a plan as numpy array (a,b,c,d) of a plan.
+            be a Frame or a model of a plane as numpy array [a,b,c,d] of a plane.
+            Uses the plane equation a x + b y + c z + d = 0.
 
     Raises:
-        ValueError: If the overlay value is wrong
+        ValueError: If the overlay value is wrong.
 
     Returns:
-        plotly.graph_objs._figure.Figure: A new plot with all overlays.
+        plotly.graph_objects.Figure: A new plot with all overlays.
     """
     fig.update_traces(opacity=0.7)
     fig.update_traces(
@@ -48,7 +49,7 @@ def plot_overlay(fig, frame, overlay: dict, **kwargs):
             )
         else:
             raise ValueError(
-                f"{from_dict} is not supported, use either a frame of plan model"
+                f"{from_dict} is not supported, use either a Frame or plane model"
             )
 
         i = i + 1
@@ -61,13 +62,13 @@ def plot_overlay_frame(fig, frame, name: str, marker_color: str, **kwargs):
     """Overlay the plot with another frame.
 
     Args:
-        fig (plotly figure): The original plot.
+        fig (plotly.graph_objects.Figure): The original plot.
         frame (Frame): The Frame to overlay.
         name (str): Name of the frame to overlay, used for tooltips.
-        marker_color (str): Color of the overlay
+        marker_color (str): Color of the overlay.
 
     Returns:
-        plotly.graph_objs._figure.Figure: Plot with overlayed Frame.
+        plotly.graph_objects.Figure: Plot with overlayed Frame.
     """
     overlay_fig = frame.plot(
         color=None, point_size=2.0, prepend_id=name + " ", opacity=0.7, **kwargs
@@ -80,7 +81,19 @@ def plot_overlay_frame(fig, frame, name: str, marker_color: str, **kwargs):
 def plot_overlay_plane(
     fig, plane_model: np.array, name: str, orig_frame, colors, i: int
 ):
+    """Overlay the plot with plane.
 
+    Args:
+        fig (plotly.graph_objects.Figure): The original plot.
+        plane_model (np.array): [a,b,c,d], for the plane to overlay. Uses the plane equation a x + b y + c z + d = 0.
+        name (str): Name of the plane to overlay, used for tooltips.
+        orig_frame (int)
+        colors (int)
+        i (int)
+
+    Returns:
+        plotly.graph_objects.Figure: Plot with overlayed Frame.
+    """
     x = np.linspace(min(orig_frame.data.x) * 0.95, max(orig_frame.data.x) * 1.05, 100)
     y = np.linspace(min(orig_frame.data.y) * 0.95, max(orig_frame.data.y) * 1.05, 100)
 
