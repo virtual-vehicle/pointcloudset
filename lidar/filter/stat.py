@@ -23,7 +23,8 @@ def quantile_filter(
             testframe.filter("quantile","intensity","==",0.5)
 
     Args:
-        dim (str): column in data, for example "intensity"
+        frame (Frame): Frame to be filtered
+        dim (str): Dimension to limit, column in data of frame, for example "intensity"
         relation (str, optional): Any operator as string. Defaults to ">=".
         cut_quantile (float, optional): Quantile to compare to. Defaults to 0.5.
 
@@ -35,7 +36,7 @@ def quantile_filter(
     return frame.apply_filter(filter_array.to_numpy())
 
 
-def value_filter(frame, dim: "str", relation: str, value: float) -> Frame:
+def value_filter(frame, dim: str, relation: str, value: float) -> Frame:
     """Limit the range of certain values in lidar Frame.
 
     Example:
@@ -44,13 +45,13 @@ def value_filter(frame, dim: "str", relation: str, value: float) -> Frame:
             testframe.filter("value", "x", ">", 1.0)
 
     Args:
-        dim (str): dimension to limit, any column in data not just x, y, or z
-        relation (str): Any operator as string. Defaults to ">=".
+        frame (Frame): frame to be filtered
+        dim (str): dimension to limit, any column in data not just x, y, or z, for example "intensity"
+        relation (str): Any operator as string.
         value (float): value to limit.
 
     Returns:
-        Frame: filtered frame, were columns which did not match the criteria were
-        dropped.
+        Frame: Frame which fullfils the criteria.
     """
 
     bool_array = (OPS[relation](frame.data[dim], value)).to_numpy()
@@ -59,15 +60,15 @@ def value_filter(frame, dim: "str", relation: str, value: float) -> Frame:
 
 def remove_radius_outlier(frame: Frame, nb_points: int, radius: float) -> Frame:
     """Function to remove points that have less than nb_points in a given
-    sphere of a given radius Parameters.
+    sphere of a given radius.
 
     Args:
         nb_points (int) – Number of points within the radius.
         radius (float) – Radius of the sphere.
 
     Returns:
-        Frame: without the outliers.
+        Frame: Frame without outliers.
     """
     pcd = frame.to_instance("open3d")
-    cl, index_to_keep = pcd.remove_radius_outlier(nb_points=nb_points, radius=radius)
+    _, index_to_keep = pcd.remove_radius_outlier(nb_points=nb_points, radius=radius)
     return frame.apply_filter(index_to_keep)
