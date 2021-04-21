@@ -24,7 +24,7 @@ def plot_overlay(fig, frame, overlay: dict, **kwargs):
         ValueError: If the overlay value is wrong.
 
     Returns:
-        plotly.graph_objects.Figure: A new plot with all overlays.
+        plotly.graph_objects.Figure: Plot with all overlays.
     """
     fig.update_traces(opacity=0.7)
     fig.update_traces(

@@ -24,11 +24,13 @@ class FrameCore:
     ):
         """One Frame of lidar measurements.
 
-        Example:
-        testbag = Path().cwd().parent.joinpath("tests/testdata/test.bag")
-        testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
-        testframe = testset[0]
+        Examples:
 
+            .. code-block:: python
+
+                testbag = Path().cwd().parent.joinpath("tests/testdata/test.bag")
+                testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
+                testframe = testset[0]
         """
         self.data = data
         """All the data, x,y.z and intensity, range and more"""

@@ -65,12 +65,14 @@ class DatasetCore:
 
     def _agg(self, agg: Union[str, list, dict]) -> dask.dataframe.DataFrame:
         """Aggregate using one or more operations over the whole dataset.
-        Similar to pandas agg. Used dask dataframes with parallel processing.
+            Similar to pandas agg. Used dask dataframes with parallel processing.
 
         Example:
-            dataset.agg("max")
-            datset.agg(["min","max","mean","std"])
-            datset.agg({"x" : ["min","max","mean","std"]})
+            .. code-block:: python
+
+                dataset.agg("max")
+                datset.agg(["min","max","mean","std"])
+                datset.agg({"x" : ["min","max","mean","std"]})
 
         Args:
             agg (Union[str, list, dict]): [description]
@@ -88,13 +90,25 @@ class DatasetCore:
         """Check if dataset has frames.
 
         Returns:
-            bool: ``True`` if the dataset contains frames.
+            bool: ``True`` if the dataset does contain frames, False if dataset does not contain any frames.
         """
         return len(self) > 0
 
     def get_frames_between_timestamps(
         self, start_time: datetime.datetime, end_time: datetime.datetime
     ) -> DatasetCore:
+        """Select frames between start_time and end_time.
+
+        Args:
+            start_time (datetime.datetime): Timestamp of first frame.
+            end_time (datetime.datetime): Timestamp of last frame.
+
+        Returns:
+            Dataset: Dataset with frames between two timestamps.
+
+        Raises:
+            ValueError: If start_time is bigger than end_time.
+        """
         if not start_time < end_time:
             raise ValueError("start_time must be smaller than end_time")
         start_i = self._get_frame_number_from_time(start_time)
@@ -107,11 +121,11 @@ class DatasetCore:
         Args:
             time (datetime.datetime): The time of interest
 
-        Raises:
-            ValueError: If time is outside of range.
-
         Returns:
             int: Frame number
+
+        Raises:
+            ValueError: If time is outside of range.
         """
         if time < self.start_time or time > self.end_time:
             raise ValueError("time is outside of range")

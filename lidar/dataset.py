@@ -80,14 +80,14 @@ class Dataset(DatasetCore):
         """Converts a libaries instance to a lidar Dataset.
 
         Args:
-            library (str): name of the libary
-            instance (list[Frame]): instance fromw wicht to convert
-
-        Raises:
-            ValueError: If instance is not supported.
+            library (str): name of the library
+            instance (list[Frame]): instance from which to convert
 
         Returns:
             Dataset: derived from the instance
+
+        Raises:
+            ValueError: If instance is not supported.
         """
         library = library.upper()
         if library not in DATASET_FROM_INSTANCE:
@@ -111,39 +111,40 @@ class Dataset(DatasetCore):
         """Applies a function onto the dataset. It is also possible to pass keyword
         arguments.
 
-        Example 1:
-
-        def func(frame:lidar.Frame) -> lidar.Frame:
-            return frame.limit(x,0,1)
-
-        dataset.apply(func)
-
-        This results in a new dataset
-
-        Example 2:
-
-        def func(frame:lidar.Frame) -> float:
-            return frame.data.x.max()
-
-        dataset.apply(func)
-
-
-        Example 3:
-
-        def func(frame:lidar.Frame, test: float) -> float:
-            return frame.data.x.max() + test
-
-        dataset.apply(func, test=10)
-
         Args:
             func (Union[Callable[[Frame], Frame], Callable[[Frame], Any]]): Function to
-                apply. If it retunrs a Frame and has the according type hint a new
+                apply. If it returns a Frame and has the according type hint a new
                 Dataset will be generated.
             warn (bool)
 
         Returns:
             Union[Dataset, DelayedResult]: A dataset if the function returns a Frame, or
             a DelayedResult object which is a tuple of dask delayed objects.
+
+        Examples:
+
+            .. code-block:: python
+
+                def func(frame:lidar.Frame) -> lidar.Frame:
+                    return frame.limit(x,0,1)
+
+                dataset.apply(func)
+
+            This results in a new dataset
+
+            .. code-block:: python
+
+                def func(frame:lidar.Frame) -> float:
+                    return frame.data.x.max()
+
+                dataset.apply(func)
+
+            .. code-block:: python
+
+                def func(frame:lidar.Frame, test: float) -> float:
+                    return frame.data.x.max() + test
+
+                dataset.apply(func, test=10)
         """
 
         returns_frame = _is_pipline_returing_frame(func, warn=warn)
@@ -179,20 +180,29 @@ class Dataset(DatasetCore):
         """Aggregate using one or more operations over the whole dataset.
         Similar to pandas agg. Used dask dataframes with parallel processing.
 
-        Example:
-            dataset.agg("max", "frame")
-            datset.agg(["min","max","mean","std"])
-            datset.agg({"x" : ["min","max","mean","std"]})
-
         Args:
             agg (Union[str, list, dict]): [description]
             depth (Literal[, optional): [description]. Defaults to "dataset".
 
+        Returns:
+            Union[pd.DataFrame, pd.DataFrame, pd.Series]: [description]
+
         Raises:
             ValueError: [description]
 
-        Returns:
-            Union[pd.DataFrame, pd.DataFrame, pd.Series]: [description]
+        Examples:
+
+            .. code-block:: python
+
+                dataset.agg("max", "frame")
+
+            .. code-block:: python
+
+                datset.agg(["min","max","mean","std"])
+
+            .. code-block:: python
+
+                datset.agg({"x" : ["min","max","mean","std"]})
         """
         if depth == "point":
             data = self._agg(agg).compute()
