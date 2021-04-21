@@ -18,13 +18,14 @@ def quantile_filter(
     """Filtering based on quantile values of dimension dim of the data.
 
     Example:
+        .. code-block:: python
 
-    testframe.filter("quantile","intensity","==",0.5)
+            testframe.filter("quantile","intensity","==",0.5)
 
     Args:
         dim (str): column in data, for example "intensity"
         relation (str, optional): Any operator as string. Defaults to ">=".
-        cut_quantile (float, optional): Qunatile to compare to. Defaults to 0.5.
+        cut_quantile (float, optional): Quantile to compare to. Defaults to 0.5.
 
     Returns:
         Frame: Frame which fullfils the criteria.
@@ -38,13 +39,15 @@ def value_filter(frame, dim: "str", relation: str, value: float) -> Frame:
     """Limit the range of certain values in lidar Frame.
 
     Example:
+        .. code-block:: python
 
-    testframe.filter("value", "x", ">", 1.0)
+            testframe.filter("value", "x", ">", 1.0)
 
     Args:
         dim (str): dimension to limit, any column in data not just x, y, or z
         relation (str): Any operator as string. Defaults to ">=".
         value (float): value to limit.
+
     Returns:
         Frame: filtered frame, were columns which did not match the criteria were
         dropped.
@@ -57,9 +60,11 @@ def value_filter(frame, dim: "str", relation: str, value: float) -> Frame:
 def remove_radius_outlier(frame: Frame, nb_points: int, radius: float) -> Frame:
     """Function to remove points that have less than nb_points in a given
     sphere of a given radius Parameters.
+
     Args:
         nb_points (int) – Number of points within the radius.
         radius (float) – Radius of the sphere.
+
     Returns:
         Frame: without the outliers.
     """
