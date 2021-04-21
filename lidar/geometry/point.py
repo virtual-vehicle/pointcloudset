@@ -1,5 +1,5 @@
 """
-Functions for geometric calculations with points.
+Utility functions for geometric calculations with points.
 """
 
 import numpy as np

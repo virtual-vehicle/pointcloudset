@@ -1,5 +1,5 @@
 """
-Frame filters based on statistics.
+Utility function for filtering frames based on statistics.
 """
 
 from __future__ import annotations

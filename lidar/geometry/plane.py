@@ -1,5 +1,5 @@
 """
-Functions for geometric calculations with planes.
+Utility functions for geometric calculations with planes.
 """
 
 import math
