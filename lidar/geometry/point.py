@@ -12,6 +12,9 @@ def distance_to_point(point_A: np.array, point_B: np.array) -> float:
         point_A (np.array): [x, y, z]
         point_B (np.array): [x, y, z]
 
+    Raises:
+        ValueError: If any of the two points does not have 3 values.
+
     Returns:
         [float]: Euclidean distance between two points.
     """
