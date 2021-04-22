@@ -1,7 +1,7 @@
 How to Contribute
 =====================================
 
-* add Issues in gitlab
-* generate a branch and implement new features
-* write tests for the new features
-* make a merge request in gitlab
+* Add issues in GitLab
+* Generate a branch and implement new features
+* Write tests for the new features
+* Make a merge request in GitLab

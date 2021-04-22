@@ -19,8 +19,8 @@ A package to work with automotive lidar data stored in ROS bag files.
    :caption: Contribute
 
    how_to_contribute
-   guidelines
    getting_started_contribution
+   guidelines
    gitlab_access
 
 

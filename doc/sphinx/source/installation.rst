@@ -1,6 +1,7 @@
-Installation in another project
+Quickstart
 ========================================
 
+Install python package with pip:
 
 .. code-block:: console
 

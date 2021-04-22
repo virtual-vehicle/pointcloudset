@@ -1,12 +1,12 @@
 GitLab access to the docker registry
 ==========================================
 
-On your very first time accessing our gitlab docker registry you need to do the following steps:
+On your very first time accessing our GitLab docker registry you need to do the following steps:
 
-1.) generate an access token:
-   * in gitlab => User settings => Access token
-   * generate a token with &#34;read_registry&#34; rights
-   * store the token safely (KeePass)
+1.) Generate an access token:
+   * In GitLab => User settings => Access token
+   * Generate a token with &#34;read_registry&#34; rights
+   * Store the token safely (KeePass)
 
 2.) In the terminal login to our registry:
 
