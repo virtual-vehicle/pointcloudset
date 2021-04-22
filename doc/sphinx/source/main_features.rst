@@ -1,6 +1,6 @@
 Main features
 ========================================
-* LiDAR pointclouds over time
+* Lidar pointclouds over time
 * Support for large files (lazy evaluation, parallel processing)
 * Interactive 3D visualisation
 * Support for numerical data per point (intensity, range, noise …)

@@ -6,4 +6,3 @@ Guidelines
 * Have a look at the Makefile and the available make commands.
 * Use typehints when declaring a function, class or method.
 * VS code settings in the dev container take care of linting with mypy, flake8 and code formatting with black.
-* Every 0.x release needs to have 100% code coverage with tests
