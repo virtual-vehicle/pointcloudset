@@ -11,8 +11,8 @@ A package to work with automotive lidar data stored in ROS bag files.
    :maxdepth: 1
    :caption: Getting Started
 
-   getting_started
-   installation
+   main_features
+   quickstart
 
 .. toctree::
    :maxdepth: 1
