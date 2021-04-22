@@ -29,14 +29,17 @@ class DatasetCore:
 
     @property
     def start_time(self) -> datetime.datetime:
+        """datetime.datetime: Time of first frame in Dataset."""
         return self.timestamps[0]
 
     @property
     def end_time(self) -> datetime.datetime:
+        """datetime.datetime: Time of last frame in Dataset."""
         return self.timestamps[-1]
 
     @property
     def daskdataframe(self) -> dask.dataframe.core.DataFrame:
+        """dask.dataframe.core.DataFrame: Dask DataFrame with data of Dataset."""
         return dask.dataframe.from_delayed(self.data)
 
     def __len__(self) -> int:
