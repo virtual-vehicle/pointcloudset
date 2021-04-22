@@ -87,10 +87,10 @@ class DatasetCore:
         return data
 
     def has_frames(self) -> bool:
-        """Check if dataset has frames.
+        """Check if Dataset has Frames.
 
         Returns:
-            bool: ``True`` if the dataset does contain frames, False if dataset does not contain any frames.
+            bool: ``True`` if the Dataset does contain Frames, ``False`` if Dataset does not contain any Frames.
         """
         return len(self) > 0
 

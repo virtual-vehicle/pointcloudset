@@ -45,10 +45,10 @@ class FrameCore:
 
     @property
     def timestamp_str(self) -> str:
-        """Converted ROS timestamp to human readable date and time.
+        """Converts ROS timestamp to human readable date and time.
 
         Returns:
-            str: date time string
+            str: Datetime string.
         """
         return self.timestamp.strftime("%A, %B %d, %Y %I:%M:%S")
 
@@ -118,7 +118,7 @@ class FrameCore:
 
     def _has_data(self) -> bool:
         """Check if lidar frame has data. Data here means point coordinates and
-        measruments at each point of the pointcloud.
+        measurements at each point of the pointcloud.
 
         Returns:
             bool: `True`` if the lidar frame contains data.
@@ -126,22 +126,22 @@ class FrameCore:
         return not self.data.empty
 
     def has_original_id(self) -> bool:
-        """Checks if orginal_id column is present in the data.
+        """Checks if original_id column is present in the data.
         Original_id identifies a lidar point and makes them coparable.
 
         Returns:
-            bool: `True`` if the lidar frame contains orginal_id data.
+            bool: ``True`` if the lidar frame contains original_id data.
         """
         return "original_id" in self.data.columns
 
     def _contains_original_id_number(self, original_id: int) -> bool:
-        """Check if lidar frame contains a specific orginal_id.
+        """Check if lidar frame contains a specific original_id.
 
         Args:
-            original_id (int): the orginal_id to check
+            original_id (int): the original_id to check
 
         Returns:
-            bool: True if the original_id exists.
+            bool: ``True`` if the original_id exists.
         """
         return original_id in self.data["original_id"].values
 
@@ -155,11 +155,11 @@ class FrameCore:
 
         Args:
             id (int): Id number
-            use_orginal_id (bool, optional): Use normal index or the orginal_id.
-            Defaults to False.
+            use_original_id (bool, optional): Use normal index or the original_id.
+                Defaults to ``False``.
 
         Returns:
-            pd.DataFrame: a frame which only containse the defined points.
+            pd.DataFrame: A frame which only contains the defined points.
         """
         try:
             if use_original_id:

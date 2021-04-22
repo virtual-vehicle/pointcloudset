@@ -18,8 +18,8 @@ def distance_to_point(
     Args:
         point_A (np.array): [x, y, z], point for which the distance is calculated to plane
         plane_model (np.array): [a, b, c, d], could be provided by plane_segmentation
-        normal_dist (bool): Calculate normal distance if True, calculate
-            distance in direction of line of sight if False. Defaults to True.
+        normal_dist (bool): Calculate normal distance if ``True``, calculate
+            distance in direction of line of sight if ``False``. Defaults to ``True``.
 
     Raises:
         ValueError: If point does not have 3 values or if plane does not have 4 values.

@@ -63,8 +63,8 @@ def remove_radius_outlier(frame: Frame, nb_points: int, radius: float) -> Frame:
     sphere of a given radius.
 
     Args:
-        nb_points (int) – Number of points within the radius.
-        radius (float) – Radius of the sphere.
+        nb_points (int): Number of points within the radius.
+        radius (float): Radius of the sphere.
 
     Returns:
         Frame: Frame without outliers.

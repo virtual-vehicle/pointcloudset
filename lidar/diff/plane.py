@@ -19,10 +19,10 @@ def calculate_distance_to_plane(
         frame (Frame): Frame for which the distance to the plane is calculated.
         target (np.array): [a, b, c, d] as parameters for the target plane, could be provided by
             plane_segmentation.
-        absolute_values (bool, optional): Calculate absolute distances if True.
-            Defaults to True.
-        normal_dist (bool, optional): Calculate normal distance if True, calculate
-            distance in direction of line of sight if False. Defaults to True.
+        absolute_values (bool, optional): Calculate absolute distances if ``True``.
+            Defaults to ``True``.
+        normal_dist (bool, optional): Calculate normal distance if ``True``, calculate
+            distance in direction of line of sight if ``False``. Defaults to ``True``.
 
     Returns:
         Frame: Frame with distance to a plane for each point.

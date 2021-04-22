@@ -42,7 +42,7 @@ from lidar.plot.frame import plot_overlay
 
 
 def is_documented_by(original):
-    """A decorator to get the docstring from anoter function."""
+    """A decorator to get the docstring from another function."""
 
     def wrapper(target):
         target.__doc__ = original.__doc__
@@ -56,20 +56,20 @@ class Frame(FrameCore):
 
     @classmethod
     def from_file(cls, file_path: Path, **kwargs):
-        """Extract data from file and construct a Frame with it. Uses Pynthcloud as
+        """Extract data from file and construct a Frame with it. Uses pyntcloud as
         backend.
 
         Args:
-            file_path (Path): pathlib Path of file to read
-
-        Raises:
-            ValueError: For unsupported files
+            file_path (Path): pathlib Path of file to read.
 
         Returns:
             Frame: lidar frame with timestamp last modified.
+
+        Raises:
+            ValueError: For unsupported files.
         """
         if not isinstance(file_path, Path):
-            raise TypeError("Expectinga Path object for file_path")
+            raise TypeError("Expecting a Path object for file_path")
         ext = file_path.suffix[1:].upper()
         if ext not in FRAME_FROM_FILE:
             raise ValueError(
@@ -124,15 +124,15 @@ class Frame(FrameCore):
         """Converts a libaries instance to a lidar Frame.
 
         Args:
-            library (str): name of the libary
+            library (str): Name of the library.
             instance (Union[ pd.DataFrame, pyntcloud.PyntCloud,
                 o3d.open3d_pybind.geometry.PointCloud ]): [description]
 
+        Returns:
+            Frame: Derived from the instance.
+
         Raises:
             ValueError: If instance is not supported.
-
-        Returns:
-            Frame: derived from the instance
         """
         library = library.upper()
         if library not in FRAME_FROM_INSTANCE:
@@ -150,14 +150,14 @@ class Frame(FrameCore):
         """Convert Frame to another librarie instance.
 
         Args:
-            library (str): name of the libary
-
-        Raises:
-            ValueError: If libary is not suppored
+            library (str): Name of the library.
 
         Returns:
             Union[ pd.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud ]:
             The derived instance
+
+        Raises:
+            ValueError: If library is not suppored.
         """
         library = library.upper()
         if library not in FRAME_TO_INSTANCE:
@@ -185,21 +185,21 @@ class Frame(FrameCore):
         You can also pass arguments to the plotly express function scatter_3D.
 
         Args:
-            frame (Frame): the frame to plot
+            frame (Frame): The frame to plot.
             color (str or None): Which column to plot. For example "intensity"
-            overlay (dict, optional): Dict with of rames to overlay
-                {"Cluster 1": cluster1,"plan1 1": plane_model}
+            overlay (dict, optional): Dict with Frames to overlay
+                {"Cluster 1": cluster1,"Plane 1 1": plane_model}
             point_size (float, optional): Size of each point. Defaults to 2.
-            prepend_id (str, optional): string before point id to display in hover
-            hover data (list(str), optional): data columns to display in hover.
+            prepend_id (str, optional): String before point id to display in hover.
+            hover data (list(str), optional): Data columns to display in hover.
             Default is None.
-
-        Raises:
-            ValueError: if the color column name is not in the data
 
         Returns:
             Plotly plot: The interactive plotly plot, best used inside a jupyter
             notebook.
+
+        Raises:
+            ValueError: If the color column name is not in the data.
         """
         if color is not None and color not in self.data.columns:
             raise ValueError(f"choose any of {list(self.data.columns)} or None")
@@ -252,15 +252,15 @@ class Frame(FrameCore):
         """Calculate differences and distances to the origin, plane, point and frame.
 
         Args:
-            name (str): "orgin", "plane", "frame", "point"
+            name (str): "origin", "plane", "frame", "point"
             target (Union[None, Frame, np.ndarray], optional): [description].
                 Defaults to None,
 
-        Raises:
-            ValueError: If name is not supported.
-
         Returns:
             Frame: New frame with added column of the differences
+
+        Raises:
+            ValueError: If name is not supported.
         """
         if name in ALL_DIFFS:
             ALL_DIFFS[name](frame=self, target=target, **kwargs)
@@ -278,17 +278,20 @@ class Frame(FrameCore):
     def limit(self, dim: "str", minvalue: float, maxvalue: float) -> Frame:
         """Limit the range of certain values in lidar Frame. Can be chained together.
 
-        Example:
-
-        testframe.limit("x", -1.0, 1.0).limit("intensity", 0.0, 50.0)
-
         Args:
-            dim (str): dimension to limit, any column in data not just x, y, or z
-            minvalue (float): min value to limit. (greater equal)
-            maxvalue (float): max value to limit. (smaller equal)
+            dim (str): Dimension to limit, any column in data not just x, y, or z.
+            minvalue (float): Min value to limit. (greater equal)
+            maxvalue (float): Max value to limit. (smaller equal)
+
         Returns:
-            Frame: limited frame, were columns which did not match the criteria were
+            Frame: Limited frame, where columns which did not match the criteria were
             dropped.
+
+        Examples:
+
+            .. code-block:: python
+
+                testframe.limit("x", -1.0, 1.0).limit("intensity", 0.0, 50.0)
         """
         if maxvalue < minvalue:
             raise ValueError("maxvalue must be greater than minvalue")
@@ -297,16 +300,17 @@ class Frame(FrameCore):
         )
 
     def apply_filter(self, filter_result: Union[np.ndarray, List[int]]) -> Frame:
-        """Generating a new Frame by removing points where filter
+        """Generating a new Frame by removing points where filter.
 
         Args:
-            filter_result (Union[np.ndarray, List[int]]): Filter result
-
-        Raises:
-            TypeError: If the filter_result has the wrong type
+            filter_result (Union[np.ndarray, List[int]]): Filter result.
 
         Returns:
-            Frame: rame with filterd rows and reindexed data and points.
+            Frame: Frame with filtered rows and reindexed data and points.
+
+        Raises:
+            TypeError: If the filter_result has the wrong type.
+
         """
         if isinstance(filter_result, np.ndarray):
             # dataframe and pyntcloud based filters
@@ -317,8 +321,8 @@ class Frame(FrameCore):
         else:
             raise TypeError(
                 (
-                    "Wrong filter_result expeciting array with boolean values or"
-                    "list of intices"
+                    "Wrong filter_result expecting array with boolean values or"
+                    "list of indices"
                 )
             )
         return Frame(new_data, timestamp=self.timestamp)
@@ -328,7 +332,7 @@ class Frame(FrameCore):
             take_cluster.
 
         Args:
-            eps (float): Density parameter that is used to find neighbouring points.
+            eps (float): Density parameter that is used to find neighboring points.
             min_points (int): Minimum number of points to form a cluster.
 
         Returns:
@@ -346,10 +350,10 @@ class Frame(FrameCore):
 
         Args:
             cluster_number (int): Cluster id to keep.
-            cluster_labels (pd.DataFrame): clusters generated with get_cluster.
+            cluster_labels (pd.DataFrame): Clusters generated with get_cluster.
 
         Returns:
-            Frame: with cluster of ID cluster_number.
+            Frame: Frame with cluster of ID cluster_number.
         """
         bool_array = (cluster_labels["cluster"] == cluster_number).values
         return self.apply_filter(bool_array)
@@ -366,12 +370,12 @@ class Frame(FrameCore):
 
         Args:
             distance_threshold (float): Max distance a point can be from the plane
-                        model, and still be considered an inlier.
+                        model, and still be considered as an inlier.
             ransac_n (int):  Number of initial points to be considered inliers in
                         each iteration.
             num_iterations (int): Number of iterations.
             return_plane_model (bool, optional): Return also plane model parameters.
-                        Defaults to False.
+                        Defaults to ``False``.
 
         Returns:
             Frame or dict: Frame with inliers or a dict of Frame with inliers and the
@@ -385,8 +389,8 @@ class Frame(FrameCore):
         )
         if len(self) > 200:
             warnings.warn(
-                """Might not produce reproducable resuts, If the number of points
-                is high. Try to reduce the area of interesst before using
+                """Might not produce reproduceable resuts, If the number of points
+                is high. Try to reduce the area of interest before using
                 plane_segmentation. Caused by open3D."""
             )
         inlier_Frame = self.apply_filter(inliers)

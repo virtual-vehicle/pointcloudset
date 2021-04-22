@@ -18,7 +18,7 @@ def to_open3d(frame: Frame) -> o3d.open3d_pybind.geometry.PointCloud:
     """Converts pandas dataframe to open3d PointCloud.
 
     Args:
-        df (pd.DataFrame): pointcoud dataframe with x,y,z,intensity
+        df (pd.DataFrame): pointcloud dataframe with x,y,z,intensity
 
     Returns:
         o3d.open3d_pybind.geometry.PointCloud: open3d pointcloud object
