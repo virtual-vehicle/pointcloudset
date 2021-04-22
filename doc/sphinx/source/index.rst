@@ -29,6 +29,7 @@ A package to work with automotive lidar data stored in ROS bag files.
    :caption: Tutorial
 
    tutorial_notebooks/usage
+   tutorial_notebooks/reading_las
    
 
 .. toctree::
