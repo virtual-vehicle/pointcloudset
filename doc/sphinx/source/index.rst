@@ -21,7 +21,7 @@ A package to work with automotive lidar data stored in ROS bag files.
    how_to_contribute
    getting_started_contribution
    guidelines
-   gitlab_access
+
 
 
 .. toctree::
@@ -30,7 +30,7 @@ A package to work with automotive lidar data stored in ROS bag files.
 
    tutorial_notebooks/usage
    tutorial_notebooks/reading_las
-   
+
 
 .. toctree::
    :maxdepth: 5
