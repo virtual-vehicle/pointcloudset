@@ -60,10 +60,10 @@ class Frame(FrameCore):
         backend.
 
         Args:
-            file_path (Path): pathlib Path of file to read.
+            file_path (Path): Pathlib Path of file to read.
 
         Returns:
-            Frame: lidar frame with timestamp last modified.
+            Frame: Frame with timestamp last modified.
 
         Raises:
             ValueError: For unsupported files.
@@ -147,7 +147,7 @@ class Frame(FrameCore):
     def to_instance(
         self, library: str, **kwargs
     ) -> Union[pd.DataFrame, pyntcloud.PyntCloud, o3d.geometry.PointCloud]:
-        """Convert Frame to another librarie instance.
+        """Convert Frame to another library instance.
 
         Args:
             library (str): Name of the library.
@@ -188,7 +188,8 @@ class Frame(FrameCore):
             frame (Frame): The frame to plot.
             color (str or None): Which column to plot. For example "intensity"
             overlay (dict, optional): Dict with Frames to overlay
-                {"Cluster 1": cluster1,"Plane 1 1": plane_model}
+                {"Cluster 1": cluster1,"Plane 1": plane_model}\n
+                See also: :func:`lidar.plot.frame.plot_overlay`
             point_size (float, optional): Size of each point. Defaults to 2.
             prepend_id (str, optional): String before point id to display in hover.
             hover data (list(str), optional): Data columns to display in hover.
@@ -252,7 +253,11 @@ class Frame(FrameCore):
         """Calculate differences and distances to the origin, plane, point and frame.
 
         Args:
-            name (str): "origin", "plane", "frame", "point"
+            name (str):
+                "origin": :func:`lidar.diff.origin.calculate_distance_to_origin` \n
+                "plane": :func:`lidar.diff.plane.calculate_distance_to_plane` \n
+                "frame": :func:`lidar.diff.frame.calculate_distance_to_frame` \n
+                "point": :func:`lidar.diff.point.calculate_distance_to_point` \n
             target (Union[None, Frame, np.ndarray], optional): [description].
                 Defaults to None,
 
