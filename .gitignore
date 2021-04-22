@@ -103,3 +103,4 @@ notebooks/dev*
 tests/testdata/big.bag
 *.lock
 *.dirlock
+*dask-worker-space*
