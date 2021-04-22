@@ -21,11 +21,11 @@ def distance_to_point(
         normal_dist (bool): Calculate normal distance if ``True``, calculate
             distance in direction of line of sight if ``False``. Defaults to ``True``.
 
+    Returns:
+        float: Distance between plane and point.
+
     Raises:
         ValueError: If point does not have 3 values or if plane does not have 4 values.
-
-    Returns:
-        [float]: Distance between plane and point.
     """
     if len(point_A) != 3:
         raise ValueError("point needs to have 3 values")
@@ -53,13 +53,13 @@ def intersect_line_of_sight(line: np.array, plane_model: np.array) -> np.array:
 
     Args:
         line (np.array): [lx, ly, lz], line of sight through origin and point (lx,ly,lz)
-        plane_model (np.array): [a, b, c, d], could be provided by plane_segmentation
+        plane_model (np.array): [a, b, c, d], could be provided by plane_segmentation.
+
+    Returns:
+        np.array: [px, py, pz], point of intersection of line of sight and plane.
 
     Raises:
         ValueError: If line does not have 3 values or if plane does not have 4 values.
-
-    Returns:
-        [np.array]: [px, py, pz], point of intersection of line of sight and plane.
     """
     if len(line) != 3:
         raise ValueError("line needs to have 3 values")

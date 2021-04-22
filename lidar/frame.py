@@ -195,7 +195,7 @@ class Frame(FrameCore):
             Default is None.
 
         Returns:
-            Plotly plot: The interactive plotly plot, best used inside a jupyter
+            plotly.graph_objs.Figure: The interactive plotly plot, best used inside a jupyter
             notebook.
 
         Raises:
