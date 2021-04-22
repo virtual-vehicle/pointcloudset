@@ -38,7 +38,7 @@ def _is_pipline_returing_frame(pipeline, warn=True) -> bool:
 
 
 class Dataset(DatasetCore):
-    """Lidar Dataset which contains individual frames, timestamps and metadata."""
+    """Lidar Dataset which contains multiple frames, timestamps and metadata."""
 
     def __getitem__(self, frame_number: Union[slice, int]) -> Union[DatasetCore, Frame]:
         if isinstance(frame_number, slice):
@@ -55,6 +55,19 @@ class Dataset(DatasetCore):
 
     @classmethod
     def from_file(cls, file_path: Path, **kwargs):
+        """Reads a Dataset from a file.
+
+        Args:
+            file_path (Path): File path where Dataset should be read from.
+            **kwargs: Keyword arguments to pass to func.
+
+        Returns:
+            Dataset: Dataset object from file.
+
+        Raises:
+            ValueError: If file format is not supported.
+            TypeError: If file_path is not a Path object.
+        """
         if not isinstance(file_path, Path):
             raise TypeError("Expecting a Path object for file_path")
         ext = file_path.suffix[1:].upper()
@@ -77,14 +90,15 @@ class Dataset(DatasetCore):
         instance: list[Frame],
         **kwargs,
     ) -> Dataset:
-        """Converts a libaries instance to a lidar Dataset.
+        """Converts a libary instance to a lidar Dataset.
 
         Args:
-            library (str): name of the library
-            instance (list[Frame]): instance from which to convert
+            library (str): Name of the library.
+            instance (list[Frame]): Instance from which to convert.
+            **kwargs: Keyword arguments to pass to func.
 
         Returns:
-            Dataset: derived from the instance
+            Dataset: Derived from the instance.
 
         Raises:
             ValueError: If instance is not supported.
@@ -100,6 +114,12 @@ class Dataset(DatasetCore):
             return cls(**DATASET_FROM_INSTANCE[library](instance, **kwargs))
 
     def to_file(self, file_path: Path = Path(), **kwargs) -> None:
+        """Writes a Dataset to a file.
+
+        Args:
+            file_path (Path): File path where Dataset should be saved.
+            **kwargs: Keyword arguments to pass to func.
+        """
         DATASET_TO_FILE["DIR"](self, file_path=file_path, **kwargs)
 
     def apply(
@@ -116,6 +136,7 @@ class Dataset(DatasetCore):
                 apply. If it returns a Frame and has the according type hint a new
                 Dataset will be generated.
             warn (bool)
+            **kwargs: Keyword arguments to pass to func.
 
         Returns:
             Union[Dataset, DelayedResult]: A dataset if the function returns a Frame, or
@@ -178,7 +199,7 @@ class Dataset(DatasetCore):
         depth: Literal["dataset", "frame", "point"] = "dataset",
     ) -> Union[pd.Series, List[pd.DataFrame], pd.DataFrame, pd.DataFrame]:
         """Aggregate using one or more operations over the whole dataset.
-        Similar to pandas agg. Used dask dataframes with parallel processing.
+        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel processing.
 
         Args:
             agg (Union[str, list, dict]): [description]
@@ -188,7 +209,7 @@ class Dataset(DatasetCore):
             Union[pd.DataFrame, pd.DataFrame, pd.Series]: [description]
 
         Raises:
-            ValueError: [description]
+            ValueError: If depth is not "dataset", "frame" or "point".
 
         Examples:
 
@@ -198,11 +219,11 @@ class Dataset(DatasetCore):
 
             .. code-block:: python
 
-                datset.agg(["min","max","mean","std"])
+                dataset.agg(["min","max","mean","std"])
 
             .. code-block:: python
 
-                datset.agg({"x" : ["min","max","mean","std"]})
+                dataset.agg({"x" : ["min","max","mean","std"]})
         """
         if depth == "point":
             data = self._agg(agg).compute()
@@ -225,15 +246,63 @@ class Dataset(DatasetCore):
             raise ValueError("depth needs to be dataset, frame or point")
 
     def min(self, depth: str = "dataset"):
+        """Aggregate using minimum operation over the whole dataset.
+        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel processing.
+
+        Hint:
+
+            See also: :func:`lidar.dataset.Dataset.agg`\n
+            Same as:
+
+            .. code-block:: python
+
+                dataset.agg(["min"])
+        """
         return self.agg("min", depth=depth)
 
     def max(self, depth: str = "dataset"):
+        """Aggregate using maximum operation over the whole dataset.
+        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel processing.
+
+        Hint:
+
+            See also: :func:`lidar.dataset.Dataset.agg`\n
+            Same as:
+
+            .. code-block:: python
+
+                dataset.agg(["max"])
+        """
         return self.agg("max", depth=depth)
 
     def mean(self, depth: str = "dataset"):
+        """Aggregate using mean operation over the whole dataset.
+        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel processing.
+
+        Hint:
+
+            See also: :func:`lidar.dataset.Dataset.agg`\n
+            Same as:
+
+            .. code-block:: python
+
+                dataset.agg(["mean"])
+        """
         return self.agg("mean", depth=depth)
 
     def std(self, depth: str = "dataset"):
+        """Aggregate using std operation over the whole dataset.
+        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel processing.
+
+        Hint:
+
+            See also: :func:`lidar.dataset.Dataset.agg`\n
+            Same as:
+
+            .. code-block:: python
+
+                dataset.agg(["std"])
+        """
         return self.agg("std", depth=depth)
 
     def _agg_per_frame(

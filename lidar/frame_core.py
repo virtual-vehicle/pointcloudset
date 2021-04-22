@@ -35,11 +35,11 @@ class FrameCore:
         self.data = data
         """All the data, x,y.z and intensity, range and more"""
         self.timestamp = timestamp
-        """timestamp"""
+        """Timestamp."""
         self.points = pyntcloud.PyntCloud(self.data, mesh=None)
-        """Pyntcloud object with x,y,z coordinates"""
+        """Pyntcloud object with x,y,z coordinates."""
         self.orig_file = orig_file
-        """Path to bag file. Defaults to empty"""
+        """Path to bag file. Defaults to empty."""
 
         self._check_index()
 
@@ -48,12 +48,13 @@ class FrameCore:
         """Converts ROS timestamp to human readable date and time.
 
         Returns:
-            str: Datetime string.
+            str: Date/time string.
         """
         return self.timestamp.strftime("%A, %B %d, %Y %I:%M:%S")
 
     @property
     def data(self):
+        """All the data, x,y.z and intensity, range and more"""
         return self.__data
 
     @data.setter
@@ -127,10 +128,10 @@ class FrameCore:
 
     def has_original_id(self) -> bool:
         """Checks if original_id column is present in the data.
-        Original_id identifies a lidar point and makes them coparable.
+        Original_id identifies a lidar point and makes them comparable.
 
         Returns:
-            bool: ``True`` if the lidar frame contains original_id data.
+            bool: ``True`` if the Frame contains original_id data, ``False`` if Frame does not contain original_id data.
         """
         return "original_id" in self.data.columns
 
@@ -146,7 +147,11 @@ class FrameCore:
         return original_id in self.data["original_id"].values
 
     def describe(self) -> pd.DataFrame:
-        """Generate descriptive statistics based on .data.describe()."""
+        """Generate descriptive statistics based on .data.describe() and therefore on pandas.DataFrame.describe().
+
+        Returns:
+            pd.DataFrame: Summary statistics of the data of the Frame.
+        """
         return self.data.describe()
 
     def extract_point(self, id: int, use_original_id: bool = False) -> pd.DataFrame:
@@ -154,12 +159,12 @@ class FrameCore:
         can be the current index of the data from the Frame or the original_id.
 
         Args:
-            id (int): Id number
-            use_original_id (bool, optional): Use normal index or the original_id.
+            id (int): ID number
+            use_original_id (bool, optional): If ``True`` use original_id, if ``False`` use current index in Frame.
                 Defaults to ``False``.
 
         Returns:
-            pd.DataFrame: A frame which only contains the defined points.
+            pd.DataFrame: A frame which only contains the defined point.
         """
         try:
             if use_original_id:
