@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 def quantile_filter(
     frame, dim: str, relation: str = ">=", cut_quantile: float = 0.5
-) -> Frame:
+) -> lidar.Frame:
     """Filtering based on quantile values of dimension dim of the data.
 
     Example:
@@ -36,7 +36,7 @@ def quantile_filter(
     return frame.apply_filter(filter_array.to_numpy())
 
 
-def value_filter(frame, dim: str, relation: str, value: float) -> Frame:
+def value_filter(frame, dim: str, relation: str, value: float) -> lidar.Frame:
     """Limit the range of certain values in lidar Frame.
 
     Example:
@@ -45,10 +45,10 @@ def value_filter(frame, dim: str, relation: str, value: float) -> Frame:
             testframe.filter("value", "x", ">", 1.0)
 
     Args:
-        frame (Frame): frame to be filtered
-        dim (str): dimension to limit, any column in data not just x, y, or z, for example "intensity"
+        frame (Frame): Frame to be filtered.
+        dim (str): Dimension to limit, any column in data not just x, y, or z, for example "intensity"
         relation (str): Any operator as string.
-        value (float): value to limit.
+        value (float): Value to limit.
 
     Returns:
         Frame: Frame which fullfils the criteria.
@@ -58,11 +58,12 @@ def value_filter(frame, dim: str, relation: str, value: float) -> Frame:
     return frame.apply_filter(bool_array)
 
 
-def remove_radius_outlier(frame: Frame, nb_points: int, radius: float) -> Frame:
+def remove_radius_outlier(frame: Frame, nb_points: int, radius: float) -> lidar.Frame:
     """Function to remove points that have less than nb_points in a given
     sphere of a given radius.
 
     Args:
+        frame (Frame): Frame from which to remove points.
         nb_points (int): Number of points within the radius.
         radius (float): Radius of the sphere.
 
