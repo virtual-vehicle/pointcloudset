@@ -91,7 +91,7 @@ class DatasetCore:
 
         Returns:
             bool: ``True`` if the Dataset does contain Frames, ``False`` if Dataset
-                does not contain any Frames.
+            does not contain any Frames.
         """
         return len(self) > 0
 
