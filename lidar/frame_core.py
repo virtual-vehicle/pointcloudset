@@ -148,7 +148,7 @@ class FrameCore:
 
     def describe(self) -> pd.DataFrame:
         """Generate descriptive statistics based on :func:`Frame.data.describe` and therefore on
-        pandas.DataFrame.describe().
+        :meth:`pandas:pandas.DataFrame.describe`.
 
         Returns:
             pd.DataFrame: Summary statistics of the data of the Frame.

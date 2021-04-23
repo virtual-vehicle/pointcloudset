@@ -41,8 +41,12 @@ extensions = [
     "sphinx.ext.coverage",
     "sphinxcontrib.napoleon",
     "nbsphinx",
+    "sphinx.ext.intersphinx",
 ]
 
+intersphinx_mapping = {
+    "pandas": ("http://pandas.pydata.org/pandas-docs/dev", None),
+}
 napoleon_numpy_docstring = False
 autodoc_member_order = "bysource"
 
