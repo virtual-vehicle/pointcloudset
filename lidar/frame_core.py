@@ -51,7 +51,7 @@ class FrameCore:
 
     @property
     def data(self):
-        """All the data, x,y.z and intensity, range and more"""
+        """All the data, x,y,z and auxilary data such as intensity, range and more"""
         return self.__data
 
     @data.setter
@@ -70,6 +70,7 @@ class FrameCore:
 
     @property
     def centroid(self) -> np.array:
+        """Geometric center for the point cloud."""
         return self.points.centroid
 
     def __repr__(self) -> str:
