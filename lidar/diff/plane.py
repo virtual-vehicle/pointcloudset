@@ -18,7 +18,7 @@ def calculate_distance_to_plane(
 
     Args:
         frame (Frame): Frame for which the distance to the plane is calculated.
-        target (np.array): [a, b, c, d] as parameters for the target plane, could be
+        target (numpy.ndarray): [a, b, c, d] as parameters for the target plane, could be
             provided by plane_segmentation.
         absolute_values (bool, optional): Calculate absolute distances if ``True``.
             Defaults to ``True``.

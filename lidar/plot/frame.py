@@ -85,7 +85,7 @@ def plot_overlay_plane(
 
     Args:
         fig (plotly.graph_objects.Figure): The original plot.
-        plane_model (np.array): [a,b,c,d], for the plane to overlay. Uses the plane
+        plane_model (numpy.ndarray): [a,b,c,d], for the plane to overlay. Uses the plane
             equation a x + b y + c z + d = 0.
         name (str): Name of the plane to overlay, used for tooltips.
         orig_frame (int)

@@ -17,9 +17,9 @@ def distance_to_point(
     https://mathworld.wolfram.com/Point-PlaneDistance.html
 
     Args:
-        point_A (np.array): [x, y, z], point for which the distance is calculated to
+        point_A (numpy.ndarray): [x, y, z], point for which the distance is calculated to
             plane.
-        plane_model (np.array): [a, b, c, d], could be provided by plane_segmentation.
+        plane_model (numpy.ndarray): [a, b, c, d], could be provided by plane_segmentation.
         normal_dist (bool): Calculate normal distance if ``True``, calculate
             distance in direction of line of sight if ``False``. Defaults to ``True``.
 
@@ -54,11 +54,11 @@ def intersect_line_of_sight(line: np.array, plane_model: np.array) -> np.array:
         Uses the plane equation a x + b y + c z + d = 0.
 
     Args:
-        line (np.array): [lx, ly, lz], line of sight through origin and point (lx,ly,lz)
-        plane_model (np.array): [a, b, c, d], could be provided by plane_segmentation.
+        line (numpy.ndarray): [lx, ly, lz], line of sight through origin and point (lx,ly,lz)
+        plane_model (numpy.ndarray): [a, b, c, d], could be provided by plane_segmentation.
 
     Returns:
-        numpy.array: [px, py, pz], point of intersection of line of sight and plane.
+        numpy.ndarray: [px, py, pz], point of intersection of line of sight and plane.
 
     Raises:
         ValueError: If line does not have 3 values or if plane does not have 4 values.

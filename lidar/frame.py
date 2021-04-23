@@ -66,7 +66,7 @@ class Frame(FrameCore):
         backend.
 
         Args:
-            file_path (Path): Pathlib Path of file to read.
+            file_path (pathlib.Path): Pathlib Path of file to read.
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -98,7 +98,7 @@ class Frame(FrameCore):
         when using this function.
 
         Args:
-            file_path (Path, optional): Destination. Defaults to the folder of
+            file_path (pathlib.Path, optional): Destination. Defaults to the folder of
                 the bag file and csv with the timestamp of the frame.
             **kwargs: Keyword arguments to pass to func.
 
@@ -276,7 +276,7 @@ class Frame(FrameCore):
                 "plane": :func:`lidar.diff.plane.calculate_distance_to_plane` \n
                 "frame": :func:`lidar.diff.frame.calculate_distance_to_frame` \n
                 "point": :func:`lidar.diff.point.calculate_distance_to_point` \n
-            target (Union[None, Frame, np.ndarray], optional): [description].
+            target (Union[None, Frame, numpy.ndarray], optional): [description].
                 Defaults to None.
             **kwargs: Keyword arguments to pass to func.
 
@@ -343,7 +343,7 @@ class Frame(FrameCore):
         """Generating a new Frame by removing points where filter.
 
         Args:
-            filter_result (Union[np.ndarray, List[int]]): Filter result.
+            filter_result (Union[numpy.ndarray, List[int]]): Filter result.
 
         Returns:
             Frame: Frame with filtered rows and reindexed data and points.

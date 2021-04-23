@@ -54,7 +54,7 @@ class Dataset(DatasetCore):
         """Reads a Dataset from a file.
 
         Args:
-            file_path (Path): File path where Dataset should be read from.
+            file_path (pathlib.Path): File path where Dataset should be read from.
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -83,7 +83,7 @@ class Dataset(DatasetCore):
         """Writes a Dataset to a file.
 
         Args:
-            file_path (Path): File path where Dataset should be saved.
+            file_path (pathlib.Path): File path where Dataset should be saved.
             **kwargs: Keyword arguments to pass to func.
         """
         DATASET_TO_FILE["DIR"](self, file_path=file_path, **kwargs)
@@ -204,7 +204,7 @@ class Dataset(DatasetCore):
                 "point". Defaults to "dataset".
 
         Returns:
-            Union[pd.DataFrame, pd.DataFrame, pd.Series]: Aggregated Dataset.
+            Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
 
         Raises:
             ValueError: If depth is not "dataset", "frame" or "point".
@@ -253,7 +253,7 @@ class Dataset(DatasetCore):
                 "point". Defaults to "dataset".
 
         Returns:
-            Union[pd.DataFrame, pd.DataFrame, pd.Series]: Aggregated Dataset.
+            Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
 
         Hint:
 
@@ -276,7 +276,7 @@ class Dataset(DatasetCore):
                 "point". Defaults to "dataset".
 
         Returns:
-            Union[pd.DataFrame, pd.DataFrame, pd.Series]: Aggregated Dataset.
+            Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
 
         Hint:
 
@@ -299,7 +299,7 @@ class Dataset(DatasetCore):
                 "point". Defaults to "dataset".
 
         Returns:
-            Union[pd.DataFrame, pd.DataFrame, pd.Series]: Aggregated Dataset.
+            Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
 
         Hint:
 
@@ -322,7 +322,7 @@ class Dataset(DatasetCore):
                 "point". Defaults to "dataset".
 
         Returns:
-            Union[pd.DataFrame, pd.DataFrame, pd.Series]: Aggregated Dataset.
+            Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
 
         Hint:
 

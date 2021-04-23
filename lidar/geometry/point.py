@@ -9,8 +9,8 @@ def distance_to_point(point_A: np.array, point_B: np.array) -> float:
     """Calculate the Euclidean distance of a point to another point.
 
     Args:
-        point_A (np.array): [x, y, z]
-        point_B (np.array): [x, y, z]
+        point_A (numpy.ndarray): [x, y, z]
+        point_B (numpy.ndarray): [x, y, z]
 
     Returns:
         float: Euclidean distance between two points.
