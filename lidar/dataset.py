@@ -94,7 +94,7 @@ class Dataset(DatasetCore):
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
-            Dataset: Derived from the instance.
+            Dataset: Dataset object derived from the instance.
 
         Raises:
             ValueError: If instance is not supported.
@@ -124,7 +124,7 @@ class Dataset(DatasetCore):
         warn: bool = True,
         **kwargs,
     ) -> Union[Dataset, DelayedResult]:
-        """Applies a function onto the dataset. It is also possible to pass keyword
+        """Applies a function to the dataset. It is also possible to pass keyword
         arguments.
 
         Args:
@@ -135,8 +135,8 @@ class Dataset(DatasetCore):
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
-            Union[Dataset, DelayedResult]: A dataset if the function returns a Frame, or
-            a DelayedResult object which is a tuple of dask delayed objects.
+            Union[Dataset, DelayedResult]: A Dataset if the function returns a Frame,
+            otherwise a DelayedResult object which is a tuple of dask delayed objects.
 
         Examples:
 
@@ -146,7 +146,7 @@ class Dataset(DatasetCore):
                     return frame.limit(x,0,1)
 
                 dataset.apply(func)
-                # This results in a new dataset
+                # This results in a new Dataset
 
             .. code-block:: python
 
@@ -154,6 +154,7 @@ class Dataset(DatasetCore):
                     return frame.data.x.max()
 
                 dataset.apply(func)
+                # This results in a DelayedResult
 
             .. code-block:: python
 
@@ -161,6 +162,7 @@ class Dataset(DatasetCore):
                     return frame.data.x.max() + test
 
                 dataset.apply(func, test=10)
+                # This results in a DelayedResult
         """
 
         returns_frame = _is_pipline_returing_frame(func, warn=warn)
@@ -194,15 +196,16 @@ class Dataset(DatasetCore):
         depth: Literal["dataset", "frame", "point"] = "dataset",
     ) -> Union[pd.Series, List[pd.DataFrame], pd.DataFrame, pd.DataFrame]:
         """Aggregate using one or more operations over the whole dataset.
-        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel
-        processing.
+        Similar to :func:`pandas.DataFrame.aggregate`. Uses dask dataframes with
+        parallel processing.
 
         Args:
-            agg (Union[str, list, dict]): [description]
-            depth (Literal[, optional): [description]. Defaults to "dataset".
+            agg (Union[str, list, dict]): Function to use for aggregating.
+            depth (Literal[, optional): Aggregation level: "dataset", "frame" or
+                "point". Defaults to "dataset".
 
         Returns:
-            Union[pd.DataFrame, pd.DataFrame, pd.Series]: [description]
+            Union[pd.DataFrame, pd.DataFrame, pd.Series]: Aggregated Dataset.
 
         Raises:
             ValueError: If depth is not "dataset", "frame" or "point".
@@ -242,9 +245,16 @@ class Dataset(DatasetCore):
             raise ValueError("depth needs to be dataset, frame or point")
 
     def min(self, depth: str = "dataset"):
-        """Aggregate using minimum operation over the whole dataset.
-        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel
-        processing.
+        """Aggregate using min operation over the whole dataset.
+        Similar to :func:`pandas.DataFrame.aggregate`. Uses dask dataframes with
+        parallel processing.
+
+        Args:
+            depth (Literal[, optional): Aggregation level: "dataset", "frame" or
+                "point". Defaults to "dataset".
+
+        Returns:
+            Union[pd.DataFrame, pd.DataFrame, pd.Series]: Aggregated Dataset.
 
         Hint:
 
@@ -258,9 +268,16 @@ class Dataset(DatasetCore):
         return self.agg("min", depth=depth)
 
     def max(self, depth: str = "dataset"):
-        """Aggregate using maximum operation over the whole dataset.
-        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel
-        processing.
+        """Aggregate using max operation over the whole dataset.
+        Similar to :func:`pandas.DataFrame.aggregate`. Uses dask dataframes with
+        parallel processing.
+
+        Args:
+            depth (Literal[, optional): Aggregation level: "dataset", "frame" or
+                "point". Defaults to "dataset".
+
+        Returns:
+            Union[pd.DataFrame, pd.DataFrame, pd.Series]: Aggregated Dataset.
 
         Hint:
 
@@ -275,8 +292,15 @@ class Dataset(DatasetCore):
 
     def mean(self, depth: str = "dataset"):
         """Aggregate using mean operation over the whole dataset.
-        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel
-        processing.
+        Similar to :func:`pandas.DataFrame.aggregate`. Uses dask dataframes with
+        parallel processing.
+
+        Args:
+            depth (Literal[, optional): Aggregation level: "dataset", "frame" or
+                "point". Defaults to "dataset".
+
+        Returns:
+            Union[pd.DataFrame, pd.DataFrame, pd.Series]: Aggregated Dataset.
 
         Hint:
 
@@ -291,8 +315,15 @@ class Dataset(DatasetCore):
 
     def std(self, depth: str = "dataset"):
         """Aggregate using std operation over the whole dataset.
-        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel
-        processing.
+        Similar to :func:`pandas.DataFrame.aggregate`. Uses dask dataframes with
+        parallel processing.
+
+        Args:
+            depth (Literal[, optional): Aggregation level: "dataset", "frame" or
+                "point". Defaults to "dataset".
+
+        Returns:
+            Union[pd.DataFrame, pd.DataFrame, pd.Series]: Aggregated Dataset.
 
         Hint:
 

@@ -1,9 +1,3 @@
-"""
-FrameCore Class
-
-With all the main methods and properties of the Frame Class.
-"""
-
 from __future__ import annotations
 
 import traceback
@@ -16,22 +10,25 @@ import pyntcloud
 
 
 class FrameCore:
+    """
+    FrameCore Class with all the main methods and properties of the Frame Class.
+    One Frame of lidar measurements.
+
+    Examples:
+
+        .. code-block:: python
+
+            testbag = Path().cwd().parent.joinpath("tests/testdata/test.bag")
+            testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
+            testframe = testset[0]
+    """
+
     def __init__(
         self,
         data: pd.DataFrame,
         orig_file: str = "",
         timestamp: datetime = datetime.now(),
     ):
-        """One Frame of lidar measurements.
-
-        Examples:
-
-            .. code-block:: python
-
-                testbag = Path().cwd().parent.joinpath("tests/testdata/test.bag")
-                testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
-                testframe = testset[0]
-        """
         self.data = data
         """All the data, x,y.z and intensity, range and more"""
         self.timestamp = timestamp
@@ -137,7 +134,7 @@ class FrameCore:
 
         Returns:
             bool: ``True`` if the Frame contains original_id data, ``False`` if Frame
-                does not contain original_id data.
+            does not contain original_id data.
         """
         return "original_id" in self.data.columns
 
