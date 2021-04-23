@@ -32,7 +32,8 @@ class Dataset(DatasetCore):
     """
     Dataset Class which contains multiple frames, timestamps and metadata.
     For more details on how to use the Dataset Class please refer to the usage.ipynb
-    notebook for an interactive tutorial.
+    notebook for an interactive tutorial. The notebook can also be found in the tutorial
+    section of the docu.
     """
 
     def __getitem__(self, frame_number: Union[slice, int]) -> Union[DatasetCore, Frame]:
@@ -145,8 +146,7 @@ class Dataset(DatasetCore):
                     return frame.limit(x,0,1)
 
                 dataset.apply(func)
-
-            This results in a new dataset
+                # This results in a new dataset
 
             .. code-block:: python
 
@@ -194,7 +194,8 @@ class Dataset(DatasetCore):
         depth: Literal["dataset", "frame", "point"] = "dataset",
     ) -> Union[pd.Series, List[pd.DataFrame], pd.DataFrame, pd.DataFrame]:
         """Aggregate using one or more operations over the whole dataset.
-        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel processing.
+        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel
+        processing.
 
         Args:
             agg (Union[str, list, dict]): [description]
@@ -242,7 +243,8 @@ class Dataset(DatasetCore):
 
     def min(self, depth: str = "dataset"):
         """Aggregate using minimum operation over the whole dataset.
-        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel processing.
+        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel
+        processing.
 
         Hint:
 
@@ -257,7 +259,8 @@ class Dataset(DatasetCore):
 
     def max(self, depth: str = "dataset"):
         """Aggregate using maximum operation over the whole dataset.
-        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel processing.
+        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel
+        processing.
 
         Hint:
 
@@ -272,7 +275,8 @@ class Dataset(DatasetCore):
 
     def mean(self, depth: str = "dataset"):
         """Aggregate using mean operation over the whole dataset.
-        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel processing.
+        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel
+        processing.
 
         Hint:
 
@@ -287,7 +291,8 @@ class Dataset(DatasetCore):
 
     def std(self, depth: str = "dataset"):
         """Aggregate using std operation over the whole dataset.
-        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel processing.
+        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with parallel
+        processing.
 
         Hint:
 
