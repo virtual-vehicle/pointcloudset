@@ -39,7 +39,7 @@ class Frame(FrameCore):
     Frame Class with one Frame of lidar measurements. Typically an automotive lidar
     records many frames per second.
 
-    One Frame consists mainly of PyntCloud pointcloud (.points) and a pandas dataframe
+    One Frame consists mainly of PyntCloud pointcloud (PyntCloud.points) and a pandas.DataFrame
     (.data) with all the associated data.
 
     Note that the index of the points is not preserved when applying processing. This
@@ -137,7 +137,7 @@ class Frame(FrameCore):
 
         Args:
             library (str): Name of the library.
-            instance (Union[ pd.DataFrame, pyntcloud.PyntCloud,
+            instance (Union[ pandas.DataFrame, pyntcloud.PyntCloud,
                 o3d.open3d_pybind.geometry.PointCloud ]): [description]
             **kwargs: Keyword arguments to pass to func.
 
@@ -167,7 +167,7 @@ class Frame(FrameCore):
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
-            Union[ pd.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud ]: The
+            Union[ pandas.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud ]: The
             derived instance.
 
         Raises:
@@ -369,7 +369,7 @@ class Frame(FrameCore):
 
     def get_cluster(self, eps: float, min_points: int) -> pd.DataFrame:
         """Get the clusters based on
-        open3d.cpu.pybind.geometry.Geometry. cluster_dbscan().
+        :meth:`open3d:open3d.geometry.PointCloud.cluster_dbscan`.
         Process further with :func:`lidar.frame.Frame.take_cluster`.
 
         Args:
@@ -377,7 +377,7 @@ class Frame(FrameCore):
             min_points (int): Minimum number of points to form a cluster.
 
         Returns:
-            pd.DataFrame: Dataframe with list of clusters.
+            pandas.DataFrame: Dataframe with list of clusters.
         """
         labels = np.array(
             self.to_instance("open3d").cluster_dbscan(
@@ -391,7 +391,7 @@ class Frame(FrameCore):
 
         Args:
             cluster_number (int): Cluster ID to keep.
-            cluster_labels (pd.DataFrame): Clusters generated with
+            cluster_labels (pandas.DataFrame): Clusters generated with
                 :func:`lidar.frame.Frame.get_cluster`.
 
         Returns:
@@ -408,7 +408,7 @@ class Frame(FrameCore):
         return_plane_model: bool = False,
     ) -> Union[Frame, dict]:
         """Segments a plane in the point cloud using the RANSAC algorithm.
-        Based on open3d.cpu.pybind.geometry.Geometry3D.segment_plane().
+        Based on :meth:`open3d:open3d.geometry.PointCloud.segment_plane`.
 
         Args:
             distance_threshold (float): Max distance a point can be from the plane

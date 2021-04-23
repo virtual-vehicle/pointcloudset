@@ -56,7 +56,7 @@ class FrameCore:
 
     @property
     def bounding_box(self) -> pd.DataFrame:
-        """ The axis aligned boundary box as a dataframe."""
+        """ The axis aligned boundary box as a :class:`pandas.DataFrame`."""
         return self.data[["x", "y", "z"]].agg(["min", "max"])
 
     @property
@@ -151,7 +151,7 @@ class FrameCore:
         :meth:`pandas:pandas.DataFrame.describe`.
 
         Returns:
-            pd.DataFrame: Summary statistics of the data of the Frame.
+            :class:`pandas.DataFrame`: Summary statistics of the data of the Frame.
         """
         return self.data.describe()
 
@@ -165,7 +165,7 @@ class FrameCore:
                 use current index in Frame. Defaults to ``False``.
 
         Returns:
-            pd.DataFrame: A frame which only contains the defined point.
+            :class:`pandas.DataFrame`: A frame which only contains the defined point.
         """
         try:
             if use_original_id:

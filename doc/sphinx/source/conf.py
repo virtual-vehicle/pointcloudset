@@ -46,6 +46,9 @@ extensions = [
 
 intersphinx_mapping = {
     "pandas": ("http://pandas.pydata.org/pandas-docs/dev", None),
+    "pyntcloud": ("http://pyntcloud.readthedocs.io/en/latest", None),
+    "open3d": ("http://www.open3d.org/docs/latest", None),
+    "python": ("https://docs.python.org/3", None),
 }
 napoleon_numpy_docstring = False
 autodoc_member_order = "bysource"
