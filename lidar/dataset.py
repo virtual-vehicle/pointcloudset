@@ -1,12 +1,3 @@
-"""
-Dataset Class
-
-The Dataset class contains multiple frames.
-
-For more details on how to use it please refer to the usage.ipynb notebook for
-an interactive tutorial.
-
-"""
 from __future__ import annotations
 
 from pathlib import Path
@@ -38,7 +29,11 @@ def _is_pipline_returing_frame(pipeline, warn=True) -> bool:
 
 
 class Dataset(DatasetCore):
-    """Lidar Dataset which contains multiple frames, timestamps and metadata."""
+    """
+    Dataset Class which contains multiple frames, timestamps and metadata.
+    For more details on how to use the Dataset Class please refer to the usage.ipynb
+    notebook for an interactive tutorial.
+    """
 
     def __getitem__(self, frame_number: Union[slice, int]) -> Union[DatasetCore, Frame]:
         if isinstance(frame_number, slice):

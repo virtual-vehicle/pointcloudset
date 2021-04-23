@@ -21,8 +21,10 @@ def calculate_distance_to_point(
         Adds the result as a new column to the data of the frame.
 
     Args:
-        frame (Frame): Frame for which the Euclidean distance to the point is calculated.
-        target (np.ndarray): [x, y, z] as coordinates of the point to which the Euclidean distance is calculated.
+        frame (Frame): Frame for which the Euclidean distance to the point is
+            calculated.
+        target (np.ndarray): [x, y, z] as coordinates of the point to which the
+            Euclidean distance is calculated.
 
     Returns:
         Frame: Frame with Euclidean distances to a point for each point.

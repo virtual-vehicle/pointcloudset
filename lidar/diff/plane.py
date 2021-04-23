@@ -13,12 +13,13 @@ def calculate_distance_to_plane(
     """Calculate the distance of each point to a plane.
 
     Note:
-        Adds the result as a new column to the data of the frame. Uses the plane equation a x + b y + c z + d = 0.
+        Adds the result as a new column to the data of the frame. Uses the plane
+        equation a x + b y + c z + d = 0.
 
     Args:
         frame (Frame): Frame for which the distance to the plane is calculated.
-        target (np.array): [a, b, c, d] as parameters for the target plane, could be provided by
-            plane_segmentation.
+        target (np.array): [a, b, c, d] as parameters for the target plane, could be
+            provided by plane_segmentation.
         absolute_values (bool, optional): Calculate absolute distances if ``True``.
             Defaults to ``True``.
         normal_dist (bool, optional): Calculate normal distance if ``True``, calculate

@@ -131,7 +131,8 @@ class FrameCore:
         Original_id identifies a lidar point and makes them comparable.
 
         Returns:
-            bool: ``True`` if the Frame contains original_id data, ``False`` if Frame does not contain original_id data.
+            bool: ``True`` if the Frame contains original_id data, ``False`` if Frame
+                does not contain original_id data.
         """
         return "original_id" in self.data.columns
 
@@ -147,7 +148,8 @@ class FrameCore:
         return original_id in self.data["original_id"].values
 
     def describe(self) -> pd.DataFrame:
-        """Generate descriptive statistics based on .data.describe() and therefore on pandas.DataFrame.describe().
+        """Generate descriptive statistics based on .data.describe() and therefore on
+        pandas.DataFrame.describe().
 
         Returns:
             pd.DataFrame: Summary statistics of the data of the Frame.
@@ -160,8 +162,8 @@ class FrameCore:
 
         Args:
             id (int): ID number
-            use_original_id (bool, optional): If ``True`` use original_id, if ``False`` use current index in Frame.
-                Defaults to ``False``.
+            use_original_id (bool, optional): If ``True`` use original_id, if ``False``
+                use current index in Frame. Defaults to ``False``.
 
         Returns:
             pd.DataFrame: A frame which only contains the defined point.

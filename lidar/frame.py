@@ -196,8 +196,8 @@ class Frame(FrameCore):
             Default is None.
 
         Returns:
-            plotly.graph_objs.Figure: The interactive plotly plot, best used inside a jupyter
-            notebook.
+            plotly.graph_objs.Figure: The interactive plotly plot, best used inside a
+            jupyter notebook.
 
         Raises:
             ValueError: If the color column name is not in the data.
