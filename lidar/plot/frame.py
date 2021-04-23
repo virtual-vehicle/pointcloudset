@@ -95,8 +95,10 @@ def plot_overlay_plane(
     Returns:
         plotly.graph_objects.Figure: Plot with overlayed Frame.
     """
-    x = np.linspace(min(orig_frame.data.x) * 0.95, max(orig_frame.data.x) * 1.05, 100)
-    y = np.linspace(min(orig_frame.data.y) * 0.95, max(orig_frame.data.y) * 1.05, 100)
+    bb = orig_frame.bounding_box
+    x = np.linspace(bb.x["min"], bb.x["max"], 100)
+    y = np.linspace(bb.y["min"], bb.y["max"], 100)
+    z = np.linspace(bb.z["min"], bb.z["max"], 100)
 
     X, Y = np.meshgrid(x, y)
 
@@ -104,7 +106,19 @@ def plot_overlay_plane(
     colorscale = [[color[0] / len(colors), color[1]] for color in enumerate(colors)]
 
     a, b, c, d = plane_model
-    Z = (-d - a * X - b * Y) / c
+
+    eps = 0.000001
+    if (abs(c) < eps) & (abs(b) < eps):
+        print("both")
+        Y, Z = np.meshgrid(y, z)
+        X = (d - b * Y - c * Z) / a
+    elif (abs(c) < eps) & (abs(b) > eps):
+        print("only c")
+        X, Z = np.meshgrid(x, z)
+        Y = (d - a * X - c * Z) / b
+    else:
+        X, Y = np.meshgrid(x, y)
+        Z = (-d - a * X - b * Y) / c
     p2 = go.Figure(
         data=[
             go.Surface(
