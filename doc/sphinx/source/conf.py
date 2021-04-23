@@ -49,6 +49,7 @@ intersphinx_mapping = {
     "pyntcloud": ("http://pyntcloud.readthedocs.io/en/latest", None),
     "open3d": ("http://www.open3d.org/docs/latest", None),
     "python": ("https://docs.python.org/3", None),
+    "numpy": ("http://docs.scipy.org/doc/numpy/", None),
 }
 napoleon_numpy_docstring = False
 autodoc_member_order = "bysource"
