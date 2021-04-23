@@ -6,8 +6,9 @@ doccoverage:
 	docstr-coverage lidar --skipmagic
 
 test:
-	coverage run -m pytest
-	pytest --current-env --nbval notebooks/usage.ipynb
+	pytest --cov=lidar tests
+	pytest --current-env --nbval-lax doc/sphinx/source/tutorial_notebooks/usage.ipynb
+	pytest --current-env --nbval-lax doc/sphinx/source/tutorial_notebooks/reading_las.ipynb
 	python -m coverage report -i
 	python -m coverage html -i
 
