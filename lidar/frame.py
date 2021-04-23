@@ -20,7 +20,7 @@ from __future__ import annotations
 import datetime
 import warnings
 from pathlib import Path
-from typing import List, Union
+from typing import List, Union, Literal
 
 import numpy as np
 import open3d as o3d
@@ -117,7 +117,7 @@ class Frame(FrameCore):
     @classmethod
     def from_instance(
         cls,
-        library: str,
+        library: Literal["PYNTCLOUD", "OPEN3D", "DATAFRAME", "PANDAS"],
         instance: Union[pd.DataFrame, pyntcloud.PyntCloud, o3d.geometry.PointCloud],
         **kwargs,
     ) -> Frame:
@@ -145,7 +145,7 @@ class Frame(FrameCore):
             return cls(**FRAME_FROM_INSTANCE[library](instance, **kwargs))
 
     def to_instance(
-        self, library: str, **kwargs
+        self, library: Literal["PYNTCLOUD", "OPEN3D", "DATAFRAME", "PANDAS"], **kwargs
     ) -> Union[pd.DataFrame, pyntcloud.PyntCloud, o3d.geometry.PointCloud]:
         """Convert Frame to another library instance.
 
@@ -248,7 +248,10 @@ class Frame(FrameCore):
         return fig
 
     def diff(
-        self, name: str, target: Union[None, Frame, np.ndarray] = None, **kwargs
+        self,
+        name: Literal["origin", "plane", "frame", "point"],
+        target: Union[None, Frame, np.ndarray] = None,
+        **kwargs,
     ) -> Frame:
         """Calculate differences and distances to the origin, plane, point and frame.
 
