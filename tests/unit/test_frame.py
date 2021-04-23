@@ -232,3 +232,10 @@ def test_axis_aligned_bounding_box(testframe_mini: Frame):
     check.almost_equal(list(bb.x.values), [-1.0, 716.62253361])
     check.almost_equal(list(bb.y.values), [-1.0, 791.8389702424873])
     check.almost_equal(list(bb.z.values), [-1.0, 825.7276944386689])
+
+
+def test_centroit(testframe_mini: Frame):
+    ct = testframe_mini.centroid
+    check.almost_equal(
+        list(ct), [259.95131121217355, 225.64930989164827, 365.44029720089736]
+    )

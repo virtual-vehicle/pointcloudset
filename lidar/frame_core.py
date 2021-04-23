@@ -68,6 +68,10 @@ class FrameCore:
         """ The axis aligned boundary box as a dataframe."""
         return self.data[["x", "y", "z"]].agg(["min", "max"])
 
+    @property
+    def centroid(self) -> np.array:
+        return self.points.centroid
+
     def __repr__(self) -> str:
         return (
             f"{self.__class__.__name__}({self.data}, "
