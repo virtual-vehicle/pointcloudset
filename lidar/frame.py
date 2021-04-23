@@ -163,7 +163,7 @@ class Frame(FrameCore):
             library (str): Name of the library.
 
         Returns:
-            Union[ pd.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud ]:
+            Union[pd.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud]:
             The derived instance
 
         Raises:
