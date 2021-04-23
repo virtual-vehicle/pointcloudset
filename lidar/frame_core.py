@@ -54,6 +54,15 @@ class FrameCore:
         self._update_data(df)
         self._check_index()
 
+    @property
+    def bounding_box(self) -> pd.DataFrame:
+        """ The axis aligned boundary box as a dataframe."""
+        return self.data[["x", "y", "z"]].agg(["min", "max"])
+
+    @property
+    def centroid(self) -> np.array:
+        return self.points.centroid
+
     def __repr__(self) -> str:
         return (
             f"{self.__class__.__name__}({self.data}, "
