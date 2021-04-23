@@ -131,7 +131,8 @@ class Dataset(DatasetCore):
             func (Union[Callable[[Frame], Frame], Callable[[Frame], Any]]): Function to
                 apply. If it returns a Frame and has the according type hint a new
                 Dataset will be generated.
-            warn (bool)
+            warn (bool): If ``True`` warning if result is not a Dataset, if ``False`` warning is
+                turned off.
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -154,7 +155,6 @@ class Dataset(DatasetCore):
                     return frame.data.x.max()
 
                 dataset.apply(func)
-                # This results in a DelayedResult
 
             .. code-block:: python
 
@@ -162,7 +162,6 @@ class Dataset(DatasetCore):
                     return frame.data.x.max() + test
 
                 dataset.apply(func, test=10)
-                # This results in a DelayedResult
         """
 
         returns_frame = _is_pipline_returing_frame(func, warn=warn)
