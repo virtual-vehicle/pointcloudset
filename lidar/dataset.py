@@ -79,6 +79,15 @@ class Dataset(DatasetCore):
         res = DATASET_FROM_FILE[ext](file_path, **kwargs)
         return cls(data=res["data"], timestamps=res["timestamps"], meta=res["meta"])
 
+    def to_file(self, file_path: Path = Path(), **kwargs) -> None:
+        """Writes a Dataset to a file.
+
+        Args:
+            file_path (Path): File path where Dataset should be saved.
+            **kwargs: Keyword arguments to pass to func.
+        """
+        DATASET_TO_FILE["DIR"](self, file_path=file_path, **kwargs)
+
     @classmethod
     def from_instance(
         cls,
@@ -108,15 +117,6 @@ class Dataset(DatasetCore):
             )
         else:
             return cls(**DATASET_FROM_INSTANCE[library](instance, **kwargs))
-
-    def to_file(self, file_path: Path = Path(), **kwargs) -> None:
-        """Writes a Dataset to a file.
-
-        Args:
-            file_path (Path): File path where Dataset should be saved.
-            **kwargs: Keyword arguments to pass to func.
-        """
-        DATASET_TO_FILE["DIR"](self, file_path=file_path, **kwargs)
 
     def apply(
         self,
