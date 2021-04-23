@@ -27,9 +27,9 @@ def calculate_distance_to_frame(frame, target):
     """
     if "x difference" in frame.data.columns:
         raise NotImplementedError("Differences of differences are not supported.")
-    if not frame.has_original_id():
+    if not frame.has_original_id:
         raise ValueError("Frame does not contain original_id.")
-    if not target.has_original_id():
+    if not target.has_original_id:
         raise ValueError("Target does not contain original_id.")
     reference_original_ids = frame.data.original_id.values
     target_original_ids = target.data.original_id.values
