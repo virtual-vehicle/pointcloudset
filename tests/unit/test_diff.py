@@ -139,19 +139,19 @@ def test_calculate_distance_to_plane2(testframe_mini: Frame):
     testframe_mini.diff("plane", target=np.array([-1, 0, 0, 0]), absolute_values=False)
     check.equal(
         str(list(testframe_mini.data.columns.values)),
-        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [-1  0  0  0]']",
+        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [-1 0 0 0]']",
     )
-    check.equal(testframe_mini.data["distance to plane: [-1  0  0  0]"][1], -1.0)
+    check.equal(testframe_mini.data["distance to plane: [-1 0 0 0]"][1], -1.0)
 
 
 def test_calculate_distance_to_plane3(testframe_mini: Frame):
     testframe_mini.diff("plane", target=np.array([-1, 0, 0, 0]), absolute_values=True)
-    check.equal(testframe_mini.data["distance to plane: [-1  0  0  0]"][1], 1.0)
+    check.equal(testframe_mini.data["distance to plane: [-1 0 0 0]"][1], 1.0)
 
 
 def test_calculate_distance_to_point(testframe_mini: Frame):
     testframe_mini.diff("point", target=np.array([-1, 0, 0]))
-    check.equal(testframe_mini.data["distance to point: [-1  0  0]"][0], 1.0)
+    check.equal(testframe_mini.data["distance to point: [-1 0 0]"][0], 1.0)
 
 
 def test_frame_diff_of_diff(testframe_mini_real: Frame):

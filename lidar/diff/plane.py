@@ -35,5 +35,6 @@ def calculate_distance_to_plane(
     if absolute_values:
         distances = np.absolute(distances)
     plane_str = np.array2string(target, formatter={"float_kind": lambda x: "%.4f" % x})
+    plane_str = " ".join(plane_str.split())  # delete multiple white space
     frame._add_column(f"distance to plane: {plane_str}", distances)
     return frame

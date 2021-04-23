@@ -33,5 +33,6 @@ def calculate_distance_to_point(
     points = frame.points.xyz
     distances = np.array([np.linalg.norm(point_a - point) for point in points])
     point_str = np.array2string(target, formatter={"float_kind": lambda x: "%.4f" % x})
+    point_str = " ".join(point_str.split())  # delete multiple white space
     frame._add_column(f"distance to point: {point_str}", distances)
     return frame
