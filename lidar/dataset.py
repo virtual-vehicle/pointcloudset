@@ -131,8 +131,8 @@ class Dataset(DatasetCore):
             func (Union[Callable[[Frame], Frame], Callable[[Frame], Any]]): Function to
                 apply. If it returns a Frame and has the according type hint a new
                 Dataset will be generated.
-            warn (bool): If ``True`` warning if result is not a Dataset, if ``False`` warning is
-                turned off.
+            warn (bool): If ``True`` warning if result is not a Dataset, if ``False``
+                warning is turned off.
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -195,7 +195,7 @@ class Dataset(DatasetCore):
         depth: Literal["dataset", "frame", "point"] = "dataset",
     ) -> Union[pd.Series, List[pd.DataFrame], pd.DataFrame, pd.DataFrame]:
         """Aggregate using one or more operations over the whole dataset.
-        Similar to :func:`pandas.DataFrame.aggregate`. Uses dask dataframes with
+        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with
         parallel processing.
 
         Args:
@@ -245,7 +245,7 @@ class Dataset(DatasetCore):
 
     def min(self, depth: str = "dataset"):
         """Aggregate using min operation over the whole dataset.
-        Similar to :func:`pandas.DataFrame.aggregate`. Uses dask dataframes with
+        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with
         parallel processing.
 
         Args:
@@ -268,7 +268,7 @@ class Dataset(DatasetCore):
 
     def max(self, depth: str = "dataset"):
         """Aggregate using max operation over the whole dataset.
-        Similar to :func:`pandas.DataFrame.aggregate`. Uses dask dataframes with
+        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with
         parallel processing.
 
         Args:
@@ -291,7 +291,7 @@ class Dataset(DatasetCore):
 
     def mean(self, depth: str = "dataset"):
         """Aggregate using mean operation over the whole dataset.
-        Similar to :func:`pandas.DataFrame.aggregate`. Uses dask dataframes with
+        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with
         parallel processing.
 
         Args:
@@ -314,7 +314,7 @@ class Dataset(DatasetCore):
 
     def std(self, depth: str = "dataset"):
         """Aggregate using std operation over the whole dataset.
-        Similar to :func:`pandas.DataFrame.aggregate`. Uses dask dataframes with
+        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with
         parallel processing.
 
         Args:

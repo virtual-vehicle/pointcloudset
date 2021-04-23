@@ -42,7 +42,7 @@ class FrameCore:
 
     @property
     def data(self):
-        """All the data, x,y,z and auxilary data such as intensity, range and more"""
+        """All the data, x,y,z and auxiliary data such as intensity, range and more"""
         return self.__data
 
     @data.setter
@@ -147,7 +147,7 @@ class FrameCore:
 
     def describe(self) -> pd.DataFrame:
         """Generate descriptive statistics based on :func:`Frame.data.describe` and therefore on
-        :func:`pandas.DataFrame.describe`.
+        pandas.DataFrame.describe().
 
         Returns:
             pd.DataFrame: Summary statistics of the data of the Frame.

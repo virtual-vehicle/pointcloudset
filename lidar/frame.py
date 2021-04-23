@@ -47,8 +47,8 @@ class Frame(FrameCore):
     Frame object is generated at each processing stage.
 
     Developer notes:
-    * All operations have to act on both, pointcloud and data and keep the timestamp.
-    * All processing methods need to return another Frame.
+        * All operations have to act on both, pointcloud and data and keep the timestamp.
+        * All processing methods need to return another Frame.
 
     Examples:
 
@@ -369,7 +369,7 @@ class Frame(FrameCore):
 
     def get_cluster(self, eps: float, min_points: int) -> pd.DataFrame:
         """Get the clusters based on
-        :func:`open3d.cpu.pybind.geometry.Geometry. cluster_dbscan`.
+        open3d.cpu.pybind.geometry.Geometry. cluster_dbscan().
         Process further with :func:`lidar.frame.Frame.take_cluster`.
 
         Args:
@@ -408,7 +408,7 @@ class Frame(FrameCore):
         return_plane_model: bool = False,
     ) -> Union[Frame, dict]:
         """Segments a plane in the point cloud using the RANSAC algorithm.
-        Based on :func:`open3d.cpu.pybind.geometry.Geometry3D.segment_plane`.
+        Based on open3d.cpu.pybind.geometry.Geometry3D.segment_plane().
 
         Args:
             distance_threshold (float): Max distance a point can be from the plane
