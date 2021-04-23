@@ -7,8 +7,8 @@ import pandas as pd
 
 
 def calculate_distance_to_frame(frame, target):
-    """Calculate the differences for each point in a frame which also exists in the target frame
-    (frame - target). Points with the same original_id are compared.
+    """Calculate the differences for each point in a frame which also exists in
+    the target frame (frame - target). Points with the same original_id are compared.
 
     Note:
         Adds the results to the data of the frame.
@@ -21,7 +21,8 @@ def calculate_distance_to_frame(frame, target):
         Frame: Frame consisting of frame including differences to target.
 
     Raises:
-        ValueError: If there are no original_ids in frame or in target or if they have no common original_ids.
+        ValueError: If there are no original_ids in frame or in target or if they have
+            no common original_ids.
         NotImplementedError: If difference has already been calculated.
     """
     if "x difference" in frame.data.columns:

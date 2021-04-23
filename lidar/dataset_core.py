@@ -1,10 +1,3 @@
-"""
-DatasetCore Class
-
-With all the main methods and properties of the Dataset Class.
-"""
-
-
 from __future__ import annotations
 
 import datetime
@@ -16,6 +9,10 @@ from dask.delayed import Delayed, DelayedLeaf
 
 
 class DatasetCore:
+    """
+    DatasetCore Class with all the main methods and properties of the Dataset Class.
+    """
+
     def __init__(
         self,
         data: List[dask.delayed.DelayedLeaf] = [],
@@ -93,7 +90,8 @@ class DatasetCore:
         """Check if Dataset has Frames.
 
         Returns:
-            bool: ``True`` if the Dataset does contain Frames, ``False`` if Dataset does not contain any Frames.
+            bool: ``True`` if the Dataset does contain Frames, ``False`` if Dataset
+                does not contain any Frames.
         """
         return len(self) > 0
 

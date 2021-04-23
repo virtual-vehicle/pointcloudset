@@ -12,12 +12,14 @@ from lidar.geometry import point
 def distance_to_point(
     point_A: np.array, plane_model: np.array, normal_dist: bool = True
 ) -> float:
-    """Calculate the distance of a point to a plane. Uses the plane equation a x + b y + c z + d = 0
+    """Calculate the distance of a point to a plane. Uses the plane equation
+    a x + b y + c z + d = 0
     https://mathworld.wolfram.com/Point-PlaneDistance.html
 
     Args:
-        point_A (np.array): [x, y, z], point for which the distance is calculated to plane
-        plane_model (np.array): [a, b, c, d], could be provided by plane_segmentation
+        point_A (np.array): [x, y, z], point for which the distance is calculated to
+            plane.
+        plane_model (np.array): [a, b, c, d], could be provided by plane_segmentation.
         normal_dist (bool): Calculate normal distance if ``True``, calculate
             distance in direction of line of sight if ``False``. Defaults to ``True``.
 

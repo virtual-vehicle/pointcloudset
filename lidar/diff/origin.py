@@ -14,7 +14,8 @@ def calculate_distance_to_origin(frame, **kwargs):
         Adds the result as a new column to the data of the frame.
 
     Args:
-        frame (Frame): Frame for which the Euclidean distance to the origin is calculated.
+        frame (Frame): Frame for which the Euclidean distance to the origin is
+            calculated.
 
     Returns:
         Frame: Frame with Euclidean distance to the origin for each point.

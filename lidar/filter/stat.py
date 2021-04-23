@@ -46,7 +46,8 @@ def value_filter(frame, dim: str, relation: str, value: float) -> lidar.Frame:
 
     Args:
         frame (Frame): Frame to be filtered.
-        dim (str): Dimension to limit, any column in data not just x, y, or z, for example "intensity"
+        dim (str): Dimension to limit, any column in data not just x, y, or z, for
+            example "intensity"
         relation (str): Any operator as string.
         value (float): Value to limit.
 
