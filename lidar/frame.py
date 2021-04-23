@@ -67,6 +67,7 @@ class Frame(FrameCore):
 
         Args:
             file_path (Path): Pathlib Path of file to read.
+            **kwargs: Keyword arguments to pass to func.
 
         Returns:
             Frame: Frame with timestamp last modified.
@@ -98,7 +99,8 @@ class Frame(FrameCore):
 
         Args:
             file_path (Path, optional): Destination. Defaults to the folder of
-            the bag file and csv with the timestamp of the frame.
+                the bag file and csv with the timestamp of the frame.
+            **kwargs: Keyword arguments to pass to func.
 
         Raises:
             ValueError: If file format is not supported.
@@ -137,6 +139,7 @@ class Frame(FrameCore):
             library (str): Name of the library.
             instance (Union[ pd.DataFrame, pyntcloud.PyntCloud,
                 o3d.open3d_pybind.geometry.PointCloud ]): [description]
+            **kwargs: Keyword arguments to pass to func.
 
         Returns:
             Frame: Derived from the instance.
@@ -161,10 +164,11 @@ class Frame(FrameCore):
 
         Args:
             library (str): Name of the library.
+            **kwargs: Keyword arguments to pass to func.
 
         Returns:
-            Union[pd.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud]:
-            The derived instance
+            Union[ pd.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud ]: The
+            derived instance.
 
         Raises:
             ValueError: If library is not suppored.
@@ -203,7 +207,8 @@ class Frame(FrameCore):
             point_size (float, optional): Size of each point. Defaults to 2.
             prepend_id (str, optional): String before point id to display in hover.
             hover data (list(str), optional): Data columns to display in hover.
-            Default is None.
+                Default is None.
+            **kwargs: Keyword arguments to pass to func.
 
         Returns:
             plotly.graph_objs.Figure: The interactive plotly plot, best used inside a
@@ -269,10 +274,11 @@ class Frame(FrameCore):
                 "frame": :func:`lidar.diff.frame.calculate_distance_to_frame` \n
                 "point": :func:`lidar.diff.point.calculate_distance_to_point` \n
             target (Union[None, Frame, np.ndarray], optional): [description].
-                Defaults to None,
+                Defaults to None.
+            **kwargs: Keyword arguments to pass to func.
 
         Returns:
-            Frame: New frame with added column of the differences
+            Frame: New frame with added column of the differences.
 
         Raises:
             ValueError: If name is not supported.
@@ -284,6 +290,22 @@ class Frame(FrameCore):
             raise ValueError("Unsupported diff. Check docstring")
 
     def filter(self, name: str, *args, **kwargs) -> Frame:
+        """Filters a Frame according to criteria.
+
+        Args:
+            name (str):
+                "quantile": :func:`lidar.filter.stat.quantile_filter` \n
+                "value": :func:`lidar.filter.stat.value_filter` \n
+                "radiusoutlier": :func:`lidar.filter.stat.remove_radius_outlier` \n
+            *args: Positional arguments to pass to func.
+            **kwargs: Keyword arguments to pass to func.
+
+        Returns:
+            Frame: Frame which fullfils the criteria.
+
+        Raises:
+            ValueError: If name is not supported.
+        """
         name = name.upper()
         if name in ALL_FILTERS:
             return ALL_FILTERS[name](self, *args, **kwargs)
@@ -343,8 +365,9 @@ class Frame(FrameCore):
         return Frame(new_data, timestamp=self.timestamp)
 
     def get_cluster(self, eps: float, min_points: int) -> pd.DataFrame:
-        """Get the clusters based on open3D cluster_dbscan. Process further with
-            take_cluster.
+        """Get the clusters based on
+        :func:`open3d.cpu.pybind.geometry.Geometry. cluster_dbscan`.
+        Process further with :func:`lidar.frame.Frame.take_cluster`.
 
         Args:
             eps (float): Density parameter that is used to find neighboring points.
@@ -364,11 +387,12 @@ class Frame(FrameCore):
         """Takes only the points belonging to the cluster_number.
 
         Args:
-            cluster_number (int): Cluster id to keep.
-            cluster_labels (pd.DataFrame): Clusters generated with get_cluster.
+            cluster_number (int): Cluster ID to keep.
+            cluster_labels (pd.DataFrame): Clusters generated with
+                :func:`lidar.frame.Frame.get_cluster`.
 
         Returns:
-            Frame: Frame with cluster of ID cluster_number.
+            Frame: Frame with selected cluster.
         """
         bool_array = (cluster_labels["cluster"] == cluster_number).values
         return self.apply_filter(bool_array)
@@ -381,7 +405,7 @@ class Frame(FrameCore):
         return_plane_model: bool = False,
     ) -> Union[Frame, dict]:
         """Segments a plane in the point cloud using the RANSAC algorithm.
-        Based on open3D plane segmentation.
+        Based on :func:`open3d.cpu.pybind.geometry.Geometry3D.segment_plane`.
 
         Args:
             distance_threshold (float): Max distance a point can be from the plane
