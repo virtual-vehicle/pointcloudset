@@ -132,7 +132,7 @@ class FrameCore:
 
         Returns:
             bool: ``True`` if the Frame contains original_id data, ``False`` if Frame
-                does not contain original_id data.
+            does not contain original_id data.
         """
         return "original_id" in self.data.columns
 
