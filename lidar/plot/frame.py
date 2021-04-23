@@ -109,11 +109,9 @@ def plot_overlay_plane(
 
     eps = 0.000001
     if (abs(c) < eps) & (abs(b) < eps):
-        print("both")
         Y, Z = np.meshgrid(y, z)
         X = (d - b * Y - c * Z) / a
     elif (abs(c) < eps) & (abs(b) > eps):
-        print("only c")
         X, Z = np.meshgrid(x, z)
         Y = (d - a * X - c * Z) / b
     else:
