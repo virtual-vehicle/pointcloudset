@@ -12,15 +12,6 @@ import pyntcloud
 class FrameCore:
     """
     FrameCore Class with all the main methods and properties of the Frame Class.
-    One Frame of lidar measurements.
-
-    Examples:
-
-        .. code-block:: python
-
-            testbag = Path().cwd().parent.joinpath("tests/testdata/test.bag")
-            testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",keep_zeros=False)
-            testframe = testset[0]
     """
 
     def __init__(
@@ -34,7 +25,7 @@ class FrameCore:
         self.timestamp = timestamp
         """Timestamp."""
         self.points = pyntcloud.PyntCloud(self.data, mesh=None)
-        """Pyntcloud object with x,y,z coordinates."""
+        """PyntCloud object with x,y,z coordinates."""
         self.orig_file = orig_file
         """Path to bag file. Defaults to empty."""
 
@@ -145,8 +136,8 @@ class FrameCore:
         return original_id in self.data["original_id"].values
 
     def describe(self) -> pd.DataFrame:
-        """Generate descriptive statistics based on .data.describe() and therefore on
-        pandas.DataFrame.describe().
+        """Generate descriptive statistics based on :func:`Frame.data.describe` and therefore on
+        :func:`pandas.DataFrame.describe`.
 
         Returns:
             pd.DataFrame: Summary statistics of the data of the Frame.

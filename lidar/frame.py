@@ -1,20 +1,3 @@
-"""
-Frame Class
-
-For one lidar measurement frame. Typically an automotive lidar records many frames per
-second.
-
-One Frame consists mainly of pyntcloud pointcloud (.points) and a pandas dataframe
-(.data) with all the associated data.
-
-Note that the index of the points is not preserved when applying processing. This
-is necessary since pyntcloud does not allow to pass the index. Therefore, a new
-Frame object is generated at each processing stage.
-
-Developer notes:
-* All operations have to act on both, pointcloud and data and keep the timestamp.
-* All processing methods need to return another Frame.
-"""
 from __future__ import annotations
 
 import datetime
@@ -52,11 +35,34 @@ def is_documented_by(original):
 
 
 class Frame(FrameCore):
-    """One lidar frame."""
+    """
+    Frame Class with one Frame of lidar measurements. Typically an automotive lidar
+    records many frames per second.
+
+    One Frame consists mainly of PyntCloud pointcloud (.points) and a pandas dataframe
+    (.data) with all the associated data.
+
+    Note that the index of the points is not preserved when applying processing. This
+    is necessary since PyntCloud does not allow to pass the index. Therefore, a new
+    Frame object is generated at each processing stage.
+
+    Developer notes:
+    * All operations have to act on both, pointcloud and data and keep the timestamp.
+    * All processing methods need to return another Frame.
+
+    Examples:
+
+        .. code-block:: python
+
+            testbag = Path().cwd().parent.joinpath("tests/testdata/test.bag")
+            testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",
+                keep_zeros=False)
+            testframe = testset[0]
+    """
 
     @classmethod
     def from_file(cls, file_path: Path, **kwargs):
-        """Extract data from file and construct a Frame with it. Uses pyntcloud as
+        """Extract data from file and construct a Frame with it. Uses PyntCloud as
         backend.
 
         Args:
@@ -66,7 +72,8 @@ class Frame(FrameCore):
             Frame: Frame with timestamp last modified.
 
         Raises:
-            ValueError: For unsupported files.
+            ValueError: If file format is not supported.
+            TypeError: If file_path is no Path object.
         """
         if not isinstance(file_path, Path):
             raise TypeError("Expecting a Path object for file_path")
@@ -85,13 +92,16 @@ class Frame(FrameCore):
         )
 
     def to_file(self, file_path: Path = Path(), **kwargs) -> None:
-        """Exports the frame as a csv for use with cloud compare or similar tools.
+        """Exports the frame as a csv file for use with CloudCompare or similar tools.
         Currently not all attributes of a frame are saved so some information is lost
         when using this function.
 
         Args:
             file_path (Path, optional): Destination. Defaults to the folder of
             the bag file and csv with the timestamp of the frame.
+
+        Raises:
+            ValueError: If file format is not supported.
         """
         ext = file_path.suffix[1:].upper()
         if ext not in FRAME_TO_FILE:
