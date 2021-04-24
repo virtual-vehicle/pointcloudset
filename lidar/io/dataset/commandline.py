@@ -61,12 +61,12 @@ def get(
     keep_zeros: bool = False,
     max_size: int = 100,
 ):
-    """Convert ros bagfiles to a directory of use with the lidar package.
+    """Convert ROS bagfiles to a directory of use with the lidar package.
 
     Args:
         bagfile: ROS bagfile
         folder_to_write: [description]
-        topic: ros lidar pointcloud topic. for example "/os1_cloud_node/points".
+        topic: ros lidar pointcloud topic. For example "/os1_cloud_node/points".
         start_frame_number:  Defaults to 0.
         end_frame_number:  Defaults to None.
         keep_zeros: Keep element with zero values. Defaults to ``False``.
