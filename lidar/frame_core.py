@@ -147,7 +147,7 @@ class FrameCore:
         return original_id in self.data["original_id"].values
 
     def describe(self) -> pd.DataFrame:
-        """Generate descriptive statistics based on :func:`Frame.data.describe` and therefore on
+        """Generate descriptive statistics based on Frame.data.describe() and therefore on
         :meth:`pandas:pandas.DataFrame.describe`.
 
         Returns:

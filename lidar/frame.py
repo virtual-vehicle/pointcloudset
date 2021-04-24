@@ -66,7 +66,7 @@ class Frame(FrameCore):
         backend.
 
         Args:
-            file_path (pathlib.Path): Pathlib Path of file to read.
+            file_path (pathlib.Path): Path of file to read.
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -93,7 +93,7 @@ class Frame(FrameCore):
         )
 
     def to_file(self, file_path: Path = Path(), **kwargs) -> None:
-        """Exports the frame as a csv file for use with CloudCompare or similar tools.
+        """Exports the frame as a csv file for use with `CloudCompare <https://www.danielgm.net/cc/ake>`_ or similar tools.
         Currently not all attributes of a frame are saved so some information is lost
         when using this function.
 
@@ -130,15 +130,18 @@ class Frame(FrameCore):
     def from_instance(
         cls,
         library: Literal["PYNTCLOUD", "OPEN3D", "DATAFRAME", "PANDAS"],
-        instance: Union[pd.DataFrame, pyntcloud.PyntCloud, o3d.geometry.PointCloud],
+        instance: Union[
+            pandas.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud
+        ],
         **kwargs,
     ) -> Frame:
         """Converts a libaries instance to a lidar Frame.
 
         Args:
             library (str): Name of the library.
-            instance (Union[ pandas.DataFrame, pyntcloud.PyntCloud,
-                o3d.open3d_pybind.geometry.PointCloud ]): [description]
+            instance
+                (Union[pandas.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud]):
+                Library instance to convert.
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -159,7 +162,7 @@ class Frame(FrameCore):
 
     def to_instance(
         self, library: Literal["PYNTCLOUD", "OPEN3D", "DATAFRAME", "PANDAS"], **kwargs
-    ) -> Union[pd.DataFrame, pyntcloud.PyntCloud, o3d.geometry.PointCloud]:
+    ) -> Union[pandas.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud]:
         """Convert Frame to another library instance.
 
         Args:
@@ -167,8 +170,8 @@ class Frame(FrameCore):
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
-            Union[ pandas.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud ]: The
-            derived instance.
+            Union[ pandas.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud ]:
+            The derived instance.
 
         Raises:
             ValueError: If library is not suppored.
@@ -191,12 +194,13 @@ class Frame(FrameCore):
         prepend_id: str = "",
         hover_data: List[str] = None,
         **kwargs,
-    ) -> plotly.graph_objs._figure.Figure:
-        """Plot a Frame as a 3D scatter plot with plotly. It handles plots of single
+    ) -> plotly.graph_objs.Figure:
+        """Plot a Frame as a 3D scatter plot with Plotly. It handles plots of single
         frames and overlay with other objects, such as other frames from clustering or
         planes from plane segmentation.
 
-        You can also pass arguments to the plotly express function scatter_3D.
+        You can also pass arguments to the Plotly express function
+        :func:`plotly.express.scatter_3d`.
 
         Args:
             frame (Frame): The frame to plot.
@@ -206,13 +210,13 @@ class Frame(FrameCore):
                 See also: :func:`lidar.plot.frame.plot_overlay`
             point_size (float, optional): Size of each point. Defaults to 2.
             prepend_id (str, optional): String before point id to display in hover.
-            hover data (list(str), optional): Data columns to display in hover.
+            hover_data (list(str), optional): Data columns to display in hover.
                 Default is None.
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
-            plotly.graph_objs.Figure: The interactive plotly plot, best used inside a
-            jupyter notebook.
+            plotly.graph_objs.Figure: The interactive Plotly plot, best used inside a
+            Jupyter Notebook.
 
         Raises:
             ValueError: If the color column name is not in the data.
@@ -367,7 +371,7 @@ class Frame(FrameCore):
             )
         return Frame(new_data, timestamp=self.timestamp)
 
-    def get_cluster(self, eps: float, min_points: int) -> pd.DataFrame:
+    def get_cluster(self, eps: float, min_points: int) -> pandas.DataFrame:
         """Get the clusters based on
         :meth:`open3d:open3d.geometry.PointCloud.cluster_dbscan`.
         Process further with :func:`lidar.frame.Frame.take_cluster`.
