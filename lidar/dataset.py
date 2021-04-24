@@ -193,14 +193,16 @@ class Dataset(DatasetCore):
         self,
         agg: Union[str, list, dict],
         depth: Literal["dataset", "frame", "point"] = "dataset",
-    ) -> Union[pd.Series, List[pd.DataFrame], pd.DataFrame, pd.DataFrame]:
+    ) -> Union[
+        pandas.Series, List[pandas.DataFrame], pandas.DataFrame, pandas.DataFrame
+    ]:
         """Aggregate using one or more operations over the whole dataset.
-        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with
-        parallel processing.
+        Similar to :meth:`pandas.DataFrame.aggregate`.
+        Uses :class:`dask.dataframe.DataFrame` with parallel processing.
 
         Args:
             agg (Union[str, list, dict]): Function to use for aggregating.
-            depth (Literal[, optional): Aggregation level: "dataset", "frame" or
+            depth (Literal["dataset", "frame", "point"], optional): Aggregation level: "dataset", "frame" or
                 "point". Defaults to "dataset".
 
         Returns:
@@ -245,11 +247,11 @@ class Dataset(DatasetCore):
 
     def min(self, depth: str = "dataset"):
         """Aggregate using min operation over the whole dataset.
-        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with
-        parallel processing.
+        Similar to :meth:`pandas.DataFrame.aggregate`.
+        Uses :class:`dask.dataframe.DataFrame` with parallel processing.
 
         Args:
-            depth (Literal[, optional): Aggregation level: "dataset", "frame" or
+            depth (Literal["dataset", "frame", "point"], optional): Aggregation level: "dataset", "frame" or
                 "point". Defaults to "dataset".
 
         Returns:
@@ -268,11 +270,11 @@ class Dataset(DatasetCore):
 
     def max(self, depth: str = "dataset"):
         """Aggregate using max operation over the whole dataset.
-        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with
-        parallel processing.
+        Similar to :meth:`pandas.DataFrame.aggregate`.
+        Uses :class:`dask.dataframe.DataFrame` with parallel processing.
 
         Args:
-            depth (Literal[, optional): Aggregation level: "dataset", "frame" or
+            depth (Literal["dataset", "frame", "point"], optional): Aggregation level: "dataset", "frame" or
                 "point". Defaults to "dataset".
 
         Returns:
@@ -291,11 +293,11 @@ class Dataset(DatasetCore):
 
     def mean(self, depth: str = "dataset"):
         """Aggregate using mean operation over the whole dataset.
-        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with
-        parallel processing.
+        Similar to :meth:`pandas.DataFrame.aggregate`.
+        Uses :class:`dask.dataframe.DataFrame` with parallel processing.
 
         Args:
-            depth (Literal[, optional): Aggregation level: "dataset", "frame" or
+            depth (Literal["dataset", "frame", "point"], optional): Aggregation level: "dataset", "frame" or
                 "point". Defaults to "dataset".
 
         Returns:
@@ -314,11 +316,11 @@ class Dataset(DatasetCore):
 
     def std(self, depth: str = "dataset"):
         """Aggregate using std operation over the whole dataset.
-        Similar to pandas.DataFrame.aggregate(). Uses dask dataframes with
-        parallel processing.
+        Similar to :meth:`pandas.DataFrame.aggregate`.
+        Uses :class:`dask.dataframe.DataFrame` with parallel processing.
 
         Args:
-            depth (Literal[, optional): Aggregation level: "dataset", "frame" or
+            depth (Literal["dataset", "frame", "point"], optional): Aggregation level: "dataset", "frame" or
                 "point". Defaults to "dataset".
 
         Returns:

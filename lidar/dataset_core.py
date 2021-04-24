@@ -26,17 +26,26 @@ class DatasetCore:
 
     @property
     def start_time(self) -> datetime.datetime:
-        """datetime.datetime: Time of first frame in Dataset."""
+        """
+        Returns:
+            datetime.datetime: Time of first frame in Dataset.
+        """
         return self.timestamps[0]
 
     @property
     def end_time(self) -> datetime.datetime:
-        """datetime.datetime: Time of last frame in Dataset."""
+        """
+        Returns:
+            datetime.datetime: Time of last frame in Dataset.
+        """
         return self.timestamps[-1]
 
     @property
     def daskdataframe(self) -> dask.dataframe.core.DataFrame:
-        """dask.dataframe.core.DataFrame: Dask DataFrame with data of Dataset."""
+        """
+        Returns:
+            dask.dataframe.DataFrame: Dask DataFrame with data of Dataset.
+        """
         return dask.dataframe.from_delayed(self.data)
 
     def __len__(self) -> int:
@@ -87,7 +96,7 @@ class DatasetCore:
         return data
 
     def has_frames(self) -> bool:
-        """Check if Dataset has Frames.
+        """Check if Dataset has Frame.
 
         Returns:
             bool: ``True`` if the Dataset does contain Frames, ``False`` if Dataset
@@ -105,7 +114,7 @@ class DatasetCore:
             end_time (datetime.datetime): Timestamp of last frame.
 
         Returns:
-            Dataset: Dataset with frames between two timestamps.
+            Dataset: Dataset with Frames between two timestamps.
 
         Raises:
             ValueError: If start_time is bigger than end_time.
@@ -120,10 +129,10 @@ class DatasetCore:
         """Get the frame number from a timestamp.
 
         Args:
-            time (datetime.datetime): The time of interest
+            time (datetime.datetime): The time of interest.
 
         Returns:
-            int: Frame number
+            int: Frame number.
 
         Raises:
             ValueError: If time is outside of range.
@@ -139,7 +148,7 @@ class DatasetCore:
         if len(self) > 0:
             assert len(self.timestamps) == len(
                 self.data
-            ), "Lenght of timestamps do not match the data"
+            ), "Length of timestamps do not match the data"
             if any(
                 self.timestamps[i] >= self.timestamps[i + 1]
                 for i in range(len(self.timestamps) - 1)

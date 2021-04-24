@@ -16,12 +16,11 @@ class FrameCore:
 
     def __init__(
         self,
-        data: pd.DataFrame,
+        data: pandas.DataFrame,
         orig_file: str = "",
         timestamp: datetime = datetime.now(),
     ):
         self.data = data
-        """All the data, x,y.z and intensity, range and more"""
         self.timestamp = timestamp
         """Timestamp."""
         self.points = pyntcloud.PyntCloud(self.data, mesh=None)
@@ -33,7 +32,7 @@ class FrameCore:
 
     @property
     def timestamp_str(self) -> str:
-        """Converts ROS timestamp to human readable date and time.
+        """Converts `ROS <https://www.ros.org/>`_ timestamp to human readable date and time.
 
         Returns:
             str: Date/time string.
@@ -42,7 +41,7 @@ class FrameCore:
 
     @property
     def data(self):
-        """All the data, x,y,z and auxiliary data such as intensity, range and more"""
+        """All the data, x,y,z and auxiliary data such as intensity, range and more."""
         return self.__data
 
     @data.setter
@@ -110,7 +109,7 @@ class FrameCore:
 
         Args:
             column_name (str): name of the new column.
-            values (np.array): Values of the new column.
+            values (numpy.ndarray): Values of the new column.
         """
         self.data[column_name] = values
         return self
@@ -120,7 +119,7 @@ class FrameCore:
         measurements at each point of the pointcloud.
 
         Returns:
-            bool: `True`` if the lidar frame contains data.
+            bool: ``True`` if the lidar frame contains data.
         """
         return not self.data.empty
 
@@ -146,16 +145,16 @@ class FrameCore:
         """
         return original_id in self.data["original_id"].values
 
-    def describe(self) -> pd.DataFrame:
+    def describe(self) -> pandas.DataFrame:
         """Generate descriptive statistics based on Frame.data.describe() and therefore on
         :meth:`pandas:pandas.DataFrame.describe`.
 
         Returns:
-            :class:`pandas.DataFrame`: Summary statistics of the data of the Frame.
+            pandas.DataFrame: Summary statistics of the data of the Frame.
         """
         return self.data.describe()
 
-    def extract_point(self, id: int, use_original_id: bool = False) -> pd.DataFrame:
+    def extract_point(self, id: int, use_original_id: bool = False) -> pandas.DataFrame:
         """Extract a specific point from the Frame defined by the point id. The id
         can be the current index of the data from the Frame or the original_id.
 
@@ -165,7 +164,7 @@ class FrameCore:
                 use current index in Frame. Defaults to ``False``.
 
         Returns:
-            :class:`pandas.DataFrame`: A frame which only contains the defined point.
+            pandas.DataFrame: A frame which only contains the defined point.
         """
         try:
             if use_original_id:
