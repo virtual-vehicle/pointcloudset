@@ -54,7 +54,9 @@ class Dataset(DatasetCore):
         """Reads a Dataset from a file.
 
         Args:
-            file_path (pathlib.Path): File path where Dataset should be read from.
+            file_path (pathlib.Path): File path where Dataset should be read from.\n
+                If file format is a directory: :func:`lidar.io.dataset.dir.dataset_from_dir`\n
+                If file format is a ROS bag file: :func:`lidar.io.dataset.bag.dataset_from_rosbag`
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -83,7 +85,8 @@ class Dataset(DatasetCore):
         """Writes a Dataset to a file.
 
         Args:
-            file_path (pathlib.Path): File path where Dataset should be saved.
+            file_path (pathlib.Path): File path where Dataset should be saved.\n
+                If file format is a directory: :func:`lidar.io.dataset.dir.dataset_to_dir`
             **kwargs: Keyword arguments to pass to func.
         """
         DATASET_TO_FILE["DIR"](self, file_path=file_path, **kwargs)
@@ -98,7 +101,8 @@ class Dataset(DatasetCore):
         """Converts a library instance to a lidar Dataset.
 
         Args:
-            library (str): Name of the library.
+            library (str): Name of the library.\n
+                If "frames": :func:`lidar.io.dataset.frames.dataset_from_frames`
             instance (list[Frame]): Instance from which to convert.
             **kwargs: Keyword arguments to pass to func.
 
