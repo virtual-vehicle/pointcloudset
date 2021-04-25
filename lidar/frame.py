@@ -138,7 +138,11 @@ class Frame(FrameCore):
         """Converts a libaries instance to a lidar Frame.
 
         Args:
-            library (str): Name of the library.
+            library (str): Name of the library.\n
+                If PYNTCLOUD: :func:`lidar.io.frame.pyntcloud.from_pyntcloud`\n
+                If OPEN3D: :func:`lidar.io.frame.open3d.from_open3d`\n
+                If DATAFRAME: :func:`lidar.io.frame.pandas.from_dataframe`\n
+                If PANDAS: :func:`lidar.io.frame.pandas.from_dataframe`
             instance
                 (Union[pandas.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud]):
                 Library instance to convert.
@@ -166,7 +170,11 @@ class Frame(FrameCore):
         """Convert Frame to another library instance.
 
         Args:
-            library (str): Name of the library.
+            library (str): Name of the library.\n
+                If PYNTCLOUD: :func:`lidar.io.frame.pyntcloud.to_pyntcloud`\n
+                If OPEN3D: :func:`lidar.io.frame.open3d.to_open3d`\n
+                If DATAFRAME: :func:`lidar.io.frame.pandas.to_dataframe`\n
+                If PANDAS: :func:`lidar.io.frame.pandas.to_dataframe`
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
