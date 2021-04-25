@@ -11,6 +11,13 @@ delimiter = ";"
 
 
 def dataset_to_dir(dataset_in, file_path: Path, use_orig_filename: bool = True) -> None:
+    """Writes Dataset to directory.
+
+    Args:
+        dataset_in (Dataset): Dataset to write.
+        file_path (pathlib.Path): Destination path.
+        use_orig_filename (bool): Use filename from which the dataset was read. Defaults to ``True``.
+    """
     _check_dir(file_path)
     orig_filename = Path(dataset_in.meta["orig_file"]).stem
     if len(orig_filename) == 0:
@@ -31,6 +38,14 @@ def dataset_to_dir(dataset_in, file_path: Path, use_orig_filename: bool = True) 
 
 
 def dataset_from_dir(dir: Path) -> dict:
+    """Reads a Dataset from a directory.
+
+    Args:
+        dir (pathlib.Path): Path of directory.
+
+    Returns:
+        dict: Lidar data with timestamps and metadata.
+    """
     _check_dir(dir)
     dirs = [e for e in dir.iterdir() if e.is_dir()]
     dirs.sort()

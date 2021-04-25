@@ -55,6 +55,18 @@ def dataset_from_rosbag(
     end_frame_number: int = None,
     keep_zeros: bool = False,
 ) -> dict:
+    """Reads a Dataset from a bag file.
+
+    Args:
+        bagfile (pathlib.Path): Path of bag file.
+        topic (str): ROS topic that should be read.
+        start_frame_number (int): Start frame of frame sequence to read. Defaults to 0.
+        end_frame_number (int): End frame of frame sequence to read. Defaults to None.
+        keep_zeros (bool): If ``True`` keep zeros in frames, if ``False`` do not keep zeros in frames.
+
+    Returns:
+        dict: Lidar data with timestamps and metadata.
+    """
     max_size = 100
     bag = rosbag.Bag(bagfile.as_posix())
     max_messages = get_number_of_messages(bag, topic)

@@ -95,7 +95,7 @@ class Dataset(DatasetCore):
         instance: list[Frame],
         **kwargs,
     ) -> Dataset:
-        """Converts a libary instance to a lidar Dataset.
+        """Converts a library instance to a lidar Dataset.
 
         Args:
             library (str): Name of the library.
