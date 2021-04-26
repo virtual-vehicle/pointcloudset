@@ -1,5 +1,5 @@
-Welcome to PyMultiLidar's documentation!
-========================================
+Welcome to pointcloudset's documentation!
+=========================================
 
 A package to work with automotive lidar data.
 ---------------------------------------------

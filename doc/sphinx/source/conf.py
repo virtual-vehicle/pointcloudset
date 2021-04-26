@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.abspath("../../../lidar"))
 
 # -- Project information -----------------------------------------------------
 
-project = "PyMultiLidar"
+project = "pointcloudset"
 copyright = "2021, Thomas Goelles, Birgit Schlager, Stefan Muckenhuber, Sarah Haas, Tobias Hammer"
 author = (
     "Thomas Goelles, Birgit Schlager, Stefan Muckenhuber, Sarah Haas, Tobias Hammer"
