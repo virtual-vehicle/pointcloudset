@@ -13,15 +13,15 @@
 import os
 import sys
 
-from lidar import __version__
+from pointcloudset import __version__
 
-sys.path.insert(0, os.path.abspath("../../../lidar"))
+sys.path.insert(0, os.path.abspath("../../../pointcloudset"))
 
 
 # -- Project information -----------------------------------------------------
 
 project = "pointcloudset"
-copyright = "2021, Thomas Goelles, Birgit Schlager, Stefan Muckenhuber, Sarah Haas, Tobias Hammer"
+copyright = "VIRTUAL VEHICLE Research GmbH"
 author = (
     "Thomas Goelles, Birgit Schlager, Stefan Muckenhuber, Sarah Haas, Tobias Hammer"
 )

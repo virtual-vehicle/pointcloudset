@@ -1,7 +1,7 @@
 Welcome to pointcloudset's documentation!
 =========================================
 
-A package to work with lidar datasets. A lidar dataset is a collection of pointclouds
+A package to work with pointcloud datasets. A pointcloud dataset is a collection of pointclouds
 recorded over a time period.
 
 Use case examples
@@ -48,7 +48,7 @@ Use case examples
    :caption: Python API
 
    description_python_api
-   python-api/lidar
+   python-api/pointcloudset
 
 
 Indices and tables

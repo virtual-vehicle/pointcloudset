@@ -5,14 +5,14 @@ Install python package with pip:
 
 .. code-block:: console
 
-   pip install PyMultiLidar
+   pip install pointcloudset
 
 
 Open a jupyter notebook and start
 
 .. code-block:: python
 
-   from lidar import Dataset, Frame
+   from pointcloudset import Dataset, Frame
    from pathlib import Path
 
    dataset = Dataset.from_file(Path(rosbag_file.bag),topic="/os1_cloud_node/points",keep_zeros=False)

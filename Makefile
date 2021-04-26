@@ -9,7 +9,7 @@ test:
 	pytest --cov=pointcloudset tests
 	pytest --current-env --nbval-lax doc/sphinx/source/tutorial_notebooks/usage.ipynb
 	pytest --current-env --nbval-lax doc/sphinx/source/tutorial_notebooks/reading_las.ipynb
-	pytest --current-env --nbval-lax tests/plot/plot2d_test.ipynb
+	pytest --current-env --nbval-lax tests/plot/test_plot_plane.ipynb
 	python -m coverage report -i
 	python -m coverage html -i
 

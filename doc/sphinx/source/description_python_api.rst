@@ -2,12 +2,12 @@ Description of Python API
 ========================================
 
 The key components of the Python API are Datasets and Frames:
-    * Dataset: Datasets are based on the classes :class:`lidar.dataset.Dataset` and :class:`lidar.dataset.DatasetCore`
-    * Frame: Frames are based on the classes :class:`lidar.frame.Frame` and :class:`lidar.frame.FrameCore`
+    * Dataset: Datasets are based on the classes :class:`pointcloudset.dataset.Dataset` and :class:`pointcloudset.dataset.DatasetCore`
+    * Frame: Frames are based on the classes :class:`pointcloudset.frame.Frame` and :class:`pointcloudset.frame.FrameCore`
 
 A Dataset consists of multiple Frames. Datasets and Frames use the functions of the following subpackages:
-    * :mod:`lidar.diff`
-    * :mod:`lidar.filter`
-    * :mod:`lidar.geometry`
-    * :mod:`lidar.io`
-    * :mod:`lidar.plot`
+    * :mod:`pointcloudset.diff`
+    * :mod:`pointcloudset.filter`
+    * :mod:`pointcloudset.geometry`
+    * :mod:`pointcloudset.io`
+    * :mod:`pointcloudset.plot`
