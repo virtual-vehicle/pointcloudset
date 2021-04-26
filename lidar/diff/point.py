@@ -12,7 +12,9 @@ if TYPE_CHECKING:
     import lidar
 
 
-def calculate_distance_to_point(frame: lidar.Frame, target: np.ndarray, **kwargs):
+def calculate_distance_to_point(
+    frame: lidar.frame.Frame, target: np.ndarray, **kwargs
+) -> lidar.frame.Frame:
     """Calculate the Euclidian distance to a point for each point in the frame.
 
     Note:
