@@ -48,7 +48,7 @@ Use case examples
    :caption: Python API
 
    description_python_api
-   python-api/pointcloudset
+   python-api/lidar
 
 
 Indices and tables
