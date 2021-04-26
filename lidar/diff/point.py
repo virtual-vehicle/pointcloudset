@@ -27,7 +27,7 @@ def calculate_distance_to_point(
             Euclidean distance is calculated.
 
     Returns:
-        Frame: Frame with Euclidean distances to a point for each point.
+        Frame: Frame including Euclidean distances to a point for each point.
     """
     point_a = target
     points = frame.points.xyz

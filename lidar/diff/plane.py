@@ -26,7 +26,7 @@ def calculate_distance_to_plane(
             distance in direction of line of sight if ``False``. Defaults to ``True``.
 
     Returns:
-        Frame: Frame with distance to a plane for each point.
+        Frame: Frame including distances to a plane for each point.
     """
     points = frame.points.xyz
     distances = np.asarray(

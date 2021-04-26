@@ -18,7 +18,7 @@ def calculate_distance_to_origin(frame, **kwargs):
             calculated.
 
     Returns:
-        Frame: Frame with Euclidean distance to the origin for each point.
+        Frame: Frame including Euclidean distances to the origin for each point.
     """
     point_a = np.array((0, 0, 0))
 
