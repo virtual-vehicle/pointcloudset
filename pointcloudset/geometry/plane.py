@@ -22,7 +22,7 @@ def distance_to_point(
         point_A (numpy.ndarray): [x, y, z], point for which the distance is calculated
             to plane.
         plane_model (numpy.ndarray):  [a, b, c, d] parameters of the plane equation,
-            could be provided by :func:`pointcloudset.frame.Frame.plane_segmentation`.
+            could be provided by :func:`pointcloudset.pointcloud.PointCloud.plane_segmentation`.
         normal_dist (bool): Calculate normal distance if ``True``, calculate
             distance in direction of line of sight if ``False``. Defaults to ``True``.
 
@@ -60,7 +60,7 @@ def intersect_line_of_sight(line: np.ndarray, plane_model: np.ndarray) -> np.nda
         line (numpy.ndarray): [lx, ly, lz], line of sight through origin and point
             (lx,ly,lz).
         plane_model (numpy.ndarray): [a, b, c, d] parameters of the plane equation,
-            could be provided by :func:`pointcloudset.frame.Frame.plane_segmentation`.
+            could be provided by :func:`pointcloudset.pointcloud.PointCloud.plane_segmentation`.
 
     Returns:
         numpy.ndarray: [px, py, pz], point of intersection of line of sight and plane.

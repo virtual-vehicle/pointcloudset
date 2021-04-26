@@ -7,31 +7,31 @@ import pytest
 import pytest_check as check
 
 import pointcloudset
-from pointcloudset import Frame
+from pointcloudset import PointCloud
 
 
 def test_from_file_not_path():
     with pytest.raises(TypeError):
-        pointcloudset.Frame.from_file("/sepp.depp")
+        pointcloudset.PointCloud.from_file("/sepp.depp")
 
 
 def test_from_file_not_supported(testlas1: Path):
     with pytest.raises(ValueError):
-        pointcloudset.Frame.from_file(Path("/sepp.depp"))
+        pointcloudset.PointCloud.from_file(Path("/sepp.depp"))
 
 
 def test_from_file_las(testlas1: Path):
-    frame = pointcloudset.Frame.from_file(testlas1)
-    check.equal(type(frame), Frame)
+    pointcloud = pointcloudset.PointCloud.from_file(testlas1)
+    check.equal(type(pointcloud), PointCloud)
     testdata = Path.cwd().joinpath("tests/testdata/diamond.las").as_posix()
-    check.equal(frame.orig_file, testdata)
-    check.less_equal(frame.timestamp, datetime.now())
-    check.equal(len(list(frame.data.columns)), 13)
+    check.equal(pointcloud.orig_file, testdata)
+    check.less_equal(pointcloud.timestamp, datetime.now())
+    check.equal(len(list(pointcloud.data.columns)), 13)
 
 
-def test_to_csv(testframe: Frame, tmp_path: Path):
+def test_to_csv(testpointcloud: PointCloud, tmp_path: Path):
     testfile_name = tmp_path.joinpath("just_test.csv")
-    testframe.to_file(file_path=testfile_name)
+    testpointcloud.to_file(file_path=testfile_name)
     check.equal(testfile_name.exists(), True)
     read_frame = pd.read_csv(testfile_name)
     test_values = read_frame.iloc[0].values
@@ -54,10 +54,10 @@ def test_to_csv(testframe: Frame, tmp_path: Path):
     )
 
 
-def test_to_csv2(testframe: Frame, tmp_path: Path):
-    testframe.orig_file = tmp_path.joinpath("fake.bag").as_posix()
+def test_to_csv2(testpointcloud: PointCloud, tmp_path: Path):
+    testpointcloud.orig_file = tmp_path.joinpath("fake.bag").as_posix()
     testfile_name = tmp_path.joinpath("fake_timestamp_1592833242755911566.csv")
-    testframe.to_file(file_path=testfile_name)
+    testpointcloud.to_file(file_path=testfile_name)
     check.equal(testfile_name.exists(), True)
     read_frame = pd.read_csv(testfile_name)
     test_values = read_frame.iloc[0].values

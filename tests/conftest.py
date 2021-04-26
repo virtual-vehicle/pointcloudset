@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from pointcloudset import Dataset, Frame
+from pointcloudset import Dataset, PointCloud
 
 
 @pytest.fixture()
@@ -29,7 +29,7 @@ def testset_withzero(testbag1):
 
 
 @pytest.fixture()
-def testframe(testset):
+def testpointcloud(testset):
     return testset[1]
 
 
@@ -84,8 +84,8 @@ def reference_pointcloud_withzero_dataframe():
 
 
 @pytest.fixture()
-def testframe_mini(testframe_mini_df) -> Frame:
-    return Frame(
+def testframe_mini(testframe_mini_df) -> PointCloud:
+    return PointCloud(
         data=testframe_mini_df,
         timestamp=datetime.datetime(2020, 1, 1),
         orig_file="/fake/testrame_mini.bag",
@@ -93,9 +93,9 @@ def testframe_mini(testframe_mini_df) -> Frame:
 
 
 @pytest.fixture()
-def testframe_mini_real(testframe) -> Frame:
+def testframe_mini_real(testpointcloud) -> PointCloud:
     return (
-        testframe.limit("x", -1, 1)
+        testpointcloud.limit("x", -1, 1)
         .limit("y", -1, 1)
         .limit("z", -1, 1)
         .limit("intensity", 0, 10)
@@ -103,18 +103,18 @@ def testframe_mini_real(testframe) -> Frame:
 
 
 @pytest.fixture()
-def testframe_mini_real_plus1(testframe_mini_real) -> Frame:
+def testframe_mini_real_plus1(testframe_mini_real) -> PointCloud:
     testdata = testframe_mini_real.data.copy(deep=True)
     testdata = testdata + 1.0
     testdata["original_id"] = testframe_mini_real.data["original_id"]
-    return Frame(data=testdata)
+    return PointCloud(data=testdata)
 
 
 @pytest.fixture()
-def testframe_mini_real_other_original_id(testframe_mini_real) -> Frame:
+def testframe_mini_real_other_original_id(testframe_mini_real) -> PointCloud:
     testdata = testframe_mini_real.data.copy(deep=True)
     testdata["original_id"] = testdata["original_id"] + 1000000
-    return Frame(data=testdata)
+    return PointCloud(data=testdata)
 
 
 @pytest.fixture()

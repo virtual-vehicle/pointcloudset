@@ -2,13 +2,13 @@ import datetime
 
 import pytest_check as check
 
-from pointcloudset import Dataset, Frame
+from pointcloudset import Dataset, PointCloud
 from pointcloudset.pipeline.delayed_result import DelayedResult
 
 
 def test_apply1(testset: Dataset):
-    def pipeline1(frame: Frame) -> Frame:
-        return frame.limit("x", 0, 1)
+    def pipeline1(pointcloud: PointCloud) -> PointCloud:
+        return pointcloud.limit("x", 0, 1)
 
     testset_result = testset.apply(func=pipeline1)
     check.equal(type(testset_result), Dataset)
@@ -18,8 +18,8 @@ def test_apply1(testset: Dataset):
 
 
 def test_apply2(testset: Dataset):
-    def pipeline1(frame: Frame):
-        return frame.data.x.max()
+    def pipeline1(pointcloud: PointCloud):
+        return pointcloud.data.x.max()
 
     testset_result = testset.apply(
         func=pipeline1,
@@ -30,11 +30,11 @@ def test_apply2(testset: Dataset):
 
 
 def test_apply_both(testset: Dataset):
-    def pipeline1(frame: Frame) -> Frame:
-        return frame.limit("x", 0, 1)
+    def pipeline1(pointcloud: PointCloud) -> PointCloud:
+        return pointcloud.limit("x", 0, 1)
 
-    def pipeline2(frame: Frame):
-        return frame.data.x.max()
+    def pipeline2(pointcloud: PointCloud):
+        return pointcloud.data.x.max()
 
     testset_result = testset.apply(pipeline1).apply(pipeline2)
     testset_result2 = testset_result.compute()
@@ -45,8 +45,8 @@ def test_apply_both(testset: Dataset):
 
 
 def test_apply3(testset: Dataset):
-    def pipeline1(frame: Frame) -> Frame:
-        return frame.limit("x", 0, 1)
+    def pipeline1(pointcloud: PointCloud) -> PointCloud:
+        return pointcloud.limit("x", 0, 1)
 
     testset2 = testset[0:2]
     testset_result = testset2.apply(func=pipeline1)
@@ -55,8 +55,8 @@ def test_apply3(testset: Dataset):
 
 
 def test_apply_time(testset: Dataset):
-    def pipeline1(frame: Frame):
-        return frame.timestamp
+    def pipeline1(pointcloud: PointCloud):
+        return pointcloud.timestamp
 
     testset2 = testset[0:2]
     testset_result = testset2.apply(func=pipeline1).compute()
@@ -65,7 +65,7 @@ def test_apply_time(testset: Dataset):
 
 
 def test_apply_with_args(testset: Dataset):
-    def pipeline1(frame: Frame, test):
+    def pipeline1(pointcloud: PointCloud, test):
         return test
 
     testset2 = testset[0:2]

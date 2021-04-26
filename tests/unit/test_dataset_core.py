@@ -5,7 +5,7 @@ import pandas as pd
 import pytest_check as check
 import pytest
 
-from pointcloudset import Dataset, Frame
+from pointcloudset import Dataset, PointCloud
 from dask.dataframe import DataFrame as ddf
 
 
@@ -14,7 +14,7 @@ def test_agg_wrong(testdataset_mini_real: Dataset):
         testdataset_mini_real._agg("nix")
 
 
-def test_agg_min(testdataset_mini_real: Dataset, testframe_mini_real: Frame):
+def test_agg_min(testdataset_mini_real: Dataset, testframe_mini_real: PointCloud):
     res = testdataset_mini_real._agg("min")
     computed = res.compute()
     check.is_instance(res, ddf)
@@ -38,7 +38,7 @@ def test_agg_min(testdataset_mini_real: Dataset, testframe_mini_real: Frame):
     )
 
 
-def test_agg_list(testdataset_mini_real: Dataset, testframe_mini_real: Frame):
+def test_agg_list(testdataset_mini_real: Dataset, testframe_mini_real: PointCloud):
     res = testdataset_mini_real._agg(["min", "max", "mean", "std"])
     computed = res.compute()
     check.is_instance(res, ddf)
@@ -47,7 +47,7 @@ def test_agg_list(testdataset_mini_real: Dataset, testframe_mini_real: Frame):
     check.equal(len(computed), len(testframe_mini_real))
 
 
-def test_agg_dict(testdataset_mini_real: Dataset, testframe_mini_real: Frame):
+def test_agg_dict(testdataset_mini_real: Dataset, testframe_mini_real: PointCloud):
     res = testdataset_mini_real._agg({"x": ["min", "max", "mean", "std"]})
     computed = res.compute()
     check.is_instance(res, ddf)

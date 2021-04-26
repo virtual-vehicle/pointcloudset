@@ -5,19 +5,19 @@ from typing import TYPE_CHECKING, List
 import dask
 
 if TYPE_CHECKING:
-    from pointcloudset import Frame
+    from pointcloudset import PointCloud
 
 
-def dataset_from_frames(frames: List[Frame]) -> dict:
+def dataset_from_frames(frames: List[PointCloud]) -> dict:
     """Convert a list of pointcloud frames to a new dataset.
 
     Args:
-        frames (List[Frame]): A list of frames.
+        frames (List[PointCloud]): A list of frames.
 
     Returns:
         dict: For convertion to dataset.
     """
-    data = [dask.delayed(frame.data) for frame in frames]
-    timestamps = [frame.timestamp for frame in frames]
+    data = [dask.delayed(pointcloud.data) for pointcloud in frames]
+    timestamps = [pointcloud.timestamp for pointcloud in frames]
     meta = {"orig_file": "from frames list"}
     return {"data": data, "timestamps": timestamps, "meta": meta}

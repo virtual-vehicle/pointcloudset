@@ -28,7 +28,7 @@ class DatasetCore:
     def start_time(self) -> datetime.datetime:
         """
         Returns:
-            datetime.datetime: Time of first frame in Dataset.
+            datetime.datetime: Time of first pointcloud in Dataset.
         """
         return self.timestamps[0]
 
@@ -36,7 +36,7 @@ class DatasetCore:
     def end_time(self) -> datetime.datetime:
         """
         Returns:
-            datetime.datetime: Time of last frame in Dataset.
+            datetime.datetime: Time of last pointcloud in Dataset.
         """
         return self.timestamps[-1]
 
@@ -53,7 +53,7 @@ class DatasetCore:
         return len(self.data)
 
     def __str__(self):
-        return f"Lidar Dataset with {len(self)} frame(s)"
+        return f"Lidar Dataset with {len(self)} pointcloud(s)"
 
     def __repr__(self) -> str:
         return (
@@ -96,7 +96,7 @@ class DatasetCore:
         return data
 
     def has_frames(self) -> bool:
-        """Check if Dataset has Frame.
+        """Check if Dataset has PointCloud.
 
         Returns:
             bool: ``True`` if the Dataset does contain Frames, ``False`` if Dataset
@@ -110,8 +110,8 @@ class DatasetCore:
         """Select frames between start_time and end_time.
 
         Args:
-            start_time (datetime.datetime): Timestamp of first frame.
-            end_time (datetime.datetime): Timestamp of last frame.
+            start_time (datetime.datetime): Timestamp of first pointcloud.
+            end_time (datetime.datetime): Timestamp of last pointcloud.
 
         Returns:
             Dataset: Dataset with Frames between two timestamps.
@@ -126,13 +126,13 @@ class DatasetCore:
         return self[start_i:end_i]
 
     def _get_frame_number_from_time(self, time: datetime.datetime) -> int:
-        """Get the frame number from a timestamp.
+        """Get the pointcloud number from a timestamp.
 
         Args:
             time (datetime.datetime): The time of interest.
 
         Returns:
-            int: Frame number.
+            int: PointCloud number.
 
         Raises:
             ValueError: If time is outside of range.

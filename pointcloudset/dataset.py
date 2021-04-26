@@ -7,7 +7,7 @@ from dask import delayed
 import pandas as pd
 
 from pointcloudset.dataset_core import DatasetCore
-from pointcloudset.frame import Frame
+from pointcloudset.pointcloud import PointCloud
 from pointcloudset.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_TO_FILE
 from pointcloudset.pipeline.delayed_result import DelayedResult
 
@@ -16,7 +16,7 @@ def _is_pipline_returing_frame(pipeline, warn=True) -> bool:
     type_hints = get_type_hints(pipeline)
     res = False
     if "return" in type_hints:
-        res = get_type_hints(pipeline)["return"] == Frame
+        res = get_type_hints(pipeline)["return"] == PointCloud
     else:
         if warn:
             print(
@@ -36,7 +36,9 @@ class Dataset(DatasetCore):
     section of the docu.
     """
 
-    def __getitem__(self, frame_number: Union[slice, int]) -> Union[DatasetCore, Frame]:
+    def __getitem__(
+        self, frame_number: Union[slice, int]
+    ) -> Union[DatasetCore, PointCloud]:
         if isinstance(frame_number, slice):
             data = self.data[frame_number]
             timestamps = self.timestamps[frame_number]
@@ -45,7 +47,9 @@ class Dataset(DatasetCore):
         elif isinstance(frame_number, int):
             df = self.data[frame_number].compute()
             timestamp = self.timestamps[frame_number]
-            return Frame(data=df, orig_file=self.meta["orig_file"], timestamp=timestamp)
+            return PointCloud(
+                data=df, orig_file=self.meta["orig_file"], timestamp=timestamp
+            )
         else:
             raise TypeError("Wrong type {}".format(type(frame_number).__name__))
 
@@ -95,15 +99,15 @@ class Dataset(DatasetCore):
     def from_instance(
         cls,
         library: str,
-        instance: list[Frame],
+        instance: list[PointCloud],
         **kwargs,
     ) -> Dataset:
-        """Converts a library instance to a pointcloudset  Dataset.
+        """Converts a library instance to a pointcloudset Dataset.
 
         Args:
             library (str): Name of the library.\n
-                If "frames": :func:`pointcloudset.io.dataset.frames.dataset_from_frames`
-            instance (list[Frame]): Instance from which to convert.
+                If "frames": :func:`pointcloudset.io.dataset.pointclouds.dataset_from_frames`
+            instance (list[PointCloud]): Instance from which to convert.
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -124,7 +128,7 @@ class Dataset(DatasetCore):
 
     def apply(
         self,
-        func: Union[Callable[[Frame], Frame], Callable[[Frame], Any]],
+        func: Union[Callable[[PointCloud], PointCloud], Callable[[PointCloud], Any]],
         warn: bool = True,
         **kwargs,
     ) -> Union[Dataset, DelayedResult]:
@@ -132,38 +136,38 @@ class Dataset(DatasetCore):
         arguments.
 
         Args:
-            func (Union[Callable[[Frame], Frame], Callable[[Frame], Any]]): Function to
-                apply. If it returns a Frame and has the according type hint a new
+            func (Union[Callable[[PointCloud], PointCloud], Callable[[PointCloud], Any]]): Function to
+                apply. If it returns a PointCloud and has the according type hint a new
                 Dataset will be generated.
             warn (bool): If ``True`` warning if result is not a Dataset, if ``False``
                 warning is turned off.
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
-            Union[Dataset, DelayedResult]: A Dataset if the function returns a Frame,
+            Union[Dataset, DelayedResult]: A Dataset if the function returns a PointCloud,
             otherwise a DelayedResult object which is a tuple of dask delayed objects.
 
         Examples:
 
             .. code-block:: python
 
-                def func(frame:pointcloudset .Frame) -> pointcloudset .Frame:
-                    return frame.limit(x,0,1)
+                def func(pointcloud:pointcloudset .PointCloud) -> pointcloudset .PointCloud:
+                    return pointcloud.limit(x,0,1)
 
                 dataset.apply(func)
                 # This results in a new Dataset
 
             .. code-block:: python
 
-                def func(frame:pointcloudset.Frame) -> float:
-                    return frame.data.x.max()
+                def func(pointcloud:pointcloudset.PointCloud) -> float:
+                    return pointcloud.data.x.max()
 
                 dataset.apply(func)
 
             .. code-block:: python
 
-                def func(frame:pointcloudset.Frame, test: float) -> float:
-                    return frame.data.x.max() + test
+                def func(pointcloud:pointcloudset.PointCloud, test: float) -> float:
+                    return pointcloud.data.x.max() + test
 
                 dataset.apply(func, test=10)
         """
@@ -173,15 +177,15 @@ class Dataset(DatasetCore):
         if returns_frame:
 
             def pipeline_delayed(element_in, timestamp):
-                frame = Frame(data=element_in, timestamp=timestamp)
-                frame = func(frame, **kwargs)
-                return frame.data
+                pointcloud = PointCloud(data=element_in, timestamp=timestamp)
+                pointcloud = func(pointcloud, **kwargs)
+                return pointcloud.data
 
         else:
 
             def pipeline_delayed(element_in, timestamp):
-                frame = Frame(data=element_in, timestamp=timestamp)
-                return func(frame, **kwargs)
+                pointcloud = PointCloud(data=element_in, timestamp=timestamp)
+                return func(pointcloud, **kwargs)
 
         res = []
         for i in range(0, len(self)):
@@ -196,7 +200,7 @@ class Dataset(DatasetCore):
     def agg(
         self,
         agg: Union[str, list, dict],
-        depth: Literal["dataset", "frame", "point"] = "dataset",
+        depth: Literal["dataset", "pointcloud", "point"] = "dataset",
     ) -> Union[
         pandas.Series, List[pandas.DataFrame], pandas.DataFrame, pandas.DataFrame
     ]:
@@ -206,20 +210,20 @@ class Dataset(DatasetCore):
 
         Args:
             agg (Union[str, list, dict]): Function to use for aggregating.
-            depth (Literal["dataset", "frame", "point"], optional): Aggregation level: "dataset", "frame" or
+            depth (Literal["dataset", "pointcloud", "point"], optional): Aggregation level: "dataset", "pointcloud" or
                 "point". Defaults to "dataset".
 
         Returns:
             Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
 
         Raises:
-            ValueError: If depth is not "dataset", "frame" or "point".
+            ValueError: If depth is not "dataset", "pointcloud" or "point".
 
         Examples:
 
             .. code-block:: python
 
-                dataset.agg("max", "frame")
+                dataset.agg("max", "pointcloud")
 
             .. code-block:: python
 
@@ -238,7 +242,7 @@ class Dataset(DatasetCore):
                 ]
 
             return data
-        elif depth == "frame":
+        elif depth == "pointcloud":
             return self._agg_per_frame(agg)
         elif depth == "dataset":
             data = self._agg(agg).compute()
@@ -247,7 +251,7 @@ class Dataset(DatasetCore):
                 data.index = [f"{i} {agg}" for i in data.index]
             return data
         else:
-            raise ValueError("depth needs to be dataset, frame or point")
+            raise ValueError("depth needs to be dataset, pointcloud or point")
 
     def min(self, depth: str = "dataset"):
         """Aggregate using min operation over the whole dataset.
@@ -255,8 +259,8 @@ class Dataset(DatasetCore):
         Uses :class:`dask.dataframe.DataFrame` with parallel processing.
 
         Args:
-            depth (Literal["dataset", "frame", "point"], optional): Aggregation level:
-            "dataset", "frame" or "point". Defaults to "dataset".
+            depth (Literal["dataset", "pointcloud", "point"], optional): Aggregation level:
+            "dataset", "pointcloud" or "point". Defaults to "dataset".
 
         Returns:
             Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated
@@ -270,7 +274,7 @@ class Dataset(DatasetCore):
 
             .. code-block:: python
 
-                dataset.min("frame")
+                dataset.min("pointcloud")
 
             .. code-block:: python
 
@@ -293,8 +297,8 @@ class Dataset(DatasetCore):
         Uses :class:`dask.dataframe.DataFrame` with parallel processing.
 
         Args:
-            depth (Literal["dataset", "frame", "point"], optional): Aggregation level:
-            "dataset", "frame" or "point". Defaults to "dataset".
+            depth (Literal["dataset", "pointcloud", "point"], optional): Aggregation level:
+            "dataset", "pointcloud" or "point". Defaults to "dataset".
 
         Returns:
             Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated
@@ -308,7 +312,7 @@ class Dataset(DatasetCore):
 
             .. code-block:: python
 
-                dataset.max("frame")
+                dataset.max("pointcloud")
 
             .. code-block:: python
 
@@ -331,8 +335,8 @@ class Dataset(DatasetCore):
         Uses :class:`dask.dataframe.DataFrame` with parallel processing.
 
         Args:
-            depth (Literal["dataset", "frame", "point"], optional): Aggregation level:
-            "dataset", "frame" or "point". Defaults to "dataset".
+            depth (Literal["dataset", "pointcloud", "point"], optional): Aggregation level:
+            "dataset", "pointcloud" or "point". Defaults to "dataset".
 
         Returns:
             Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
@@ -345,7 +349,7 @@ class Dataset(DatasetCore):
 
             .. code-block:: python
 
-                dataset.mean("frame")
+                dataset.mean("pointcloud")
 
             .. code-block:: python
 
@@ -368,8 +372,8 @@ class Dataset(DatasetCore):
         Uses :class:`dask.dataframe.DataFrame` with parallel processing.
 
         Args:
-            depth (Literal["dataset", "frame", "point"], optional): Aggregation level:
-            "dataset", "frame" or "point". Defaults to "dataset".
+            depth (Literal["dataset", "pointcloud", "point"], optional): Aggregation level:
+            "dataset", "pointcloud" or "point". Defaults to "dataset".
 
         Returns:
             Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
@@ -382,7 +386,7 @@ class Dataset(DatasetCore):
 
             .. code-block:: python
 
-                dataset.std("frame")
+                dataset.std("pointcloud")
 
             .. code-block:: python
 
@@ -402,8 +406,8 @@ class Dataset(DatasetCore):
     def _agg_per_frame(
         self, agg: Union[str, list, dict]
     ) -> Union[pd.DataFrame, list, pd.DataFrame]:
-        def get(frame, agg: Union[str, list, dict]):
-            return frame.data.agg(agg)
+        def get(pointcloud, agg: Union[str, list, dict]):
+            return pointcloud.data.agg(agg)
 
         res = self.apply(get, warn=False, agg=agg).compute()
         if isinstance(agg, list):
@@ -413,7 +417,7 @@ class Dataset(DatasetCore):
             if not isinstance(agg, dict):
                 res = res.drop("original_id", axis=1)
             res.columns = [f"{column} {agg}" for column in res.columns]
-            res.index.name = "frame"
+            res.index.name = "pointcloud"
             res["timestamp"] = self.timestamps
             return res
 
