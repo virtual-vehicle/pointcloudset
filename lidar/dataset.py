@@ -293,11 +293,12 @@ class Dataset(DatasetCore):
         Uses :class:`dask.dataframe.DataFrame` with parallel processing.
 
         Args:
-            depth (Literal["dataset", "frame", "point"], optional): Aggregation level: "dataset", "frame" or
-                "point". Defaults to "dataset".
+            depth (Literal["dataset", "frame", "point"], optional): Aggregation level:
+            "dataset", "frame" or "point". Defaults to "dataset".
 
         Returns:
-            Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
+            Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated
+            Dataset.
 
         Examples:
 
@@ -330,8 +331,8 @@ class Dataset(DatasetCore):
         Uses :class:`dask.dataframe.DataFrame` with parallel processing.
 
         Args:
-            depth (Literal["dataset", "frame", "point"], optional): Aggregation level: "dataset", "frame" or
-                "point". Defaults to "dataset".
+            depth (Literal["dataset", "frame", "point"], optional): Aggregation level:
+            "dataset", "frame" or "point". Defaults to "dataset".
 
         Returns:
             Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
@@ -367,8 +368,8 @@ class Dataset(DatasetCore):
         Uses :class:`dask.dataframe.DataFrame` with parallel processing.
 
         Args:
-            depth (Literal["dataset", "frame", "point"], optional): Aggregation level: "dataset", "frame" or
-                "point". Defaults to "dataset".
+            depth (Literal["dataset", "frame", "point"], optional): Aggregation level:
+            "dataset", "frame" or "point". Defaults to "dataset".
 
         Returns:
             Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
