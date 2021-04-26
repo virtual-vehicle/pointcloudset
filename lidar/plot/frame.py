@@ -100,9 +100,6 @@ def plot_overlay_plane(
     y = np.linspace(bb.y["min"], bb.y["max"], 100)
     z = np.linspace(bb.z["min"], bb.z["max"], 100)
 
-    print(colors)
-    print(i)
-
     a, b, c, d = plane_model
 
     eps = 0.000001
@@ -116,27 +113,22 @@ def plot_overlay_plane(
         X, Y = np.meshgrid(x, y)
         Z = (-d - a * X - b * Y) / c
 
-    colorscale = [[color[0] / len(colors), color[1]] for color in enumerate(colors)]
-    surfacecolor = np.ones(shape=X.shape) * colorscale[i][0]
+    colorscale = [[0, colors[i]], [1, colors[i]]]
+    surfacecolor = np.ones(shape=X.shape)
 
-    p2 = go.Figure(
-        data=[
-            go.Surface(
-                x=X,
-                y=Y,
-                z=Z,
-                name=name,
-                surfacecolor=surfacecolor,
-                colorscale=colorscale,
-                showscale=True,
-                cmin=0,
-                cmax=1,
-                opacity=0.5,
-            )
-        ]
+    p2 = go.Surface(
+        x=X,
+        y=Y,
+        z=Z,
+        name=name,
+        surfacecolor=surfacecolor,
+        colorscale=colorscale,
+        showscale=False,
+        cmin=0,
+        cmax=1,
+        opacity=0.5,
     )
-    trace2 = p2.data[0]
-    fig.add_trace(trace2)
-    i = i + 1
+
+    fig.add_trace(p2)
     fig.update_layout(scene_aspectmode="data")
     return fig
