@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 import pytest_check as check
 
-from lidar import Dataset, Frame
+from pointcloudset import Dataset, Frame
 
 
 def test_from_bag_wrong_topic(testbag1):

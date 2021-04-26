@@ -9,12 +9,12 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 if TYPE_CHECKING:
-    import lidar
+    import pointcloudset
 
 
 def calculate_distance_to_point(
-    frame: lidar.frame.Frame, target: np.ndarray, **kwargs
-) -> lidar.frame.Frame:
+    frame: pointcloudset.frame.Frame, target: np.ndarray, **kwargs
+) -> pointcloudset.frame.Frame:
     """Calculate the Euclidian distance to a point for each point in the frame.
 
     Note:

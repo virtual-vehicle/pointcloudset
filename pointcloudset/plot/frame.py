@@ -1,6 +1,6 @@
 """
 Functions for plotting frames.
-Used mainly by :func:`lidar.frame.Frame.plot` but could also be used on its own.
+Used mainly by :func:`pointcloudset.frame.Frame.plot` but could also be used on its own.
 """
 import numpy as np
 import plotly.express as px

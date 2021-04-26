@@ -4,7 +4,7 @@ Functions to calculate distances of points in frame and a plane.
 
 import numpy as np
 
-from lidar.geometry import plane
+from pointcloudset.geometry import plane
 
 
 def calculate_distance_to_plane(

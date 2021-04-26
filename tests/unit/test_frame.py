@@ -8,7 +8,7 @@ import pytest_check as check
 from pandas._testing import assert_frame_equal
 from pyntcloud import PyntCloud
 
-from lidar import Frame
+from pointcloudset import Frame
 
 
 def test_init(testframe_mini_df: pd.DataFrame):
@@ -139,7 +139,7 @@ def test_testframe_1_with_zero(testframe_withzero: Frame):
 
 
 def test_testframe_1(testframe: Frame):
-    # testframe.data.to_pickle("/workspaces/lidar/tests/testdata/testframe_dataframe.pkl")
+    # testframe.data.to_pickle("/workspaces/pointcloudset/tests/testdata/testframe_dataframe.pkl")
     check.equal(len(testframe), 45809)
     check.equal(testframe._has_data(), True)
     check.equal(len(testframe), 45809)
@@ -199,7 +199,7 @@ def test_testframe_withzero_data(
     testframe_withzero: Frame, reference_data_with_zero_dataframe: pd.DataFrame
 ):
     data = testframe_withzero.data
-    # data.to_pickle("/workspaces/lidar/tests/testdata/testframe_withzero_dataframe.pkl")
+    # data.to_pickle("/workspaces/pointcloudset/tests/testdata/testframe_withzero_dataframe.pkl")
     check.equal(
         list(data.columns),
         ["x", "y", "z", "intensity", "t", "reflectivity", "ring", "noise", "range"],
@@ -215,7 +215,7 @@ def test_testframe_pointcloud(
     array = np.asarray(pointcloud.points)
     pointcloud_df = pd.DataFrame(array)
     # pointcloud_df.to_pickle(
-    #    "/workspaces/lidar/tests/testdata/testframe_withzero_pointcloud.pkl"
+    #    "/workspaces/pointcloudset/tests/testdata/testframe_withzero_pointcloud.pkl"
     # )
     sub_points = pointcloud.select_by_index(list(range(5000, 5550)))
     sub_array = np.asarray(sub_points.points)

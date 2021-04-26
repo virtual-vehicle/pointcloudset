@@ -6,7 +6,7 @@ import open3d as o3d
 from pyntcloud import PyntCloud
 
 if TYPE_CHECKING:
-    from lidar import Frame
+    from pointcloudset import Frame
 
 
 def from_open3d(open3d_data: o3d.open3d_pybind.geometry.PointCloud) -> dict:

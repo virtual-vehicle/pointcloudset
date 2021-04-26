@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from lidar import Dataset, Frame
+from pointcloudset import Dataset, Frame
 
 
 @pytest.fixture()

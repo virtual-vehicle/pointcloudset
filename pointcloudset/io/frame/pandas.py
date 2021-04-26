@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 if TYPE_CHECKING:
-    from lidar import Frame
+    from pointcloudset import Frame
 
 
 def from_dataframe(df: pd.DataFrame) -> dict:

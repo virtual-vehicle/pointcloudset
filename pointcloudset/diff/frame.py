@@ -4,7 +4,7 @@ Functions to calculate differences between frames.
 
 import numpy as np
 import pandas as pd
-import lidar
+import pointcloudset
 
 
 def calculate_distance_to_frame(frame, target):

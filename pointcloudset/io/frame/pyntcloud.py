@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import pyntcloud
 
 if TYPE_CHECKING:
-    from lidar import Frame
+    from pointcloudset import Frame
 
 
 def from_pyntcloud(pyntcloud_data: pyntcloud.PyntCloud) -> dict:

@@ -115,11 +115,11 @@ class FrameCore:
         return self
 
     def _has_data(self) -> bool:
-        """Check if lidar frame has data. Data here means point coordinates and
+        """Check if pointcloudset frame has data. Data here means point coordinates and
         measurements at each point of the pointcloud.
 
         Returns:
-            bool: ``True`` if the lidar frame contains data.
+            bool: ``True`` if the pointcloudset frame contains data.
         """
         return not self.data.empty
 
@@ -135,7 +135,7 @@ class FrameCore:
         return "original_id" in self.data.columns
 
     def _contains_original_id_number(self, original_id: int) -> bool:
-        """Check if lidar frame contains a specific original_id.
+        """Check if pointcloudset frame contains a specific original_id.
 
         Args:
             original_id (int): the original_id to check

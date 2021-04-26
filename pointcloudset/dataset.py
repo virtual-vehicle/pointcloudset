@@ -6,10 +6,10 @@ from typing import Any, Callable, Union, get_type_hints, List, Literal
 from dask import delayed
 import pandas as pd
 
-from lidar.dataset_core import DatasetCore
-from lidar.frame import Frame
-from lidar.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_TO_FILE
-from lidar.pipeline.delayed_result import DelayedResult
+from pointcloudset.dataset_core import DatasetCore
+from pointcloudset.frame import Frame
+from pointcloudset.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_TO_FILE
+from pointcloudset.pipeline.delayed_result import DelayedResult
 
 
 def _is_pipline_returing_frame(pipeline, warn=True) -> bool:
@@ -55,8 +55,8 @@ class Dataset(DatasetCore):
 
         Args:
             file_path (pathlib.Path): File path where Dataset should be read from.\n
-                If file format is a directory: :func:`lidar.io.dataset.dir.dataset_from_dir`\n
-                If file format is a ROS bag file: :func:`lidar.io.dataset.bag.dataset_from_rosbag`
+                If file format is a directory: :func:`pointcloudset.io.dataset.dir.dataset_from_dir`\n
+                If file format is a ROS bag file: :func:`pointcloudset.io.dataset.bag.dataset_from_rosbag`
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -86,7 +86,7 @@ class Dataset(DatasetCore):
 
         Args:
             file_path (pathlib.Path): File path where Dataset should be saved.\n
-                If file format is a directory: :func:`lidar.io.dataset.dir.dataset_to_dir`
+                If file format is a directory: :func:`pointcloudset.io.dataset.dir.dataset_to_dir`
             **kwargs: Keyword arguments to pass to func.
         """
         DATASET_TO_FILE["DIR"](self, file_path=file_path, **kwargs)
@@ -98,11 +98,11 @@ class Dataset(DatasetCore):
         instance: list[Frame],
         **kwargs,
     ) -> Dataset:
-        """Converts a library instance to a lidar Dataset.
+        """Converts a library instance to a pointcloudset  Dataset.
 
         Args:
             library (str): Name of the library.\n
-                If "frames": :func:`lidar.io.dataset.frames.dataset_from_frames`
+                If "frames": :func:`pointcloudset.io.dataset.frames.dataset_from_frames`
             instance (list[Frame]): Instance from which to convert.
             **kwargs: Keyword arguments to pass to func.
 
@@ -147,7 +147,7 @@ class Dataset(DatasetCore):
 
             .. code-block:: python
 
-                def func(frame:lidar.Frame) -> lidar.Frame:
+                def func(frame:pointcloudset .Frame) -> pointcloudset .Frame:
                     return frame.limit(x,0,1)
 
                 dataset.apply(func)
@@ -155,14 +155,14 @@ class Dataset(DatasetCore):
 
             .. code-block:: python
 
-                def func(frame:lidar.Frame) -> float:
+                def func(frame:pointcloudset.Frame) -> float:
                     return frame.data.x.max()
 
                 dataset.apply(func)
 
             .. code-block:: python
 
-                def func(frame:lidar.Frame, test: float) -> float:
+                def func(frame:pointcloudset.Frame, test: float) -> float:
                     return frame.data.x.max() + test
 
                 dataset.apply(func, test=10)
@@ -278,7 +278,7 @@ class Dataset(DatasetCore):
 
         Hint:
 
-            See also: :func:`lidar.dataset.Dataset.agg`\n
+            See also: :func:`pointcloudset.dataset.Dataset.agg`\n
             Same as:
 
             .. code-block:: python
@@ -316,7 +316,7 @@ class Dataset(DatasetCore):
 
         Hint:
 
-            See also: :func:`lidar.dataset.Dataset.agg`\n
+            See also: :func:`pointcloudset.dataset.Dataset.agg`\n
             Same as:
 
             .. code-block:: python
@@ -353,7 +353,7 @@ class Dataset(DatasetCore):
 
         Hint:
 
-            See also: :func:`lidar.dataset.Dataset.agg`\n
+            See also: :func:`pointcloudset.dataset.Dataset.agg`\n
             Same as:
 
             .. code-block:: python
@@ -390,7 +390,7 @@ class Dataset(DatasetCore):
 
         Hint:
 
-            See also: :func:`lidar.dataset.Dataset.agg`\n
+            See also: :func:`pointcloudset.dataset.Dataset.agg`\n
             Same as:
 
             .. code-block:: python

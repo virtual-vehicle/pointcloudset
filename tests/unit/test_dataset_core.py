@@ -5,7 +5,7 @@ import pandas as pd
 import pytest_check as check
 import pytest
 
-from lidar import Dataset, Frame
+from pointcloudset import Dataset, Frame
 from dask.dataframe import DataFrame as ddf
 
 

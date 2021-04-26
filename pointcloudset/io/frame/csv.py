@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from lidar import Frame
+    from pointcloudset import Frame
 
 
 def write_csv(frame: Frame, file_path: Path) -> None:

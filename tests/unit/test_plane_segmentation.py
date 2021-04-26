@@ -1,7 +1,7 @@
 import pytest_check as check
 
-from lidar import Frame
-from lidar.frame_core import FrameCore
+from pointcloudset import Frame
+from pointcloudset.frame_core import FrameCore
 
 
 def test_plane_segmentation_of_open3d(testframe):

@@ -104,3 +104,4 @@ tests/testdata/big.bag
 *.lock
 *.dirlock
 *dask-worker-space*
+logs*

@@ -3,8 +3,8 @@ import pandas as pd
 import pytest
 import pytest_check as check
 
-from lidar import Frame
-from lidar.diff.frame import _calculate_single_point_difference
+from pointcloudset import Frame
+from pointcloudset.diff.frame import _calculate_single_point_difference
 
 
 def test_frame_difference_equal(testframe_mini_real: Frame):

@@ -22,21 +22,21 @@ def get_version(rel_path):
 
 
 setup(
-    name="lidar",
+    name="pointcloudset",
     packages=[
-        "lidar",
-        "lidar.diff",
-        "lidar.filter",
-        "lidar.geometry",
-        "lidar.io",
-        "lidar.plot",
+        "pointcloudset",
+        "pointcloudset.diff",
+        "pointcloudset.filter",
+        "pointcloudset.geometry",
+        "pointcloudset.io",
+        "pointcloudset.plot",
     ],
-    version=get_version("lidar/__init__.py"),
+    version=get_version("pointcloudset/__init__.py"),
     author="VIRTUAL VEHICLE Research GmbH",
     author_email="thomas.goelles@v2c2.at",
-    description="Analyse automotive lidar data stored in ROS bagfiles",
-    python_requires=">=3.7",
+    description="Analyse of point cloud collections",
+    python_requires=">=3.8",
     entry_points={
-        "console_scripts": ["bag2dataset = lidar.io.dataset.commandline:app"]
+        "console_scripts": ["bag2dataset = pointcloudset.io.dataset.commandline:app"]
     },
 )

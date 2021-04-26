@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 import pytest_check as check
 
-from lidar import Dataset, Frame
+from pointcloudset import Dataset, Frame
 
 
 def test_extract_point1(testframe: Frame):

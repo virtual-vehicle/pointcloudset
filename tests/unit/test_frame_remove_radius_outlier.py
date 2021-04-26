@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 import pytest_check as check
 
-from lidar import Frame
+from pointcloudset import Frame
 
 
 def test_rro1(testframe_mini_real):

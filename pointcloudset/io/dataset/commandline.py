@@ -6,8 +6,8 @@ import rosbag
 import typer
 import click
 
-import lidar
-from lidar.io.dataset.bag import get_number_of_messages, read_rosbag_part
+import pointcloudset
+from pointcloudset.io.dataset.bag import get_number_of_messages, read_rosbag_part
 
 app = typer.Typer()
 
@@ -46,7 +46,7 @@ def convert_bag2dir(
         )
         data = res["data"]
         timestamps = res["timestamps"]
-        lidar.Dataset(data, timestamps, meta).to_file(
+        pointcloudset.Dataset(data, timestamps, meta).to_file(
             folder_to_write.joinpath(f"{chunk_number}"), use_orig_filename=False
         )
         chunk_number = chunk_number + 1
@@ -62,12 +62,12 @@ def get(
     keep_zeros: bool = False,
     max_size: int = 100,
 ):
-    # """Convert ROS bagfiles to a directory of use with the lidar package.
+    # """Convert ROS bagfiles to a directory of use with the pointcloudset package.
 
     # Args:
     #     bagfile: ROS bagfile
     #     folder_to_write: [description]
-    #     topic: ros lidar pointcloud topic. For example "/os1_cloud_node/points".
+    #     topic: ros pointcloudset pointcloud topic. For example "/os1_cloud_node/points".
     #     start_frame_number:  Defaults to 0.
     #     end_frame_number:  Defaults to None.
     #     keep_zeros: Keep element with zero values. Defaults to ``False``.

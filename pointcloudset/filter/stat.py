@@ -6,15 +6,18 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from lidar.config import OPS
+from pointcloudset.config import OPS
 
 if TYPE_CHECKING:
-    from lidar import Frame
+    from pointcloudset import Frame
 
 
 def quantile_filter(
-    frame: lidar.frame.Frame, dim: str, relation: str = ">=", cut_quantile: float = 0.5
-) -> lidar.frame.Frame:
+    frame: pointcloudset.frame.Frame,
+    dim: str,
+    relation: str = ">=",
+    cut_quantile: float = 0.5,
+) -> pointcloudset.frame.Frame:
     """Filtering based on quantile values of dimension dim of the data.
 
     Args:
@@ -33,8 +36,8 @@ def quantile_filter(
 
 
 def value_filter(
-    frame: lidar.frame.Frame, dim: str, relation: str, value: float
-) -> lidar.frame.Frame:
+    frame: pointcloudset.frame.Frame, dim: str, relation: str, value: float
+) -> pointcloudset.frame.Frame:
     """Limit the range of certain values in a Frame.
 
     Args:
@@ -53,8 +56,8 @@ def value_filter(
 
 
 def remove_radius_outlier(
-    frame: lidar.frame.Frame, nb_points: int, radius: float
-) -> lidar.frame.Frame:
+    frame: pointcloudset.frame.Frame, nb_points: int, radius: float
+) -> pointcloudset.frame.Frame:
     """Function to remove points that have less than nb_points in a given
     sphere of a given radius.
 

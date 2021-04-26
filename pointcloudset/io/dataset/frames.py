@@ -5,11 +5,11 @@ from typing import TYPE_CHECKING, List
 import dask
 
 if TYPE_CHECKING:
-    from lidar import Frame
+    from pointcloudset import Frame
 
 
 def dataset_from_frames(frames: List[Frame]) -> dict:
-    """Convert a list of lidar frames to a new dataset.
+    """Convert a list of pointcloud frames to a new dataset.
 
     Args:
         frames (List[Frame]): A list of frames.

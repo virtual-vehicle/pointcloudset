@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 import pytest_check as check
 
-from lidar.geometry import point
+from pointcloudset.geometry import point
 
 
 def test_distance_to_point():

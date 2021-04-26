@@ -4,7 +4,7 @@ Functions to calculate distances of points in frame to origin.
 
 import numpy as np
 
-from lidar.diff.point import calculate_distance_to_point
+from pointcloudset.diff.point import calculate_distance_to_point
 
 
 def calculate_distance_to_origin(frame, **kwargs):

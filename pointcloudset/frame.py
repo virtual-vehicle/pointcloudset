@@ -12,16 +12,16 @@ import plotly
 import plotly.express as px
 import pyntcloud
 
-from lidar.diff import ALL_DIFFS
-from lidar.filter import ALL_FILTERS
-from lidar.frame_core import FrameCore
-from lidar.io import (
+from pointcloudset.diff import ALL_DIFFS
+from pointcloudset.filter import ALL_FILTERS
+from pointcloudset.frame_core import FrameCore
+from pointcloudset.io import (
     FRAME_FROM_FILE,
     FRAME_FROM_INSTANCE,
     FRAME_TO_FILE,
     FRAME_TO_INSTANCE,
 )
-from lidar.plot.frame import plot_overlay
+from pointcloudset.plot.frame import plot_overlay
 
 
 def is_documented_by(original):
@@ -58,7 +58,7 @@ class Frame(FrameCore):
         .. code-block:: python
 
             testbag = Path().cwd().parent.joinpath("tests/testdata/test.bag")
-            testset = lidar.Dataset(testbag,topic="/os1_cloud_node/points",
+            testset = pointcloudset.Dataset(testbag,topic="/os1_cloud_node/points",
                 keep_zeros=False)
             testframe = testset[0]
     """
@@ -139,14 +139,14 @@ class Frame(FrameCore):
         ],
         **kwargs,
     ) -> Frame:
-        """Converts a library instance to a lidar Frame.
+        """Converts a library instance to a pointcloudset Frame.
 
         Args:
             library (str): Name of the library.\n
-                If PYNTCLOUD: :func:`lidar.io.frame.pyntcloud.from_pyntcloud`\n
-                If OPEN3D: :func:`lidar.io.frame.open3d.from_open3d`\n
-                If DATAFRAME: :func:`lidar.io.frame.pandas.from_dataframe`\n
-                If PANDAS: :func:`lidar.io.frame.pandas.from_dataframe`
+                If PYNTCLOUD: :func:`pointcloudset.io.frame.pyntcloud.from_pyntcloud`\n
+                If OPEN3D: :func:`pointcloudset.io.frame.open3d.from_open3d`\n
+                If DATAFRAME: :func:`pointcloudset.io.frame.pandas.from_dataframe`\n
+                If PANDAS: :func:`pointcloudset.io.frame.pandas.from_dataframe`
             instance
                 (Union[pandas.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud]):
                 Library instance to convert.
@@ -182,10 +182,10 @@ class Frame(FrameCore):
 
         Args:
             library (str): Name of the library.\n
-                If PYNTCLOUD: :func:`lidar.io.frame.pyntcloud.to_pyntcloud`\n
-                If OPEN3D: :func:`lidar.io.frame.open3d.to_open3d`\n
-                If DATAFRAME: :func:`lidar.io.frame.pandas.to_dataframe`\n
-                If PANDAS: :func:`lidar.io.frame.pandas.to_dataframe`
+                If PYNTCLOUD: :func:`pointcloudset.io.frame.pyntcloud.to_pyntcloud`\n
+                If OPEN3D: :func:`pointcloudset.io.frame.open3d.to_open3d`\n
+                If DATAFRAME: :func:`pointcloudset.io.frame.pandas.to_dataframe`\n
+                If PANDAS: :func:`pointcloudset.io.frame.pandas.to_dataframe`
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -233,7 +233,7 @@ class Frame(FrameCore):
                 Defaults to None.
             overlay (dict, optional): Dict with Frames to overlay.
                 {"Cluster 1": cluster1,"Plane 1": plane_model}\n
-                See also: :func:`lidar.plot.frame.plot_overlay`\n
+                See also: :func:`pointcloudset.plot.frame.plot_overlay`\n
                 Defaults to empty.
             point_size (float, optional): Size of each point. Defaults to 2.
             prepend_id (str, optional): String before point id to display in hover.
@@ -306,10 +306,10 @@ class Frame(FrameCore):
 
         Args:
             name (str):
-                "origin": :func:`lidar.diff.origin.calculate_distance_to_origin` \n
-                "plane": :func:`lidar.diff.plane.calculate_distance_to_plane` \n
-                "frame": :func:`lidar.diff.frame.calculate_distance_to_frame` \n
-                "point": :func:`lidar.diff.point.calculate_distance_to_point` \n
+                "origin": :func:`pointcloudset.diff.origin.calculate_distance_to_origin` \n
+                "plane": :func:`pointcloudset.diff.plane.calculate_distance_to_plane` \n
+                "frame": :func:`pointcloudset.diff.frame.calculate_distance_to_frame` \n
+                "point": :func:`pointcloudset.diff.point.calculate_distance_to_point` \n
             target (Union[None, Frame, numpy.ndarray], optional): Pass argument according to chosen object.
                 Defaults to None.
             **kwargs: Keyword arguments to pass to func.
@@ -337,9 +337,9 @@ class Frame(FrameCore):
 
         Args:
             name (str):
-                "quantile": :func:`lidar.filter.stat.quantile_filter` \n
-                "value": :func:`lidar.filter.stat.value_filter` \n
-                "radiusoutlier": :func:`lidar.filter.stat.remove_radius_outlier` \n
+                "quantile": :func:`pointcloudset.filter.stat.quantile_filter` \n
+                "value": :func:`pointcloudset.filter.stat.value_filter` \n
+                "radiusoutlier": :func:`pointcloudset.filter.stat.remove_radius_outlier` \n
             *args: Positional arguments to pass to func.
             **kwargs: Keyword arguments to pass to func.
 
@@ -366,7 +366,7 @@ class Frame(FrameCore):
             raise ValueError("Unsupported filter. Check docstring")
 
     def limit(self, dim: "str", minvalue: float, maxvalue: float) -> Frame:
-        """Limit the range of certain values in lidar Frame. Can be chained together.
+        """Limit the range of certain values in pointcloudset Frame. Can be chained together.
 
         Args:
             dim (str): Dimension to limit, any column in data not just x, y, or z.
@@ -420,7 +420,7 @@ class Frame(FrameCore):
     def get_cluster(self, eps: float, min_points: int) -> pandas.DataFrame:
         """Get the clusters based on
         :meth:`open3d:open3d.geometry.PointCloud.cluster_dbscan`.
-        Process further with :func:`lidar.frame.Frame.take_cluster`.
+        Process further with :func:`pointcloudset.frame.Frame.take_cluster`.
 
         Args:
             eps (float): Density parameter that is used to find neighboring points.
@@ -442,7 +442,7 @@ class Frame(FrameCore):
         Args:
             cluster_number (int): Cluster ID to keep.
             cluster_labels (pandas.DataFrame): Clusters generated with
-                :func:`lidar.frame.Frame.get_cluster`.
+                :func:`pointcloudset.frame.Frame.get_cluster`.
 
         Returns:
             Frame: Frame with selected cluster.

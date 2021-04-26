@@ -1,7 +1,7 @@
 import plotly
 import pytest_check as check
 
-from lidar import Frame
+from pointcloudset import Frame
 
 
 def test_plot1(testframe_mini: Frame):

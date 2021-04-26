@@ -7,7 +7,7 @@ from dask.delayed import DelayedLeaf
 from pandas.testing import assert_series_equal
 import pandas as pd
 
-from lidar import Dataset, Frame
+from pointcloudset import Dataset, Frame
 
 
 def test_dataset_len(testbag1: str, testset: Dataset):

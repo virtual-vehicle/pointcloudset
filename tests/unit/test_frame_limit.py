@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 import pytest_check as check
 
-from lidar import Frame
+from pointcloudset import Frame
 
 
 def test_frame_limit(testframe_mini: Frame):

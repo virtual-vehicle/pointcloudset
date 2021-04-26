@@ -3,7 +3,7 @@ import pytest
 import pytest_check as check
 from numpy.testing import assert_array_equal
 
-from lidar.geometry import plane
+from pointcloudset.geometry import plane
 
 
 def test_distance_to_point1():
