@@ -37,6 +37,7 @@ A package to work with automotive lidar data.
    :titlesonly:
    :caption: Python API
 
+   description_python_api
    python-api/lidar
 
 
