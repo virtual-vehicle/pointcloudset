@@ -1,7 +1,16 @@
 Welcome to PyMultiLidar's documentation!
 ========================================
 
-A package to work with automotive lidar data.
+A package to work with lidar datasets. A lidar dataset is a collections of pointclouds
+recorded over a time period.
+
+Use case examples
+########################
+- Post processing and analytics of a lidar dataset recorded by ROS
+- A collection of multiple lidar scans from a terrestrial laser scanner
+- Comparison of the point cloud to a ground truth
+- Analytics of point clouds over time
+
 ---------------------------------------------
 
 .. image:: ../../assets/front.jpg
