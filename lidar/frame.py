@@ -226,8 +226,10 @@ class Frame(FrameCore):
         if hover_data is None:
             show_hover = False
         elif isinstance(hover_data, list) & len(hover_data) > 0:
-            default = ["original_id"]
-            hover_data = list(set(default + hover_data))
+            if self.has_original_id:
+                default = ["original_id"]
+                hover_data = hover_data + default
+            hover_data = list(set(hover_data))
             if any(x not in self.data.columns for x in hover_data):
                 raise ValueError(f"choose a list of {list(self.data.columns)} or []")
 
