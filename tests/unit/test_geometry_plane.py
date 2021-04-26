@@ -8,9 +8,17 @@ from lidar.geometry import plane
 
 def test_distance_to_point1():
     distance = plane.distance_to_point(
-        point_A=np.array([1, 0, 0]), plane_model=np.array([1, 0, 0, 0])
+        point_A=np.array([0, 0, 0]), plane_model=np.array([1, 0, 0, 10])
     )
-    check.equal(distance, 1.0)
+    check.equal(distance, 10)
+    distance = plane.distance_to_point(
+        point_A=np.array([1, 1, 1]), plane_model=np.array([1, 0, 0, 10])
+    )
+    check.equal(distance, 11)
+    distance = plane.distance_to_point(
+        point_A=np.array([-1, -1, -1]), plane_model=np.array([1, 0, 0, 10])
+    )
+    check.equal(distance, 9)
 
 
 def test_distance_to_point2():
