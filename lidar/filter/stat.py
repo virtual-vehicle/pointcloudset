@@ -26,11 +26,6 @@ def quantile_filter(
 
     Returns:
         Frame: Frame which fullfils the criteria.
-
-    Example:
-        .. code-block:: python
-
-            testframe.filter("quantile","intensity","==",0.5)
     """
     cut_value = frame.data[dim].quantile(cut_quantile)
     filter_array = OPS[relation](frame.data[dim], cut_value)
@@ -51,11 +46,6 @@ def value_filter(
 
     Returns:
         Frame: Frame which fullfils the criteria.
-
-    Example:
-        .. code-block:: python
-
-            testframe.filter("quantile","intensity","==",0.5)
     """
 
     bool_array = (OPS[relation](frame.data[dim], value)).to_numpy()

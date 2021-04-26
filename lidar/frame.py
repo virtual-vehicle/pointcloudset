@@ -157,6 +157,13 @@ class Frame(FrameCore):
 
         Raises:
             ValueError: If instance is not supported.
+
+        Examples:
+
+            .. code-block:: python
+
+                testframe = from_instance("OPEN3D", open3d_pointcloud)
+
         """
         library = library.upper()
         if library not in FRAME_FROM_INSTANCE:
@@ -187,6 +194,12 @@ class Frame(FrameCore):
 
         Raises:
             ValueError: If library is not suppored.
+
+        Examples:
+
+            .. code-block:: python
+
+                open3d_pointcloud = testframe.to_instance("OPEN3D")
         """
         library = library.upper()
         if library not in FRAME_TO_INSTANCE:
@@ -297,7 +310,7 @@ class Frame(FrameCore):
                 "plane": :func:`lidar.diff.plane.calculate_distance_to_plane` \n
                 "frame": :func:`lidar.diff.frame.calculate_distance_to_frame` \n
                 "point": :func:`lidar.diff.point.calculate_distance_to_point` \n
-            target (Union[None, Frame, numpy.ndarray], optional): [description].
+            target (Union[None, Frame, numpy.ndarray], optional): Pass argument according to chosen object.
                 Defaults to None.
             **kwargs: Keyword arguments to pass to func.
 
@@ -306,6 +319,12 @@ class Frame(FrameCore):
 
         Raises:
             ValueError: If name is not supported.
+
+        Examples:
+
+            .. code-block:: python
+
+                newframe = testframe.diff("frame", targetframe)
         """
         if name in ALL_DIFFS:
             ALL_DIFFS[name](frame=self, target=target, **kwargs)
@@ -329,6 +348,16 @@ class Frame(FrameCore):
 
         Raises:
             ValueError: If name is not supported.
+
+        Examples:
+
+            .. code-block:: python
+
+                filteredframe = testframe.filter("quantile","intensity","==",0.5)
+
+            .. code-block:: python
+
+                filteredframe = testframe.filter("value","intensity",">",100)
         """
         name = name.upper()
         if name in ALL_FILTERS:
@@ -352,7 +381,7 @@ class Frame(FrameCore):
 
             .. code-block:: python
 
-                testframe.limit("x", -1.0, 1.0).limit("intensity", 0.0, 50.0)
+                limitedframe = testframe.limit("x", -1.0, 1.0).limit("intensity", 0.0, 50.0)
         """
         if maxvalue < minvalue:
             raise ValueError("maxvalue must be greater than minvalue")
