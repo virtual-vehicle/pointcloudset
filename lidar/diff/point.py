@@ -13,8 +13,8 @@ if TYPE_CHECKING:
 
 
 def calculate_distance_to_point(
-    frame: lidar.Frame, target: np.ndarray, **kwargs
-) -> lidar.Frame:
+    frame: lidar.frame.Frame, target: np.ndarray, **kwargs
+) -> lidar.frame.Frame:
     """Calculate the Euclidian distance to a point for each point in the frame.
 
     Note:
@@ -23,11 +23,11 @@ def calculate_distance_to_point(
     Args:
         frame (Frame): Frame for which the Euclidean distance to the point is
             calculated.
-        target (np.ndarray): [x, y, z] as coordinates of the point to which the
+        target (numpy.ndarray): [x, y, z] as coordinates of the point to which the
             Euclidean distance is calculated.
 
     Returns:
-        Frame: Frame with Euclidean distances to a point for each point.
+        Frame: Frame including Euclidean distances to a point for each point.
     """
     point_a = target
     points = frame.points.xyz

@@ -9,6 +9,14 @@ if TYPE_CHECKING:
 
 
 def from_pyntcloud(pyntcloud_data: pyntcloud.PyntCloud) -> dict:
+    """Converts a pyntcloud pointcloud to a Frame.
+
+    Args:
+        pyntcloud_data (pyntcloud.PyntCloud): Pyntcloud pointcloud which should be converted.
+
+    Returns:
+        dict: Pointcloud data.
+    """
     if not isinstance(pyntcloud_data, pyntcloud.PyntCloud):
         raise TypeError(
             f"Type {type(pyntcloud_data)} not supported for conversion."
@@ -18,4 +26,12 @@ def from_pyntcloud(pyntcloud_data: pyntcloud.PyntCloud) -> dict:
 
 
 def to_pyntcloud(frame: Frame) -> pyntcloud.PyntCloud:
+    """Converts a Frame to a pyntcloud pointcloud.
+
+    Args:
+        frame (Frame): Frame which should be converted.
+
+    Returns:
+        pyntcloud.PointCloud: Pyntcloud pointcloud.
+    """
     return frame.points

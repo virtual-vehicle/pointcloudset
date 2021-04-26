@@ -4,6 +4,7 @@ Functions to calculate differences between frames.
 
 import numpy as np
 import pandas as pd
+import lidar
 
 
 def calculate_distance_to_frame(frame, target):
@@ -18,7 +19,7 @@ def calculate_distance_to_frame(frame, target):
         target (Frame): Frame which is substracted from frame.
 
     Returns:
-        Frame: Frame consisting of frame including differences to target.
+        Frame: Frame including differences to target.
 
     Raises:
         ValueError: If there are no original_ids in frame or in target or if they have

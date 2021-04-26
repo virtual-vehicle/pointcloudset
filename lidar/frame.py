@@ -39,16 +39,19 @@ class Frame(FrameCore):
     Frame Class with one Frame of lidar measurements. Typically an automotive lidar
     records many frames per second.
 
-    One Frame consists mainly of PyntCloud pointcloud (.points) and a pandas dataframe
-    (.data) with all the associated data.
+    One Frame consists mainly of `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_
+    pointcloud
+    (`PyntCloud.points <https://pyntcloud.readthedocs.io/en/latest/points.html#points>`_)
+    and a pandas.DataFrame (.data) with all the associated data.
 
     Note that the index of the points is not preserved when applying processing. This
-    is necessary since PyntCloud does not allow to pass the index. Therefore, a new
-    Frame object is generated at each processing stage.
+    is necessary since `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_
+    does not allow to pass the index. Therefore, a new Frame object is generated at
+    each processing stage.
 
     Developer notes:
-    * All operations have to act on both, pointcloud and data and keep the timestamp.
-    * All processing methods need to return another Frame.
+        * All operations have to act on both, pointcloud and data and keep the timestamp.
+        * All processing methods need to return another Frame.
 
     Examples:
 
@@ -62,11 +65,12 @@ class Frame(FrameCore):
 
     @classmethod
     def from_file(cls, file_path: Path, **kwargs):
-        """Extract data from file and construct a Frame with it. Uses PyntCloud as
+        """Extract data from file and construct a Frame with it. Uses
+        `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_ as
         backend.
 
         Args:
-            file_path (Path): Pathlib Path of file to read.
+            file_path (pathlib.Path): Path of file to read.
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -93,12 +97,12 @@ class Frame(FrameCore):
         )
 
     def to_file(self, file_path: Path = Path(), **kwargs) -> None:
-        """Exports the frame as a csv file for use with CloudCompare or similar tools.
+        """Exports the frame as a csv file for use with `CloudCompare <https://www.danielgm.net/cc/ake>`_ or similar tools.
         Currently not all attributes of a frame are saved so some information is lost
         when using this function.
 
         Args:
-            file_path (Path, optional): Destination. Defaults to the folder of
+            file_path (pathlib.Path, optional): Destination. Defaults to the folder of
                 the bag file and csv with the timestamp of the frame.
             **kwargs: Keyword arguments to pass to func.
 
@@ -130,15 +134,22 @@ class Frame(FrameCore):
     def from_instance(
         cls,
         library: Literal["PYNTCLOUD", "OPEN3D", "DATAFRAME", "PANDAS"],
-        instance: Union[pd.DataFrame, pyntcloud.PyntCloud, o3d.geometry.PointCloud],
+        instance: Union[
+            pandas.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud
+        ],
         **kwargs,
     ) -> Frame:
-        """Converts a libaries instance to a lidar Frame.
+        """Converts a library instance to a lidar Frame.
 
         Args:
-            library (str): Name of the library.
-            instance (Union[ pd.DataFrame, pyntcloud.PyntCloud,
-                o3d.open3d_pybind.geometry.PointCloud ]): [description]
+            library (str): Name of the library.\n
+                If PYNTCLOUD: :func:`lidar.io.frame.pyntcloud.from_pyntcloud`\n
+                If OPEN3D: :func:`lidar.io.frame.open3d.from_open3d`\n
+                If DATAFRAME: :func:`lidar.io.frame.pandas.from_dataframe`\n
+                If PANDAS: :func:`lidar.io.frame.pandas.from_dataframe`
+            instance
+                (Union[pandas.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud]):
+                Library instance to convert.
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -159,16 +170,20 @@ class Frame(FrameCore):
 
     def to_instance(
         self, library: Literal["PYNTCLOUD", "OPEN3D", "DATAFRAME", "PANDAS"], **kwargs
-    ) -> Union[pd.DataFrame, pyntcloud.PyntCloud, o3d.geometry.PointCloud]:
+    ) -> Union[pandas.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud]:
         """Convert Frame to another library instance.
 
         Args:
-            library (str): Name of the library.
+            library (str): Name of the library.\n
+                If PYNTCLOUD: :func:`lidar.io.frame.pyntcloud.to_pyntcloud`\n
+                If OPEN3D: :func:`lidar.io.frame.open3d.to_open3d`\n
+                If DATAFRAME: :func:`lidar.io.frame.pandas.to_dataframe`\n
+                If PANDAS: :func:`lidar.io.frame.pandas.to_dataframe`
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
-            Union[ pd.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud ]: The
-            derived instance.
+            Union[ pandas.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud ]:
+            The derived instance.
 
         Raises:
             ValueError: If library is not suppored.
@@ -191,28 +206,32 @@ class Frame(FrameCore):
         prepend_id: str = "",
         hover_data: List[str] = None,
         **kwargs,
-    ) -> plotly.graph_objs._figure.Figure:
-        """Plot a Frame as a 3D scatter plot with plotly. It handles plots of single
-        frames and overlay with other objects, such as other frames from clustering or
-        planes from plane segmentation.
+    ) -> plotly.graph_objs.Figure:
+        """Plot a Frame as a 3D scatter plot with `Plotly <https://plotly.com/>`_.
+        It handles plots of single frames and overlay with other objects, such as
+        other frames from clustering or planes from plane segmentation.
 
-        You can also pass arguments to the plotly express function scatter_3D.
+        You can also pass arguments to the `Plotly <https://plotly.com/>`_
+        express function :func:`plotly.express.scatter_3d`.
 
         Args:
             frame (Frame): The frame to plot.
-            color (str or None): Which column to plot. For example "intensity"
-            overlay (dict, optional): Dict with Frames to overlay
+            color (str or None): Which column to plot. For example "intensity".
+                Defaults to None.
+            overlay (dict, optional): Dict with Frames to overlay.
                 {"Cluster 1": cluster1,"Plane 1": plane_model}\n
-                See also: :func:`lidar.plot.frame.plot_overlay`
+                See also: :func:`lidar.plot.frame.plot_overlay`\n
+                Defaults to empty.
             point_size (float, optional): Size of each point. Defaults to 2.
             prepend_id (str, optional): String before point id to display in hover.
-            hover data (list(str), optional): Data columns to display in hover.
-                Default is None.
+                Defaults to empty.
+            hover_data (list(str), optional): Data columns to display in hover.
+                Defaults to None.
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
-            plotly.graph_objs.Figure: The interactive plotly plot, best used inside a
-            jupyter notebook.
+            plotly.graph_objs.Figure: The interactive Plotly plot, best used inside a
+            Jupyter Notebook.
 
         Raises:
             ValueError: If the color column name is not in the data.
@@ -278,12 +297,12 @@ class Frame(FrameCore):
                 "plane": :func:`lidar.diff.plane.calculate_distance_to_plane` \n
                 "frame": :func:`lidar.diff.frame.calculate_distance_to_frame` \n
                 "point": :func:`lidar.diff.point.calculate_distance_to_point` \n
-            target (Union[None, Frame, np.ndarray], optional): [description].
+            target (Union[None, Frame, numpy.ndarray], optional): [description].
                 Defaults to None.
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
-            Frame: New frame with added column of the differences.
+            Frame: New Frame with added column of the differences.
 
         Raises:
             ValueError: If name is not supported.
@@ -345,7 +364,7 @@ class Frame(FrameCore):
         """Generating a new Frame by removing points where filter.
 
         Args:
-            filter_result (Union[np.ndarray, List[int]]): Filter result.
+            filter_result (Union[numpy.ndarray, List[int]]): Filter result.
 
         Returns:
             Frame: Frame with filtered rows and reindexed data and points.
@@ -369,9 +388,9 @@ class Frame(FrameCore):
             )
         return Frame(new_data, timestamp=self.timestamp)
 
-    def get_cluster(self, eps: float, min_points: int) -> pd.DataFrame:
+    def get_cluster(self, eps: float, min_points: int) -> pandas.DataFrame:
         """Get the clusters based on
-        :func:`open3d.cpu.pybind.geometry.Geometry. cluster_dbscan`.
+        :meth:`open3d:open3d.geometry.PointCloud.cluster_dbscan`.
         Process further with :func:`lidar.frame.Frame.take_cluster`.
 
         Args:
@@ -379,7 +398,7 @@ class Frame(FrameCore):
             min_points (int): Minimum number of points to form a cluster.
 
         Returns:
-            pd.DataFrame: Dataframe with list of clusters.
+            pandas.DataFrame: Dataframe with list of clusters.
         """
         labels = np.array(
             self.to_instance("open3d").cluster_dbscan(
@@ -393,7 +412,7 @@ class Frame(FrameCore):
 
         Args:
             cluster_number (int): Cluster ID to keep.
-            cluster_labels (pd.DataFrame): Clusters generated with
+            cluster_labels (pandas.DataFrame): Clusters generated with
                 :func:`lidar.frame.Frame.get_cluster`.
 
         Returns:
@@ -410,16 +429,16 @@ class Frame(FrameCore):
         return_plane_model: bool = False,
     ) -> Union[Frame, dict]:
         """Segments a plane in the point cloud using the RANSAC algorithm.
-        Based on :func:`open3d.cpu.pybind.geometry.Geometry3D.segment_plane`.
+        Based on :meth:`open3d:open3d.geometry.PointCloud.segment_plane`.
 
         Args:
             distance_threshold (float): Max distance a point can be from the plane
-                        model, and still be considered as an inlier.
+                model, and still be considered as an inlier.
             ransac_n (int):  Number of initial points to be considered inliers in
-                        each iteration.
+                each iteration.
             num_iterations (int): Number of iterations.
-            return_plane_model (bool, optional): Return also plane model parameters.
-                        Defaults to ``False``.
+            return_plane_model (bool, optional): Return also plane model parameters
+                if ``True``. Defaults to ``False``.
 
         Returns:
             Frame or dict: Frame with inliers or a dict of Frame with inliers and the
@@ -433,7 +452,7 @@ class Frame(FrameCore):
         )
         if len(self) > 200:
             warnings.warn(
-                """Might not produce reproduceable resuts, If the number of points
+                """Might not produce reproduceable resuts, if the number of points
                 is high. Try to reduce the area of interest before using
                 plane_segmentation. Caused by open3D."""
             )

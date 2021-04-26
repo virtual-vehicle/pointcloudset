@@ -1,6 +1,6 @@
 .PHONY: doc doccoverage
 doc:
-	sphinx-apidoc --no-toc -f -e -o ./doc/sphinx/source/python-api ./lidar --module-first && cd doc/sphinx/ && make html
+	sphinx-apidoc --no-toc --module-first -f -e -o ./doc/sphinx/source/python-api ./lidar lidar/io/dataset/commandline.py lidar/io/dataset/convert_bag2dataset.py && cd doc/sphinx/ && make html
 
 doccoverage:
 	docstr-coverage lidar --skipmagic

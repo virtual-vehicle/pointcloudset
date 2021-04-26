@@ -12,10 +12,10 @@ def dataset_from_frames(frames: List[Frame]) -> dict:
     """Convert a list of lidar frames to a new dataset.
 
     Args:
-        frames (List[Frame]): A list of frames
+        frames (List[Frame]): A list of frames.
 
     Returns:
-        dict: for convetion to dataset
+        dict: For convertion to dataset.
     """
     data = [dask.delayed(frame.data) for frame in frames]
     timestamps = [frame.timestamp for frame in frames]

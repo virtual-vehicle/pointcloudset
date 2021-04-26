@@ -1,6 +1,6 @@
 """
 Functions for plotting frames.
-Used mainly by Frame.plot() but could also be used on its own.
+Used mainly by :func:`lidar.frame.Frame.plot` but could also be used on its own.
 """
 import numpy as np
 import plotly.express as px
@@ -17,7 +17,7 @@ def plot_overlay(fig, frame, overlay: dict, **kwargs):
         overlay (dict): A dict with objects to overlay.
             For example overlay={"Cluster 1": cluster1, "plane1": plane_model}
             The name of the entry is used in tooltips and the value can either
-            be a Frame or a model of a plane as numpy array [a,b,c,d] of a plane.
+            be a Frame or a model of a plane as numpy.ndarray [a,b,c,d] of a plane.
             Uses the plane equation a x + b y + c z + d = 0.
 
     Raises:
@@ -68,7 +68,7 @@ def plot_overlay_frame(fig, frame, name: str, marker_color: str, **kwargs):
         marker_color (str): Color of the overlay.
 
     Returns:
-        plotly.graph_objects.Figure: Plot with overlayed Frame.
+        plotly.graph_objects.Figure: Plot with Frame overlayed with another Frame.
     """
     overlay_fig = frame.plot(
         color=None, point_size=2.0, prepend_id=name + " ", opacity=0.7, **kwargs
@@ -79,13 +79,13 @@ def plot_overlay_frame(fig, frame, name: str, marker_color: str, **kwargs):
 
 
 def plot_overlay_plane(
-    fig, plane_model: np.array, name: str, orig_frame, colors, i: int
+    fig, plane_model: np.ndarray, name: str, orig_frame, colors, i: int
 ):
     """Overlay the plot with plane.
 
     Args:
         fig (plotly.graph_objects.Figure): The original plot.
-        plane_model (np.array): [a,b,c,d], for the plane to overlay. Uses the plane
+        plane_model (numpy.ndarray): [a,b,c,d], for the plane to overlay. Uses the plane
             equation a x + b y + c z + d = 0.
         name (str): Name of the plane to overlay, used for tooltips.
         orig_frame:
@@ -93,7 +93,7 @@ def plot_overlay_plane(
         i (int):
 
     Returns:
-        plotly.graph_objects.Figure: Plot with overlayed Frame.
+        plotly.graph_objects.Figure: Plot with Frame overlayed with plane.
     """
     bb = orig_frame.bounding_box
     x = np.linspace(bb.x["min"], bb.x["max"], 100)

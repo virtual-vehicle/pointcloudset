@@ -54,7 +54,9 @@ class Dataset(DatasetCore):
         """Reads a Dataset from a file.
 
         Args:
-            file_path (Path): File path where Dataset should be read from.
+            file_path (pathlib.Path): File path where Dataset should be read from.\n
+                If file format is a directory: :func:`lidar.io.dataset.dir.dataset_from_dir`\n
+                If file format is a ROS bag file: :func:`lidar.io.dataset.bag.dataset_from_rosbag`
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -83,7 +85,8 @@ class Dataset(DatasetCore):
         """Writes a Dataset to a file.
 
         Args:
-            file_path (Path): File path where Dataset should be saved.
+            file_path (pathlib.Path): File path where Dataset should be saved.\n
+                If file format is a directory: :func:`lidar.io.dataset.dir.dataset_to_dir`
             **kwargs: Keyword arguments to pass to func.
         """
         DATASET_TO_FILE["DIR"](self, file_path=file_path, **kwargs)
@@ -95,10 +98,11 @@ class Dataset(DatasetCore):
         instance: list[Frame],
         **kwargs,
     ) -> Dataset:
-        """Converts a libary instance to a lidar Dataset.
+        """Converts a library instance to a lidar Dataset.
 
         Args:
-            library (str): Name of the library.
+            library (str): Name of the library.\n
+                If "frames": :func:`lidar.io.dataset.frames.dataset_from_frames`
             instance (list[Frame]): Instance from which to convert.
             **kwargs: Keyword arguments to pass to func.
 
@@ -131,8 +135,8 @@ class Dataset(DatasetCore):
             func (Union[Callable[[Frame], Frame], Callable[[Frame], Any]]): Function to
                 apply. If it returns a Frame and has the according type hint a new
                 Dataset will be generated.
-            warn (bool): If ``True`` warning if result is not a Dataset, if ``False`` warning is
-                turned off.
+            warn (bool): If ``True`` warning if result is not a Dataset, if ``False``
+                warning is turned off.
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -193,18 +197,20 @@ class Dataset(DatasetCore):
         self,
         agg: Union[str, list, dict],
         depth: Literal["dataset", "frame", "point"] = "dataset",
-    ) -> Union[pd.Series, List[pd.DataFrame], pd.DataFrame, pd.DataFrame]:
+    ) -> Union[
+        pandas.Series, List[pandas.DataFrame], pandas.DataFrame, pandas.DataFrame
+    ]:
         """Aggregate using one or more operations over the whole dataset.
-        Similar to :func:`pandas.DataFrame.aggregate`. Uses dask dataframes with
-        parallel processing.
+        Similar to :meth:`pandas.DataFrame.aggregate`.
+        Uses :class:`dask.dataframe.DataFrame` with parallel processing.
 
         Args:
             agg (Union[str, list, dict]): Function to use for aggregating.
-            depth (Literal[, optional): Aggregation level: "dataset", "frame" or
+            depth (Literal["dataset", "frame", "point"], optional): Aggregation level: "dataset", "frame" or
                 "point". Defaults to "dataset".
 
         Returns:
-            Union[pd.DataFrame, pd.DataFrame, pd.Series]: Aggregated Dataset.
+            Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
 
         Raises:
             ValueError: If depth is not "dataset", "frame" or "point".
@@ -245,15 +251,15 @@ class Dataset(DatasetCore):
 
     def min(self, depth: str = "dataset"):
         """Aggregate using min operation over the whole dataset.
-        Similar to :func:`pandas.DataFrame.aggregate`. Uses dask dataframes with
-        parallel processing.
+        Similar to :meth:`pandas.DataFrame.aggregate`.
+        Uses :class:`dask.dataframe.DataFrame` with parallel processing.
 
         Args:
-            depth (Literal[, optional): Aggregation level: "dataset", "frame" or
+            depth (Literal["dataset", "frame", "point"], optional): Aggregation level: "dataset", "frame" or
                 "point". Defaults to "dataset".
 
         Returns:
-            Union[pd.DataFrame, pd.DataFrame, pd.Series]: Aggregated Dataset.
+            Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
 
         Hint:
 
@@ -268,15 +274,15 @@ class Dataset(DatasetCore):
 
     def max(self, depth: str = "dataset"):
         """Aggregate using max operation over the whole dataset.
-        Similar to :func:`pandas.DataFrame.aggregate`. Uses dask dataframes with
-        parallel processing.
+        Similar to :meth:`pandas.DataFrame.aggregate`.
+        Uses :class:`dask.dataframe.DataFrame` with parallel processing.
 
         Args:
-            depth (Literal[, optional): Aggregation level: "dataset", "frame" or
+            depth (Literal["dataset", "frame", "point"], optional): Aggregation level: "dataset", "frame" or
                 "point". Defaults to "dataset".
 
         Returns:
-            Union[pd.DataFrame, pd.DataFrame, pd.Series]: Aggregated Dataset.
+            Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
 
         Hint:
 
@@ -291,15 +297,15 @@ class Dataset(DatasetCore):
 
     def mean(self, depth: str = "dataset"):
         """Aggregate using mean operation over the whole dataset.
-        Similar to :func:`pandas.DataFrame.aggregate`. Uses dask dataframes with
-        parallel processing.
+        Similar to :meth:`pandas.DataFrame.aggregate`.
+        Uses :class:`dask.dataframe.DataFrame` with parallel processing.
 
         Args:
-            depth (Literal[, optional): Aggregation level: "dataset", "frame" or
+            depth (Literal["dataset", "frame", "point"], optional): Aggregation level: "dataset", "frame" or
                 "point". Defaults to "dataset".
 
         Returns:
-            Union[pd.DataFrame, pd.DataFrame, pd.Series]: Aggregated Dataset.
+            Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
 
         Hint:
 
@@ -314,15 +320,15 @@ class Dataset(DatasetCore):
 
     def std(self, depth: str = "dataset"):
         """Aggregate using std operation over the whole dataset.
-        Similar to :func:`pandas.DataFrame.aggregate`. Uses dask dataframes with
-        parallel processing.
+        Similar to :meth:`pandas.DataFrame.aggregate`.
+        Uses :class:`dask.dataframe.DataFrame` with parallel processing.
 
         Args:
-            depth (Literal[, optional): Aggregation level: "dataset", "frame" or
+            depth (Literal["dataset", "frame", "point"], optional): Aggregation level: "dataset", "frame" or
                 "point". Defaults to "dataset".
 
         Returns:
-            Union[pd.DataFrame, pd.DataFrame, pd.Series]: Aggregated Dataset.
+            Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
 
         Hint:
 

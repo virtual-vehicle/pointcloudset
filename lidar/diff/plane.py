@@ -8,7 +8,7 @@ from lidar.geometry import plane
 
 
 def calculate_distance_to_plane(
-    frame, target: np.array, absolute_values: bool = True, normal_dist: bool = True
+    frame, target: np.ndarray, absolute_values: bool = True, normal_dist: bool = True
 ):
     """Calculate the distance of each point to a plane.
 
@@ -18,7 +18,7 @@ def calculate_distance_to_plane(
 
     Args:
         frame (Frame): Frame for which the distance to the plane is calculated.
-        target (np.array): [a, b, c, d] as parameters for the target plane, could be
+        target (numpy.ndarray): [a, b, c, d] as parameters for the target plane, could be
             provided by plane_segmentation.
         absolute_values (bool, optional): Calculate absolute distances if ``True``.
             Defaults to ``True``.
@@ -26,7 +26,7 @@ def calculate_distance_to_plane(
             distance in direction of line of sight if ``False``. Defaults to ``True``.
 
     Returns:
-        Frame: Frame with distance to a plane for each point.
+        Frame: Frame including distances to a plane for each point.
     """
     points = frame.points.xyz
     distances = np.asarray(
