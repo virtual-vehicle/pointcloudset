@@ -4,6 +4,7 @@ from typing import Optional
 import numpy as np
 import rosbag
 import typer
+import click
 
 import lidar
 from lidar.io.dataset.bag import get_number_of_messages, read_rosbag_part
@@ -61,17 +62,17 @@ def get(
     keep_zeros: bool = False,
     max_size: int = 100,
 ):
-    """Convert ROS bagfiles to a directory of use with the lidar package.
+    # """Convert ROS bagfiles to a directory of use with the lidar package.
 
-    Args:
-        bagfile: ROS bagfile
-        folder_to_write: [description]
-        topic: ros lidar pointcloud topic. For example "/os1_cloud_node/points".
-        start_frame_number:  Defaults to 0.
-        end_frame_number:  Defaults to None.
-        keep_zeros: Keep element with zero values. Defaults to ``False``.
-        max_size: Max size of chunk, an internal variable. Defaults to 100.
-    """
+    # Args:
+    #     bagfile: ROS bagfile
+    #     folder_to_write: [description]
+    #     topic: ros lidar pointcloud topic. For example "/os1_cloud_node/points".
+    #     start_frame_number:  Defaults to 0.
+    #     end_frame_number:  Defaults to None.
+    #     keep_zeros: Keep element with zero values. Defaults to ``False``.
+    #     max_size: Max size of chunk, an internal variable. Defaults to 100.
+    # """
 
     if bagfile == ".":
         bagfile_paths = list(Path.cwd().rglob("*.bag"))
@@ -95,5 +96,8 @@ def get(
     typer.echo("done")
 
 
+typer_click_object = typer.main.get_command(app)
+
 if __name__ == "__main__":
     app()
+    typer_click_object()

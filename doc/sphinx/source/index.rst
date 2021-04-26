@@ -13,6 +13,7 @@ A package to work with automotive lidar data.
 
    main_features
    quickstart
+   commandline_interface
 
 .. toctree::
    :maxdepth: 1

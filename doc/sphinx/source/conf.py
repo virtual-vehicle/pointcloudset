@@ -42,6 +42,7 @@ extensions = [
     "sphinxcontrib.napoleon",
     "nbsphinx",
     "sphinx.ext.intersphinx",
+    "sphinx_click",
 ]
 
 intersphinx_mapping = {
