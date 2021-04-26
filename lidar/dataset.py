@@ -261,6 +261,20 @@ class Dataset(DatasetCore):
         Returns:
             Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
 
+        Examples:
+
+            .. code-block:: python
+
+                dataset.min()
+
+            .. code-block:: python
+
+                dataset.min("frame")
+
+            .. code-block:: python
+
+                dataset.min("point")
+
         Hint:
 
             See also: :func:`lidar.dataset.Dataset.agg`\n
@@ -283,6 +297,20 @@ class Dataset(DatasetCore):
 
         Returns:
             Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
+
+        Examples:
+
+            .. code-block:: python
+
+                dataset.max()
+
+            .. code-block:: python
+
+                dataset.max("frame")
+
+            .. code-block:: python
+
+                dataset.max("point")
 
         Hint:
 
@@ -307,6 +335,20 @@ class Dataset(DatasetCore):
         Returns:
             Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
 
+        Examples:
+
+            .. code-block:: python
+
+                dataset.mean()
+
+            .. code-block:: python
+
+                dataset.mean("frame")
+
+            .. code-block:: python
+
+                dataset.mean("point")
+
         Hint:
 
             See also: :func:`lidar.dataset.Dataset.agg`\n
@@ -329,6 +371,20 @@ class Dataset(DatasetCore):
 
         Returns:
             Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
+
+        Examples:
+
+            .. code-block:: python
+
+                dataset.std()
+
+            .. code-block:: python
+
+                dataset.std("frame")
+
+            .. code-block:: python
+
+                dataset.std("point")
 
         Hint:
 
