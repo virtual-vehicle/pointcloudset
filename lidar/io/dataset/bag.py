@@ -1,5 +1,5 @@
 """
-Functions for ROS bagfiles.
+Functions for `ROS <https://www.ros.org/>`_ bagfiles.
 """
 import datetime
 import itertools
@@ -59,10 +59,11 @@ def dataset_from_rosbag(
 
     Args:
         bagfile (pathlib.Path): Path of bag file.
-        topic (str): ROS topic that should be read.
+        topic (str): `ROS <https://www.ros.org/>`_ topic that should be read.
         start_frame_number (int): Start frame of frame sequence to read. Defaults to 0.
         end_frame_number (int): End frame of frame sequence to read. Defaults to None.
-        keep_zeros (bool): If ``True`` keep zeros in frames, if ``False`` do not keep zeros in frames.
+        keep_zeros (bool): If ``True`` keep zeros in frames, if ``False`` do not keep
+            zeros in frames.
 
     Returns:
         dict: Lidar data with timestamps and metadata.

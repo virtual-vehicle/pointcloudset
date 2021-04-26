@@ -5,7 +5,7 @@ Utility functions for geometric calculations with points.
 import numpy as np
 
 
-def distance_to_point(point_A: np.array, point_B: np.array) -> float:
+def distance_to_point(point_A: np.ndarray, point_B: np.ndarray) -> float:
     """Calculate the Euclidean distance of a point to another point.
 
     Args:

@@ -10,16 +10,19 @@ from lidar.geometry import point
 
 
 def distance_to_point(
-    point_A: np.array, plane_model: np.array, normal_dist: bool = True
+    point_A: np.ndarray, plane_model: np.ndarray, normal_dist: bool = True
 ) -> float:
-    """Calculate the distance of a point to a plane. Uses the plane equation
-    a x + b y + c z + d = 0
+    """Calculate the distance from a plane to a point.
     https://mathworld.wolfram.com/Point-PlaneDistance.html
 
+    Note:
+        Uses the plane equation a x + b y + c z + d = 0.
+
     Args:
-        point_A (numpy.ndarray): [x, y, z], point for which the distance is calculated to
-            plane.
-        plane_model (numpy.ndarray): [a, b, c, d], could be provided by plane_segmentation.
+        point_A (numpy.ndarray): [x, y, z], point for which the distance is calculated
+            to plane.
+        plane_model (numpy.ndarray):  [a, b, c, d] parameters of the plane equation,
+            could be provided by :func:`lidar.frame.Frame.plane_segmentation`.
         normal_dist (bool): Calculate normal distance if ``True``, calculate
             distance in direction of line of sight if ``False``. Defaults to ``True``.
 
@@ -47,15 +50,17 @@ def distance_to_point(
     return distance
 
 
-def intersect_line_of_sight(line: np.array, plane_model: np.array) -> np.array:
+def intersect_line_of_sight(line: np.ndarray, plane_model: np.ndarray) -> np.ndarray:
     """Calculate the point of intersection between a line and a plane.
 
     Note:
         Uses the plane equation a x + b y + c z + d = 0.
 
     Args:
-        line (numpy.ndarray): [lx, ly, lz], line of sight through origin and point (lx,ly,lz)
-        plane_model (numpy.ndarray): [a, b, c, d], could be provided by plane_segmentation.
+        line (numpy.ndarray): [lx, ly, lz], line of sight through origin and point
+            (lx,ly,lz).
+        plane_model (numpy.ndarray): [a, b, c, d] parameters of the plane equation,
+            could be provided by :func:`lidar.frame.Frame.plane_segmentation`.
 
     Returns:
         numpy.ndarray: [px, py, pz], point of intersection of line of sight and plane.

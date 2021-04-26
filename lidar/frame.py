@@ -39,12 +39,15 @@ class Frame(FrameCore):
     Frame Class with one Frame of lidar measurements. Typically an automotive lidar
     records many frames per second.
 
-    One Frame consists mainly of PyntCloud pointcloud (PyntCloud.points) and a pandas.DataFrame
-    (.data) with all the associated data.
+    One Frame consists mainly of `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_
+    pointcloud
+    (`PyntCloud.points <https://pyntcloud.readthedocs.io/en/latest/points.html#points>`_)
+    and a pandas.DataFrame (.data) with all the associated data.
 
     Note that the index of the points is not preserved when applying processing. This
-    is necessary since PyntCloud does not allow to pass the index. Therefore, a new
-    Frame object is generated at each processing stage.
+    is necessary since `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_
+    does not allow to pass the index. Therefore, a new Frame object is generated at
+    each processing stage.
 
     Developer notes:
         * All operations have to act on both, pointcloud and data and keep the timestamp.
@@ -62,7 +65,8 @@ class Frame(FrameCore):
 
     @classmethod
     def from_file(cls, file_path: Path, **kwargs):
-        """Extract data from file and construct a Frame with it. Uses PyntCloud as
+        """Extract data from file and construct a Frame with it. Uses
+        `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_ as
         backend.
 
         Args:
@@ -135,7 +139,7 @@ class Frame(FrameCore):
         ],
         **kwargs,
     ) -> Frame:
-        """Converts a libaries instance to a lidar Frame.
+        """Converts a library instance to a lidar Frame.
 
         Args:
             library (str): Name of the library.\n
@@ -203,23 +207,26 @@ class Frame(FrameCore):
         hover_data: List[str] = None,
         **kwargs,
     ) -> plotly.graph_objs.Figure:
-        """Plot a Frame as a 3D scatter plot with Plotly. It handles plots of single
-        frames and overlay with other objects, such as other frames from clustering or
-        planes from plane segmentation.
+        """Plot a Frame as a 3D scatter plot with `Plotly <https://plotly.com/>`_.
+        It handles plots of single frames and overlay with other objects, such as
+        other frames from clustering or planes from plane segmentation.
 
-        You can also pass arguments to the Plotly express function
-        :func:`plotly.express.scatter_3d`.
+        You can also pass arguments to the `Plotly <https://plotly.com/>`_
+        express function :func:`plotly.express.scatter_3d`.
 
         Args:
             frame (Frame): The frame to plot.
-            color (str or None): Which column to plot. For example "intensity"
-            overlay (dict, optional): Dict with Frames to overlay
+            color (str or None): Which column to plot. For example "intensity".
+                Defaults to None.
+            overlay (dict, optional): Dict with Frames to overlay.
                 {"Cluster 1": cluster1,"Plane 1": plane_model}\n
-                See also: :func:`lidar.plot.frame.plot_overlay`
+                See also: :func:`lidar.plot.frame.plot_overlay`\n
+                Defaults to empty.
             point_size (float, optional): Size of each point. Defaults to 2.
             prepend_id (str, optional): String before point id to display in hover.
+                Defaults to empty.
             hover_data (list(str), optional): Data columns to display in hover.
-                Default is None.
+                Defaults to None.
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -293,7 +300,7 @@ class Frame(FrameCore):
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
-            Frame: New frame with added column of the differences.
+            Frame: New Frame with added column of the differences.
 
         Raises:
             ValueError: If name is not supported.
@@ -424,12 +431,12 @@ class Frame(FrameCore):
 
         Args:
             distance_threshold (float): Max distance a point can be from the plane
-                        model, and still be considered as an inlier.
+                model, and still be considered as an inlier.
             ransac_n (int):  Number of initial points to be considered inliers in
-                        each iteration.
+                each iteration.
             num_iterations (int): Number of iterations.
-            return_plane_model (bool, optional): Return also plane model parameters.
-                        Defaults to ``False``.
+            return_plane_model (bool, optional): Return also plane model parameters
+                if ``True``. Defaults to ``False``.
 
         Returns:
             Frame or dict: Frame with inliers or a dict of Frame with inliers and the
@@ -443,7 +450,7 @@ class Frame(FrameCore):
         )
         if len(self) > 200:
             warnings.warn(
-                """Might not produce reproduceable resuts, If the number of points
+                """Might not produce reproduceable resuts, if the number of points
                 is high. Try to reduce the area of interest before using
                 plane_segmentation. Caused by open3D."""
             )

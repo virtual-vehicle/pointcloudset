@@ -8,7 +8,7 @@ from lidar.geometry import plane
 
 
 def calculate_distance_to_plane(
-    frame, target: np.array, absolute_values: bool = True, normal_dist: bool = True
+    frame, target: np.ndarray, absolute_values: bool = True, normal_dist: bool = True
 ):
     """Calculate the distance of each point to a plane.
 
