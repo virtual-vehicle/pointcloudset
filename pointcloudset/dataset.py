@@ -30,7 +30,7 @@ def _is_pipline_returing_frame(pipeline, warn=True) -> bool:
 
 class Dataset(DatasetCore):
     """
-    Dataset Class which contains multiple frames, timestamps and metadata.
+    Dataset Class which contains multiple pointclouds, timestamps and metadata.
     For more details on how to use the Dataset Class please refer to the usage.ipynb
     notebook for an interactive tutorial. The notebook can also be found in the tutorial
     section of the docu.
@@ -106,7 +106,7 @@ class Dataset(DatasetCore):
 
         Args:
             library (str): Name of the library.\n
-                If "frames": :func:`pointcloudset.io.dataset.pointclouds.dataset_from_frames`
+                If "frames": :func:`pointcloudset.io.dataset.frames.dataset_from_frames`
             instance (list[PointCloud]): Instance from which to convert.
             **kwargs: Keyword arguments to pass to func.
 

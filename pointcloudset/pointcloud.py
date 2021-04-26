@@ -37,7 +37,7 @@ def is_documented_by(original):
 class PointCloud(PointCloudCore):
     """
     PointCloud Class with one pointcloud of lidar measurements. Typically an automotive lidar
-    records many frames per second.
+    records many pointclouds per second.
 
     One PointCloud consists mainly of `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_
     pointcloud
@@ -221,8 +221,8 @@ class PointCloud(PointCloudCore):
         **kwargs,
     ) -> plotly.graph_objs.Figure:
         """Plot a PointCloud as a 3D scatter plot with `Plotly <https://plotly.com/>`_.
-        It handles plots of single frames and overlay with other objects, such as
-        other frames from clustering or planes from plane segmentation.
+        It handles plots of single pointclouds and overlay with other objects, such as
+        other pointclouds from clustering or planes from plane segmentation.
 
         You can also pass arguments to the `Plotly <https://plotly.com/>`_
         express function :func:`plotly.express.scatter_3d`.
@@ -231,7 +231,7 @@ class PointCloud(PointCloudCore):
             pointcloud (PointCloud): The pointcloud to plot.
             color (str or None): Which column to plot. For example "intensity".
                 Defaults to None.
-            overlay (dict, optional): Dict with Frames to overlay.
+            overlay (dict, optional): Dict with PointClouds to overlay.
                 {"Cluster 1": cluster1,"Plane 1": plane_model}\n
                 See also: :func:`pointcloudset.plot.pointcloud.plot_overlay`\n
                 Defaults to empty.
@@ -308,10 +308,10 @@ class PointCloud(PointCloudCore):
             name (str):
                 "origin": :func:`pointcloudset.diff.origin.calculate_distance_to_origin` \n
                 "plane": :func:`pointcloudset.diff.plane.calculate_distance_to_plane` \n
-                "pointcloud": :func:`pointcloudset.diff.pointcloud.calculate_distance_to_frame` \n
+                "pointcloud": :func:`pointcloudset.diff.pointcloud.calculate_distance_to_pointcloud` \n
                 "point": :func:`pointcloudset.diff.point.calculate_distance_to_point` \n
-            target (Union[None, PointCloud, numpy.ndarray], optional): Pass argument according to chosen object.
-                Defaults to None.
+            target (Union[None, PointCloud, numpy.ndarray], optional): Pass argument
+                according to chosen object. Defaults to None.
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -324,7 +324,7 @@ class PointCloud(PointCloudCore):
 
             .. code-block:: python
 
-                newframe = testpointcloud.diff("pointcloud", targetframe)
+                newpointcloud = testpointcloud.diff("pointcloud", targetpointcloud)
         """
         if name in ALL_DIFFS:
             ALL_DIFFS[name](pointcloud=self, target=target, **kwargs)
@@ -353,11 +353,11 @@ class PointCloud(PointCloudCore):
 
             .. code-block:: python
 
-                filteredframe = testpointcloud.filter("quantile","intensity","==",0.5)
+                filteredpointcloud = testpointcloud.filter("quantile","intensity","==",0.5)
 
             .. code-block:: python
 
-                filteredframe = testpointcloud.filter("value","intensity",">",100)
+                filteredpointcloud = testpointcloud.filter("value","intensity",">",100)
         """
         name = name.upper()
         if name in ALL_FILTERS:
@@ -381,7 +381,7 @@ class PointCloud(PointCloudCore):
 
             .. code-block:: python
 
-                limitedframe = testpointcloud.limit("x", -1.0, 1.0).limit("intensity", 0.0, 50.0)
+                limitedpointcloud = testpointcloud.limit("x", -1.0, 1.0).limit("intensity", 0.0, 50.0)
         """
         if maxvalue < minvalue:
             raise ValueError("maxvalue must be greater than minvalue")
