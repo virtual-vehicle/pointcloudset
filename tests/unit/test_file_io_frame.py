@@ -23,7 +23,8 @@ def test_from_file_not_supported(testlas1: Path):
 def test_from_file_las(testlas1: Path):
     frame = pointcloudset.Frame.from_file(testlas1)
     check.equal(type(frame), Frame)
-    check.equal(frame.orig_file, "/workspaces/pointcloudset/tests/testdata/diamond.las")
+    testdata = Path.cwd().joinpath("tests/testdata/diamond.las").as_posix()
+    check.equal(frame.orig_file, testdata)
     check.less_equal(frame.timestamp, datetime.now())
     check.equal(len(list(frame.data.columns)), 13)
 
