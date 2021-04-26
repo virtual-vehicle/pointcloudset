@@ -88,9 +88,9 @@ def plot_overlay_plane(
         plane_model (np.array): [a,b,c,d], for the plane to overlay. Uses the plane
             equation a x + b y + c z + d = 0.
         name (str): Name of the plane to overlay, used for tooltips.
-        orig_frame (int)
-        colors (int)
-        i (int)
+        orig_frame:
+        colors:
+        i (int):
 
     Returns:
         plotly.graph_objects.Figure: Plot with overlayed Frame.
@@ -100,23 +100,25 @@ def plot_overlay_plane(
     y = np.linspace(bb.y["min"], bb.y["max"], 100)
     z = np.linspace(bb.z["min"], bb.z["max"], 100)
 
-    X, Y = np.meshgrid(x, y)
-
-    surfacecolor = np.ones(shape=X.shape)
-    colorscale = [[color[0] / len(colors), color[1]] for color in enumerate(colors)]
+    print(colors)
+    print(i)
 
     a, b, c, d = plane_model
 
     eps = 0.000001
     if (abs(c) < eps) & (abs(b) < eps):
         Y, Z = np.meshgrid(y, z)
-        X = (d - b * Y - c * Z) / a
+        X = (-d - b * Y - c * Z) / a
     elif (abs(c) < eps) & (abs(b) > eps):
         X, Z = np.meshgrid(x, z)
-        Y = (d - a * X - c * Z) / b
+        Y = (-d - a * X - c * Z) / b
     else:
         X, Y = np.meshgrid(x, y)
         Z = (-d - a * X - b * Y) / c
+
+    colorscale = [[color[0] / len(colors), color[1]] for color in enumerate(colors)]
+    surfacecolor = np.ones(shape=X.shape) * colorscale[i][0]
+
     p2 = go.Figure(
         data=[
             go.Surface(
@@ -124,11 +126,12 @@ def plot_overlay_plane(
                 y=Y,
                 z=Z,
                 name=name,
-                surfacecolor=surfacecolor * i,
+                surfacecolor=surfacecolor,
                 colorscale=colorscale,
-                showscale=False,
+                showscale=True,
                 cmin=0,
                 cmax=1,
+                opacity=0.5,
             )
         ]
     )
