@@ -106,7 +106,7 @@ class Dataset(DatasetCore):
 
         Args:
             library (str): Name of the library.\n
-                If "frames": :func:`pointcloudset.io.dataset.pointclouds.dataset_from_frames`
+                If "frames": :func:`pointcloudset.io.dataset.pointclouds.dataset_from_pointclouds`
             instance (list[PointCloud]): Instance from which to convert.
             **kwargs: Keyword arguments to pass to func.
 
@@ -243,7 +243,7 @@ class Dataset(DatasetCore):
 
             return data
         elif depth == "pointcloud":
-            return self._agg_per_frame(agg)
+            return self._agg_per_pointcloud(agg)
         elif depth == "dataset":
             data = self._agg(agg).compute()
             data = data.agg(agg)
@@ -403,7 +403,7 @@ class Dataset(DatasetCore):
         """
         return self.agg("std", depth=depth)
 
-    def _agg_per_frame(
+    def _agg_per_pointcloud(
         self, agg: Union[str, list, dict]
     ) -> Union[pd.DataFrame, list, pd.DataFrame]:
         def get(pointcloud, agg: Union[str, list, dict]):

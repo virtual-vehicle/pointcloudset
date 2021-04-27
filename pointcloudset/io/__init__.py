@@ -8,7 +8,7 @@ from pyntcloud.io import (
 
 from pointcloudset.io.dataset.bag import dataset_from_rosbag
 from pointcloudset.io.dataset.dir import dataset_from_dir, dataset_to_dir
-from pointcloudset.io.dataset.frames import dataset_from_frames
+from pointcloudset.io.dataset.pointcloud import dataset_from_pointclouds
 from pointcloudset.io.pointcloud.csv import write_csv
 from pointcloudset.io.pointcloud.open3d import from_open3d, to_open3d
 from pointcloudset.io.pointcloud.pandas import from_dataframe, to_dataframe
@@ -18,7 +18,7 @@ DATASET_FROM_FILE = {"BAG": dataset_from_rosbag, "DIR": dataset_from_dir}
 
 DATASET_TO_FILE = {"DIR": dataset_to_dir}
 
-DATASET_FROM_INSTANCE = {"FRAMES": dataset_from_frames}
+DATASET_FROM_INSTANCE = {"POINTCLOUDS": dataset_from_pointclouds}
 
 POINTCLOUD_TO_FILE = {"CSV": write_csv}
 

@@ -119,11 +119,11 @@ def testframe_mini_real_other_original_id(testframe_mini_real) -> PointCloud:
 
 @pytest.fixture()
 def testdataset_mini_real(testframe_mini_real, testframe_mini_real_plus1) -> Dataset:
-    frames = [testframe_mini_real, testframe_mini_real_plus1]
-    return Dataset.from_instance("FRAMES", frames)
+    pointclouds = [testframe_mini_real, testframe_mini_real_plus1]
+    return Dataset.from_instance("POINTCLOUDS", pointclouds)
 
 
 @pytest.fixture()
 def testdataset_mini_same(testframe_mini_real) -> Dataset:
-    frames = [testframe_mini_real, testframe_mini_real]
-    return Dataset.from_instance("FRAMES", frames)
+    pointclouds = [testframe_mini_real, testframe_mini_real]
+    return Dataset.from_instance("POINTCLOUDS", pointclouds)

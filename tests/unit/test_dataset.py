@@ -120,8 +120,10 @@ def test_from_frames_list(testdataset_mini_real):
     check.is_instance(testdataset_mini_real[0], PointCloud)
 
 
-def test_agg_frame(testdataset_mini_real: Dataset, testframe_mini_real: PointCloud):
-    test = testdataset_mini_real._agg_per_frame("min")
+def test_agg_pointcloud(
+    testdataset_mini_real: Dataset, testframe_mini_real: PointCloud
+):
+    test = testdataset_mini_real._agg_per_pointcloud("min")
     x_min = testframe_mini_real.data.agg({"x": "min"})
     check.is_instance(test, pd.DataFrame)
     check.equal(len(test), len(testdataset_mini_real))
@@ -322,7 +324,7 @@ def test_dataset_min_point(
     assert_series_equal(first, should, check_names=False)
 
 
-def test_dataset_min_frame(
+def test_dataset_min_pointcloud(
     testdataset_mini_real: Dataset,
     testframe_mini_real: PointCloud,
     testframe_mini_real_plus1: PointCloud,
@@ -397,7 +399,7 @@ def test_dataset_max_dataset(
     )
 
 
-def test_dataset_max_frame(
+def test_dataset_max_pointcloud(
     testdataset_mini_real: Dataset,
     testframe_mini_real: PointCloud,
     testframe_mini_real_plus1: PointCloud,
