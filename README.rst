@@ -6,8 +6,23 @@ pointcloudset
 A package to work with pointcloud datasets. A pointcloud dataset is a collection of pointclouds
 recorded over a time period.
 
-Use case examples
+
+Features
 ########################
+* Handles Pointclouds over time
+* Apply arbitrary functions to datasets of pointclouds
+* Support for numerical data per point (intensity, range, noise …)
+* Support for large files with lazy evaluation, parallel processing
+* Interactive 3D visualisation
+.. image:: _static/plot_3d.gif
+   :width: 600
+* High level processing based on dask, pandas, open3D and pyntcloud
+* HTML documented API, Interactive jupyter notebook with examples
+* Docker image is available
+
+
+Use case examples
+#######################################
 - Post processing and analytics of a lidar dataset recorded by ROS
 - A collection of multiple lidar scans from a terrestrial laser scanner
 - Comparison of the point cloud to a ground truth
@@ -15,17 +30,8 @@ Use case examples
 
 
 
-Main features
-========================================
-* Pointclouds over time
-* Support for large files (lazy evaluation, parallel processing)
-* Interactive 3D visualisation
-* Support for numerical data per point (intensity, range, noise …)
-* High level processing based on dask, pandas, open3D and pyntcloud
-* HTML documented API, Interactive jupyter notebook with examples
-
 Installation and Quickstart
-========================================
+#######################################
 
 Install python package with pip:
 
@@ -34,14 +40,16 @@ Install python package with pip:
    pip install pointcloudset
 
 
-Open a jupyter notebook and start
+
+Quickstart
+########################
 
 .. code-block:: python
 
    from pointcloudset import Dataset, Frame
    from pathlib import Path
 
-   dataset = Dataset.from_file(Path(rosbag_file.bag),topic="/os1_cloud_node/points",keep_zeros=False)
+   dataset = Dataset.from_file(Path(rosbag_file.bag), topic="/os1_cloud_node/points", keep_zeros=False)
    frame = Frame.from_file(Path(lasfile.las))
 
 * See the usage.ipynb notebook in the notebook folder for an interactive tutorial.
