@@ -24,20 +24,10 @@ from pointcloudset.io import (
 from pointcloudset.plot.pointcloud import plot_overlay
 
 
-def is_documented_by(original):
-    """A decorator to get the docstring from another function."""
-
-    def wrapper(target):
-        target.__doc__ = original.__doc__
-        return target
-
-    return wrapper
-
-
 class PointCloud(PointCloudCore):
     """
-    PointCloud Class with one pointcloud of lidar measurements. Typically an automotive lidar
-    records many pointclouds per second.
+    PointCloud Class with one pointcloud of lidar measurements, laser scanning,
+    photogrammetry  or simular.
 
     One PointCloud consists mainly of `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_
     pointcloud
@@ -394,7 +384,8 @@ class PointCloud(PointCloudCore):
         )
 
     def apply_filter(self, filter_result: Union[np.ndarray, List[int]]) -> PointCloud:
-        """Generating a new PointCloud by removing points where filter.
+        """Generating a new PointCloud by removing points according to a call of the
+        filter method.
 
         Args:
             filter_result (Union[numpy.ndarray, List[int]]): Filter result.

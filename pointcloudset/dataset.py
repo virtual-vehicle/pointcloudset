@@ -56,6 +56,12 @@ class Dataset(DatasetCore):
     @classmethod
     def from_file(cls, file_path: Path, **kwargs):
         """Reads a Dataset from a file.
+        For larger ROS bagfiles files use the commandline tool bag2dataset to convert the ROS bagfile
+        beforehand.
+
+        Supported are the native format which is a directore filled with fastparquet frames and
+        ROS bag files (.bag).
+
 
         Args:
             file_path (pathlib.Path): File path where Dataset should be read from.\n
@@ -88,6 +94,9 @@ class Dataset(DatasetCore):
     def to_file(self, file_path: Path = Path(), **kwargs) -> None:
         """Writes a Dataset to a file.
 
+        Supported is the native format which is a directory full of fastparquet files
+        with meta data.
+
         Args:
             file_path (pathlib.Path): File path where Dataset should be saved.\n
                 If file format is a directory: :func:`pointcloudset.io.dataset.dir.dataset_to_dir`
@@ -106,7 +115,7 @@ class Dataset(DatasetCore):
 
         Args:
             library (str): Name of the library.\n
-                If "frames": :func:`pointcloudset.io.dataset.pointclouds.dataset_from_pointclouds`
+                If "pointclouds": :func:`pointcloudset.io.dataset.pointclouds.dataset_from_pointclouds`
             instance (list[PointCloud]): Instance from which to convert.
             **kwargs: Keyword arguments to pass to func.
 
@@ -115,6 +124,13 @@ class Dataset(DatasetCore):
 
         Raises:
             ValueError: If instance is not supported.
+
+        Examples:
+
+            .. code-block:: python
+
+                pointcloudset.Dataset.from_instance("pointclouds", [pc1, pc2])
+
         """
         library = library.upper()
         if library not in DATASET_FROM_INSTANCE:
@@ -151,7 +167,7 @@ class Dataset(DatasetCore):
 
             .. code-block:: python
 
-                def func(pointcloud:pointcloudset .PointCloud) -> pointcloudset .PointCloud:
+                def func(pointcloud:pointcloudset .PointCloud) -> pointcloudset.PointCloud:
                     return pointcloud.limit(x,0,1)
 
                 dataset.apply(func)
@@ -208,13 +224,16 @@ class Dataset(DatasetCore):
         Similar to :meth:`pandas.DataFrame.aggregate`.
         Uses :class:`dask.dataframe.DataFrame` with parallel processing.
 
+
         Args:
             agg (Union[str, list, dict]): Function to use for aggregating.
             depth (Literal["dataset", "pointcloud", "point"], optional): Aggregation level: "dataset", "pointcloud" or
                 "point". Defaults to "dataset".
 
         Returns:
-            Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Aggregated Dataset.
+            Union[pandas.DataFrame, pandas.DataFrame, pandas.Series]: Results of the
+            aggregation. This can be a pandas DataFrame or Series, depending on the
+            depth and aggregation.
 
         Raises:
             ValueError: If depth is not "dataset", "pointcloud" or "point".

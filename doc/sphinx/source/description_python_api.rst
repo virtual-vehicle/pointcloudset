@@ -1,11 +1,24 @@
-Description of Python API
+How to read the API documentation
 ========================================
 
-The key components of the Python API are Datasets and PointClouds:
-    * Dataset: Datasets are based on the classes :class:`pointcloudset.dataset.Dataset` and :class:`pointcloudset.dataset_core.DatasetCore`
-    * PointCloud: PointClouds are based on the classes :class:`pointcloudset.pointcloud.PointCloud` and :class:`pointcloudset.pointcloud_core.PointCloudCore`
+A Dataset consists of multiple PointCloud objects which form the two main classes of the package.
 
-A Dataset consists of multiple PointCloud objects. Datasets and PointCloud use the functions of the following subpackages:
+The main classes
+----------------------------------------
+
+
+**Dataset**: :class:`pointcloudset.dataset.Dataset` based on :class:`pointcloudset.dataset_core.DatasetCore`
+
+**PointCloud**: :class:`pointcloudset.pointcloud.PointCloud` based on :class:`pointcloudset.pointcloud_core.PointCloudCore`
+
+
+Modules
+----------------------------------------
+
+As a common user these Classes are enough to tackle most proplems. If you want to dive deeper or contribute to
+the package than you should have a look at the other modules.
+
+ Datasets and PointCloud use the functions of the following modules:
     * :mod:`pointcloudset.diff`
     * :mod:`pointcloudset.filter`
     * :mod:`pointcloudset.geometry`
