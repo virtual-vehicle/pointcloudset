@@ -19,41 +19,49 @@ def test_from_pyntcloud(testlas1: Path):
     check.equal(len(list(pointcloud.data.columns)), 13)
 
 
-def test_to_pyntcloud(testframe_mini: PointCloud, testlas1: Path):
+def test_to_pyntcloud(testpointcloud_mini: PointCloud, testlas1: Path):
     pyntcloud_data = PyntCloud.from_file(testlas1.as_posix())
-    res = testframe_mini.to_instance("pyntcloud")
+    res = testpointcloud_mini.to_instance("pyntcloud")
     check.is_instance(res, PyntCloud)
     check.equal(
-        list(res.points.columns.values), list(testframe_mini.data.columns.values)
+        list(res.points.columns.values), list(testpointcloud_mini.data.columns.values)
     )
 
 
-def test_to_open3d(testframe_mini: PointCloud):
-    pointcloud = testframe_mini.to_instance("open3d")
+def test_to_open3d(testpointcloud_mini: PointCloud):
+    pointcloud = testpointcloud_mini.to_instance("open3d")
     check.equal(type(pointcloud), o3d.cpu.pybind.geometry.PointCloud)
     check.equal(pointcloud.has_points(), True)
-    check.equal(len(np.asarray(pointcloud.points)), len(testframe_mini))
+    check.equal(len(np.asarray(pointcloud.points)), len(testpointcloud_mini))
 
 
-def test_from_open3d(testframe_mini_real: PointCloud):
-    open3d_data = testframe_mini_real.to_instance("open3d")
+def test_from_open3d(testpointcloud_mini_real: PointCloud):
+    open3d_data = testpointcloud_mini_real.to_instance("open3d")
     pointcloud = pointcloudset.PointCloud.from_instance("open3d", open3d_data)
-    test = pointcloud.data - testframe_mini_real.data[["x", "y", "z"]]
+    test = pointcloud.data - testpointcloud_mini_real.data[["x", "y", "z"]]
     check.equal(set(list(test.max())).intersection([0.0, 0.0, 0.0]), {0.0})
 
 
-def test_from_dataframe(testframe_mini_df: pd.DataFrame, testframe_mini: PointCloud):
-    pointcloud = pointcloudset.PointCloud.from_instance("DataFrame", testframe_mini_df)
+def test_from_dataframe(
+    testpointcloud_mini_df: pd.DataFrame, testpointcloud_mini: PointCloud
+):
+    pointcloud = pointcloudset.PointCloud.from_instance(
+        "DataFrame", testpointcloud_mini_df
+    )
     check.is_instance(pointcloud, PointCloud)
-    test = pointcloud.data - testframe_mini.data[["x", "y", "z"]]
+    test = pointcloud.data - testpointcloud_mini.data[["x", "y", "z"]]
     check.equal(set(list(test.max())).intersection([0.0, 0.0, 0.0]), {0.0})
 
 
-def test_to_dataframe(testframe_mini_df: pd.DataFrame, testframe_mini: PointCloud):
-    df = testframe_mini.to_instance("DataFrame")
+def test_to_dataframe(
+    testpointcloud_mini_df: pd.DataFrame, testpointcloud_mini: PointCloud
+):
+    df = testpointcloud_mini.to_instance("DataFrame")
     check.is_instance(df, pd.DataFrame)
 
 
-def test_to_dataframe2(testframe_mini_df: pd.DataFrame, testframe_mini: PointCloud):
-    df = testframe_mini.to_instance("pandas")
+def test_to_dataframe2(
+    testpointcloud_mini_df: pd.DataFrame, testpointcloud_mini: PointCloud
+):
+    df = testpointcloud_mini.to_instance("pandas")
     check.is_instance(df, pd.DataFrame)

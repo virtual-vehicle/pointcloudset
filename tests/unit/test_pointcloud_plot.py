@@ -4,12 +4,12 @@ import pytest_check as check
 from pointcloudset import PointCloud
 
 
-def test_plot1(testframe_mini: PointCloud):
-    check.equal(type(testframe_mini.plot()), plotly.graph_objs._figure.Figure)
+def test_plot1(testpointcloud_mini: PointCloud):
+    check.equal(type(testpointcloud_mini.plot()), plotly.graph_objs._figure.Figure)
 
 
-def test_plot_plotly(testframe_mini: PointCloud):
-    plot = testframe_mini.plot()
+def test_plot_plotly(testpointcloud_mini: PointCloud):
+    plot = testpointcloud_mini.plot()
     check.equal(
         type(plot),
         plotly.graph_objs._figure.Figure,

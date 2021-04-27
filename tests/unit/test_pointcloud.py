@@ -11,21 +11,21 @@ from pyntcloud import PyntCloud
 from pointcloudset import PointCloud
 
 
-def test_init(testframe_mini_df: pd.DataFrame):
-    pointcloud = PointCloud(testframe_mini_df, datetime(2020, 1, 1))
+def test_init(testpointcloud_mini_df: pd.DataFrame):
+    pointcloud = PointCloud(testpointcloud_mini_df, datetime(2020, 1, 1))
     check.equal(type(pointcloud), PointCloud)
 
 
-def test_has_data(testframe_mini: PointCloud):
-    check.equal(testframe_mini._has_data(), True)
+def test_has_data(testpointcloud_mini: PointCloud):
+    check.equal(testpointcloud_mini._has_data(), True)
 
 
-def test_has_original_id(testframe_mini: PointCloud):
-    check.equal(testframe_mini.has_original_id, False)
+def test_has_original_id(testpointcloud_mini: PointCloud):
+    check.equal(testpointcloud_mini.has_original_id, False)
 
 
-def test_has_original_id2(testframe_mini_real: PointCloud):
-    check.equal(testframe_mini_real.has_original_id, True)
+def test_has_original_id2(testpointcloud_mini_real: PointCloud):
+    check.equal(testpointcloud_mini_real.has_original_id, True)
 
 
 def test_contains_original_id_number(testpointcloud: PointCloud):
@@ -36,21 +36,21 @@ def test_contains_original_id_number(testpointcloud: PointCloud):
     check.equal(testpointcloud._contains_original_id_number(-1000), False)
 
 
-def test_points(testframe_mini):
-    points = testframe_mini.points
+def test_points(testpointcloud_mini):
+    points = testpointcloud_mini.points
     check.is_instance(points, PyntCloud)
 
 
-def test_points2(testframe_mini):
-    points = testframe_mini.points
+def test_points2(testpointcloud_mini):
+    points = testpointcloud_mini.points
     check.equal(
         list(points.points.columns),
         ["x", "y", "z", "intensity", "t", "reflectivity", "ring", "noise", "range"],
     )
 
 
-def test_timestamp(testframe_mini):
-    check.equal(type(testframe_mini.timestamp), datetime)
+def test_timestamp(testpointcloud_mini):
+    check.equal(type(testpointcloud_mini.timestamp), datetime)
 
 
 def test_org_file(testpointcloud):
@@ -58,9 +58,9 @@ def test_org_file(testpointcloud):
     check.equal(Path(testpointcloud.orig_file).stem, "test")
 
 
-def test_len(testframe_mini: PointCloud):
-    check.equal(type(len(testframe_mini)), int)
-    check.equal(len(testframe_mini), 8)
+def test_len(testpointcloud_mini: PointCloud):
+    check.equal(type(len(testpointcloud_mini)), int)
+    check.equal(len(testpointcloud_mini), 8)
 
 
 def test_getitem_single(testpointcloud: PointCloud):
@@ -113,15 +113,15 @@ def test_str(testpointcloud: PointCloud):
     )
 
 
-def test_repr(testframe_mini: PointCloud):
-    check.equal(type(repr(testframe_mini)), str)
-    check.equal(len(repr(testframe_mini)), 790)
+def test_repr(testpointcloud_mini: PointCloud):
+    check.equal(type(repr(testpointcloud_mini)), str)
+    check.equal(len(repr(testpointcloud_mini)), 790)
 
 
-def test_add_column(testframe_mini: PointCloud):
-    newframe = testframe_mini._add_column("test", testframe_mini.data["x"])
+def test_add_column(testpointcloud_mini: PointCloud):
+    newframe = testpointcloud_mini._add_column("test", testpointcloud_mini.data["x"])
     check.equal(type(newframe), PointCloud)
-    after_columns = list(testframe_mini.data.columns.values)
+    after_columns = list(testpointcloud_mini.data.columns.values)
     check.equal(
         str(after_columns),
         "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'test']",
@@ -133,30 +133,30 @@ def test_describe(testpointcloud: PointCloud):
 
 
 # test with actual data
-def test_testframe_1_with_zero(testframe_withzero: PointCloud):
-    check.equal(len(testframe_withzero), 131072)
-    check.equal(testframe_withzero._has_data(), True)
+def test_testpointcloud_1_with_zero(testpointcloud_withzero: PointCloud):
+    check.equal(len(testpointcloud_withzero), 131072)
+    check.equal(testpointcloud_withzero._has_data(), True)
 
 
-def test_testframe_1(testpointcloud: PointCloud):
-    # testpointcloud.data.to_pickle("/workspaces/pointcloudset/tests/testdata/testframe_dataframe.pkl")
+def test_testpointcloud_1(testpointcloud: PointCloud):
+    # testpointcloud.data.to_pickle("/workspaces/pointcloudset/tests/testdata/testpointcloud_dataframe.pkl")
     check.equal(len(testpointcloud), 45809)
     check.equal(testpointcloud._has_data(), True)
     check.equal(len(testpointcloud), 45809)
 
 
-def test_testframe_index(testpointcloud):
+def test_testpointcloud_index(testpointcloud):
     check.equal(testpointcloud.data.index[0], 0)
     check.equal(testpointcloud.data.index[-1] + 1, len(testpointcloud))
     check.equal(testpointcloud.data.index.is_monotonic_increasing, True)
 
 
-def test_testframe_2(testframe_mini: PointCloud):
-    check.equal(len(testframe_mini), 8)
-    check.equal(testframe_mini._has_data(), True)
+def test_testpointcloud_2(testpointcloud_mini: PointCloud):
+    check.equal(len(testpointcloud_mini), 8)
+    check.equal(testpointcloud_mini._has_data(), True)
 
 
-def test_testframe_data(testpointcloud: PointCloud):
+def test_testpointcloud_data(testpointcloud: PointCloud):
     data = testpointcloud.data
     check.equal(
         list(data.columns),
@@ -176,7 +176,7 @@ def test_testframe_data(testpointcloud: PointCloud):
     check.equal(data.shape, (45809, 10))
 
 
-def test_testframe_data_types(testpointcloud: PointCloud):
+def test_testpointcloud_data_types(testpointcloud: PointCloud):
     types = [str(types) for types in testpointcloud.data.dtypes.values]
     check.equal(
         types,
@@ -195,11 +195,12 @@ def test_testframe_data_types(testpointcloud: PointCloud):
     )
 
 
-def test_testframe_withzero_data(
-    testframe_withzero: PointCloud, reference_data_with_zero_dataframe: pd.DataFrame
+def test_testpointcloud_withzero_data(
+    testpointcloud_withzero: PointCloud,
+    reference_data_with_zero_dataframe: pd.DataFrame,
 ):
-    data = testframe_withzero.data
-    # data.to_pickle("/workspaces/pointcloudset/tests/testdata/testframe_withzero_dataframe.pkl")
+    data = testpointcloud_withzero.data
+    # data.to_pickle("/workspaces/pointcloudset/tests/testdata/testpointcloud_withzero_dataframe.pkl")
     check.equal(
         list(data.columns),
         ["x", "y", "z", "intensity", "t", "reflectivity", "ring", "noise", "range"],
@@ -208,15 +209,15 @@ def test_testframe_withzero_data(
     assert_frame_equal(data, reference_data_with_zero_dataframe)
 
 
-def test_testframe_pointcloud(
-    testframe_withzero: PointCloud,
+def test_testpointcloud_pointcloud(
+    testpointcloud_withzero: PointCloud,
     reference_pointcloud_withzero_dataframe: pd.DataFrame,
 ):
-    pointcloud = testframe_withzero.to_instance("open3d")
+    pointcloud = testpointcloud_withzero.to_instance("open3d")
     array = np.asarray(pointcloud.points)
     pointcloud_df = pd.DataFrame(array)
     # pointcloud_df.to_pickle(
-    #    "/workspaces/pointcloudset/tests/testdata/testframe_withzero_pointcloud.pkl"
+    #    "/workspaces/pointcloudset/tests/testdata/testpointcloud_withzero_pointcloud.pkl"
     # )
     sub_points = pointcloud.select_by_index(list(range(5000, 5550)))
     sub_array = np.asarray(sub_points.points)
@@ -227,16 +228,16 @@ def test_testframe_pointcloud(
     assert_frame_equal(pointcloud_df, reference_pointcloud_withzero_dataframe)
 
 
-def test_axis_aligned_bounding_box(testframe_mini: PointCloud):
-    bb = testframe_mini.bounding_box
+def test_axis_aligned_bounding_box(testpointcloud_mini: PointCloud):
+    bb = testpointcloud_mini.bounding_box
     check.is_instance(bb, pd.DataFrame)
     check.almost_equal(list(bb.x.values), [-1.0, 716.62253361])
     check.almost_equal(list(bb.y.values), [-1.0, 791.8389702424873])
     check.almost_equal(list(bb.z.values), [-1.0, 825.7276944386689])
 
 
-def test_centroit(testframe_mini: PointCloud):
-    ct = testframe_mini.centroid
+def test_centroit(testpointcloud_mini: PointCloud):
+    ct = testpointcloud_mini.centroid
     check.almost_equal(
         list(ct), [259.95131121217355, 225.64930989164827, 365.44029720089736]
     )

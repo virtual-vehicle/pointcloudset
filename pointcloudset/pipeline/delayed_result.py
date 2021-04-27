@@ -13,10 +13,12 @@ class DelayedResult(UserList):
     def compute(self) -> list:
         return list(dask.compute(*self.data))
 
-    def __getitem__(self, frame_number: Union[slice, int]) -> Union[DelayedResult, Any]:
-        if isinstance(frame_number, slice):
-            return self[frame_number]
-        elif isinstance(frame_number, int):
-            return super().__getitem__(frame_number).compute()
+    def __getitem__(
+        self, pointcloud_number: Union[slice, int]
+    ) -> Union[DelayedResult, Any]:
+        if isinstance(pointcloud_number, slice):
+            return self[pointcloud_number]
+        elif isinstance(pointcloud_number, int):
+            return super().__getitem__(pointcloud_number).compute()
         else:
-            raise TypeError("Wrong type {}".format(type(frame_number).__name__))
+            raise TypeError("Wrong type {}".format(type(pointcloud_number).__name__))

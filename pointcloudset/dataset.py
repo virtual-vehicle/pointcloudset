@@ -30,28 +30,28 @@ def _is_pipline_returing_pointcloud(pipeline, warn=True) -> bool:
 
 class Dataset(DatasetCore):
     """
-    Dataset Class which contains multiple frames, timestamps and metadata.
+    Dataset Class which contains multiple pointclouds, timestamps and metadata.
     For more details on how to use the Dataset Class please refer to the usage.ipynb
     notebook for an interactive tutorial. The notebook can also be found in the tutorial
     section of the docu.
     """
 
     def __getitem__(
-        self, frame_number: Union[slice, int]
+        self, pointcloud_number: Union[slice, int]
     ) -> Union[DatasetCore, PointCloud]:
-        if isinstance(frame_number, slice):
-            data = self.data[frame_number]
-            timestamps = self.timestamps[frame_number]
+        if isinstance(pointcloud_number, slice):
+            data = self.data[pointcloud_number]
+            timestamps = self.timestamps[pointcloud_number]
             meta = self.meta
             return Dataset(data, timestamps, meta)
-        elif isinstance(frame_number, int):
-            df = self.data[frame_number].compute()
-            timestamp = self.timestamps[frame_number]
+        elif isinstance(pointcloud_number, int):
+            df = self.data[pointcloud_number].compute()
+            timestamp = self.timestamps[pointcloud_number]
             return PointCloud(
                 data=df, orig_file=self.meta["orig_file"], timestamp=timestamp
             )
         else:
-            raise TypeError("Wrong type {}".format(type(frame_number).__name__))
+            raise TypeError("Wrong type {}".format(type(pointcloud_number).__name__))
 
     @classmethod
     def from_file(cls, file_path: Path, **kwargs):

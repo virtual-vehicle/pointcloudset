@@ -5,32 +5,32 @@ import pytest_check as check
 from pointcloudset import PointCloud
 
 
-def test_pointcloud_limit(testframe_mini: PointCloud):
-    check.equal(len(testframe_mini.limit("x", minvalue=0.0, maxvalue=2.0)), 2)
-    check.equal(len(testframe_mini.limit("x", minvalue=-100.0, maxvalue=-10)), 0)
+def test_pointcloud_limit(testpointcloud_mini: PointCloud):
+    check.equal(len(testpointcloud_mini.limit("x", minvalue=0.0, maxvalue=2.0)), 2)
+    check.equal(len(testpointcloud_mini.limit("x", minvalue=-100.0, maxvalue=-10)), 0)
 
 
-def test_pointcloud_limit2(testframe_mini: PointCloud):
+def test_pointcloud_limit2(testpointcloud_mini: PointCloud):
     with pytest.raises(KeyError):
-        testframe_mini.limit("wrong", minvalue=0.0, maxvalue=200)
+        testpointcloud_mini.limit("wrong", minvalue=0.0, maxvalue=200)
 
 
-def test_pointcloud_limit3(testframe_mini: PointCloud):
+def test_pointcloud_limit3(testpointcloud_mini: PointCloud):
     with pytest.raises(ValueError):
-        testframe_mini.limit("wrong", minvalue=2000, maxvalue=0)
+        testpointcloud_mini.limit("wrong", minvalue=2000, maxvalue=0)
 
 
-def test_pointcloud_limit4(testframe_mini: PointCloud, testframe_mini_df):
+def test_pointcloud_limit4(testpointcloud_mini: PointCloud, testpointcloud_mini_df):
     np.testing.assert_array_equal(
-        testframe_mini.limit("x", minvalue=0.0, maxvalue=2.0).data.values,
-        testframe_mini_df[0:2].values,
+        testpointcloud_mini.limit("x", minvalue=0.0, maxvalue=2.0).data.values,
+        testpointcloud_mini_df[0:2].values,
     )
 
 
-def test_pointcloud_limit5(testframe_mini: PointCloud, testframe_mini_df):
+def test_pointcloud_limit5(testpointcloud_mini: PointCloud, testpointcloud_mini_df):
     np.testing.assert_array_equal(
-        testframe_mini.limit("intensity", minvalue=0.0, maxvalue=2.0).data.values,
-        testframe_mini_df[0:2].values,
+        testpointcloud_mini.limit("intensity", minvalue=0.0, maxvalue=2.0).data.values,
+        testpointcloud_mini_df[0:2].values,
     )
 
 
@@ -44,15 +44,19 @@ def test_limit_7(testpointcloud: PointCloud):
     check.equal(len(totest), 416)
 
 
-def test_pointcloud_limit_chaining(testframe_mini: PointCloud, testframe_mini_df):
-    totest = testframe_mini.limit("x", minvalue=0.0, maxvalue=20000.0).limit(
+def test_pointcloud_limit_chaining(
+    testpointcloud_mini: PointCloud, testpointcloud_mini_df
+):
+    totest = testpointcloud_mini.limit("x", minvalue=0.0, maxvalue=20000.0).limit(
         "x", 0.0, 2.0
     )
-    np.testing.assert_array_equal(totest.data.values, testframe_mini_df[0:2].values)
+    np.testing.assert_array_equal(
+        totest.data.values, testpointcloud_mini_df[0:2].values
+    )
 
 
-def test_pointcloud_limit_chaining2(testframe_mini: PointCloud):
-    totest = testframe_mini.limit("x", minvalue=0.0, maxvalue=500.0).limit(
+def test_pointcloud_limit_chaining2(testpointcloud_mini: PointCloud):
+    totest = testpointcloud_mini.limit("x", minvalue=0.0, maxvalue=500.0).limit(
         "x", 0.0, 300.0
     )
     check.equal(len(totest), 4)
@@ -60,7 +64,7 @@ def test_pointcloud_limit_chaining2(testframe_mini: PointCloud):
     check.equal(totest.data.isnull().values.any(), False)
 
 
-def test_limit_chaining3(testframe_mini: PointCloud):
-    totest = testframe_mini.limit("x", minvalue=0.0, maxvalue=500.0)
+def test_limit_chaining3(testpointcloud_mini: PointCloud):
+    totest = testpointcloud_mini.limit("x", minvalue=0.0, maxvalue=500.0)
     check.equal(totest.data.index.is_monotonic_increasing, True)
     check.equal(len(totest), 5)
