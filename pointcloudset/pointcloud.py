@@ -97,9 +97,11 @@ class PointCloud(PointCloudCore):
         )
 
     def to_file(self, file_path: Path = Path(), **kwargs) -> None:
-        """Exports the pointcloud as a csv file for use with `CloudCompare <https://www.danielgm.net/cc/ake>`_ or similar tools.
+        """Exports the pointcloud as to a file for use with `CloudCompare <https://www.danielgm.net/cc/ake>`_ or similar tools.
         Currently not all attributes of a pointcloud are saved so some information is lost
         when using this function.
+        Uses `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_ as
+        backend.
 
         Args:
             file_path (pathlib.Path, optional): Destination. Defaults to the folder of
