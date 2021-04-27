@@ -4,9 +4,6 @@ Welcome to pointcloudset's documentation!
 .. include:: ../../../README.rst
    :start-after: inclusion-marker-do-not-remove
 
-.. image:: _static/front.jpg
-   :height: 200
-
 .. toctree::
    :maxdepth: 1
    :caption: Convert ROS bagfiles

@@ -14,8 +14,10 @@ Features
 * Support for numerical data per point (intensity, range, noise …)
 * Support for large files with lazy evaluation, parallel processing
 * Interactive 3D visualisation
-.. image:: _static/plot_3d.gif
+
+.. image:: images/plot_3d.gif
    :width: 600
+
 * High level processing based on dask, pandas, open3D and pyntcloud
 * HTML documented API, Interactive jupyter notebook with examples
 * Docker image is available
