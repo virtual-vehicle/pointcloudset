@@ -33,8 +33,8 @@ def test_to_csv(testpointcloud: PointCloud, tmp_path: Path):
     testfile_name = tmp_path.joinpath("just_test.csv")
     testpointcloud.to_file(file_path=testfile_name)
     check.equal(testfile_name.exists(), True)
-    read_frame = pd.read_csv(testfile_name)
-    test_values = read_frame.iloc[0].values
+    read_pointcloud = pd.read_csv(testfile_name)
+    test_values = read_pointcloud.iloc[0].values
     np.testing.assert_allclose(
         [
             1.4383683e00,
@@ -59,8 +59,8 @@ def test_to_csv2(testpointcloud: PointCloud, tmp_path: Path):
     testfile_name = tmp_path.joinpath("fake_timestamp_1592833242755911566.csv")
     testpointcloud.to_file(file_path=testfile_name)
     check.equal(testfile_name.exists(), True)
-    read_frame = pd.read_csv(testfile_name)
-    test_values = read_frame.iloc[0].values
+    read_pointcloud = pd.read_csv(testfile_name)
+    test_values = read_pointcloud.iloc[0].values
     np.testing.assert_allclose(
         [
             1.4383683e00,

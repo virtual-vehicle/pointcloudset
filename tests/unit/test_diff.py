@@ -7,7 +7,7 @@ from pointcloudset import PointCloud
 from pointcloudset.diff.pointcloud import _calculate_single_point_difference
 
 
-def test_frame_difference_equal(testframe_mini_real: PointCloud):
+def test_pointcloud_difference_equal(testframe_mini_real: PointCloud):
     res = testframe_mini_real.diff("pointcloud", testframe_mini_real)
     x_test = res.data["x difference"].values
     y_test = res.data["y difference"].values
@@ -43,21 +43,21 @@ def test_frame_difference_equal(testframe_mini_real: PointCloud):
     check.equal(np.all(z_test == 0.0), True)
 
 
-def test_frame_difference1_no_orignal_id(
+def test_pointcloud_difference1_no_orignal_id(
     testframe_mini: PointCloud, testframe_mini_real: PointCloud
 ):
     with pytest.raises(ValueError):
         testframe_mini.diff("pointcloud", testframe_mini_real)
 
 
-def test_frame_difference1_no_orignal_id2(
+def test_pointcloud_difference1_no_orignal_id2(
     testframe_mini: PointCloud, testframe_mini_real: PointCloud
 ):
     with pytest.raises(ValueError):
         testframe_mini_real.diff("pointcloud", testframe_mini)
 
 
-def test_frame_difference1(
+def test_pointcloud_difference1(
     testframe_mini_real: PointCloud, testframe_mini_real_plus1: PointCloud
 ):
     res = testframe_mini_real.diff("pointcloud", testframe_mini_real_plus1)
@@ -71,7 +71,7 @@ def test_frame_difference1(
     check.equal(np.all(np.isclose(z_test, -1.0)), True)
 
 
-def test_frame_difference_no_intersection(
+def test_pointcloud_difference_no_intersection(
     testframe_mini_real: PointCloud, testframe_mini_real_other_original_id: PointCloud
 ):
     with pytest.raises(ValueError):
@@ -154,7 +154,7 @@ def test_calculate_distance_to_point(testframe_mini: PointCloud):
     check.equal(testframe_mini.data["distance to point: [-1 0 0]"][0], 1.0)
 
 
-def test_frame_diff_of_diff(testframe_mini_real: PointCloud):
+def test_pointcloud_diff_of_diff(testframe_mini_real: PointCloud):
     res = testframe_mini_real.diff("pointcloud", testframe_mini_real)
     with pytest.raises(NotImplementedError):
         res.diff("pointcloud", testframe_mini_real)

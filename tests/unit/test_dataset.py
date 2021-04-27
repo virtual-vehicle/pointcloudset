@@ -48,16 +48,16 @@ def test_getitem_error(testset: Dataset):
         testset["fake"]
 
 
-def test_get_frame_number_from_time(testset):
-    res = testset._get_frame_number_from_time(testset.start_time)
+def test_get_pointcloud_number_from_time(testset):
+    res = testset._get_pointcloud_number_from_time(testset.start_time)
     check.equal(res, 0)
-    res2 = testset._get_frame_number_from_time(testset.end_time)
+    res2 = testset._get_pointcloud_number_from_time(testset.end_time)
     check.equal(res2 + 1, len(testset))
 
 
 def test_getitem_timerange(testset: Dataset):
     check.equal(len(testset), 2)
-    dataset = testset.get_frames_between_timestamps(
+    dataset = testset.get_pointclouds_between_timestamps(
         datetime.datetime(2020, 6, 22, 13, 40, 42, 657267),
         datetime.datetime(2020, 6, 22, 13, 40, 42, 755912),
     )
@@ -71,8 +71,8 @@ def test_getitem_strange(testset):
     check.equal(len(testset[2:0]), 0)
 
 
-def test_has_frames(testset: Dataset):
-    check.equal(testset.has_frames(), True)
+def test_has_pointclouds(testset: Dataset):
+    check.equal(testset.has_pointclouds(), True)
 
 
 def test_str(testset: Dataset):
@@ -113,7 +113,7 @@ def test_extend(testbag1):
     check.equal(len(ds1), len_old * 2)
 
 
-def test_from_frames_list(testdataset_mini_real):
+def test_from_pointclouds_list(testdataset_mini_real):
     check.is_instance(testdataset_mini_real, Dataset)
     check.equal(len(testdataset_mini_real), 2)
     check.is_instance(testdataset_mini_real.data[0], DelayedLeaf)
@@ -340,7 +340,7 @@ def test_dataset_std(testdataset_mini_same: Dataset):
     check.equal(stdres["x std"], 0.0)
 
 
-def test_frame_std(testdataset_mini_real: Dataset):
+def test_pointcloud_std(testdataset_mini_real: Dataset):
     stdres = testdataset_mini_real.std("pointcloud")
     check.is_instance(stdres, pd.DataFrame)
     check.equal(len(stdres), 2)
@@ -361,7 +361,7 @@ def test_frame_std(testdataset_mini_real: Dataset):
     )
 
 
-def test_frame_point(testdataset_mini_real: Dataset):
+def test_pointcloud_point(testdataset_mini_real: Dataset):
     stdres = testdataset_mini_real.std("point")
     check.is_instance(stdres, pd.DataFrame)
     check.equal(

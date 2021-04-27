@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Any, Callable, Union, get_type_hints, List, Literal
 
 from dask import delayed
-import pandas as pd
+import pandas
 
 from pointcloudset.dataset_core import DatasetCore
 from pointcloudset.pointcloud import PointCloud
@@ -12,7 +12,7 @@ from pointcloudset.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_T
 from pointcloudset.pipeline.delayed_result import DelayedResult
 
 
-def _is_pipline_returing_frame(pipeline, warn=True) -> bool:
+def _is_pipline_returing_pointcloud(pipeline, warn=True) -> bool:
     type_hints = get_type_hints(pipeline)
     res = False
     if "return" in type_hints:
@@ -172,9 +172,9 @@ class Dataset(DatasetCore):
                 dataset.apply(func, test=10)
         """
 
-        returns_frame = _is_pipline_returing_frame(func, warn=warn)
+        returns_pointcloud = _is_pipline_returing_pointcloud(func, warn=warn)
 
-        if returns_frame:
+        if returns_pointcloud:
 
             def pipeline_delayed(element_in, timestamp):
                 pointcloud = PointCloud(data=element_in, timestamp=timestamp)
@@ -192,7 +192,7 @@ class Dataset(DatasetCore):
             item = delayed(pipeline_delayed)(self.data[i], self.timestamps[i])
             res.append(item)
 
-        if returns_frame:
+        if returns_pointcloud:
             return Dataset(data=res, timestamps=self.timestamps, meta=self.meta)
         else:
             return DelayedResult(res)
@@ -405,7 +405,7 @@ class Dataset(DatasetCore):
 
     def _agg_per_pointcloud(
         self, agg: Union[str, list, dict]
-    ) -> Union[pd.DataFrame, list, pd.DataFrame]:
+    ) -> Union[pandas.DataFrame, list, pandas.DataFrame]:
         def get(pointcloud, agg: Union[str, list, dict]):
             return pointcloud.data.agg(agg)
 
@@ -413,7 +413,7 @@ class Dataset(DatasetCore):
         if isinstance(agg, list):
             return res
         else:
-            res = pd.DataFrame(res)
+            res = pandas.DataFrame(res)
             if not isinstance(agg, dict):
                 res = res.drop("original_id", axis=1)
             res.columns = [f"{column} {agg}" for column in res.columns]

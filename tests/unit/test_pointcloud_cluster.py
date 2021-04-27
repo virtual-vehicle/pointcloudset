@@ -5,7 +5,7 @@ import pytest_check as check
 from pointcloudset import PointCloud
 
 
-def test_frame_cluster(testframe_mini_real: PointCloud):
+def test_pointcloud_cluster(testframe_mini_real: PointCloud):
     label = testframe_mini_real.get_cluster(eps=0.8, min_points=5)
     label_ref = np.array(
         [
@@ -38,7 +38,7 @@ def test_frame_cluster(testframe_mini_real: PointCloud):
     np.testing.assert_equal(label.to_numpy(), label_ref)
 
 
-def test_frame_take_cluster(testframe_mini_real: PointCloud):
+def test_pointcloud_take_cluster(testframe_mini_real: PointCloud):
     label = testframe_mini_real.get_cluster(eps=0.8, min_points=5)
     cluster0 = testframe_mini_real.take_cluster(0, label)
     check.equal(len(cluster0), 5)

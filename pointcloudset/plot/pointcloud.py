@@ -39,12 +39,12 @@ def plot_overlay(fig, pointcloud, overlay: dict, **kwargs):
                 fig,
                 plane_model=from_dict,
                 name=name,
-                orig_frame=pointcloud,
+                orig_pointcloud=pointcloud,
                 colors=colors,
                 i=i,
             )
         elif from_dict._has_data():
-            fig = plot_overlay_frame(
+            fig = plot_overlay_pointcloud(
                 fig,
                 pointcloud=from_dict,
                 name=name,
@@ -62,7 +62,7 @@ def plot_overlay(fig, pointcloud, overlay: dict, **kwargs):
     return fig
 
 
-def plot_overlay_frame(fig, pointcloud, name: str, marker_color: str, **kwargs):
+def plot_overlay_pointcloud(fig, pointcloud, name: str, marker_color: str, **kwargs):
     """Overlay the plot with another pointcloud.
 
     Args:
@@ -83,7 +83,7 @@ def plot_overlay_frame(fig, pointcloud, name: str, marker_color: str, **kwargs):
 
 
 def plot_overlay_plane(
-    fig, plane_model: np.ndarray, name: str, orig_frame, colors, i: int
+    fig, plane_model: np.ndarray, name: str, orig_pointcloud, colors, i: int
 ):
     """Overlay the plot with plane.
 
@@ -92,14 +92,14 @@ def plot_overlay_plane(
         plane_model (numpy.ndarray): [a,b,c,d], for the plane to overlay. Uses the plane
             equation a x + b y + c z + d = 0.
         name (str): Name of the plane to overlay, used for tooltips.
-        orig_frame:
+        orig_pointcloud:
         colors:
         i (int):
 
     Returns:
         plotly.graph_objects.Figure: Plot with PointCloud overlayed with plane.
     """
-    bb = orig_frame.bounding_box
+    bb = orig_pointcloud.bounding_box
     x = np.linspace(bb.x["min"], bb.x["max"], 100)
     y = np.linspace(bb.y["min"], bb.y["max"], 100)
     z = np.linspace(bb.z["min"], bb.z["max"], 100)

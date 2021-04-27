@@ -308,7 +308,7 @@ class PointCloud(PointCloudCore):
             name (str):
                 "origin": :func:`pointcloudset.diff.origin.calculate_distance_to_origin` \n
                 "plane": :func:`pointcloudset.diff.plane.calculate_distance_to_plane` \n
-                "pointcloud": :func:`pointcloudset.diff.pointcloud.calculate_distance_to_frame` \n
+                "pointcloud": :func:`pointcloudset.diff.pointcloud.calculate_distance_to_pointcloud` \n
                 "point": :func:`pointcloudset.diff.point.calculate_distance_to_point` \n
             target (Union[None, PointCloud, numpy.ndarray], optional): Pass argument according to chosen object.
                 Defaults to None.
@@ -487,8 +487,8 @@ class PointCloud(PointCloudCore):
                 is high. Try to reduce the area of interest before using
                 plane_segmentation. Caused by open3D."""
             )
-        inlier_Frame = self.apply_filter(inliers)
+        inlier_pointcloud = self.apply_filter(inliers)
         if return_plane_model:
-            return {"PointCloud": inlier_Frame, "plane_model": plane_model}
+            return {"PointCloud": inlier_pointcloud, "plane_model": plane_model}
         else:
-            return inlier_Frame
+            return inlier_pointcloud

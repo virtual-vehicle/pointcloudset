@@ -95,37 +95,37 @@ class DatasetCore:
         data = data.reset_index(drop=True)
         return data
 
-    def has_frames(self) -> bool:
+    def has_pointclouds(self) -> bool:
         """Check if Dataset has PointCloud.
 
         Returns:
-            bool: ``True`` if the Dataset does contain Frames, ``False`` if Dataset
-            does not contain any Frames.
+            bool: ``True`` if the Dataset does contain PointClouds, ``False`` if Dataset
+            does not contain any PointClouds.
         """
         return len(self) > 0
 
-    def get_frames_between_timestamps(
+    def get_pointclouds_between_timestamps(
         self, start_time: datetime.datetime, end_time: datetime.datetime
     ) -> DatasetCore:
-        """Select frames between start_time and end_time.
+        """Select pointclouds between start_time and end_time.
 
         Args:
             start_time (datetime.datetime): Timestamp of first pointcloud.
             end_time (datetime.datetime): Timestamp of last pointcloud.
 
         Returns:
-            Dataset: Dataset with Frames between two timestamps.
+            Dataset: Dataset with PointClouds between two timestamps.
 
         Raises:
             ValueError: If start_time is bigger than end_time.
         """
         if not start_time < end_time:
             raise ValueError("start_time must be smaller than end_time")
-        start_i = self._get_frame_number_from_time(start_time)
-        end_i = self._get_frame_number_from_time(end_time) + 1
+        start_i = self._get_pointcloud_number_from_time(start_time)
+        end_i = self._get_pointcloud_number_from_time(end_time) + 1
         return self[start_i:end_i]
 
-    def _get_frame_number_from_time(self, time: datetime.datetime) -> int:
+    def _get_pointcloud_number_from_time(self, time: datetime.datetime) -> int:
         """Get the pointcloud number from a timestamp.
 
         Args:
