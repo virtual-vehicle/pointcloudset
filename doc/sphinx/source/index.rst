@@ -4,7 +4,7 @@ Welcome to pointcloudset's documentation!
 .. include:: ../../../README.rst
    :start-after: inclusion-marker-do-not-remove
 
-.. image:: ../../assets/front.jpg
+.. image:: _static/front.jpg
    :height: 200
 
 .. toctree::
