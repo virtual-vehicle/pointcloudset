@@ -332,7 +332,9 @@ class PointCloud(PointCloudCore):
         else:
             raise ValueError("Unsupported diff. Check docstring")
 
-    def filter(self, name: str, *args, **kwargs) -> PointCloud:
+    def filter(
+        self, name: Literal["quantile", "value", "radiusoutlier"], *args, **kwargs
+    ) -> PointCloud:
         """Filters a PointCloud according to criteria.
 
         Args:
