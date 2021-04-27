@@ -35,6 +35,8 @@ setup(
     author="VIRTUAL VEHICLE Research GmbH",
     author_email="thomas.goelles@v2c2.at",
     description="Analyse of point cloud collections",
+    long_description=open("README.rst").read(),
+    long_description_content_type="text/x-rst",
     python_requires=">=3.8",
     entry_points={
         "console_scripts": ["bag2dataset = pointcloudset.io.dataset.commandline:app"]

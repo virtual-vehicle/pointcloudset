@@ -6,6 +6,14 @@ Welcome to pointcloudset's documentation!
 
 .. toctree::
    :maxdepth: 1
+   :caption: Tutorial
+
+   tutorial_notebooks/usage
+   tutorial_notebooks/reading_las
+
+
+.. toctree::
+   :maxdepth: 1
    :caption: Convert ROS bagfiles
 
    commandline_interface
@@ -17,16 +25,6 @@ Welcome to pointcloudset's documentation!
    how_to_contribute
    getting_started_contribution
    guidelines
-
-
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Tutorial
-
-   tutorial_notebooks/usage
-   tutorial_notebooks/reading_las
-
 
 .. toctree::
    :maxdepth: 5

@@ -10,9 +10,29 @@ recorded over a time period.
 Features
 ################################################
 * Handles Pointclouds over time
-* Apply arbitrary functions to datasets of pointclouds
 * Building complex pipelines with a clean and maintainable code
+
+.. code-block:: python
+
+   newpointcloud = pointcloud.limit("x",-5,5).filter("quantile","reflectivity", ">",0.5)
+
+* Apply arbitrary functions to datasets of pointclouds
+
+.. code-block:: python
+
+   def isolate_target(frame: PointCloud) -> PointCloud:
+      return frame.limit("x",0,1).limit("y",0,1)
+
+   def diff_to_pointcloud(pointcloud: PointCloud, to_compare: PointCloud) -> PointCloud:
+      return pointcloud.diff("pointcloud", to_compare)
+
+   result = dataset.apply(isolate_target).apply(diff_to_pointcloud, to_compare=dataset[0])
+
 * Support for large files with lazy evaluation, parallel processing
+
+.. image:: images/dask.gif
+   :width: 600
+
 * Support for numerical data per point (intensity, range, noise …)
 * Interactive 3D visualisation
 
@@ -20,11 +40,9 @@ Features
    :width: 600
 
 * High level processing based on dask, pandas, open3D and pyntcloud
-* HTML documented API, Interactive jupyter notebook with examples
 * Docker image is available
 * Optmised for automotive lidar - especially the ones by ouster
-* Load and save datasets of pointclouds
-* Handling of pointcloud datasets for further processing with open3D or pyntcloud
+* Directly read ROS bagfiles and many pointcloud file formats
 * A commandline tool to convert ROS bagfiles
 
 
@@ -33,11 +51,9 @@ Use case examples
 
 - Post processing and analytics of a lidar dataset recorded by ROS
 - A collection of multiple lidar scans from a terrestrial laser scanner
-- Comparison of the point cloud to a ground truth
+- Comparison of mutliple point clouds to a ground truth
 - Analytics of point clouds over time
-- Developing Algorithms on a singel frame and then applying them to huge datasets
-- Comparision to multiple
-
+- Developing algorithms on a singel frame and then applying them to huge datasets
 
 
 Installation with pip
