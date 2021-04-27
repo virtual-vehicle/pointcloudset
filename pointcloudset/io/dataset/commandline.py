@@ -55,25 +55,13 @@ def convert_bag2dir(
 @app.command()
 def get(
     bagfile: str,
-    folder_to_write: str = typer.Argument("."),
     topic: str = typer.Argument("/os1_cloud_node/points"),
+    folder_to_write: str = typer.Argument("."),
     start_frame_number: int = typer.Option(0, "--start", "-s"),
     end_frame_number: Optional[int] = typer.Option(None, "--end", "-e"),
     keep_zeros: bool = False,
     max_size: int = 100,
 ):
-    # """Convert ROS bagfiles to a directory of use with the pointcloudset package.
-
-    # Args:
-    #     bagfile: ROS bagfile
-    #     folder_to_write: [description]
-    #     topic: ros pointcloudset pointcloud topic. For example "/os1_cloud_node/points".
-    #     start_frame_number:  Defaults to 0.
-    #     end_frame_number:  Defaults to None.
-    #     keep_zeros: Keep element with zero values. Defaults to ``False``.
-    #     max_size: Max size of chunk, an internal variable. Defaults to 100.
-    # """
-
     if bagfile == ".":
         bagfile_paths = list(Path.cwd().rglob("*.bag"))
     else:
