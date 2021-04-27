@@ -19,6 +19,7 @@ sort-imports:
 clean:
 	py3clean .
 	cd doc/sphinx/ && make $@
+	rm -r doc/sphinx/source/python-api
 
 black:
 	black . --exclude=notebooks
