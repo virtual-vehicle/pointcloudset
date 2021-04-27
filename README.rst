@@ -28,7 +28,7 @@ Features
 
    result = dataset.apply(isolate_target).apply(diff_to_pointcloud, to_compare=dataset[0])
 
-* Support for large files with lazy evaluation, parallel processing
+* Support for large files with lazy evaluation and parallel processing
 
 .. image:: images/dask.gif
    :width: 600
@@ -53,7 +53,7 @@ Use case examples
 - A collection of multiple lidar scans from a terrestrial laser scanner
 - Comparison of mutliple point clouds to a ground truth
 - Analytics of point clouds over time
-- Developing algorithms on a singel frame and then applying them to huge datasets
+- Developing algorithms on a single frame and then applying them to huge datasets
 
 
 Installation with pip
@@ -89,7 +89,7 @@ Comparison to related packages
 ################################################
 
 #. `ROS <http://wiki.ros.org/rosbag/Code%20API>`_ - ROS bagfiles can contain many pointclouds from different sensors.
-   The downside of the format is that it is only suitable for seriel access
+   The downside of the format is that it is only suitable for serial access.
 
 #. `pyntcloud <https://github.com/daavoo/pyntcloud>`_ - Only for single pointclouds. This package is used as the basis for the
    PointCloud object.
