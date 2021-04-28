@@ -76,14 +76,15 @@ Quickstart
 
 .. code-block:: python
 
-   from pointcloudset import Dataset, Frame
+   from pointcloudset import Dataset, PointCloud
    from pathlib import Path
 
    dataset = Dataset.from_file(Path(rosbag_file.bag), topic="/os1_cloud_node/points", keep_zeros=False)
-   frame = Frame.from_file(Path(lasfile.las))
+   pointcloud = PointCloud.from_file(Path(lasfile.las))
 
-* See the usage.ipynb notebook in the notebook folder for an interactive tutorial.
-* For  more usage examples you can have a look at the tests.
+* Read the html documentation.
+* See the usage.ipynb notebook in the documentation folder for an interactive tutorial.
+* For even more usage examples you can have a look at the tests.
 
 Comparison to related packages
 ################################################
