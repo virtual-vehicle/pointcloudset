@@ -9,12 +9,12 @@ authors:
   - name: Thomas Goelles^[corresponding author Thomas.Goelles@v2c2.at]
     orcid: 0000-0002-3925-6260
     affiliation: 1
-  - name: Stefan Muckenhuber
-    orcid: 0000-0003-1920-8437
-    affiliation: "1,2"
   - name: Birgit Schlager
     orcid: 0000-0003-3290-5333
     affiliation: 1
+  - name: Stefan Muckenhuber
+    orcid: 0000-0003-1920-8437
+    affiliation: "1,2"
   - name: Sarah Haas
     affiliation: 1
   - name: Tobias Hammer
