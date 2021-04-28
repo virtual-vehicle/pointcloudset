@@ -44,7 +44,7 @@ Other python packages like open3D and pyntcloud focus on processing single point
 
 ![PointCloud set with main properties and ways to read and write data. figure.\label{fig:pointcloud}](./figures/data_pipeline3.pdf){ width=90% }
 
-\autoref{fig:dataset} illustrates the structure of the `Dataset` class including import and export possibilities. A Dataset consist of many PointCloud objects which can be accesses like list elements in Python. Alternativly a `PointCloud` object can also be created directly from files, as illustrated in \autoref{fig:pointcloud}.
+\autoref{fig:dataset} illustrates the structure of the `Dataset` class including import and export possibilities. A Dataset consist of many PointCloud objects which can be accesses like list elements in Python. Alternatively a `PointCloud` object can also be created directly from files, as illustrated in \autoref{fig:pointcloud}.
 
 
 # Acknowledgements
