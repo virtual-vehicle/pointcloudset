@@ -11,7 +11,7 @@ authors:
     affiliation: 1
   - name: Birgit Schlager
     orcid: 0000-0003-3290-5333
-    affiliation: 1
+    affiliation: "1,3"
   - name: Stefan Muckenhuber
     orcid: 0000-0003-1920-8437
     affiliation: "1,2"
@@ -24,6 +24,8 @@ affiliations:
    index: 1
  - name: University of Graz, Heinrichstrasse 36, 8010 Graz, Austria
    index: 2
+ - name: Graz University of Technology, Rechbauerstrasse 12, 8010 Graz, Austria
+   index: 3
 date: 1 February 2021
 bibliography: paper.bib
 ---
