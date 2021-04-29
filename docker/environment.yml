@@ -1,0 +1,51 @@
+name: base
+channels:
+  - defaults
+  - conda-forge
+  - open3d-admin
+dependencies:
+  - numpy
+  - open3d=0.12.0
+  - pandas
+  - pip
+  - python>=3.8
+  - dask
+  - fastparquet
+  - nb_conda_kernels
+  - plotly
+  - plotly-orca
+  - pip:
+    - jupyter
+    - jupyterlab
+    - jupyterlab_server
+    - nbconvert
+    - nbformat
+    - rospkg
+    - py3rosmsgs
+    - pyntcloud
+    - setuptools
+    - black
+    - blackcellmagic
+    - coverage
+    - isort
+    - mypy
+    - pylint
+    - flake8
+    - pytest-check
+    - pandoc
+    - pytest
+    - pytest-cov
+    - docstr-coverage
+    - typer
+    - pylas
+    - nbval
+    - geopandas
+    - fastparquet
+    - pycryptodomex
+    - sphinx
+    - sphinxcontrib-napoleon
+    - sphinx_rtd_theme
+    - nbsphinx
+    - sphinx-click
+prefix: /opt/conda
+
