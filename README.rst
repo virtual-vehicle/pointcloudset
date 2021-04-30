@@ -9,7 +9,7 @@ recorded over a time period.
 
 Features
 ################################################
-* Handles Pointclouds over time
+* Handles pointclouds over time
 * Building complex pipelines with a clean and maintainable code
 
 .. code-block:: python
@@ -41,7 +41,7 @@ Features
 
 * High level processing based on dask, pandas, open3D and pyntcloud
 * Docker image is available
-* Optmised for automotive lidar - especially the ones by ouster
+* Optmised for automotive lidar - especially the ones by Ouster
 * Directly read ROS bagfiles and many pointcloud file formats
 * A commandline tool to convert ROS bagfiles
 
@@ -51,8 +51,8 @@ Use case examples
 
 - Post processing and analytics of a lidar dataset recorded by ROS
 - A collection of multiple lidar scans from a terrestrial laser scanner
-- Comparison of mutliple point clouds to a ground truth
-- Analytics of point clouds over time
+- Comparison of mutliple pointclouds to a ground truth
+- Analytics of pointclouds over time
 - Developing algorithms on a single frame and then applying them to huge datasets
 
 
