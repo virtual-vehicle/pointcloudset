@@ -24,7 +24,7 @@ PANDAS_TYPEMAPPING = {
 }
 
 
-def dataframe_from_message(
+def _dataframe_from_message(
     message: rosbag.bag.BagMessage, keep_zeros: bool = False
 ) -> pd.DataFrame:
     columnnames = [item.name for item in message.message.fields]
@@ -44,7 +44,7 @@ def dataframe_from_message(
     return frame_df
 
 
-def get_number_of_messages(bag: rosbag.Bag, topic: str) -> int:
+def _get_number_of_messages(bag: rosbag.Bag, topic: str) -> int:
     return (bag.get_type_and_topic_info().topics)[topic].message_count
 
 
@@ -70,7 +70,7 @@ def dataset_from_rosbag(
     """
     max_size = 100
     bag = rosbag.Bag(bagfile.as_posix())
-    max_messages = get_number_of_messages(bag, topic)
+    max_messages = _get_number_of_messages(bag, topic)
 
     if end_frame_number is None:
         end_frame_number = max_messages
@@ -83,7 +83,7 @@ def dataset_from_rosbag(
     data = []
     timestamps = []
     for chunk in chunks:
-        res = read_rosbag_part(
+        res = _read_rosbag_part(
             bag,
             topic=topic,
             start_frame_number=chunk[0],
@@ -100,7 +100,7 @@ def dataset_from_rosbag(
     }
 
 
-def read_rosbag_part(
+def _read_rosbag_part(
     bag: rosbag.bag,
     topic: str,
     start_frame_number: int = 0,
@@ -110,7 +110,7 @@ def read_rosbag_part(
     messages = bag.read_messages(topics=[topic])
     sliced_messages = itertools.islice(messages, start_frame_number, None)
     result_list = []
-    max_messages = get_number_of_messages(bag, topic)
+    max_messages = _get_number_of_messages(bag, topic)
     if end_frame_number is None:
         end_frame_number = max_messages
     if end_frame_number > max_messages:
@@ -120,6 +120,6 @@ def read_rosbag_part(
         message = next(sliced_messages)
         timestamp = datetime.datetime.utcfromtimestamp(message.timestamp.to_sec())
         timestamps.append(timestamp)
-        df = delayed(dataframe_from_message(message, keep_zeros))
+        df = delayed(_dataframe_from_message(message, keep_zeros))
         result_list.append(df)
     return {"data": result_list, "timestamps": timestamps}
