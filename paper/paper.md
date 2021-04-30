@@ -1,5 +1,5 @@
 ---
-title: 'pointcloudset: A python package for working with multiple pointclouds recorded over time'
+title: '`pointcloudset`: A python package for working with multiple pointclouds recorded over time'
 tags:
   - Python
   - lidar
@@ -44,9 +44,9 @@ Apart from the progress in the lidar sector, technological improvements, as well
 Other python packages for point clouds, such as open3D and pyntcloud, focus on processing single point clouds. ROS (robot operating system) [@ros:2018] provides a way to store, access, and visualize multiple point clouds stored as `rosbags`. However, these `rosbags` are meant to be accessed only in a serial fashion, which is not ideal for post processing and not well suited for extracting subsets of the point cloud dataset.
 
 
-![Dataset object with main properties and ways to read and write data. figure.\label{fig:dataset}](./figures/data_pipeline2.pdf){ width=90% }
+![Dataset object with main properties and ways to read and write data. \label{fig:dataset}](./figures/data_pipeline2.pdf){ width=100% }
 
-![PointCloud set with main properties and ways to read and write data. figure.\label{fig:pointcloud}](./figures/data_pipeline3.pdf){ width=90% }
+![PointCloud set with main properties and ways to read and write data. \label{fig:pointcloud}](./figures/data_pipeline3.pdf){ width=80% }
 
 \autoref{fig:dataset} illustrates the structure of the `Dataset` class including import and export possibilities. A Dataset consist of many PointCloud objects which can be accesses like list elements in Python. Alternatively a `PointCloud` object can also be created directly from files, as illustrated in \autoref{fig:pointcloud}.
 
