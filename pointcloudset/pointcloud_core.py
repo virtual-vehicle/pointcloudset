@@ -33,7 +33,7 @@ class PointCloudCore:
 
     @property
     def timestamp_str(self) -> str:
-        """Converts `ROS <https://www.ros.org/>`_ timestamp to human readable date and time.
+        """Timestamp to human readable date and time string.
 
         Returns:
             str: Date/time string.
