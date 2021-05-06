@@ -3,12 +3,6 @@ How to read the API documentation
 
 A Dataset consists of multiple PointCloud objects which form the two main classes of the package.
 
-.. image:: images/Folie2.PNG
-    :width: 600
-
-
-.. image:: images/Folie3.PNG
-    :width: 300
 
 The main classes
 ----------------------------------------
@@ -16,8 +10,14 @@ The main classes
 
 **Dataset**: :class:`pointcloudset.dataset.Dataset` based on :class:`pointcloudset.dataset_core.DatasetCore`
 
+.. image:: images/Folie2.PNG
+    :width: 600
+
+
 **PointCloud**: :class:`pointcloudset.pointcloud.PointCloud` based on :class:`pointcloudset.pointcloud_core.PointCloudCore`
 
+.. image:: images/Folie3.PNG
+    :width: 300
 
 Modules
 ----------------------------------------
