@@ -3,6 +3,13 @@ How to read the API documentation
 
 A Dataset consists of multiple PointCloud objects which form the two main classes of the package.
 
+.. image:: images/Folie2.PNG
+    :width: 600
+
+
+.. image:: images/Folie3.PNG
+    :width: 300
+
 The main classes
 ----------------------------------------
 
