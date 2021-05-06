@@ -98,7 +98,13 @@ Comparison to related packages
 #. `open3d <https://github.com/intel-isl/Open3D>`_ - Only for single pointclouds. Excellend package, which is used for some
    methods on the PointCloud.
 
-Citation
+Citation and contact
 ################################################
+
+.. |orcid| image:: https://orcid.org/sites/default/files/images/orcid_16x16.png
+   :target: https://orcid.org/0000-0002-3925-6260>
+
+|orcid| `Thomas Gölles <https://orcid.org/0000-0002-3925-6260>`_
+email: thomas.goelles@v2c2.at
 
 ADD link to JOSS paper here and DOI

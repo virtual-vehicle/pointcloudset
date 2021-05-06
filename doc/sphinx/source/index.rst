@@ -25,6 +25,7 @@ Welcome to pointcloudset's documentation!
    how_to_contribute
    getting_started_contribution
    guidelines
+   support
 
 .. toctree::
    :maxdepth: 5
