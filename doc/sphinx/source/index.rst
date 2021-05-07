@@ -10,6 +10,7 @@ Welcome to pointcloudset's documentation!
 
    tutorial_notebooks/usage
    tutorial_notebooks/reading_las
+   tutorial_notebooks/Working_with_kitti_dataset
 
 
 .. toctree::
