@@ -28,6 +28,7 @@ dependencies:
     - blackcellmagic
     - coverage
     - isort
+    - laspy
     - mypy
     - pylint
     - flake8
