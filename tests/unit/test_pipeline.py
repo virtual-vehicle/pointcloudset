@@ -1,8 +1,10 @@
-import pointcloudset as pcs
-import pytest_check as check
-from pointcloudset.pipeline.delayed_result import DelayedResult
 from typing import Any
+
 import pytest
+import pytest_check as check
+
+import pointcloudset as pcs
+from pointcloudset.pipeline.delayed_result import DelayedResult
 
 
 def first(pc: pcs.PointCloud) -> Any:

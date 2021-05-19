@@ -2,9 +2,8 @@
 Functions for file input and output.
 """
 
-from pyntcloud.io import (
-    FROM_FILE as POINTCLOUD_FROM_FILE,
-)  # needs to be here, ignore warnings
+from pyntcloud.io import \
+    FROM_FILE as POINTCLOUD_FROM_FILE  # needs to be here, ignore warnings
 
 from pointcloudset.io.dataset.bag import dataset_from_rosbag
 from pointcloudset.io.dataset.dir import dataset_from_dir, dataset_to_dir

@@ -1,12 +1,11 @@
 from pathlib import Path
 
 import pandas as pd
-
-import pytest_check as check
 import pytest
+import pytest_check as check
+from dask.dataframe import DataFrame as ddf
 
 from pointcloudset import Dataset, PointCloud
-from dask.dataframe import DataFrame as ddf
 
 
 def test_agg_wrong(testdataset_mini_real: Dataset):

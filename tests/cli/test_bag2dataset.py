@@ -1,8 +1,10 @@
-from typer.testing import CliRunner
-import pytest_check as check
-from pointcloudset.io.dataset.commandline import app
 from pathlib import Path
+
+import pytest_check as check
+from typer.testing import CliRunner
+
 from pointcloudset import Dataset
+from pointcloudset.io.dataset.commandline import app
 
 runner = CliRunner()
 

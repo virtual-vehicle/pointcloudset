@@ -1,11 +1,11 @@
 import datetime
 
+import pandas as pd
 import pytest
 import pytest_check as check
 import rosbag
 from dask.delayed import DelayedLeaf
 from pandas.testing import assert_series_equal
-import pandas as pd
 
 from pointcloudset import Dataset, PointCloud
 

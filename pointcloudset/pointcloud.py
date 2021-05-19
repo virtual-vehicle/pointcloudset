@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import warnings
 from pathlib import Path
-from typing import List, Union, Literal
+from typing import List, Literal, Union
 
 import numpy as np
 import open3d
@@ -14,14 +14,10 @@ import pyntcloud
 
 from pointcloudset.diff import ALL_DIFFS
 from pointcloudset.filter import ALL_FILTERS
-from pointcloudset.pointcloud_core import PointCloudCore
-from pointcloudset.io import (
-    POINTCLOUD_FROM_FILE,
-    POINTCLOUD_FROM_INSTANCE,
-    POINTCLOUD_TO_FILE,
-    POINTCLOUD_TO_INSTANCE,
-)
+from pointcloudset.io import (POINTCLOUD_FROM_FILE, POINTCLOUD_FROM_INSTANCE,
+                              POINTCLOUD_TO_FILE, POINTCLOUD_TO_INSTANCE)
 from pointcloudset.plot.pointcloud import plot_overlay
+from pointcloudset.pointcloud_core import PointCloudCore
 
 
 class PointCloud(PointCloudCore):
