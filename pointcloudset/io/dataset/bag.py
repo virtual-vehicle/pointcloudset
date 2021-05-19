@@ -60,8 +60,10 @@ def dataset_from_rosbag(
     Args:
         bagfile (pathlib.Path): Path of bag file.
         topic (str): `ROS <https://www.ros.org/>`_ topic that should be read.
-        start_frame_number (int): Start pointcloud of pointcloud sequence to read. Defaults to 0.
-        end_frame_number (int): End pointcloud of pointcloud sequence to read. Defaults to None.
+        start_frame_number (int): Start pointcloud of pointcloud sequence to read.
+            Defaults to 0.
+        end_frame_number (int): End pointcloud of pointcloud sequence to read.
+            Defaults to None.
         keep_zeros (bool): If ``True`` keep zeros in frames, if ``False`` do not keep
             zeros in frames.
 
