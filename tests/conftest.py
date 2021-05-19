@@ -9,6 +9,11 @@ from pointcloudset import Dataset, PointCloud
 
 
 @pytest.fixture()
+def testdata_path() -> Path:
+    return Path(__file__).parent.absolute() / "testdata"
+
+
+@pytest.fixture()
 def testbag1():
     return Path(__file__).parent.absolute() / "testdata/test.bag"
 
@@ -131,3 +136,12 @@ def testdataset_mini_real(
 def testdataset_mini_same(testpointcloud_mini_real) -> Dataset:
     pointclouds = [testpointcloud_mini_real, testpointcloud_mini_real]
     return Dataset.from_instance("POINTCLOUDS", pointclouds)
+
+
+@pytest.fixture()
+def test_kitti() -> Dataset:
+    filename = (
+        Path(__file__).parent.absolute()
+        / "testdata/kitti_velodyne/kitti_2011_09_26_drive_0002_synce"
+    )
+    return Dataset.from_file(filename)

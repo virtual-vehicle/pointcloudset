@@ -1,0 +1,27 @@
+from typer.testing import CliRunner
+import pytest_check as check
+from pointcloudset.io.dataset.commandline import app
+from pathlib import Path
+from pointcloudset import Dataset
+
+runner = CliRunner()
+
+
+def test_help():
+    result = runner.invoke(app, ["--help"])
+    check.equal(result.exit_code, 0)
+    check.equal("Usage:" in result.stdout, True)
+
+
+def test_convert(testbag1: Path, tmp_path: Path):
+    out_path = tmp_path.joinpath("cli")
+    result = runner.invoke(
+        app,
+        [testbag1.as_posix(), "/os1_cloud_node/points", out_path.as_posix()],
+    )
+    check.equal(result.exit_code, 0)
+    check.equal(out_path.exists(), True)
+    read_dataset = Dataset.from_file(out_path)
+    check.is_instance(read_dataset, Dataset)
+    check.equal(len(read_dataset), 2)
+    check.equal(len(read_dataset.timestamps), 2)
