@@ -1,12 +1,35 @@
 from pathlib import Path
 from typing import Optional
 
-import typer
 import click  # needed for documentation
+import typer
 
-from pointcloudset.io.dataset.convert_bag2dataset import convert_bag2dir
+from pointcloudset import Dataset
+from pointcloudset.io.dataset.bag import dataset_from_rosbag
 
 app = typer.Typer()
+
+
+def _in_loop_for_cli(res, data, timestamps, folder_to_write, meta, chunk_number):
+    data = res["data"]
+    timestamps = res["timestamps"]
+    Dataset(data, timestamps, meta).to_file(
+        folder_to_write.joinpath(f"{chunk_number}"), use_orig_filename=False
+    )
+
+
+def _convert_bag2dir(
+    bagfile: Path,
+    topic: str,
+    start_frame_number: int = 0,
+    end_frame_number: int = None,
+    keep_zeros: bool = False,
+    max_size: int = 100,
+    folder_to_write: Path = Path(),
+    mode="cli",
+    in_loop_function=_in_loop_for_cli,
+):
+    return dataset_from_rosbag(**locals())
 
 
 @app.command()
@@ -29,14 +52,15 @@ def get(
             folder_to_write_path = Path.cwd().joinpath(bagfile_path.stem)
         else:
             folder_to_write_path = Path(folder_to_write)
-        convert_bag2dir(
-            bagfile_path,
-            folder_to_write_path,
-            topic,
-            start_frame_number,
-            end_frame_number,
-            keep_zeros,
-            max_size,
+        _convert_bag2dir(
+            bagfile=bagfile_path,
+            topic=topic,
+            folder_to_write=folder_to_write_path,
+            start_frame_number=start_frame_number,
+            end_frame_number=end_frame_number,
+            keep_zeros=keep_zeros,
+            max_size=max_size,
+            in_loop_function=_in_loop_for_cli,
         )
     typer.echo("done")
 

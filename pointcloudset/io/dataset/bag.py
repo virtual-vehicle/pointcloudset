@@ -4,6 +4,7 @@ Functions for `ROS <https://www.ros.org/>`_ bagfiles.
 import datetime
 import itertools
 from pathlib import Path
+from typing import Callable, Literal, Union, List
 
 import numpy as np
 import pandas as pd
@@ -48,58 +49,83 @@ def _get_number_of_messages(bag: rosbag.Bag, topic: str) -> int:
     return (bag.get_type_and_topic_info().topics)[topic].message_count
 
 
+def _gen_frame_list(start_frame_number: int, end_frame_number: int, max_messages: int):
+    if end_frame_number is None:
+        end_frame_number = max_messages
+    if end_frame_number > max_messages:
+        raise ValueError("end_frame_number to high")
+    return np.arange(start_frame_number, end_frame_number)
+
+
+def _gen_chunks(bag, topic, start_frame_number, end_frame_number, max_size):
+    max_messages = _get_number_of_messages(bag, topic)
+    framelist = _gen_frame_list(start_frame_number, end_frame_number, max_messages)
+    return np.array_split(framelist, int(np.ceil(len(framelist) / max_size)))
+
+
+def _in_loop(
+    res: dict,
+    data: list,
+    timestamps: list,
+    folder_to_write: Path,
+    meta: dict,
+    chunk_number: int,
+):
+    data.extend(res["data"])
+    timestamps.extend(res["timestamps"])
+
+
 def dataset_from_rosbag(
     bagfile: Path,
     topic: str,
     start_frame_number: int = 0,
     end_frame_number: int = None,
     keep_zeros: bool = False,
-) -> dict:
+    max_size: int = 100,
+    folder_to_write: Path = Path(),
+    mode: Literal["internal", "cli"] = "internal",
+    in_loop_function: Callable = _in_loop,
+) -> Union[dict, None]:
     """Reads a Dataset from a bag file.
 
     Args:
-        bagfile (pathlib.Path): Path of bag file.
-        topic (str): `ROS <https://www.ros.org/>`_ topic that should be read.
-        start_frame_number (int): Start pointcloud of pointcloud sequence to read.
-            Defaults to 0.
-        end_frame_number (int): End pointcloud of pointcloud sequence to read.
-            Defaults to None.
-        keep_zeros (bool): If ``True`` keep zeros in frames, if ``False`` do not keep
-            zeros in frames.
+        bagfile (Path): Path to bag file.
+        topic (str): `ROS <https://www.ros.org/>`_ topic that should be rea
+        start_frame_number (int, optional): Start pointcloud of pointcloud sequence to read. Defaults to 0.
+        end_frame_number (int, optional): End pointcloud of pointcloud sequence to read.. Defaults to None.
+        keep_zeros (bool, optional): If ``True`` keep zeros in frames, if ``False`` do not keep
+            zeros in frames. Defaults to False.
+        max_size (int, optional): Max chunk size to read from ros file at once. Defaults to 100.
+        folder_to_write (Path, optional): Directly write to filder. Defaults to Path().
+        mode (Literal["internal", "cli"], optional): "cli" for commandline tool. Defaults to "internal".
 
     Returns:
-        dict: Lidar data with timestamps and metadata.
+        Union[dict, None]: Dict to generate Dataset or None for cli use.
     """
-    max_size = 100
     bag = rosbag.Bag(bagfile.as_posix())
-    max_messages = _get_number_of_messages(bag, topic)
+    chunks = _gen_chunks(bag, topic, start_frame_number, end_frame_number, max_size)
 
-    if end_frame_number is None:
-        end_frame_number = max_messages
-    if end_frame_number > max_messages:
-        raise ValueError("end_frame_number to high")
-
-    framelist = np.arange(start_frame_number, end_frame_number)
-
-    chunks = np.array_split(framelist, int(np.ceil(len(framelist) / max_size)))
     data = []
-    timestamps = []
-    for chunk in chunks:
+    timestamps: List[datetime.datetime] = []
+    meta = {"orig_file": bagfile.as_posix(), "topic": topic}
+
+    for chunk_number, chunk in enumerate(chunks):
         res = _read_rosbag_part(
-            bag,
+            bag=bag,
             topic=topic,
             start_frame_number=chunk[0],
             end_frame_number=chunk[-1] + 1,
             keep_zeros=keep_zeros,
         )
-        data.extend(res["data"])
-        timestamps.extend(res["timestamps"])
-    meta = {"orig_file": bagfile.as_posix(), "topic": topic}
-    return {
-        "data": data,
-        "timestamps": timestamps,
-        "meta": meta,
-    }
+        in_loop_function(res, data, timestamps, folder_to_write, meta, chunk_number)
+    if mode == "internal":
+        return {
+            "data": data,
+            "timestamps": timestamps,
+            "meta": meta,
+        }
+    else:
+        return None
 
 
 def _read_rosbag_part(
