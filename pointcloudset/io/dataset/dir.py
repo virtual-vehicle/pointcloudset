@@ -4,7 +4,6 @@ from datetime import datetime
 from pathlib import Path
 
 import dask.dataframe as dd
-import numpy as np
 
 datetime_format = "%Y-%m-%d %H:%M:%S.%f"
 delimiter = ";"
@@ -22,10 +21,7 @@ def dataset_to_dir(dataset_in, file_path: Path, use_orig_filename: bool = True) 
     orig_filename = Path(dataset_in.meta["orig_file"]).stem
     if len(orig_filename) == 0:
         orig_filename = str(uuid.uuid4())
-    if use_orig_filename:
-        folder = file_path.joinpath(orig_filename)
-    else:
-        folder = file_path
+    folder = file_path.joinpath(orig_filename) if use_orig_filename else file_path
     data = dd.from_delayed(dataset_in.data)
     data.to_parquet(folder)
     meta = dataset_in.meta
@@ -48,9 +44,9 @@ def dataset_from_dir(dir: Path) -> dict:
     """
     _check_dir(dir)
     dirs = [e for e in dir.iterdir() if e.is_dir()]
-    dirs.sort()
+    dirs.sort(key=_get_folder_number)
 
-    if len(dirs) == 0:
+    if not dirs:
         dirs = [dir]
 
     data = []
@@ -68,6 +64,10 @@ def dataset_from_dir(dir: Path) -> dict:
         "timestamps": timestamps,
         "meta": meta,
     }
+
+
+def _get_folder_number(path: Path) -> int:
+    return int(path.stem)
 
 
 def _dataset_from_single_dir(dir: Path) -> dict:
