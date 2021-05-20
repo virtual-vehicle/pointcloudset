@@ -20,7 +20,7 @@ def testbag1():
 
 @pytest.fixture()
 def testlas1():
-    return Path(__file__).parent.absolute() / "testdata/diamond.las"
+    return Path(__file__).parent.absolute() / "testdata/las_files/diamond.las"
 
 
 @pytest.fixture()
