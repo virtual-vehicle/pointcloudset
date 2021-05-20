@@ -34,6 +34,7 @@ def dataset_to_dir(dataset_in, file_path: Path, use_orig_filename: bool = True) 
 
 
 def dataset_from_dir(dir: Path) -> dict:
+    # sourcery skip: simplify-len-comparison
     """Reads a Dataset from a directory.
 
     Args:
@@ -44,9 +45,10 @@ def dataset_from_dir(dir: Path) -> dict:
     """
     _check_dir(dir)
     dirs = [e for e in dir.iterdir() if e.is_dir()]
-    dirs.sort(key=_get_folder_number)
 
-    if not dirs:
+    if len(dirs) > 0:
+        dirs.sort(key=_get_folder_number)
+    else:
         dirs = [dir]
 
     data = []
@@ -67,7 +69,11 @@ def dataset_from_dir(dir: Path) -> dict:
 
 
 def _get_folder_number(path: Path) -> int:
-    return int(path.stem)
+    try:
+        return int(path.stem)
+    except ValueError:
+        print(path)
+        raise ValueError("Not a path with a dataset.")
 
 
 def _dataset_from_single_dir(dir: Path) -> dict:
