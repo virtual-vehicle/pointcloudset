@@ -26,7 +26,7 @@ def test_from_bag2(testbag1):
 def test_to_dir(testbag1, tmp_path: Path):
     ds = Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=True)
     testfile_name = tmp_path.joinpath("dataset")
-    ds.to_file(file_path=testfile_name)
+    ds.to_file(file_path=testfile_name, use_orig_filename=False)
     check.equal(testfile_name.exists(), True)
     read_dataset = Dataset.from_file(testfile_name)
     check.is_instance(read_dataset, Dataset)
