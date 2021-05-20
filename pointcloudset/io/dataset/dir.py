@@ -4,7 +4,6 @@ from datetime import datetime
 from pathlib import Path
 
 import dask.dataframe as dd
-import numpy as np
 
 datetime_format = "%Y-%m-%d %H:%M:%S.%f"
 delimiter = ";"
@@ -22,10 +21,7 @@ def dataset_to_dir(dataset_in, file_path: Path, use_orig_filename: bool = True) 
     orig_filename = Path(dataset_in.meta["orig_file"]).stem
     if len(orig_filename) == 0:
         orig_filename = str(uuid.uuid4())
-    if use_orig_filename:
-        folder = file_path.joinpath(orig_filename)
-    else:
-        folder = file_path
+    folder = file_path.joinpath(orig_filename) if use_orig_filename else file_path
     data = dd.from_delayed(dataset_in.data)
     data.to_parquet(folder)
     meta = dataset_in.meta
@@ -38,6 +34,7 @@ def dataset_to_dir(dataset_in, file_path: Path, use_orig_filename: bool = True) 
 
 
 def dataset_from_dir(dir: Path) -> dict:
+    # sourcery skip: simplify-len-comparison
     """Reads a Dataset from a directory.
 
     Args:
@@ -48,9 +45,10 @@ def dataset_from_dir(dir: Path) -> dict:
     """
     _check_dir(dir)
     dirs = [e for e in dir.iterdir() if e.is_dir()]
-    dirs.sort()
 
-    if len(dirs) == 0:
+    if len(dirs) > 0:
+        dirs.sort(key=_get_folder_number)
+    else:
         dirs = [dir]
 
     data = []
@@ -68,6 +66,14 @@ def dataset_from_dir(dir: Path) -> dict:
         "timestamps": timestamps,
         "meta": meta,
     }
+
+
+def _get_folder_number(path: Path) -> int:
+    try:
+        return int(path.stem)
+    except ValueError:
+        print(path)
+        raise ValueError("Not a path with a dataset.")
 
 
 def _dataset_from_single_dir(dir: Path) -> dict:

@@ -153,7 +153,7 @@ class DatasetCore:
                 self.timestamps[i] >= self.timestamps[i + 1]
                 for i in range(len(self.timestamps) - 1)
             ):
-                warnings.warn("Timestamps are not monotonic increasing")
+                raise ValueError("Timestamps are not monotonic increasing")
             assert isinstance(
                 self.data[0], (DelayedLeaf, Delayed)
             ), f"data needs to be a dask delayed object got {type(self.data[0])}"

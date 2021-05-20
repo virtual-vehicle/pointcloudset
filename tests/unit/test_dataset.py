@@ -109,6 +109,7 @@ def test_extend(testbag1):
     ds1 = Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=True)
     len_old = len(ds1)
     ds2 = Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=True)
+    ds2.timestamps = [ts + datetime.timedelta(seconds=10) for ts in ds2.timestamps]
     ds1.extend(ds2)
     check.equal(len(ds1), len_old * 2)
 
