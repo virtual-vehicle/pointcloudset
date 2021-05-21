@@ -9,7 +9,7 @@ Welcome to pointcloudset's documentation!
    :caption: Tutorial
 
    tutorial_notebooks/usage
-   tutorial_notebooks/reading_las
+   tutorial_notebooks/reading_las_pcd
    tutorial_notebooks/Working_with_kitti_dataset
 
 
