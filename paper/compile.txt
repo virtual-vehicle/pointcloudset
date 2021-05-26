@@ -1,3 +1,6 @@
+cd /Users/stefanmuckenhuber/Documents/UniGraz/project/Lidar/lidar
+
+
 docker run --rm \
     --volume $PWD/paper:/data \
     --user $(id -u):$(id -g) \
