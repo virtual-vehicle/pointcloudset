@@ -98,6 +98,9 @@ Comparison to related packages
 #. `open3d <https://github.com/intel-isl/Open3D>`_ - Only for single pointclouds. Excellend package, which is used for some
    methods on the PointCloud.
 
+#. `pdal <https://github.com/PDAL/PDAL>`_ -  Works also with pipeline on pointclouds but is mostly focues on single point cloud processing.
+Pountcloudset is purely in python and based on pandas dataframes and works in parallel to process large datasets.
+
 Citation and contact
 ################################################
 
