@@ -1,11 +1,16 @@
 from pathlib import Path
 
 import pandas as pd
+import datetime
 import pytest
 import pytest_check as check
 from dask.dataframe import DataFrame as ddf
 
 from pointcloudset import Dataset, PointCloud
+
+
+def test_duration_type(testdataset_mini_real: Dataset):
+    isinstance(type(testdataset_mini_real), datetime.timedelta)
 
 
 def test_agg_wrong(testdataset_mini_real: Dataset):

@@ -41,6 +41,15 @@ class DatasetCore:
         return self.timestamps[-1]
 
     @property
+    def duration(self) -> datetime.timedelta:
+        """
+        Returns:
+            datetime.timedelta: Duration between first and last
+            pointcloud in Dataset.
+        """
+        return self.timestamps[-1] - self.timestamps[0]
+
+    @property
     def daskdataframe(self) -> dask.dataframe.core.DataFrame:
         """
         Returns:
