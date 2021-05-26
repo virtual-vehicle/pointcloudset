@@ -1,6 +1,7 @@
 """
 Functions for plotting frames.
-Used mainly by :func:`pointcloudset.pointcloud.PointCloud.plot` but could also be used on its own.
+Used mainly by :func:`pointcloudset.pointcloud.PointCloud.plot` but could also be used
+on its own.
 """
 import numpy as np
 import plotly.express as px
@@ -8,7 +9,8 @@ import plotly.graph_objs as go
 
 
 def plot_overlay(fig, pointcloud, overlay: dict, **kwargs):
-    """Meta function to overlay the plot with other plots. Used in the main plot function
+    """Meta function to overlay the plot with other plots. Used in the main plot
+    function.
     Not for standalone use.
 
     Args:
@@ -35,7 +37,7 @@ def plot_overlay(fig, pointcloud, overlay: dict, **kwargs):
     for name, from_dict in overlay.items():
         marker_color = colors[i]
         if isinstance(from_dict, np.ndarray):
-            fig = plot_overlay_plane(
+            fig = _plot_overlay_plane(
                 fig,
                 plane_model=from_dict,
                 name=name,
@@ -44,7 +46,7 @@ def plot_overlay(fig, pointcloud, overlay: dict, **kwargs):
                 i=i,
             )
         elif from_dict._has_data():
-            fig = plot_overlay_pointcloud(
+            fig = _plot_overlay_pointcloud(
                 fig,
                 pointcloud=from_dict,
                 name=name,
@@ -62,7 +64,7 @@ def plot_overlay(fig, pointcloud, overlay: dict, **kwargs):
     return fig
 
 
-def plot_overlay_pointcloud(fig, pointcloud, name: str, marker_color: str, **kwargs):
+def _plot_overlay_pointcloud(fig, pointcloud, name: str, marker_color: str, **kwargs):
     """Overlay the plot with another pointcloud.
 
     Args:
@@ -82,7 +84,7 @@ def plot_overlay_pointcloud(fig, pointcloud, name: str, marker_color: str, **kwa
     return fig.add_trace(overlay_trace)
 
 
-def plot_overlay_plane(
+def _plot_overlay_plane(
     fig, plane_model: np.ndarray, name: str, orig_pointcloud, colors, i: int
 ):
     """Overlay the plot with plane.
@@ -93,8 +95,8 @@ def plot_overlay_plane(
             equation a x + b y + c z + d = 0.
         name (str): Name of the plane to overlay, used for tooltips.
         orig_pointcloud:
-        colors:
-        i (int):
+        colors: colors from polot_overlay
+        i (int): item number from plot_overlay
 
     Returns:
         plotly.graph_objects.Figure: Plot with PointCloud overlayed with plane.
