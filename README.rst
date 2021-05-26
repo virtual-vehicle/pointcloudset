@@ -89,17 +89,15 @@ Quickstart
 Comparison to related packages
 ################################################
 
-#. `ROS <http://wiki.ros.org/rosbag/Code%20API>`_ - ROS bagfiles can contain many pointclouds from different sensors.
-   The downside of the format is that it is only suitable for serial access.
-
+#. `ROS <http://wiki.ros.org/rosbag/Code%20API>`_ -  bagfiles can contain many pointclouds from different sensors.
+   The downside of the format is that it is only suitable for serial access and not well suited for data analytics and post processing.
 #. `pyntcloud <https://github.com/daavoo/pyntcloud>`_ - Only for single pointclouds. This package is used as the basis for the
    PointCloud object.
-
 #. `open3d <https://github.com/intel-isl/Open3D>`_ - Only for single pointclouds. Excellend package, which is used for some
    methods on the PointCloud.
+#. `pdal <https://github.com/PDAL/PDAL>`_ - Works also with pipelines on pointclouds but is mostly focused on single point cloud processing.
+   Pountcloudset is purely in python and based on pandas dataframes. In addtion pointcloudset works in parallel to process large datasets.
 
-#. `pdal <https://github.com/PDAL/PDAL>`_ -  Works also with pipeline on pointclouds but is mostly focues on single point cloud processing.
-Pountcloudset is purely in python and based on pandas dataframes and works in parallel to process large datasets.
 
 Citation and contact
 ################################################
