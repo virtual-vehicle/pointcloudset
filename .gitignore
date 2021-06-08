@@ -51,8 +51,8 @@ coverage.xml
 *.log
 
 # Sphinx documentation
-docs/_build/
-doc/sphinx/source/python-api
+doc/sphinx/build/
+doc/sphinx/source/python-api*
 
 # PyBuilder
 target/
@@ -86,6 +86,9 @@ target/
 *.swp
 *.swo
 
+# pytest cache
+.pytest_cache
+
 # Mypy cache
 .mypy_cache/
 environment_noversions.yml
@@ -99,9 +102,10 @@ reports/example.synctex.gz
 pyntcloud_plot*
 .vscode-server
 ~$*
-pipeline.py
-processing.py
-notebooks/dev_thomas.html
-notebooks/dev_thomas.ipynb
-notebooks/dev_thomas.py
+notebooks/dev*
 
+tests/testdata/big.bag
+*.lock
+*.dirlock
+*dask-worker-space*
+logs*

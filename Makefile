@@ -1,23 +1,25 @@
-.PHONY: doc docserver doccoverage
+.PHONY: doc doccoverage
 doc:
-	pdoc --force --html . --output-dir doc
+	sphinx-apidoc --no-toc --module-first -f -e -o ./doc/sphinx/source/python-api ./pointcloudset pointcloudset/config.py pointcloudset/io/dataset/commandline.py pointcloudset/io/dataset/convert_bag2dataset.py && cd doc/sphinx/ && make html
 
 doccoverage:
-	docstr-coverage lidar --skipmagic
-
-docserver:
-	pdoc --http : .
+	docstr-coverage pointcloudset --skipmagic
 
 test:
-	coverage run -m pytest
+	pytest --cov=pointcloudset tests
+	pytest --current-env --nbval-lax doc/sphinx/source/tutorial_notebooks/usage.ipynb
+	pytest --current-env --nbval-lax doc/sphinx/source/tutorial_notebooks/reading_las_pcd.ipynb
+	pytest --current-env --nbval-lax tests/plot/test_plot_plane.ipynb
 	python -m coverage report -i
 	python -m coverage html -i
 
 sort-imports:
-	isort -rc .
+	isort .
 
 clean:
 	py3clean .
+	cd doc/sphinx/ && make $@
+	rm -r doc/sphinx/source/python-api
 
 black:
 	black . --exclude=notebooks
