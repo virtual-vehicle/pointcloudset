@@ -52,6 +52,7 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+doc/sphinx/source/python-api
 
 # PyBuilder
 target/
@@ -103,3 +104,4 @@ processing.py
 notebooks/dev_thomas.html
 notebooks/dev_thomas.ipynb
 notebooks/dev_thomas.py
+
