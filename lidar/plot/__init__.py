@@ -1,3 +1,0 @@
-"""
-Plot routines.
-"""
