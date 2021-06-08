@@ -86,6 +86,9 @@ target/
 *.swp
 *.swo
 
+# pytest cache
+.pytest_cache
+
 # Mypy cache
 .mypy_cache/
 environment_noversions.yml
