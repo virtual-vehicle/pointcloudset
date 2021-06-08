@@ -79,12 +79,12 @@ Quickstart
    from pointcloudset import Dataset, PointCloud
    from pathlib import Path
 
-   dataset = Dataset.from_file(Path(rosbag_file.bag), topic="/os1_cloud_node/points", keep_zeros=False)
-   pointcloud = PointCloud.from_file(Path(lasfile.las))
+   dataset = Dataset.from_file(Path("rosbag_file.bag"), topic="/os1_cloud_node/points", keep_zeros=False)
+   pointcloud = PointCloud.from_file(Path("lasfile.las"))
 
 * Read the html documentation.
-* See the usage.ipynb notebook in the documentation folder for an interactive tutorial.
-* For even more usage examples you can have a look at the tests.
+* Have a look at the tuturial notebooks in the documentation folder
+* For even more usage examples you can have a look at the tests
 
 Comparison to related packages
 ################################################
