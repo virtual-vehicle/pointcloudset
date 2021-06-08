@@ -1,11 +1,11 @@
 // For format details, see https://aka.ms/vscode-remote/devcontainer.json or this file's README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.122.1/containers/docker-existing-dockerfile
 {
-	"name": "lidar_dev",
+	"name": "pointcloudset_dev",
 	// Sets the run context to one level up instead of the .devcontainer folder.
 	"context": "..",
 	// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
-	"dockerFile": "Dockerfile",
+	"dockerFile": "Dockerfile.txt",
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
 		"python.formatting.provider": "black",
@@ -24,11 +24,13 @@
 		"autoDocstring.docstringFormat": "google",
 		"python.linting.pylintPath": "/opt/conda/bin/pylint",
 		"cSpell.maxNumberOfProblems": 500,
-		"python.testing.pytestEnabled": true
+		"python.testing.pytestEnabled": true,
+		"jupyter.alwaysTrustNotebooks": true
 	},
 	"postCreateCommand": "pip install -e .",
 	"extensions": [
 		"ms-python.python",
+		"ms-python.vscode-pylance",
 		"njpwerner.autodocstring",
 		"ms-azuretools.vscode-docker",
 		"mhutchie.git-graph",
@@ -37,12 +39,15 @@
 		"ms-azuretools.vscode-docker",
 		"streetsidesoftware.code-spell-checker",
 		"oderwat.indent-rainbow",
-		"gua.rainbow-brackets"
+		"gua.rainbow-brackets",
+		"littlefoxteam.vscode-python-test-adapter",
+		"swyddfa.esbonio"
 	],
 	"forwardPorts": [
 		5920,
 		5900,
-		8080
+		8080,
+		8787
 	],
 	"mounts": [
 		"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
