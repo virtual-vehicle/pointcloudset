@@ -9,7 +9,6 @@ dependencies:
   - pandas
   - pip
   - python>=3.8
-  - gcc
   - dask
   - nb_conda_kernels
   - plotly

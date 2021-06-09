@@ -35,6 +35,7 @@ RUN apt-get update \
     && chmod 0440 /etc/sudoers.d/$USERNAME \
     # tools to access extrenal datasets
     && apt-get -y install netcat curl make wget unzip \
+    && apt-get -y gcc \
     # orca for plotly
     && apt-get install -y xvfb \
     && apt-get install -y libgtk2.0-0 \
