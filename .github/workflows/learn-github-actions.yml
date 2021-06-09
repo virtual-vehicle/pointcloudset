@@ -1,6 +1,7 @@
 name: learn-github-actions
 
 on: [push]
+
 jobs:
   conda_test:
     runs-on: ubuntu-latest
@@ -10,9 +11,9 @@ jobs:
         with:
           activate-environment: test
           auto-activate-base: false
-          python-version: 3.8
           environment-file: docker/environment.yml
       - run: |
+            conda activate test
             conda info
             conda list
       - name: test
