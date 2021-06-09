@@ -20,10 +20,9 @@ jobs:
           activate-environment: test
           auto-activate-base: false
           environment-file: docker/environment.yml
-          on:
-
-      - run: |
-            conda activate test
+      - name: test conda 
+        shell: bash -l {0}  
+        run: |
             conda info
             conda list
       - name: test
