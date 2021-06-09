@@ -10,11 +10,11 @@ dependencies:
   - pip
   - python>=3.8
   - dask
-  - fastparquet
   - nb_conda_kernels
   - plotly
   - plotly-orca
   - pip:
+    - fastparquet
     - jupyter
     - jupyterlab
     - jupyterlab_server
