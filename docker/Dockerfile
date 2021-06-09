@@ -91,7 +91,6 @@ COPY docker/python_logging.conf /etc/ros/
 ENV DEBIAN_FRONTEND=noninteractive
 
 
-
 ########################################################################################
 # Docker image including the release
 FROM base AS release
