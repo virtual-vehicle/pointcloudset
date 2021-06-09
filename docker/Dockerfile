@@ -107,7 +107,6 @@ ADD doc/sphinx/source/tutorial_notebooks ./tutorial_notebooks
 # install
 RUN sudo /opt/conda/bin/pip install  $PACKAGE_HOME
 
-
 # Make sure the environment is activated:
 RUN echo "Make sure pointcloudset is installed:"
 RUN python -c "from pointcloudset import Dataset"
