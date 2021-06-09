@@ -1,6 +1,14 @@
 name: learn-github-actions
 
-on: [push]
+on:
+# Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
   conda_test:
@@ -12,6 +20,8 @@ jobs:
           activate-environment: test
           auto-activate-base: false
           environment-file: docker/environment.yml
+          on:
+
       - run: |
             conda activate test
             conda info
