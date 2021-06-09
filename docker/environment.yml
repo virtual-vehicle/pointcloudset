@@ -29,6 +29,7 @@ dependencies:
     - coverage
     - isort
     - laspy
+    - pylas
     - mypy
     - pylint
     - flake8
