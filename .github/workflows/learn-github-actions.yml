@@ -9,7 +9,7 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v2
         with:
           auto-activate-base: true
+          activate-environment: true
           environment-file: docker/environment.yml
           python-version: 3.8
-          activate-environment: ""
       - run: make test    
