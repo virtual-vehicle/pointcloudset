@@ -2,7 +2,7 @@ name: learn-github-actions
 
 on: [push]
 jobs:
-  check-bats-version:
+  conda_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -12,4 +12,4 @@ jobs:
           activate-environment: true
           environment-file: docker/environment.yml
           python-version: 3.8
-      - run: make test    
+      - run: conda list   
