@@ -14,4 +14,6 @@ jobs:
           python-version: 3.8
       - run: |
             conda info
-            conda list   
+            conda list
+      - name: test
+        run: make test
