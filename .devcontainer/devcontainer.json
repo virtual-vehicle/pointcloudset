@@ -40,8 +40,7 @@
 		"streetsidesoftware.code-spell-checker",
 		"oderwat.indent-rainbow",
 		"gua.rainbow-brackets",
-		"littlefoxteam.vscode-python-test-adapter",
-		"swyddfa.esbonio"
+		"littlefoxteam.vscode-python-test-adapter"
 	],
 	"forwardPorts": [
 		5920,
