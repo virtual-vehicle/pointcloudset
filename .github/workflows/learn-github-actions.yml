@@ -25,5 +25,6 @@ jobs:
         run: |
             conda info
             conda list
-      - name: test
+      - name: make test
+        shell: bash -l {0}  
         run: make test
