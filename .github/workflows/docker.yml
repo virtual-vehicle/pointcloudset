@@ -31,4 +31,7 @@ jobs:
         if: contains(steps.changed-files.outputs.modified_files, 'docker/Dockerfile')
         run: |
           echo "Your file Dockerfile has been modified."
+          cd docker
+          docker build . --file Dockerfile --tag pointcloudset_base:$(date +%s) --target base
+          docker build . --file Dockerfile --tag pointcloudset:$(date +%s) --target release
           
