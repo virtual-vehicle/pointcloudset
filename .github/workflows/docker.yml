@@ -26,10 +26,18 @@ jobs:
           for file in "${{ steps.changed-files.outputs.added_files }}"; do
             echo "$file was added"
           done
+          
+      - name: Get specific changed files
+        id: changed-files-specific
+        uses: tj-actions/changed-files@v6.3
+        with:
+          files: |
+            docker/Dockerfile
+            docker/environment.yml
 
-      - name: Run step when a file changes
-        if: contains(steps.changed-files.outputs.modified_files, 'docker/Dockerfile')
-        run: |
-          echo "Dockerfile has been modified."
-          docker build . --file docker/Dockerfile --tag pointcloudset_base:$(date +%s) --target base
+
+      - name: Run step if any of the listed files above change
+        if: steps.changed-files-specific.outputs.any_changed == 'true'
+        run: docker build . --file docker/Dockerfile --tag pointcloudset_base:$(date +%s) --target base 
+
           
