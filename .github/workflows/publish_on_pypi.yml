@@ -1,0 +1,16 @@
+# This is a basic workflow to help you get started with Actions
+name: Publish on pypi
+on:
+  #push:
+  #  tags:
+  #    - 'v*.*.*'
+  workflow_dispatch:
+
+- name: Build and publish to pypi
+  uses: JRubics/poetry-publish@v1.6
+  with:
+    pypi_token: ${{ secrets.PYPI_TOKEN }}
+    build_format: 'sdist'
+    repository_name: 'testpypi'
+    repository_url: 'https://test.pypi.org/legacy/'
+    ignore_dev_requirements: "yes"
