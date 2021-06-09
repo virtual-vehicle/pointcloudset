@@ -37,6 +37,14 @@ setup(
     description="Analyse of point cloud collections",
     long_description=open("README.rst").read(),
     long_description_content_type="text/x-rst",
+    project_urls={
+        "Bug Tracker": "https://github.com/virtual-vehicle/pointcloudset/issues",
+    },
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ],
     python_requires=">=3.8",
     entry_points={
         "console_scripts": ["bag2dataset = pointcloudset.io.dataset.commandline:app"]
