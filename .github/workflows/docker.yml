@@ -41,11 +41,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Run step if any of the listed files above change
+      - name: Build and push tgoelles/pointcloudset_base 
         if: steps.changed-files-specific.outputs.any_changed == 'true'
-        run: docker build . --file docker/Dockerfile --tag tgoelles/pointcloudset_base:latest --target base
+        run: |
+          docker build . --file docker/Dockerfile --tag tgoelles/pointcloudset_base:latest --target base
 
-      - name: Push images to docker hub
-        run: docker image push tgoelles/pointcloudset_base:latest
 
 
