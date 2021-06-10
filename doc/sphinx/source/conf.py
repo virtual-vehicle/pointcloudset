@@ -43,7 +43,7 @@ author = (
 )
 
 
-version = get_version("../../../pointcloudse/__init__.py")
+version = get_version("../../../pointcloudset/__init__.py")
 release = version
 
 
