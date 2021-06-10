@@ -32,7 +32,7 @@ Features
 
 * Support for large files with lazy evaluation and parallel processing
 
-.. image:: images/dask.gif
+.. image:: https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/dask.gif
    :width: 600
 
 * Support for numerical data per point (intensity, range, noise …)
