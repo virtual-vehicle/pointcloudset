@@ -1,21 +1,21 @@
 name: tests
 
 on:
-# Triggers the workflow on push or pull request events but only for the master branch
+  # Triggers the workflow on push or pull request events but only for the master branch
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-  conda_test:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Cache conda
         uses: actions/cache@v2
         env:
@@ -23,8 +23,7 @@ jobs:
           CACHE_NUMBER: 0
         with:
           path: ~/conda_pkgs_dir
-          key:
-            ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
+          key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
             hashFiles('etc/example-environment.yml') }}
       - uses: conda-incubator/setup-miniconda@v2
         with:
@@ -32,18 +31,27 @@ jobs:
           auto-activate-base: false
           environment-file: docker/environment.yml
           use-only-tar-bz2: true # IMPORTANT: This needs to be set for caching to work properly!
-      - name: test conda 
-        shell: bash -l {0}  
+      - name: test conda
+        shell: bash -l {0}
         run: |
-            pip install -e .
-            conda info
-            conda list
+          pip install -e .
+          conda info
+          conda list
       - name: make test
-        shell: bash -l {0}  
+        shell: bash -l {0}
         run: make test
-         - name: Coveralls
-      - name: generate badge   
-        uses: coverallsapp/github-action@master
+
+      - name: Coveralls
+        uses: AndreMiras/coveralls-python-action@develop
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-        path--to-lcov: coverage.xml
+          parallel: true
+          flag-name: Unit Test
+
+  coveralls_finish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Coveralls Finished
+        uses: AndreMiras/coveralls-python-action@develop
+        with:
+          parallel-finished: true
