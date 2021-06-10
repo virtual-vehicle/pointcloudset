@@ -1,7 +1,7 @@
 import codecs
 import os
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 def read(rel_path):
@@ -23,14 +23,7 @@ def get_version(rel_path):
 
 setup(
     name="pointcloudset",
-    packages=[
-        "pointcloudset",
-        "pointcloudset.diff",
-        "pointcloudset.filter",
-        "pointcloudset.geometry",
-        "pointcloudset.io",
-        "pointcloudset.plot",
-    ],
+    packages=find_packages(include=['pointcloudset', 'pointcloudset*']),
     version=get_version("pointcloudset/__init__.py"),
     author="VIRTUAL VEHICLE Research GmbH",
     author_email="thomas.goelles@v2c2.at",
@@ -39,13 +32,44 @@ setup(
     long_description_content_type="text/x-rst",
     project_urls={
         "Bug Tracker": "https://github.com/virtual-vehicle/pointcloudset/issues",
+        "Source": "https://github.com/virtual-vehicle/pointcloudset",
+        "Documentation": "https://pointcloudset.readthedocs.io/en/latest/?",
     },
     classifiers=[
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
         "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
+        "Operating System :: POSIX :: Linux",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Education",
+        "Intended Audience :: Other Audience",
+        "Intended Audience :: Science/Research",
+        "Development Status :: 3 - Alpha",
+        "Natural Language :: English",
+        "Topic :: Scientific/Engineering",
+        "Topic :: Scientific/Engineering :: GIS",
+        "Topic :: Scientific/Engineering :: Visualization",
+        "Topic :: Scientific/Engineering :: Information Analysis",
+        "Topic :: Utilities",
+        "Typing :: Typed",
     ],
     python_requires=">=3.8",
+    install_requires=[
+        "numpy",
+        "pandas",
+        "pyntcloud",
+        "open3d==0.12.0",
+        "plotly",
+        "fastparquet",
+        "dask",
+        "tqdm",
+        "rospkg",
+        "py3rosmsgs",
+        "pycryptodomex"
+    ],
+    extras_require={
+        'LAS':  ["pylas"]
+    },
     entry_points={
         "console_scripts": ["bag2dataset = pointcloudset.io.dataset.commandline:app"]
     },
