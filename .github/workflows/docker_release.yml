@@ -22,6 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Get the tag name
+        if: github.event_name != 'workflow_dispatch'
         run: echo "TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
       - name: manual tag
         if: github.event_name == 'workflow_dispatch'
