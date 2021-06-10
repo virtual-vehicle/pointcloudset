@@ -27,7 +27,7 @@ setup(
     version=get_version("pointcloudset/__init__.py"),
     author="VIRTUAL VEHICLE Research GmbH",
     author_email="thomas.goelles@v2c2.at",
-    description="Analyse of point cloud collections",
+    description="Efficient anayltics of point cloud data recored over a time period",
     long_description=open("README.rst").read(),
     long_description_content_type="text/x-rst",
     project_urls={
