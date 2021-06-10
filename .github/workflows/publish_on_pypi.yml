@@ -1,12 +1,16 @@
 # This is a basic workflow to help you get started with Actions
 
 name: Publish to pypi
-on:
-  push:
-    branches:
-      - "!*"
-    tags:
-      - "v*"
+
+# on:
+#   push:
+#     branches:
+#       - "!*"
+#     tags:
+#       - "v*"
+
+on: workflow_dispatch
+
 jobs:
   build:
     runs-on: ubuntu-latest
