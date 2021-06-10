@@ -23,7 +23,7 @@ def get_version(rel_path):
 
 setup(
     name="pointcloudset",
-    packages=find_packages(include=['pointcloudset', 'pointcloudset*']),
+    packages=find_packages(include=["pointcloudset", "pointcloudset*"]),
     version=get_version("pointcloudset/__init__.py"),
     author="VIRTUAL VEHICLE Research GmbH",
     author_email="thomas.goelles@v2c2.at",
@@ -65,11 +65,10 @@ setup(
         "tqdm",
         "rospkg",
         "py3rosmsgs",
-        "pycryptodomex"
+        "pycryptodomex",
+        "typer",
     ],
-    extras_require={
-        'LAS':  ["pylas"]
-    },
+    extras_require={"LAS": ["pylas"]},
     entry_points={
         "console_scripts": ["bag2dataset = pointcloudset.io.dataset.commandline:app"]
     },
