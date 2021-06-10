@@ -11,9 +11,11 @@ sphinx:
 
 conda:
   environment: docker/environment.yml
-  
+
 python:
-   setup_py_install: true  
+  install:
+    - method: pip
+      path: .
 
 # Optionally build your docs in additional formats such as PDF
 formats:
