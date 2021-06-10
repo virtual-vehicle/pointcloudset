@@ -1,11 +1,13 @@
 name: Docker release
 
-on:
-  push:
-    branches:
-      - "!*"
-    tags:
-      - "v*"
+#on:
+#  push:
+#    branches:
+#      - "!*"
+#    tags:
+#      - "v*"
+
+on: workflow_dispatch
 
 jobs:
 
@@ -24,4 +26,6 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push tgoelles/pointcloudset
-        run:  docker build . --file docker/Dockerfile --tag tgoelles/pointcloudset:${{ env.TAG }}
+        run:  |
+          docker build . --file docker/release.Dockerfile --tag tgoelles/pointcloudset:${{ env.TAG }}
+          docker push tgoelles/pointcloudset:${{ env.TAG }}
