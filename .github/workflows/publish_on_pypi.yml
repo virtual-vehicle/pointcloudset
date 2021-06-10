@@ -2,14 +2,14 @@
 
 name: Publish to pypi
 
-# on:
-#   push:
-#     branches:
-#       - "!*"
-#     tags:
-#       - "v*"
+on:
+  push:
+    branches:
+      - "!*"
+    tags:
+      - "v*"
 
-on: workflow_dispatch
+#on: workflow_dispatch
 
 jobs:
   build:
@@ -20,7 +20,7 @@ jobs:
         run: pip install build twine
       - name: build package
         run: python3 -m build
-      - name: Publish package to TestPyPI
+      - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
