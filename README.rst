@@ -2,6 +2,12 @@ pointcloudset
 =========================================
 
 .. image:: https://readthedocs.org/projects/pointcloudset/badge/?version=latest
+.. image:: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/tests.yml/badge.svg
+
+.. image::  https://readthedocs.org/projects/pointcloudset/badge/?version=latest
+    :target: https://pointcloudset.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+
 
 .. inclusion-marker-do-not-remove
 
