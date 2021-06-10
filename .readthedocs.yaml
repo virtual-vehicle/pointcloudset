@@ -9,6 +9,9 @@ version: 2
 sphinx:
    configuration: doc/sphinx/source/conf.py
 
+conda:
+  environment: docker/environment.yml
+
 # Optionally build your docs in additional formats such as PDF
 formats:
    - pdf
