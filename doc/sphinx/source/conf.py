@@ -12,10 +12,26 @@
 #
 import os
 import sys
-
-from pointcloudset import __version__
+import codecs
 
 sys.path.insert(0, os.path.abspath("../../../pointcloudset"))
+
+
+def read(rel_path):
+    here = os.path.abspath(os.path.dirname(__file__))
+    # intentionally *not* adding an encoding option to open, See:
+    #   https://github.com/pypa/virtualenv/issues/201#issuecomment-3145690
+    with codecs.open(os.path.join(here, rel_path), "r") as fp:
+        return fp.read()
+
+
+def get_version(rel_path):
+    for line in read(rel_path).splitlines():
+        if line.startswith("__version__"):
+            # __version__ = "0.9"
+            delim = '"' if '"' in line else "'"
+            return line.split(delim)[1]
+    raise RuntimeError("Unable to find version string.")
 
 
 # -- Project information -----------------------------------------------------
@@ -27,7 +43,7 @@ author = (
 )
 
 
-version = __version__
+version = get_version("../../../pointcloudse/__init__.py")
 release = version
 
 
