@@ -2,19 +2,16 @@
 #push:
 #  tags:
 #    - 'v*.*.*'
-name: Publish on pypi
+name: Publish to testpypi
 on: workflow_dispatch
+
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Build and publish to pypi
-        uses: JRubics/poetry-publish@v1.7
-        with:
-          pypi_token: ${{ secrets.PYPI_TOKEN }}
-          build_format: 'sdist'
-          repository_name: 'testpypi'
-          repository_url: 'https://test.pypi.org/legacy/'
-          ignore_dev_requirements: "yes"
+      - name: get python build setup
+        run: pip install build twine
+      - name: build package
+        run: python3 -m build
