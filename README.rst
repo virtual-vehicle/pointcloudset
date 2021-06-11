@@ -28,8 +28,7 @@ pointcloudset
 
 .. inclusion-marker-do-not-remove
 
-A package to work with pointcloud datasets. A pointcloud dataset is a collection of pointclouds
-recorded over a time period.
+Analyze large datasets of point clouds recorded over time in an efficient way. 
 
 
 Features
