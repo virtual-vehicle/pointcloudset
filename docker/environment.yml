@@ -13,40 +13,40 @@ dependencies:
   - nb_conda_kernels
   - plotly
   - plotly-orca
+  - ipykernel
   - pip:
-    - fastparquet
-    - jupyter
-    - jupyterlab
-    - jupyterlab_server
-    - nbconvert
-    - nbformat
-    - rospkg
-    - py3rosmsgs
-    - pyntcloud
-    - setuptools
-    - black
-    - blackcellmagic
-    - coverage
-    - isort
-    - laspy
-    - pylas
-    - mypy
-    - pylint
-    - flake8
-    - pytest-check
-    - pandoc
-    - pytest
-    - pytest-cov
-    - docstr-coverage
-    - typer
-    - nbval
-    - geopandas
-    - fastparquet
-    - pycryptodomex
-    - sphinx
-    - sphinxcontrib-napoleon
-    - sphinx_rtd_theme
-    - nbsphinx
-    - sphinx-click
+      - fastparquet
+      - jupyter
+      - jupyterlab
+      - jupyterlab_server
+      - nbconvert
+      - nbformat
+      - rospkg
+      - py3rosmsgs
+      - pyntcloud
+      - setuptools
+      - black
+      - blackcellmagic
+      - coverage
+      - isort
+      - laspy
+      - pylas
+      - mypy
+      - pylint
+      - flake8
+      - pytest-check
+      - pandoc
+      - pytest
+      - pytest-cov
+      - docstr-coverage
+      - typer
+      - nbval
+      - geopandas
+      - fastparquet
+      - pycryptodomex
+      - sphinx
+      - sphinxcontrib-napoleon
+      - sphinx_rtd_theme
+      - nbsphinx
+      - sphinx-click
 prefix: /opt/conda
-
