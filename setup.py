@@ -33,7 +33,7 @@ setup(
     project_urls={
         "Bug Tracker": "https://github.com/virtual-vehicle/pointcloudset/issues",
         "Source": "https://github.com/virtual-vehicle/pointcloudset",
-        "Documentation": "https://pointcloudset.readthedocs.io/en/latest/?",
+        "Documentation": "https://virtual-vehicle.github.io/pointcloudset/",
     },
     classifiers=[
         "Programming Language :: Python :: 3",
