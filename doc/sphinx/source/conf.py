@@ -46,15 +46,14 @@ author = (
 version = get_version("../../../pointcloudset/__init__.py")
 release = version
 
-# -- General configuration ---------------------------------------------------
-
-
-# List of arguments to be passed to the kernel that executes the notebooks:
+# --nbshinx settings ---------------------------------------------------
 nbsphinx_execute_arguments = [
     "--InlineBackend.figure_formats={'svg', 'pdf'}",
     "--InlineBackend.rc=figure.dpi=96",
 ]
 nbsphinx_kernel_name = "base"
+
+nbsphinx_execute = "never"
 
 # -- General configuration ---------------------------------------------------
 
