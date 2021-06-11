@@ -14,7 +14,14 @@ import os
 import sys
 import codecs
 
+
 sys.path.insert(0, os.path.abspath("../../../pointcloudset"))
+
+apidoc_module_first = True
+apidoc_output_dir = "python-api"
+apidoc_module_dir = "../../../pointcloudset"
+apidoc_excluded_paths = ["tests"]
+apidoc_separate_modules = True
 
 
 def read(rel_path):
@@ -67,6 +74,7 @@ extensions = [
     "nbsphinx",
     "sphinx.ext.intersphinx",
     "sphinx_click",
+    "sphinxcontrib.apidoc",
 ]
 
 intersphinx_mapping = {
