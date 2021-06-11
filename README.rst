@@ -65,7 +65,7 @@ Features
 
 * High level processing based on dask, pandas, open3D and pyntcloud
 * Docker image is available
-* Optmised for automotive lidar - especially the ones by Ouster
+* Optimised - but not limited to - automotive lidar 
 * Directly read ROS bagfiles and many pointcloud file formats
 * A commandline tool to convert ROS bagfiles
 
@@ -122,7 +122,7 @@ Comparison to related packages
 #. `open3d <https://github.com/intel-isl/Open3D>`_ - Only for single pointclouds. Excellend package, which is used for some
    methods on the PointCloud.
 #. `pdal <https://github.com/PDAL/PDAL>`_ - Works also with pipelines on pointclouds but is mostly focused on single point cloud processing.
-   Pountcloudset is purely in python and based on pandas dataframes. In addtion pointcloudset works in parallel to process large datasets.
+   Pointcloudset is purely in python and based on pandas dataframes. In addtion pointcloudset works in parallel to process large datasets.
 
 
 Citation and contact
