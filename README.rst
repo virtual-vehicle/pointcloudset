@@ -4,6 +4,10 @@ pointcloudset
 .. image:: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/tests.yml/badge.svg
    :target: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/tests.yml
    :alt: test status
+   
+.. image:: images/converage.svg
+   :target: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/tests.yml
+   :alt: test coverage
 
 .. image::  https://readthedocs.org/projects/pointcloudset/badge/?version=latest
     :target: https://pointcloudset.readthedocs.io/en/latest/?badge=latest
