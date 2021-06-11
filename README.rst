@@ -17,10 +17,6 @@ pointcloudset
    :target: https://hub.docker.com/repository/docker/tgoelles/pointcloudset
    :alt: Docker release
 
-.. image:: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/docker.yml/badge.svg
-   :target: https://hub.docker.com/repository/docker/tgoelles/pointcloudset_base
-   :alt: Docker base
-
 .. image:: https://badge.fury.io/py/pointcloudset.svg
     :target: https://badge.fury.io/py/pointcloudset
     :alt: PyPi badge
