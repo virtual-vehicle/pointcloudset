@@ -7,7 +7,7 @@ version: 2
 
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
-   configuration: doc/sphinx/source/conf.py
+  configuration: doc/sphinx/source/conf.py
 
 conda:
   environment: docker/environment.yml
@@ -19,4 +19,4 @@ python:
 
 # Optionally build your docs in additional formats such as PDF
 formats:
-   - pdf
+  - pdf
