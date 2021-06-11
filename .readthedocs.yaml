@@ -9,11 +9,10 @@ version: 2
 sphinx:
   configuration: doc/sphinx/source/conf.py
 
-conda:
-  environment: docker/environment.yml
-
 python:
+  version: 3.8
   install:
+    - requirements: doc/sphinx/requirements.txt
     - method: pip
       path: .
 
