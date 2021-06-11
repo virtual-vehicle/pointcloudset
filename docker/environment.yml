@@ -46,7 +46,7 @@ dependencies:
       - pycryptodomex
       - sphinx
       - sphinxcontrib-napoleon
-      - sphinx_rtd_theme=0.5.2
+      - sphinx_rtd_theme==0.5.2
       - nbsphinx
       - sphinx-click
 prefix: /opt/conda
