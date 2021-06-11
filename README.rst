@@ -25,8 +25,8 @@ pointcloudset
     :target: https://badge.fury.io/py/pointcloudset
     :alt: PyPi badge
 
-.. image:: https://crate.io/packages/pointcloudset.svg
-    :target: https://crate.io/packages/pointcloudset
+.. image:: https://pepy.tech/badge/pointcloudset/month
+    :target: https://pepy.tech/project/pointcloudset
     :alt: PyPi badge
 
 
