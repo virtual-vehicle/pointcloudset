@@ -9,8 +9,8 @@ pointcloudset
    :target: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/tests.yml
    :alt: test coverage
 
-.. image::  https://readthedocs.org/projects/pointcloudset/badge/?version=latest
-    :target: https://pointcloudset.readthedocs.io/en/latest/?badge=latest
+.. image:: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/doc.yml/badge.svg
+   :target: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/doc.yml
     :alt: Documentation Status
 
 .. image:: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/docker_release.yml/badge.svg
