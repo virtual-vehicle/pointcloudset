@@ -13,11 +13,11 @@ pointcloudset
    :target: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/publish_on_pypi.yml
    :alt: Publish to pypi
 
-.. image::https://github.com/virtual-vehicle/pointcloudset/actions/workflows/docker_release.yml/badge.svg
+.. image:: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/docker_release.yml/badge.svg
    :target: https://hub.docker.com/repository/docker/tgoelles/pointcloudset
    :alt: Docker release
 
-.. image::https://github.com/virtual-vehicle/pointcloudset/actions/workflows/docker.yml/badge.svg
+.. image:: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/docker.yml/badge.svg
    :target: https://hub.docker.com/repository/docker/tgoelles/pointcloudset_base
    :alt: Docker base
 
