@@ -49,4 +49,5 @@ dependencies:
       - sphinx_rtd_theme==0.5.2
       - nbsphinx
       - sphinx-click
+      - coverage-badge
 prefix: /opt/conda
