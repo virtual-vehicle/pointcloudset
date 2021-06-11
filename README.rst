@@ -1,12 +1,26 @@
 pointcloudset
 =========================================
 
-
 .. image:: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/tests.yml/badge.svg
+   :target: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/tests.yml
+   :alt: test status
 
 .. image::  https://readthedocs.org/projects/pointcloudset/badge/?version=latest
     :target: https://pointcloudset.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
+
+.. image::  https://github.com/virtual-vehicle/pointcloudset/actions/workflows/publish_on_pypi.yml/badge.svg
+   :target: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/publish_on_pypi.yml
+   :alt: Publish to pypi
+
+.. image::https://github.com/virtual-vehicle/pointcloudset/actions/workflows/docker_release.yml/badge.svg
+   :target: https://hub.docker.com/repository/docker/tgoelles/pointcloudset
+   :alt: Docker release
+
+.. image::https://github.com/virtual-vehicle/pointcloudset/actions/workflows/docker.yml/badge.svg
+   :target: https://hub.docker.com/repository/docker/tgoelles/pointcloudset_base
+   :alt: Docker base
+
 
 
 .. inclusion-marker-do-not-remove
