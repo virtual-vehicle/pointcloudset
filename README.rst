@@ -9,10 +9,6 @@ pointcloudset
     :target: https://pointcloudset.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
 
-.. image::  https://github.com/virtual-vehicle/pointcloudset/actions/workflows/publish_on_pypi.yml/badge.svg
-   :target: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/publish_on_pypi.yml
-   :alt: Publish to pypi
-
 .. image:: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/docker_release.yml/badge.svg
    :target: https://hub.docker.com/repository/docker/tgoelles/pointcloudset
    :alt: Docker release
