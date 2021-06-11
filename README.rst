@@ -5,7 +5,7 @@ pointcloudset
    :target: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/tests.yml
    :alt: test status
    
-.. image:: images/converage.svg
+.. image:: images/coverage.svg
    :target: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/tests.yml
    :alt: test coverage
 
