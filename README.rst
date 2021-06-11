@@ -25,6 +25,11 @@ pointcloudset
     :target: https://badge.fury.io/py/pointcloudset
     :alt: PyPi badge
 
+.. image:: https://crate.io/packages/pointcloudset.svg
+    :target: https://crate.io/packages/pointcloudset
+    :alt: PyPi badge
+
+
 .. inclusion-marker-do-not-remove
 
 A package to work with pointcloud datasets. A pointcloud dataset is a collection of pointclouds
