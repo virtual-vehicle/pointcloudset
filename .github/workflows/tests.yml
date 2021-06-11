@@ -15,7 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
+        with:
+          fetch-depth: 0
       - name: Cache conda
         uses: actions/cache@v2
         env:
@@ -43,13 +44,20 @@ jobs:
       - name: generate badge
         shell: bash -l {0}
         run: coverage-badge -o images/coverage.svg
+      - name: Verify Changed files
+        uses: tj-actions/verify-changed-files@v6
+        id: changed_files
+        with:
+          files: images/coverage.svg
       - name: Commit badge
+        if: steps.changed_files.outputs.files_changed == 'true'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add images/coverage.svg
           git commit -m "Updated coverage.svg"
       - name: Push changes
+        if: steps.changed_files.outputs.files_changed == 'true'
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.github_token }}
