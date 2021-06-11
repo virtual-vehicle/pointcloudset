@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  doc:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -41,6 +41,8 @@ jobs:
       - name: make doc
         shell: bash -l {0}
         run: make doc
+      - name: add .nojekyll
+        run: touch doc/sphinx/build/html/.nojekyll
       - name: Deploy to GitHub Pages
         if: success()
         uses: crazy-max/ghaction-github-pages@v2
