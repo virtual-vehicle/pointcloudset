@@ -50,7 +50,6 @@ jobs:
           git add images/coverage.svg
           git commit -m "Updated coverage.svg"
       - name: Push changes
-        if: steps.changed_files.outputs.files_changed == 'true'
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.github_token }}
