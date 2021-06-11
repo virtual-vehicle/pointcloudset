@@ -40,18 +40,18 @@ jobs:
       - name: make test
         shell: bash -l {0}
         run: make test
-
-      - name: Coveralls
-        uses: AndreMiras/coveralls-python-action@develop
+      - name: generate badge
+        shell: bash -l {0}
+        run: coverage-badge -o images/coverage.svg
+      - name: Commit badge
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add images/coverage.svg
+          git commit -m "Updated coverage.svg"
+      - name: Push changes
+        if: steps.changed_files.outputs.files_changed == 'true'
+        uses: ad-m/github-push-action@master
         with:
-          parallel: true
-          flag-name: Unit Test
-
-  coveralls_finish:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Coveralls Finished
-        uses: AndreMiras/coveralls-python-action@develop
-        with:
-          parallel-finished: true
+          github_token: ${{ secrets.github_token }}
+          branch: ${{ github.ref }}
