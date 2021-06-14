@@ -6,7 +6,7 @@ tags:
   - point cloud
   - ROS
 authors:
-  - name: Thomas Goelles^[corresponding author Thomas.Goelles@v2c2.at]
+  - name: Thomas Goelles
     orcid: 0000-0002-3925-6260
     affiliation: 1
   - name: Birgit Schlager
