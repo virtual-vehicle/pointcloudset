@@ -1,5 +1,5 @@
 ---
-title: '`pointcloudset`: A python package for working with multiple point clouds recorded over time'
+title: '`pointcloudset`: Analyze large datasets of point clouds recorded over time in an efficient way'
 tags:
   - Python
   - lidar
