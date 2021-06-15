@@ -1,0 +1,22 @@
+name: python 3.8
+dependencies:
+  - python=3.8
+  - numpy
+  - pandas
+  - open3d==0.12.0
+  - plotly
+  - dask
+  - pip:
+      - fastparquet
+      - jupyter
+      - jupyterlab
+      - jupyterlab_server
+      - rospkg
+      - py3rosmsgs
+      - pyntcloud
+      - laspy
+      - pylas
+      - geopandas
+      - pycryptodomex
+      - tqdm
+      - pointcloudset
