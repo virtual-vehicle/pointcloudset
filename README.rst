@@ -106,7 +106,8 @@ Quickstart
    from pathlib import Path
 
    dataset = Dataset.from_file(Path("rosbag_file.bag"), topic="/os1_cloud_node/points", keep_zeros=False)
-   pointcloud = PointCloud.from_file(Path("lasfile.las"))
+   pointcloud = dataset[42]
+   pointcloud2 = PointCloud.from_file(Path("lasfile.las"))
 
 * Read the html documentation.
 * Have a look at the tuturial notebooks in the documentation folder
