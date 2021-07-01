@@ -29,7 +29,7 @@ dependencies:
       - blackcellmagic
       - coverage
       - isort
-      - laspy
+      - laspy<2.0.0
       - pylas
       - mypy
       - pylint
