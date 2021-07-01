@@ -97,3 +97,15 @@ def _check_dir(file_path: Path):
         raise TypeError("expecting a pathlib Path object")
     if len(file_path.suffix) != 0:
         raise ValueError("expecting a path not a filename")
+
+
+def _check_dir_contents(dir: Path):
+    sub_dirs = list(dir.glob("**"))
+    for path in sub_dirs:
+        if len(sub_dirs) != 1 and path != dir or len(sub_dirs) == 1:
+            _check_dir_contents_single(path)
+
+
+def _check_dir_contents_single(dir: Path):
+    assert dir.joinpath("meta.json").is_file(), f"meta.json is missing in {dir}"
+    assert dir.joinpath("part.0.parquet"), f"part.0.parquet is missing in {dir}"
