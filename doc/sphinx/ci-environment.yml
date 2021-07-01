@@ -13,6 +13,7 @@ dependencies:
   - plotly
   - plotly-orca
   - ipykernel
+  - pandoc
   - pip:
       - fastparquet
       - jupyter
@@ -27,7 +28,6 @@ dependencies:
       - mypy
       - pylint
       - flake8
-      - pandoc>2.0
       - typer
       - nbval
       - geopandas
