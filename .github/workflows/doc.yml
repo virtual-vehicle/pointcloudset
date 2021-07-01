@@ -30,9 +30,9 @@ jobs:
         shell: bash -l {0}
         run: |
           pip install -e .
-          pip install pandoc
           conda info
           conda list
+          pandoc --version
 
       - name: make doc
         shell: bash -l {0}
