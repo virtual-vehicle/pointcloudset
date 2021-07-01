@@ -1,6 +1,9 @@
 name: Docker base image
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 jobs:
 
   build:
