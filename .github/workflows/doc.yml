@@ -22,7 +22,7 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           miniconda-version: "latest"
-          environment-file: docker/environment.yaml
+          environment-file: docker/environment.yml
           activate-environment: base
           auto-activate-base: true
 
