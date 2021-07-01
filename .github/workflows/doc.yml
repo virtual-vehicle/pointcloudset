@@ -26,6 +26,13 @@ jobs:
           activate-environment: base
           auto-activate-base: true
 
+      - name: install pointcloudset
+        shell: bash -l {0}
+        run: |
+          pip install -e .
+          conda info
+          conda list
+
       - name: make doc
         shell: bash -l {0}
         run: make doc
