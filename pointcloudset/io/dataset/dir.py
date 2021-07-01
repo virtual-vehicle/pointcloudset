@@ -30,6 +30,7 @@ def dataset_to_dir(dataset_in, file_path: Path, use_orig_filename: bool = True) 
     ]
     with open(folder.joinpath("meta.json"), "w") as outfile:
         json.dump(dataset_in.meta, outfile)
+    _check_dir_contents(folder)
     print(f"Files written to: {folder}")
 
 
@@ -100,6 +101,7 @@ def _check_dir(file_path: Path):
 
 
 def _check_dir_contents(dir: Path):
+    """Quick test if all"""
     sub_dirs = list(dir.glob("**"))
     for path in sub_dirs:
         if len(sub_dirs) != 1 and path != dir or len(sub_dirs) == 1:
@@ -107,5 +109,6 @@ def _check_dir_contents(dir: Path):
 
 
 def _check_dir_contents_single(dir: Path):
+    """checking the folder content of a written dataset."""
     assert dir.joinpath("meta.json").is_file(), f"meta.json is missing in {dir}"
     assert dir.joinpath("part.0.parquet"), f"part.0.parquet is missing in {dir}"
