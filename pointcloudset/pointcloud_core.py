@@ -7,6 +7,7 @@ from typing import Union
 import numpy as np
 import pandas as pd
 import pyntcloud
+import warnings
 
 
 class PointCloudCore:
@@ -24,7 +25,10 @@ class PointCloudCore:
         self.data = data
         self.timestamp = timestamp
         """Timestamp."""
-        self.points = pyntcloud.PyntCloud(self.data, mesh=None)
+        with warnings.catch_warnings():
+            # ignore warnings produced by pyntcloud when the pointcloud is empty
+            warnings.simplefilter("ignore")
+            self.points = pyntcloud.PyntCloud(self.data, mesh=None)
         """PyntCloud object with x,y,z coordinates."""
         self.orig_file = orig_file
         """Path to bag file. Defaults to empty."""
@@ -56,7 +60,7 @@ class PointCloudCore:
 
     @property
     def bounding_box(self) -> pd.DataFrame:
-        """ The axis aligned boundary box as a :class:`pandas.DataFrame`."""
+        """The axis aligned boundary box as a :class:`pandas.DataFrame`."""
         return self.data[["x", "y", "z"]].agg(["min", "max"])
 
     @property
