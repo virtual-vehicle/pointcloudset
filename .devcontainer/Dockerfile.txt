@@ -1,3 +1,1 @@
-# See the repository:  https://gitlab.v2c2.at/thomasgoelles/vifscience
-# The docker image lives on our internal docker registry in gitlab
 FROM tgoelles/pointcloudset_base:latest
