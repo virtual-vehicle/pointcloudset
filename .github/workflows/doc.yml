@@ -22,7 +22,7 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           miniconda-version: "latest"
-          environment-file: docker/environment.yml
+          environment-file: doc/sphinx/ci-environment.yml
           activate-environment: base
           auto-activate-base: true
 
@@ -30,6 +30,7 @@ jobs:
         shell: bash -l {0}
         run: |
           pip install -e .
+          pip install pandoc
           conda info
           conda list
 

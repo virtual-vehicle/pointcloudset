@@ -1,0 +1,41 @@
+name: base
+channels:
+  - defaults
+  - conda-forge
+  - open3d-admin
+dependencies:
+  - numpy
+  - pandas
+  - pip
+  - python>=3.8
+  - dask
+  - nb_conda_kernels
+  - plotly
+  - plotly-orca
+  - ipykernel
+  - pip:
+      - fastparquet
+      - jupyter
+      - nbconvert
+      - nbformat
+      - rospkg
+      - py3rosmsgs
+      - pyntcloud
+      - setuptools
+      - laspy<2.0.0
+      - pylas
+      - mypy
+      - pylint
+      - flake8
+      - pandoc
+      - typer
+      - nbval
+      - geopandas
+      - fastparquet
+      - pycryptodomex
+      - sphinx
+      - sphinxcontrib-napoleon
+      - sphinx_rtd_theme==0.5.2
+      - nbsphinx
+      - sphinx-click
+prefix: /opt/conda
