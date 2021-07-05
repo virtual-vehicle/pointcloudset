@@ -20,10 +20,10 @@ class PointCloudCore:
         self,
         data: pd.DataFrame,
         orig_file: str = "",
-        timestamp: datetime = datetime.now(),
+        timestamp: datetime = None,
     ):
         self.data = data
-        self.timestamp = timestamp
+        self.timestamp = timestamp or datetime.now()
         """Timestamp."""
         with warnings.catch_warnings():
             # ignore warnings produced by pyntcloud when the pointcloud is empty

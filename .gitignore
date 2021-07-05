@@ -102,7 +102,7 @@ reports/example.synctex.gz
 pyntcloud_plot*
 .vscode-server
 ~$*
-notebooks/dev*
+dev_notebooks*
 
 tests/testdata/big.bag
 *.lock

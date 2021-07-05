@@ -53,6 +53,13 @@ def test_timestamp(testpointcloud_mini):
     check.equal(type(testpointcloud_mini.timestamp), datetime)
 
 
+def test_timestamp2(testpointcloud_mini):
+    fake_empty_df = pd.DataFrame.from_dict({"x": [0], "y": [0], "z": [0]})
+    pc0 = PointCloud(data=fake_empty_df)
+    pc1 = PointCloud(data=fake_empty_df)
+    check.less(pc0.timestamp, pc1.timestamp)
+
+
 def test_org_file(testpointcloud):
     check.equal(type(testpointcloud.orig_file), str)
     check.equal(Path(testpointcloud.orig_file).stem, "test")
