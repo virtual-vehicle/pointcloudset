@@ -7,8 +7,7 @@ import pandas
 from dask import delayed
 
 from pointcloudset.dataset_core import DatasetCore
-from pointcloudset.io import (DATASET_FROM_FILE, DATASET_FROM_INSTANCE,
-                              DATASET_TO_FILE)
+from pointcloudset.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_TO_FILE
 from pointcloudset.pipeline.delayed_result import DelayedResult
 from pointcloudset.pointcloud import PointCloud
 
