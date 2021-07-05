@@ -1,11 +1,9 @@
 from pathlib import Path
 
-import dask.delayed as dd
-import pandas as pd
 import pytest
 import pytest_check as check
 
-from pointcloudset import Dataset, PointCloud
+from pointcloudset import Dataset
 
 
 def test_from_bag_wrong_topic(testbag1):
@@ -31,3 +29,11 @@ def test_to_dir(testbag1, tmp_path: Path):
     read_dataset = Dataset.from_file(testfile_name)
     check.is_instance(read_dataset, Dataset)
     check.equal(len(ds), len(read_dataset))
+
+
+def test_empty_dataset(tmp_path: Path):
+    complete_empty_dataset = Dataset()
+    check.is_false(complete_empty_dataset.has_pointclouds())
+    testfile_name = tmp_path.joinpath("dataset0")
+    with pytest.raises(ValueError):
+        complete_empty_dataset.to_file(file_path=testfile_name, use_orig_filename=False)

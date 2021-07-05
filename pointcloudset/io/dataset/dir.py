@@ -17,6 +17,8 @@ def dataset_to_dir(dataset_in, file_path: Path, use_orig_filename: bool = True) 
         file_path (pathlib.Path): Destination path.
         use_orig_filename (bool): Use filename from which the dataset was read. Defaults to ``True``.
     """
+    if not dataset_in.has_pointclouds():
+        raise ValueError("dataset must have data ")
     _check_dir(file_path)
     orig_filename = Path(dataset_in.meta["orig_file"]).stem
     if len(orig_filename) == 0:
