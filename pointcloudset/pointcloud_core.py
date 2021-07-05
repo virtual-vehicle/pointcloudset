@@ -10,6 +10,9 @@ import pyntcloud
 import warnings
 
 
+empty_data = pd.DataFrame({"x": [np.nan], "y": [np.nan], "z": [np.nan]})
+
+
 class PointCloudCore:
     """
     PointCloudCore Class with all the main methods and properties of the
@@ -18,21 +21,27 @@ class PointCloudCore:
 
     def __init__(
         self,
-        data: pd.DataFrame,
+        data: pd.DataFrame = None,
         orig_file: str = "",
         timestamp: datetime = None,
     ):
-        self.data = data
-        self.timestamp = timestamp or datetime.now()
+        self.timestamp = datetime.now() if timestamp is None else timestamp
         """Timestamp."""
+        self.orig_file = orig_file
+        """Path to orginal file. Defaults to empty."""
+
+        if data is None:
+            self.data = empty_data
+            self.data = self.data.drop(0)
+        else:
+            self.data = data
+        """The data as a pandas DataFrame."""
+
         with warnings.catch_warnings():
             # ignore warnings produced by pyntcloud when the pointcloud is empty
             warnings.simplefilter("ignore")
             self.points = pyntcloud.PyntCloud(self.data, mesh=None)
         """PyntCloud object with x,y,z coordinates."""
-        self.orig_file = orig_file
-        """Path to bag file. Defaults to empty."""
-
         self._check_index()
 
     @property
@@ -94,9 +103,7 @@ class PointCloudCore:
     def _update_data(self, df: pd.DataFrame):
         """Utility function. Implicitly called when self.data is assigned."""
         self.__data = df
-        self.timestamp = datetime.now()
         self.points = pyntcloud.PyntCloud(self.__data[["x", "y", "z"]], mesh=None)
-        self.orig_file = ""
 
     def _check_index(self):
         """A private function to check if the index of self.data is sane."""
