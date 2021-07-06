@@ -71,3 +71,13 @@ def test_apply_with_args(testset: Dataset):
     testset2 = testset[0:2]
     testset_result = testset2.apply(func=pipeline1, test=1).compute()
     check.equal(testset_result, [1, 1])
+
+
+def test_apply_empty_frame_res(testdataset_with_empty_frame: Dataset):
+    check.equal(len(testdataset_with_empty_frame), 2)
+    first_frame = testdataset_with_empty_frame[0]
+    second_frame = testdataset_with_empty_frame[1]
+    check.is_true(first_frame._has_data())
+    check.is_false(second_frame._has_data())
+    check.equal(len(second_frame), 0)
+    check.equal(list(first_frame.data.columns), list(second_frame.data.columns))
