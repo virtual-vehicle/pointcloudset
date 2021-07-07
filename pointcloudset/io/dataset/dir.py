@@ -5,7 +5,6 @@ from pathlib import Path
 
 import dask.dataframe as dd
 
-
 datetime_format = "%Y-%m-%d %H:%M:%S.%f"
 delimiter = ";"
 

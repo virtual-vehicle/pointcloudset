@@ -466,3 +466,5 @@ def test_replace_nan_frames_with_empty(testdataset_with_empty_frame: Dataset):
     check.equal(len(test2), len(testdataset_with_empty_frame))
     check.is_false(test2[1]._has_data())
     check.equal(len(test2[1]), 0)
+
+

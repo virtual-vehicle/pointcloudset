@@ -1,7 +1,7 @@
+import datetime
 from pathlib import Path
 
 import pandas as pd
-import datetime
 import pytest
 import pytest_check as check
 from dask.dataframe import DataFrame as ddf

@@ -3,12 +3,13 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Callable, List, Literal, Union, get_type_hints
 
+import numpy as np
 import pandas
 from dask import delayed
-import numpy as np
 
 from pointcloudset.dataset_core import DatasetCore
-from pointcloudset.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_TO_FILE
+from pointcloudset.io import (DATASET_FROM_FILE, DATASET_FROM_INSTANCE,
+                              DATASET_TO_FILE)
 from pointcloudset.pipeline.delayed_result import DelayedResult
 from pointcloudset.pointcloud import PointCloud
 

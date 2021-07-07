@@ -4,7 +4,7 @@ Functions for `ROS <https://www.ros.org/>`_ bagfiles.
 import datetime
 import itertools
 from pathlib import Path
-from typing import Callable, Literal, Union, List
+from typing import Callable, List, Literal, Union
 
 import numpy as np
 import pandas as pd
