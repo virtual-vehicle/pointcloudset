@@ -64,3 +64,20 @@ def test_dataset_with_empty_frame(testpointcloud_mini_real: PointCloud, tmp_path
     read_dataset = Dataset.from_file(testfile_name)
     check.is_instance(read_dataset, Dataset)
     check.equal(len(ds), len(read_dataset))
+
+
+def test_testdataset_with_empty_frame_r_and_w(
+    testdataset_with_empty_frame: Dataset, tmp_path: Path
+):
+    testfile_name = tmp_path.joinpath("dataset0")
+    testdataset_with_empty_frame.to_file(
+        file_path=testfile_name, use_orig_filename=False
+    )
+    check.equal(testfile_name.exists(), True)
+    check.equal(
+        len(list(testfile_name.glob("*.parquet"))), len(testdataset_with_empty_frame)
+    )
+    read_dataset = Dataset.from_file(testfile_name)
+    check.is_instance(read_dataset, Dataset)
+    check.equal(len(testdataset_with_empty_frame), len(read_dataset))
+    check.is_false(testdataset_with_empty_frame[1]._has_data())

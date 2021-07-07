@@ -10,9 +10,6 @@ import pyntcloud
 import warnings
 
 
-empty_data = pd.DataFrame({"x": [np.nan], "y": [np.nan], "z": [np.nan]})
-
-
 class PointCloudCore:
     """
     PointCloudCore Class with all the main methods and properties of the
@@ -24,6 +21,7 @@ class PointCloudCore:
         data: pd.DataFrame = None,
         orig_file: str = "",
         timestamp: datetime = None,
+        columns: list = ["x", "y", "z"],
     ):
         self.timestamp = datetime.now() if timestamp is None else timestamp
         """Timestamp."""
@@ -31,8 +29,12 @@ class PointCloudCore:
         """Path to orginal file. Defaults to empty."""
 
         if data is None:
+            # "empty" PointCloud with one line of all nans. This is necessary in order
+            # to save datasets with dask see issue#6
+            values = np.repeat(np.nan, len(columns))
+            empty_data = pd.DataFrame([values], columns=columns)
             self.data = empty_data
-            self.data = self.data.drop(0)
+            self.data = self.data.drop([0])
         else:
             self.data = data
         """The data as a pandas DataFrame."""
