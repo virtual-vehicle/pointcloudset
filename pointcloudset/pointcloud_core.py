@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import traceback
+import warnings
 from datetime import datetime
 from typing import Union
 
 import numpy as np
 import pandas as pd
 import pyntcloud
-import warnings
 
 
 class PointCloudCore:

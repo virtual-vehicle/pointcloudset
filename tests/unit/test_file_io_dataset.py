@@ -1,11 +1,12 @@
 from pathlib import Path
 
+import numpy as np
+import pandas as pd
 import pytest
 import pytest_check as check
-import pandas as pd
-import numpy as np
 
 from pointcloudset import Dataset, PointCloud
+from pointcloudset.io.dataset import dir
 
 
 def test_from_bag_wrong_topic(testbag1):
@@ -83,3 +84,16 @@ def test_testdataset_with_empty_frame_r_and_w(
     check.is_instance(read_dataset, Dataset)
     check.equal(len(testdataset_with_empty_frame), len(read_dataset))
     check.is_false(testdataset_with_empty_frame[1]._has_data())
+
+
+def test_check_dir_file():
+    with pytest.raises(ValueError):
+        dir._check_dir(Path("fake.txt"))
+
+
+def test_check_meta_file(testset: Dataset, tmp_path: Path):
+    testfile_name = tmp_path.joinpath("dataset0")
+    testset.to_file(testfile_name, use_orig_filename=False)
+    testfile_name.joinpath("meta.json").unlink()
+    with pytest.raises(AssertionError):
+        dir._check_dir_contents_single(testfile_name)
