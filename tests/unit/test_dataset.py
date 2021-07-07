@@ -87,6 +87,7 @@ def test_repr(testset: Dataset):
     repr = testset.__repr__()
     check.equal(type(repr), str)
 
+
 def test_start_time(testset: Dataset):
     st = testset.start_time
     check.is_instance(st, datetime.datetime)
@@ -451,3 +452,17 @@ def test_dataset_mean(
         should,
         check_names=False,
     )
+
+
+def test_replace_empty_frames_with_nan(testdataset_with_empty_frame: Dataset):
+    test = testdataset_with_empty_frame._replace_empty_frames_with_nan()
+    check.equal(len(test), len(testdataset_with_empty_frame))
+    check.equal(len(test[1]), 1)
+
+
+def test_replace_nan_frames_with_empty(testdataset_with_empty_frame: Dataset):
+    test = testdataset_with_empty_frame._replace_empty_frames_with_nan()
+    test2 = test._replace_nan_frames_with_empty()
+    check.equal(len(test2), len(testdataset_with_empty_frame))
+    check.is_false(test2[1]._has_data())
+    check.equal(len(test2[1]), 0)

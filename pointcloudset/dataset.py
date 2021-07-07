@@ -5,6 +5,7 @@ from typing import Any, Callable, List, Literal, Union, get_type_hints
 
 import pandas
 from dask import delayed
+import numpy as np
 
 from pointcloudset.dataset_core import DatasetCore
 from pointcloudset.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_TO_FILE
@@ -88,7 +89,8 @@ class Dataset(DatasetCore):
                 )
             )
         res = DATASET_FROM_FILE[ext](file_path, **kwargs)
-        return cls(data=res["data"], timestamps=res["timestamps"], meta=res["meta"])
+        out = cls(data=res["data"], timestamps=res["timestamps"], meta=res["meta"])
+        return out._replace_nan_frames_with_empty()
 
     def to_file(self, file_path: Path = Path(), **kwargs) -> None:
         """Writes a Dataset to a file.
@@ -464,3 +466,28 @@ class Dataset(DatasetCore):
         self.timestamps.extend(dataset.timestamps)
         self._check()
         return self
+
+    def _replace_empty_frames_with_nan(self):
+        """Function to replace empty pointclouds with pointclouds wiht 1 point with all
+        nan values. Needed to save files with dask.
+        """
+
+        def _exchange_empty_pointclouds_with_nan(frame: PointCloud) -> PointCloud:
+            if not frame._has_data():
+                values = np.repeat(np.nan, len(frame.data.columns))
+                frame.data.loc[0] = values
+            return frame
+
+        return self.apply(_exchange_empty_pointclouds_with_nan)
+
+    def _replace_nan_frames_with_empty(self):
+        """Function to replace nan pointclouds with empty pointcouds
+        Needed to after reading dataset files.
+        """
+
+        def _exchange_nan_pointclouds_with_empty(frame: PointCloud) -> PointCloud:
+            if (len(frame) == 1) and frame.data.isnull().all().all():
+                frame = PointCloud(columns=frame.data.columns)
+            return frame
+
+        return self.apply(_exchange_nan_pointclouds_with_empty)

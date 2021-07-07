@@ -70,9 +70,11 @@ def test_testdataset_with_empty_frame_r_and_w(
     testdataset_with_empty_frame: Dataset, tmp_path: Path
 ):
     testfile_name = tmp_path.joinpath("dataset0")
+
     testdataset_with_empty_frame.to_file(
         file_path=testfile_name, use_orig_filename=False
     )
+
     check.equal(testfile_name.exists(), True)
     check.equal(
         len(list(testfile_name.glob("*.parquet"))), len(testdataset_with_empty_frame)
