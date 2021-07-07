@@ -17,14 +17,13 @@ def _is_pipline_returing_pointcloud(pipeline, warn=True) -> bool:
     res = False
     if "return" in type_hints:
         res = get_type_hints(pipeline)["return"] == PointCloud
-    else:
-        if warn:
-            print(
-                (
-                    f"No return type was defined in {pipeline.__name__}:"
-                    "will not return a new dataset"
-                )
+    elif warn:
+        print(
+            (
+                f"No return type was defined in {pipeline.__name__}:"
+                "will not return a new dataset"
             )
+        )
     return res
 
 
@@ -190,12 +189,16 @@ class Dataset(DatasetCore):
 
         returns_pointcloud = _is_pipline_returing_pointcloud(func, warn=warn)
 
+        columns = list(self[0].data.columns)
+
         if returns_pointcloud:
 
             def pipeline_delayed(element_in, timestamp):
-                pointcloud = PointCloud(data=element_in, timestamp=timestamp)
-                pointcloud = func(pointcloud, **kwargs)
-                return pointcloud.data
+                pointcloud_in = PointCloud(data=element_in, timestamp=timestamp)
+                pointcloud = func(pointcloud_in, **kwargs)
+                if not pointcloud._has_data():
+                    pointcloud = PointCloud(columns=columns)
+                return pointcloud.data  # to generate an empty pointcloud
 
         else:
 

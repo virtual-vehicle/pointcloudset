@@ -23,6 +23,13 @@ def test_empty_pointcloud():
     check.equal(len(empty_pc), 0)
 
 
+def test_empty_pointcloud_columns():
+    empty_pc = PointCloud(columns=["x", "y", "z", "test"])
+    check.equal(type(empty_pc), PointCloud)
+    check.is_false(empty_pc._has_data())
+    # check.equal(len(empty_pc), 0)
+
+
 def test_has_data(testpointcloud_mini: PointCloud):
     check.equal(testpointcloud_mini._has_data(), True)
 

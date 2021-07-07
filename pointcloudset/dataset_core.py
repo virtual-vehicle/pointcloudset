@@ -128,7 +128,7 @@ class DatasetCore:
         Raises:
             ValueError: If start_time is bigger than end_time.
         """
-        if not start_time < end_time:
+        if start_time >= end_time:
             raise ValueError("start_time must be smaller than end_time")
         start_i = self._get_pointcloud_number_from_time(start_time)
         end_i = self._get_pointcloud_number_from_time(end_time) + 1
