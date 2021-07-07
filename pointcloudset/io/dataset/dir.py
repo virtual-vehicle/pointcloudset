@@ -5,6 +5,7 @@ from pathlib import Path
 
 import dask.dataframe as dd
 
+
 datetime_format = "%Y-%m-%d %H:%M:%S.%f"
 delimiter = ";"
 
@@ -24,7 +25,8 @@ def dataset_to_dir(dataset_in, file_path: Path, use_orig_filename: bool = True) 
     if len(orig_filename) == 0:
         orig_filename = str(uuid.uuid4())
     folder = file_path.joinpath(orig_filename) if use_orig_filename else file_path
-    data = dd.from_delayed(dataset_in.data)
+    dataset_to_write = dataset_in._replace_empty_frames_with_nan()
+    data = dd.from_delayed(dataset_to_write.data)
     data.to_parquet(folder)
     meta = dataset_in.meta
     meta["timestamps"] = [
