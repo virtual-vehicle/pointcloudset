@@ -9,13 +9,16 @@ datetime_format = "%Y-%m-%d %H:%M:%S.%f"
 delimiter = ";"
 
 
-def dataset_to_dir(dataset_in, file_path: Path, use_orig_filename: bool = True) -> None:
+def dataset_to_dir(
+    dataset_in, file_path: Path, use_orig_filename: bool = True, **kwargs
+) -> None:
     """Writes Dataset to directory.
 
     Args:
         dataset_in (Dataset): Dataset to write.
         file_path (pathlib.Path): Destination path.
         use_orig_filename (bool): Use filename from which the dataset was read. Defaults to ``True``.
+        **kwargs: Keyword arguments to pass to dask to_parquet function
     """
     if not dataset_in.has_pointclouds():
         raise ValueError("dataset must have data ")
@@ -26,7 +29,7 @@ def dataset_to_dir(dataset_in, file_path: Path, use_orig_filename: bool = True) 
     folder = file_path.joinpath(orig_filename) if use_orig_filename else file_path
     dataset_to_write = dataset_in._replace_empty_frames_with_nan()
     data = dd.from_delayed(dataset_to_write.data)
-    data.to_parquet(folder)
+    data.to_parquet(folder, **kwargs)
     meta = dataset_in.meta
     meta["timestamps"] = [
         timestamp.strftime(datetime_format) for timestamp in dataset_in.timestamps
