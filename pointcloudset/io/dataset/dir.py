@@ -71,7 +71,11 @@ def dataset_from_dir(dir: Path) -> dict:
         meta.append(res["meta"])
     meta = meta[0]
     del meta["timestamps"]
-    empty_data = pd.DataFrame.from_dict(meta["empty_data"])
+    if "empty_data" in meta:
+        empty_data = pd.DataFrame.from_dict(meta["empty_data"])
+    else:
+        empty_data = pd.DataFrame()
+        # for backwards compatibility
     return {
         "data": data,
         "timestamps": timestamps,
