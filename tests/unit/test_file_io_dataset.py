@@ -2,6 +2,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from pandas._testing import assert_frame_equal
 import pytest
 import pytest_check as check
 
@@ -76,14 +77,17 @@ def test_testdataset_with_empty_frame_r_and_w(
         file_path=testfile_name, use_orig_filename=False
     )
 
+    data_0_orig = testdataset_with_empty_frame[0].data
     check.equal(testfile_name.exists(), True)
     check.equal(
         len(list(testfile_name.glob("*.parquet"))), len(testdataset_with_empty_frame)
     )
     read_dataset = Dataset.from_file(testfile_name)
+    data_0_read = read_dataset[0].data
     check.is_instance(read_dataset, Dataset)
     check.equal(len(testdataset_with_empty_frame), len(read_dataset))
     check.is_false(testdataset_with_empty_frame[1]._has_data())
+    assert_frame_equal(data_0_orig, data_0_read)
 
 
 def test_check_dir_file():

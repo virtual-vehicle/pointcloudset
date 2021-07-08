@@ -8,8 +8,7 @@ import pandas
 from dask import delayed
 
 from pointcloudset.dataset_core import DatasetCore
-from pointcloudset.io import (DATASET_FROM_FILE, DATASET_FROM_INSTANCE,
-                              DATASET_TO_FILE)
+from pointcloudset.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_TO_FILE
 from pointcloudset.pipeline.delayed_result import DelayedResult
 from pointcloudset.pointcloud import PointCloud
 
@@ -473,10 +472,11 @@ class Dataset(DatasetCore):
         nan values. Needed to save files with dask.
         """
 
+        default_data = pandas.DataFrame(self[0].data.iloc[0]).T
+
         def _exchange_empty_pointclouds_with_nan(frame: PointCloud) -> PointCloud:
             if not frame._has_data():
-                values = np.repeat(np.nan, len(frame.data.columns))
-                frame.data.loc[0] = values
+                frame.data = default_data
             return frame
 
         return self.apply(_exchange_empty_pointclouds_with_nan)
