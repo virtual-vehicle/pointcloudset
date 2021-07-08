@@ -4,6 +4,7 @@ from datetime import datetime
 from pathlib import Path
 
 import dask.dataframe as dd
+import pandas as pd
 
 datetime_format = "%Y-%m-%d %H:%M:%S.%f"
 delimiter = ";"
@@ -27,13 +28,15 @@ def dataset_to_dir(
     if len(orig_filename) == 0:
         orig_filename = str(uuid.uuid4())
     folder = file_path.joinpath(orig_filename) if use_orig_filename else file_path
-    dataset_to_write = dataset_in._replace_empty_frames_with_nan()
+    empty_data = pd.DataFrame(dataset_in[0].data.iloc[0]).T
+    dataset_to_write = dataset_in._replace_empty_frames_with_nan(empty_data)
     data = dd.from_delayed(dataset_to_write.data)
     data.to_parquet(folder, **kwargs)
     meta = dataset_in.meta
     meta["timestamps"] = [
         timestamp.strftime(datetime_format) for timestamp in dataset_in.timestamps
     ]
+    meta["empty_data"] = empty_data.to_dict()
     with open(folder.joinpath("meta.json"), "w") as outfile:
         json.dump(dataset_in.meta, outfile)
     _check_dir_contents(folder)
@@ -68,10 +71,12 @@ def dataset_from_dir(dir: Path) -> dict:
         meta.append(res["meta"])
     meta = meta[0]
     del meta["timestamps"]
+    empty_data = pd.DataFrame.from_dict(meta["empty_data"])
     return {
         "data": data,
         "timestamps": timestamps,
         "meta": meta,
+        "empty_data": empty_data,
     }
 
 
