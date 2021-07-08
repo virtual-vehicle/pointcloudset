@@ -78,16 +78,19 @@ def test_testdataset_with_empty_frame_r_and_w(
     )
 
     data_0_orig = testdataset_with_empty_frame[0].data
+    data_1_orig = testdataset_with_empty_frame[1].data
     check.equal(testfile_name.exists(), True)
     check.equal(
         len(list(testfile_name.glob("*.parquet"))), len(testdataset_with_empty_frame)
     )
     read_dataset = Dataset.from_file(testfile_name)
     data_0_read = read_dataset[0].data
+    data_1_read = read_dataset[1].data
     check.is_instance(read_dataset, Dataset)
     check.equal(len(testdataset_with_empty_frame), len(read_dataset))
     check.is_false(testdataset_with_empty_frame[1]._has_data())
     assert_frame_equal(data_0_orig, data_0_read)
+    assert_frame_equal(data_1_orig, data_1_read)
 
 
 def test_check_dir_file():
