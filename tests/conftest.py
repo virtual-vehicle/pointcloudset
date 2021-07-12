@@ -155,3 +155,11 @@ def test_kitti() -> Dataset:
         / "testdata/kitti_velodyne/kitti_2011_09_26_drive_0002_synce"
     )
     return Dataset.from_file(filename)
+
+
+@pytest.fixture()
+def testdataset_with_empty_frame(testdataset_mini_real: Dataset):
+    def pipeline(pointcloud: PointCloud) -> PointCloud:
+        return pointcloud.filter("value", "x", "<", 0)
+
+    return testdataset_mini_real.apply(pipeline)
