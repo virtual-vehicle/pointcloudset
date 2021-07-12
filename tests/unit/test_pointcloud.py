@@ -16,6 +16,20 @@ def test_init(testpointcloud_mini_df: pd.DataFrame):
     check.equal(type(pointcloud), PointCloud)
 
 
+def test_empty_pointcloud():
+    empty_pc = PointCloud()
+    check.equal(type(empty_pc), PointCloud)
+    check.is_false(empty_pc._has_data())
+    check.equal(len(empty_pc), 0)
+
+
+def test_empty_pointcloud_columns():
+    empty_pc = PointCloud(columns=["x", "y", "z", "test"])
+    check.equal(type(empty_pc), PointCloud)
+    check.is_false(empty_pc._has_data())
+    # check.equal(len(empty_pc), 0)
+
+
 def test_has_data(testpointcloud_mini: PointCloud):
     check.equal(testpointcloud_mini._has_data(), True)
 
@@ -51,9 +65,17 @@ def test_points2(testpointcloud_mini):
 
 def test_timestamp(testpointcloud_mini):
     check.equal(type(testpointcloud_mini.timestamp), datetime)
+    check.equal(testpointcloud_mini.timestamp, datetime(2020, 1, 1))
 
 
-def test_org_file(testpointcloud):
+def test_timestamp2(testpointcloud_mini):
+    fake_empty_df = pd.DataFrame.from_dict({"x": [0], "y": [0], "z": [0]})
+    pc0 = PointCloud(data=fake_empty_df)
+    pc1 = PointCloud(data=fake_empty_df)
+    check.less(pc0.timestamp, pc1.timestamp)
+
+
+def test_org_file(testpointcloud, testset):
     check.equal(type(testpointcloud.orig_file), str)
     check.equal(Path(testpointcloud.orig_file).stem, "test")
 

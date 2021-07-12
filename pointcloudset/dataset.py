@@ -3,12 +3,12 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Callable, List, Literal, Union, get_type_hints
 
+import numpy as np
 import pandas
 from dask import delayed
 
 from pointcloudset.dataset_core import DatasetCore
-from pointcloudset.io import (DATASET_FROM_FILE, DATASET_FROM_INSTANCE,
-                              DATASET_TO_FILE)
+from pointcloudset.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_TO_FILE
 from pointcloudset.pipeline.delayed_result import DelayedResult
 from pointcloudset.pointcloud import PointCloud
 
@@ -18,14 +18,13 @@ def _is_pipline_returing_pointcloud(pipeline, warn=True) -> bool:
     res = False
     if "return" in type_hints:
         res = get_type_hints(pipeline)["return"] == PointCloud
-    else:
-        if warn:
-            print(
-                (
-                    f"No return type was defined in {pipeline.__name__}:"
-                    "will not return a new dataset"
-                )
+    elif warn:
+        print(
+            (
+                f"No return type was defined in {pipeline.__name__}:"
+                "will not return a new dataset"
             )
+        )
     return res
 
 
@@ -77,11 +76,13 @@ class Dataset(DatasetCore):
             ValueError: If file format is not supported.
             TypeError: If file_path is not a Path object.
         """
+        from_dir = False
         if not isinstance(file_path, Path):
             raise TypeError("Expecting a Path object for file_path")
         ext = file_path.suffix[1:].upper()
         if ext == "":
             ext = "DIR"
+            from_dir = True
         if ext not in DATASET_FROM_FILE:
             raise ValueError(
                 (
@@ -90,7 +91,11 @@ class Dataset(DatasetCore):
                 )
             )
         res = DATASET_FROM_FILE[ext](file_path, **kwargs)
-        return cls(data=res["data"], timestamps=res["timestamps"], meta=res["meta"])
+        meta = res["meta"]
+        out = cls(data=res["data"], timestamps=res["timestamps"], meta=meta)
+        if from_dir:
+            out = out._replace_nan_frames_with_empty(res["empty_data"])
+        return out
 
     def to_file(self, file_path: Path = Path(), **kwargs) -> None:
         """Writes a Dataset to a file.
@@ -191,12 +196,16 @@ class Dataset(DatasetCore):
 
         returns_pointcloud = _is_pipline_returing_pointcloud(func, warn=warn)
 
+        columns = list(self[0].data.columns)
+
         if returns_pointcloud:
 
             def pipeline_delayed(element_in, timestamp):
-                pointcloud = PointCloud(data=element_in, timestamp=timestamp)
-                pointcloud = func(pointcloud, **kwargs)
-                return pointcloud.data
+                pointcloud_in = PointCloud(data=element_in, timestamp=timestamp)
+                pointcloud = func(pointcloud_in, **kwargs)
+                if not pointcloud._has_data():
+                    pointcloud = PointCloud(columns=columns)
+                return pointcloud.data  # to generate an empty pointcloud
 
         else:
 
@@ -462,3 +471,27 @@ class Dataset(DatasetCore):
         self.timestamps.extend(dataset.timestamps)
         self._check()
         return self
+
+    def _replace_empty_frames_with_nan(self, empty_data: pandas.DataFrame):
+        """Function to replace empty pointclouds with pointclouds wiht 1 point with all
+        nan values. Needed to save files with dask.
+        """
+
+        def _exchange_empty_pointclouds_with_nan(frame: PointCloud) -> PointCloud:
+            if not frame._has_data():
+                frame.data = empty_data
+            return frame
+
+        return self.apply(_exchange_empty_pointclouds_with_nan)
+
+    def _replace_nan_frames_with_empty(self, empty_data: pandas.DataFrame):
+        """Function to replace nan pointclouds with empty pointcouds
+        Needed to after reading dataset files.
+        """
+
+        def _exchange_nan_pointclouds_with_empty(frame: PointCloud) -> PointCloud:
+            if (len(frame) == 1) and np.allclose(empty_data.values, frame.data.values):
+                frame = PointCloud(columns=frame.data.columns)
+            return frame
+
+        return self.apply(_exchange_nan_pointclouds_with_empty)

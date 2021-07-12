@@ -128,7 +128,7 @@ class DatasetCore:
         Raises:
             ValueError: If start_time is bigger than end_time.
         """
-        if not start_time < end_time:
+        if start_time >= end_time:
             raise ValueError("start_time must be smaller than end_time")
         start_i = self._get_pointcloud_number_from_time(start_time)
         end_i = self._get_pointcloud_number_from_time(end_time) + 1
@@ -157,7 +157,7 @@ class DatasetCore:
         if len(self) > 0:
             assert len(self.timestamps) == len(
                 self.data
-            ), "Length of timestamps do not match the data"
+            ), f"Length of timestamps {len(self.timestamps)} do not match the data {len(self.data)}"
             if any(
                 self.timestamps[i] >= self.timestamps[i + 1]
                 for i in range(len(self.timestamps) - 1)
