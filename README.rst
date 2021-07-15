@@ -115,7 +115,7 @@ Quickstart
 
    tree.plot("x", hover_data=True)
 
-This produces the plot form the animation above.
+This produces the plot from the animation above.
 
 * Read the `html documentation`_.
 * Have a look at the `tutorial notebooks`_ in the documentation folder
