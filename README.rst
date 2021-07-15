@@ -4,13 +4,13 @@ pointcloudset
 .. image:: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/tests.yml/badge.svg
    :target: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/tests.yml
    :alt: test status
-   
+
 .. image:: images/coverage.svg
    :target: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/tests.yml
    :alt: test coverage
 
 .. image:: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/doc.yml/badge.svg
-   :target: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/doc.yml
+   :target: https://virtual-vehicle.github.io/pointcloudset/
     :alt: Documentation Status
 
 .. image:: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/docker_release.yml/badge.svg
@@ -28,19 +28,19 @@ pointcloudset
 
 .. inclusion-marker-do-not-remove
 
-Analyze large datasets of point clouds recorded over time in an efficient way. 
+Analyze large datasets of point clouds recorded over time in an efficient way.
 
 
 Features
 ################################################
-* Handles pointclouds over time
+* Handles point clouds over time
 * Building complex pipelines with a clean and maintainable code
 
 .. code-block:: python
 
    newpointcloud = pointcloud.limit("x",-5,5).filter("quantile","reflectivity", ">",0.5)
 
-* Apply arbitrary functions to datasets of pointclouds
+* Apply arbitrary functions to datasets of point clouds
 
 .. code-block:: python
 
@@ -60,14 +60,14 @@ Features
 * Support for numerical data per point (intensity, range, noise …)
 * Interactive 3D visualisation
 
-.. image:: https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/plot_3d.gif
+.. image:: https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/tree.gif
    :width: 600
 
 * High level processing based on dask, pandas, open3D and pyntcloud
 * Docker image is available
-* Optimised - but not limited to - automotive lidar 
+* Optimised - but not limited to - automotive lidar
 * Directly read ROS bagfiles and many pointcloud file formats
-* A commandline tool to convert ROS bagfiles
+* A command line tool to convert ROS bagfiles
 
 
 Use case examples
@@ -75,8 +75,8 @@ Use case examples
 
 - Post processing and analytics of a lidar dataset recorded by ROS
 - A collection of multiple lidar scans from a terrestrial laser scanner
-- Comparison of mutliple pointclouds to a ground truth
-- Analytics of pointclouds over time
+- Comparison of multiple point clouds to a ground truth
+- Analytics of point clouds over time
 - Developing algorithms on a single frame and then applying them to huge datasets
 
 
@@ -104,26 +104,37 @@ Quickstart
 
    from pointcloudset import Dataset, PointCloud
    from pathlib import Path
+   import urllib.request
 
-   dataset = Dataset.from_file(Path("rosbag_file.bag"), topic="/os1_cloud_node/points", keep_zeros=False)
-   pointcloud = dataset[42]
-   pointcloud2 = PointCloud.from_file(Path("lasfile.las"))
+   urllib.request.urlretrieve("https://github.com/virtual-vehicle/pointcloudset/raw/master/tests/testdata/test.bag", "test.bag")
+   urllib.request.urlretrieve("https://github.com/virtual-vehicle/pointcloudset/raw/master/tests/testdata/las_files/test_tree.las", "test_tree.las")
 
-* Read the html documentation.
-* Have a look at the tuturial notebooks in the documentation folder
+   dataset = Dataset.from_file(Path("test.bag"), topic="/os1_cloud_node/points", keep_zeros=False)
+   pointcloud = dataset[1]
+   tree = PointCloud.from_file(Path("test_tree.las"))
+
+   tree.plot("x", hover_data=True)
+
+This produces the plot form the animation above.
+
+* Read the `html documentation`_.
+* Have a look at the `tutorial notebooks`_ in the documentation folder
 * For even more usage examples you can have a look at the tests
+
+.. _html documentation: https://virtual-vehicle.github.io/pointcloudset/
+.. _tutorial notebooks: https://github.com/virtual-vehicle/pointcloudset/tree/better_readme_issue%239/doc/sphinx/source/tutorial_notebooks
 
 Comparison to related packages
 ################################################
 
-#. `ROS <http://wiki.ros.org/rosbag/Code%20API>`_ -  bagfiles can contain many pointclouds from different sensors.
+#. `ROS <http://wiki.ros.org/rosbag/Code%20API>`_ -  bagfiles can contain many point clouds from different sensors.
    The downside of the format is that it is only suitable for serial access and not well suited for data analytics and post processing.
-#. `pyntcloud <https://github.com/daavoo/pyntcloud>`_ - Only for single pointclouds. This package is used as the basis for the
+#. `pyntcloud <https://github.com/daavoo/pyntcloud>`_ - Only for single point clouds. This package is used as the basis for the
    PointCloud object.
-#. `open3d <https://github.com/intel-isl/Open3D>`_ - Only for single pointclouds. Excellend package, which is used for some
+#. `open3d <https://github.com/intel-isl/Open3D>`_ - Only for single point clouds. Excellent package, which is used for some
    methods on the PointCloud.
-#. `pdal <https://github.com/PDAL/PDAL>`_ - Works also with pipelines on pointclouds but is mostly focused on single point cloud processing.
-   Pointcloudset is purely in python and based on pandas dataframes. In addtion pointcloudset works in parallel to process large datasets.
+#. `pdal <https://github.com/PDAL/PDAL>`_ - Works also with pipelines on point clouds but is mostly focused on single point cloud processing.
+   Pointcloudset is purely in python and based on pandas DataFrames. In addition pointcloudset works in parallel to process large datasets.
 
 
 Citation and contact
