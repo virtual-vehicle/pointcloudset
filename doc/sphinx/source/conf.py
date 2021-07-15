@@ -7,6 +7,7 @@
 # -- Path setup --------------------------------------------------------------
 
 import codecs
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -47,13 +48,20 @@ version = get_version("../../../pointcloudset/__init__.py")
 release = version
 
 # --nbshinx settings ---------------------------------------------------
-nbsphinx_execute_arguments = [
-    "--InlineBackend.figure_formats={'svg', 'pdf'}",
-    "--InlineBackend.rc=figure.dpi=96",
-]
+# nbsphinx_execute_arguments = [
+#     "--InlineBackend.figure_formats={'svg', 'png'}",
+#     "--InlineBackend.rc=figure.dpi=96",
+# ]
 nbsphinx_kernel_name = "base"
 
-nbsphinx_execute = "never"
+nbsphinx_prolog = r"""
+.. raw:: html
+
+    <script src='http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js'></script>
+    <script>require=requirejs;</script>
+
+
+"""
 
 # -- General configuration ---------------------------------------------------
 
