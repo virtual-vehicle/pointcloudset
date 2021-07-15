@@ -34,5 +34,6 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push tgoelles/pointcloudset
         run: |
-          docker build . --file docker/release.Dockerfile --tag tgoelles/pointcloudset:${{ env.TAG }}
+          docker build . --file docker/release.Dockerfile --tag tgoelles/pointcloudset:${{ env.TAG }} --tag tgoelles/pointcloudset:latest
           docker push tgoelles/pointcloudset:${{ env.TAG }}
+          docker push tgoelles/pointcloudset:latest
