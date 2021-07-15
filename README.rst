@@ -60,7 +60,7 @@ Features
 * Support for numerical data per point (intensity, range, noise …)
 * Interactive 3D visualisation
 
-.. image:: https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/plot_3d.gif
+.. image:: https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/tree.gif
    :width: 600
 
 * High level processing based on dask, pandas, open3D and pyntcloud
