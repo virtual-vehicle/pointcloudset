@@ -250,8 +250,7 @@ class PointCloud(PointCloudCore):
         show_hover = True
         if hover_data is None:
             show_hover = False
-        if hover_data:
-            show_hover = True
+        elif hover_data:
             hover_data = list(self.data.columns)
         elif isinstance(hover_data, list) & len(hover_data) > 0:
             if self.has_original_id:
