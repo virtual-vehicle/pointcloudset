@@ -48,20 +48,15 @@ version = get_version("../../../pointcloudset/__init__.py")
 release = version
 
 # --nbshinx settings ---------------------------------------------------
-# nbsphinx_execute_arguments = [
-#     "--InlineBackend.figure_formats={'svg', 'png'}",
-#     "--InlineBackend.rc=figure.dpi=96",
-# ]
+nbsphinx_execute_arguments = [
+    "--InlineBackend.figure_formats={'svg', 'pdf'}",
+    "--InlineBackend.rc=figure.dpi=96",
+]
+
 nbsphinx_kernel_name = "base"
 
-nbsphinx_prolog = r"""
-.. raw:: html
+nbsphinx_execute = "never"
 
-    <script src='http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js'></script>
-    <script>require=requirejs;</script>
-
-
-"""
 
 # -- General configuration ---------------------------------------------------
 
