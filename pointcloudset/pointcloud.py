@@ -14,8 +14,12 @@ import pyntcloud
 
 from pointcloudset.diff import ALL_DIFFS
 from pointcloudset.filter import ALL_FILTERS
-from pointcloudset.io import (POINTCLOUD_FROM_FILE, POINTCLOUD_FROM_INSTANCE,
-                              POINTCLOUD_TO_FILE, POINTCLOUD_TO_INSTANCE)
+from pointcloudset.io import (
+    POINTCLOUD_FROM_FILE,
+    POINTCLOUD_FROM_INSTANCE,
+    POINTCLOUD_TO_FILE,
+    POINTCLOUD_TO_INSTANCE,
+)
 from pointcloudset.plot.pointcloud import plot_overlay
 from pointcloudset.pointcloud_core import PointCloudCore
 
@@ -205,7 +209,7 @@ class PointCloud(PointCloudCore):
         overlay: dict = {},
         point_size: float = 2,
         prepend_id: str = "",
-        hover_data: List[str] = None,
+        hover_data: Union(List[str], bool) = None,
         **kwargs,
     ) -> plotly.graph_objs.Figure:
         """Plot a PointCloud as a 3D scatter plot with `Plotly <https://plotly.com/>`_.
@@ -226,7 +230,8 @@ class PointCloud(PointCloudCore):
             point_size (float, optional): Size of each point. Defaults to 2.
             prepend_id (str, optional): String before point id to display in hover.
                 Defaults to empty.
-            hover_data (list(str), optional): Data columns to display in hover.
+            hover_data (list(str) or True, optional): Data columns to display in hover. If True
+                then all the columns are are show in the hover.
                 Defaults to None.
             **kwargs: Keyword arguments to pass to func.
 
@@ -245,6 +250,9 @@ class PointCloud(PointCloudCore):
         show_hover = True
         if hover_data is None:
             show_hover = False
+        if hover_data:
+            show_hover = True
+            hover_data = list(self.data.columns)
         elif isinstance(hover_data, list) & len(hover_data) > 0:
             if self.has_original_id:
                 default = ["original_id"]
