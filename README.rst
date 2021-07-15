@@ -122,7 +122,7 @@ This produces the plot from the animation above.
 * For even more usage examples you can have a look at the tests
 
 .. _html documentation: https://virtual-vehicle.github.io/pointcloudset/
-.. _tutorial notebooks: https://github.com/virtual-vehicle/pointcloudset/tree/better_readme_issue%239/doc/sphinx/source/tutorial_notebooks
+.. _tutorial notebooks: https://github.com/virtual-vehicle/pointcloudset/tree/master/doc/sphinx/source/tutorial_notebooks
 
 Comparison to related packages
 ################################################
