@@ -109,3 +109,5 @@ tests/testdata/big.bag
 *.dirlock
 *dask-worker-space*
 logs*
+tests/notebooks/test_tree.las
+tests/notebooks/test.bag
