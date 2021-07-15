@@ -104,10 +104,14 @@ Quickstart
 
    from pointcloudset import Dataset, PointCloud
    from pathlib import Path
+   import urllib.request
 
-   dataset = Dataset.from_file(Path("rosbag_file.bag"), topic="/os1_cloud_node/points", keep_zeros=False)
-   pointcloud = dataset[42]
-   pointcloud2 = PointCloud.from_file(Path("lasfile.las"))
+   urllib.request.urlretrieve("https://github.com/virtual-vehicle/pointcloudset/raw/master/tests/testdata/test.bag", "test.bag")
+   urllib.request.urlretrieve("https://github.com/virtual-vehicle/pointcloudset/raw/master/tests/testdata/las_files/test_tree.las", "test_tree.las")
+
+   dataset = Dataset.from_file(Path("test.bag"), topic="/os1_cloud_node/points", keep_zeros=False)
+   pointcloud = dataset[1]
+   pointcloud2 = PointCloud.from_file(Path("test_tree.las"))
 
 * Read the `html documentation`_.
 * Have a look at the `tutorial notebooks`_ in the documentation folder
