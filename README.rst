@@ -111,7 +111,11 @@ Quickstart
 
    dataset = Dataset.from_file(Path("test.bag"), topic="/os1_cloud_node/points", keep_zeros=False)
    pointcloud = dataset[1]
-   pointcloud2 = PointCloud.from_file(Path("test_tree.las"))
+   tree = PointCloud.from_file(Path("test_tree.las"))
+
+   tree.plot("x", hover_data=True)
+
+This produces the plot form the animation above.
 
 * Read the `html documentation`_.
 * Have a look at the `tutorial notebooks`_ in the documentation folder
