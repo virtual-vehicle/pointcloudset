@@ -10,7 +10,7 @@ pointcloudset
    :alt: test coverage
 
 .. image:: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/doc.yml/badge.svg
-   :target: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/doc.yml
+   :target: https://virtual-vehicle.github.io/pointcloudset/
     :alt: Documentation Status
 
 .. image:: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/docker_release.yml/badge.svg
@@ -110,22 +110,23 @@ Quickstart
    pointcloud2 = PointCloud.from_file(Path("lasfile.las"))
 
 * Read the `html documentation`_.
-* Have a look at the tutorial notebooks in the documentation folder
+* Have a look at the `tutorial notebooks`_ in the documentation folder
 * For even more usage examples you can have a look at the tests
 
 .. _html documentation: https://virtual-vehicle.github.io/pointcloudset/
+.. _tutorial notebooks: https://github.com/virtual-vehicle/pointcloudset/tree/better_readme_issue%239/doc/sphinx/source/tutorial_notebooks
 
 Comparison to related packages
 ################################################
 
 #. `ROS <http://wiki.ros.org/rosbag/Code%20API>`_ -  bagfiles can contain many point clouds from different sensors.
    The downside of the format is that it is only suitable for serial access and not well suited for data analytics and post processing.
-#. `pyntcloud <https://github.com/daavoo/pyntcloud>`_ - Only for single pointclouds. This package is used as the basis for the
+#. `pyntcloud <https://github.com/daavoo/pyntcloud>`_ - Only for single point clouds. This package is used as the basis for the
    PointCloud object.
 #. `open3d <https://github.com/intel-isl/Open3D>`_ - Only for single point clouds. Excellent package, which is used for some
    methods on the PointCloud.
-#. `pdal <https://github.com/PDAL/PDAL>`_ - Works also with pipelines on pointclouds but is mostly focused on single point cloud processing.
-   Pointcloudset is purely in python and based on pandas dataframes. In addition pointcloudset works in parallel to process large datasets.
+#. `pdal <https://github.com/PDAL/PDAL>`_ - Works also with pipelines on point clouds but is mostly focused on single point cloud processing.
+   Pointcloudset is purely in python and based on pandas DataFrames. In addition pointcloudset works in parallel to process large datasets.
 
 
 Citation and contact
