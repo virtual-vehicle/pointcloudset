@@ -1,9 +1,20 @@
-Change Log
-===========
+Changelog
+==========
+All notable changes to this project will be documented in this file.
 
-0.2.3
-------
-- added empty PointCloud object (issue#6)
-- added columns option to generate empty PointClouds with a specific schema (issue#6)
+The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
+and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
+
+[Unreleased]
+-------------
+
+
+[0.2.3] - 2021-07-12
+---------------------
+
+Added
+~~~~~~
+- empty PointCloud object (issue#6)
+- columns option to generate empty PointClouds with a specific schema (issue#6)
 - support for reading and writing Datasets with empty frames (issue#6)
 - check if all required files are written when saving a dataset
