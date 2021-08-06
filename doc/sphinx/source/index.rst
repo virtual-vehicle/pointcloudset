@@ -36,6 +36,12 @@ Welcome to pointcloudset's documentation!
    description_python_api
    python-api/pointcloudset
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Changelog
+
+   changelog
+
 
 Indices and tables
 ==================
