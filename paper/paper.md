@@ -50,6 +50,9 @@ Other python packages for point clouds, such as open3D and pyntcloud, focus on p
 
 \autoref{fig:dataset} illustrates the structure of the `Dataset` class including import and export possibilities. A Dataset consists of many PointCloud objects which can be accessed like list elements in Python. Alternatively, a `PointCloud` object can also be created directly from files, as illustrated in \autoref{fig:pointcloud}.
 
+# Contributions
+
+T.G. developed the concept and architecture; T.G., B.S., and S.H. developed the software; T.G. wrote the automatic tests; B.S. and T.G. wrote the software documentation; T.H. and T.G. created Jupyter notebooks for example usage; S.M., T.G., and B.S. wrote the manuscript. All authors contributed to the manuscript and software testing.
 
 # Acknowledgements
 
