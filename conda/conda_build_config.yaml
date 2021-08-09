@@ -1,7 +1,2 @@
-channels:
-  - defaults
-  - conda-forge
-  - open3d-admin
-
 python:
   - 3.8
