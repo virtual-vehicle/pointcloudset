@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: publish-to-conda
-      uses: tgoelles/conda-publish-action@v1.3
+      uses: tgoelles/conda-publish-action@v1.3_open3d
       with:
         subdir: 'conda'
         anacondatoken: ${{ secrets.ANACONDA_TOKEN }}
