@@ -1,0 +1,74 @@
+{% set name = "pointcloudset" %}
+{% set version = "0.2.3" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
+  sha256: 1bfc25bc4a43532ea8b3710fd536bd5b68f22cb99c6c801b855fb0e79ace9c2f
+
+build:
+  number: 0
+  entry_points:
+    - bag2dataset = pointcloudset.io.dataset.commandline:app
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - dask
+    - fastparquet
+    - numpy
+    - open3d ==0.12.0
+    - pandas
+    - pip
+    - plotly
+    - py3rosmsgs
+    - pycryptodomex
+    - pyntcloud
+    - python
+    - rospkg
+    - tqdm
+    - typer
+  run:
+    - dask
+    - fastparquet
+    - numpy
+    - open3d ==0.12.0
+    - pandas
+    - plotly
+    - py3rosmsgs
+    - pycryptodomex
+    - pyntcloud
+    - python
+    - rospkg
+    - tqdm
+    - typer
+
+test:
+  imports:
+    - pointcloudset
+    - pointcloudset.diff
+    - pointcloudset.filter
+    - pointcloudset.geometry
+    - pointcloudset.io
+    - pointcloudset.io.dataset
+    - pointcloudset.io.pointcloud
+    - pointcloudset.pipeline
+    - pointcloudset.plot
+  commands:
+    - bag2dataset --help
+
+about:
+  home: https://virtual-vehicle.github.io/pointcloudset/
+  license: MIT
+  license_family: MIT
+  license_file: LICENSE.md
+  summary: "Analyze large datasets of point clouds recorded over time in an efficient way"
+  doc_url: https://virtual-vehicle.github.io/pointcloudset/
+  dev_url: https://github.com/virtual-vehicle/pointcloudset
+
+extra:
+  recipe-maintainers:
+    - tgoelles
