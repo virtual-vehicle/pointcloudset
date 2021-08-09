@@ -77,7 +77,7 @@ RUN apt-get update && \
 # Python
 # Copy environment.yml (if found) to a temp locaition so we update the environment. Also
 # copy "noop.txt" so the COPY instruction does not fail if no environment.yml exists.
-COPY docker/environment.yml* /tmp/conda-tmp/
+COPY conda/environment.yml* /tmp/conda-tmp/
 RUN /opt/conda/bin/conda update -n base -c defaults conda
 #RUN /opt/conda/bin/conda config --set channel_priority strict
 # Update Python environment based on environment.yml (if presenet)
