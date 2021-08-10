@@ -118,44 +118,23 @@ def test_distances_to_origin(testpointcloud_mini: PointCloud):
     )
 
 
-def test_calculate_distance_to_plane1(testpointcloud_mini: PointCloud):
-    newframe = testpointcloud_mini.diff(
-        "plane", target=np.array([1, 0, 0, 0]), absolute_values=False
-    )
-    check.equal(type(newframe), PointCloud)
+@pytest.mark.parametrize(
+    "plane, plane_str, absolute_values, res",
+    [
+        (np.array([-1, 0, 0, 0]), "[-1 0 0 0]", True, 1.0),
+        (np.array([-1, 0, 0, 0]), "[-1 0 0 0]", False, -1.0),
+        (np.array([1, 0, 0, 0]), "[1 0 0 0]", False, 1.0),
+    ],
+)
+def test_calculate_distance_to_plane(
+    testpointcloud_mini: PointCloud, plane, plane_str, absolute_values, res
+):
+    testpointcloud_mini.diff("plane", target=plane, absolute_values=absolute_values)
     check.equal(
         str(list(testpointcloud_mini.data.columns.values)),
-        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [1 0 0 0]']",
+        f"['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: {plane_str}']",
     )
-    check.equal(testpointcloud_mini.data["distance to plane: [1 0 0 0]"][1], 1.0)
-
-
-def test_calculate_distance_to_plane1_2(testpointcloud_mini: PointCloud):
-    newframe = testpointcloud_mini.diff("plane", np.array([1, 0, 0, 0]))
-    check.equal(type(newframe), PointCloud)
-    check.equal(
-        str(list(testpointcloud_mini.data.columns.values)),
-        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [1 0 0 0]']",
-    )
-    check.equal(testpointcloud_mini.data["distance to plane: [1 0 0 0]"][1], 1.0)
-
-
-def test_calculate_distance_to_plane2(testpointcloud_mini: PointCloud):
-    testpointcloud_mini.diff(
-        "plane", target=np.array([-1, 0, 0, 0]), absolute_values=False
-    )
-    check.equal(
-        str(list(testpointcloud_mini.data.columns.values)),
-        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'distance to plane: [-1 0 0 0]']",
-    )
-    check.equal(testpointcloud_mini.data["distance to plane: [-1 0 0 0]"][1], -1.0)
-
-
-def test_calculate_distance_to_plane3(testpointcloud_mini: PointCloud):
-    testpointcloud_mini.diff(
-        "plane", target=np.array([-1, 0, 0, 0]), absolute_values=True
-    )
-    check.equal(testpointcloud_mini.data["distance to plane: [-1 0 0 0]"][1], 1.0)
+    check.equal(testpointcloud_mini.data[f"distance to plane: {plane_str}"][1], res)
 
 
 def test_calculate_distance_to_point(testpointcloud_mini: PointCloud):
