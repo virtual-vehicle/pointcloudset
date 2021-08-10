@@ -120,50 +120,47 @@ def test_from_pointclouds_list(testdataset_mini_real):
     check.is_instance(testdataset_mini_real[0], PointCloud)
 
 
+@pytest.fixture()
+def expected_columns():
+    return [
+        "x min",
+        "y min",
+        "z min",
+        "intensity min",
+        "t min",
+        "reflectivity min",
+        "ring min",
+        "noise min",
+        "range min",
+        "timestamp",
+    ]
+
+
 def test_agg_pointcloud(
-    testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud
+    testdataset_mini_real: Dataset,
+    testpointcloud_mini_real: PointCloud,
+    expected_columns,
 ):
     test = testdataset_mini_real._agg_per_pointcloud("min")
     x_min = testpointcloud_mini_real.data.agg({"x": "min"})
     check.is_instance(test, pd.DataFrame)
     check.equal(len(test), len(testdataset_mini_real))
-    check.equal(
-        list(test.columns),
-        [
-            "x min",
-            "y min",
-            "z min",
-            "intensity min",
-            "t min",
-            "reflectivity min",
-            "ring min",
-            "noise min",
-            "range min",
-            "timestamp",
-        ],
-    )
+    check.equal(list(test.columns), expected_columns)
     check.equal(test.min()["x min"], x_min.values[0])
 
 
-def test_agg_1(testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud):
+def test_agg_1(
+    testdataset_mini_real: Dataset,
+    testpointcloud_mini_real: PointCloud,
+    expected_columns,
+):
     test = testdataset_mini_real.agg("min", "pointcloud")
     x_min = testpointcloud_mini_real.data.agg({"x": "min"})
     check.is_instance(test, pd.DataFrame)
     check.equal(len(test), len(testdataset_mini_real))
     check.equal(
         list(test.columns),
-        [
-            "x min",
-            "y min",
-            "z min",
-            "intensity min",
-            "t min",
-            "reflectivity min",
-            "ring min",
-            "noise min",
-            "range min",
-            "timestamp",
-        ],
+        expected_columns,
     )
     check.equal(test.min()["x min"], x_min.values[0])
 
@@ -244,11 +241,7 @@ def test_agg_dataset_list(
     check.equal(test.x["min"]["min"], x_min.values[0])
 
 
-def test_agg_list1(
-    testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud
-):
-    f0 = testdataset_mini_real[0].data.agg(["min", "max"])
-    f1 = testdataset_mini_real[1].data.agg(["min", "max"])
+def test_agg_list1(testdataset_mini_real: Dataset):
     test = testdataset_mini_real.agg(["min", "max"], "pointcloud")
     check.is_instance(test, list)
 
@@ -317,9 +310,7 @@ def test_dataset_min_dataset(
 
 
 def test_dataset_min_point(
-    testdataset_mini_real: Dataset,
-    testpointcloud_mini_real: PointCloud,
-    testpointcloud_mini_real_plus1: PointCloud,
+    testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud
 ):
     mincalc = testdataset_mini_real.min(depth="point")
     first = mincalc.drop(["N", "original_id"], axis=1).iloc[0]
@@ -337,7 +328,6 @@ def test_dataset_min_point(
 def test_dataset_min_pointcloud(
     testdataset_mini_real: Dataset,
     testpointcloud_mini_real: PointCloud,
-    testpointcloud_mini_real_plus1: PointCloud,
 ):
     mincalc = testdataset_mini_real.min(depth="pointcloud")
     x_min = testpointcloud_mini_real.data.agg({"x": "min"})
