@@ -3,6 +3,7 @@ import pytest
 import pytest_check as check
 
 from pointcloudset import PointCloud
+from pointcloudset.config import OPS
 
 
 def test_wrong_filter(testpointcloud_mini_real: PointCloud):
@@ -21,19 +22,8 @@ def test_qf2(testpointcloud_mini_real):
     check.equal(len(test), 0)
 
 
-def test_qf3(testpointcloud_mini_real: PointCloud):
+@pytest.mark.parametrize("op", ["<", ">=", "<="])
+def test_qf3(testpointcloud_mini_real: PointCloud, op):
     q = testpointcloud_mini_real.data.quantile(0.5)
-    test = testpointcloud_mini_real.filter("quantile", "range", "<", 0.5)
-    check.less(test.data.range.min(), q.range)
-
-
-def test_qf4(testpointcloud_mini_real: PointCloud):
-    q = testpointcloud_mini_real.data.quantile(0.5)
-    test = testpointcloud_mini_real.filter("quantile", "range", ">=", 0.5)
-    check.greater_equal(test.data.range.min(), q.range)
-
-
-def test_qf5(testpointcloud_mini_real: PointCloud):
-    q = testpointcloud_mini_real.data.quantile(0.5)
-    test = testpointcloud_mini_real.filter("quantile", "range", "<=", 0.5)
-    check.less_equal(test.data.range.min(), q.range)
+    test = testpointcloud_mini_real.filter("quantile", "range", op, 0.5)
+    assert OPS[op](test.data.range.min(), q.range)
