@@ -15,13 +15,11 @@ def test_from_bag_wrong_topic(testbag1):
         ds = Dataset.from_file(testbag1, topic="/none", keep_zeros=False)
 
 
-def test_from_bag(testbag1):
-    ds = Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=False)
-    check.is_instance(ds, Dataset)
-
-
-def test_from_bag2(testbag1):
-    ds = Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=True)
+@pytest.mark.parametrize("keep_zeros", [True, False])
+def test_from_bag(testbag1, keep_zeros):
+    ds = Dataset.from_file(
+        testbag1, topic="/os1_cloud_node/points", keep_zeros=keep_zeros
+    )
     check.is_instance(ds, Dataset)
 
 

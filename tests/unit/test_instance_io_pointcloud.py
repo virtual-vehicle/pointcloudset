@@ -4,8 +4,8 @@ import numpy as np
 import open3d as o3d
 import pandas as pd
 import pytest_check as check
-from pandas._testing import assert_frame_equal
 from pyntcloud import PyntCloud
+import pytest
 
 import pointcloudset
 from pointcloudset import PointCloud
@@ -53,15 +53,7 @@ def test_from_dataframe(
     check.equal(set(list(test.max())).intersection([0.0, 0.0, 0.0]), {0.0})
 
 
-def test_to_dataframe(
-    testpointcloud_mini_df: pd.DataFrame, testpointcloud_mini: PointCloud
-):
+@pytest.mark.paramterize("to", ["DataFrame", "dataframe", "pandas", "Pandas"])
+def test_to_dataframe(testpointcloud_mini: PointCloud):
     df = testpointcloud_mini.to_instance("DataFrame")
-    check.is_instance(df, pd.DataFrame)
-
-
-def test_to_dataframe2(
-    testpointcloud_mini_df: pd.DataFrame, testpointcloud_mini: PointCloud
-):
-    df = testpointcloud_mini.to_instance("pandas")
     check.is_instance(df, pd.DataFrame)
