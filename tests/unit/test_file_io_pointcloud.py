@@ -10,14 +10,12 @@ import pointcloudset
 from pointcloudset import PointCloud
 
 
-def test_from_file_not_path():
-    with pytest.raises(TypeError):
-        pointcloudset.PointCloud.from_file("/sepp.depp")
-
-
-def test_from_file_not_supported(testlas1: Path):
-    with pytest.raises(ValueError):
-        pointcloudset.PointCloud.from_file(Path("/sepp.depp"))
+@pytest.mark.parametrize(
+    "file, error", [(Path("/sepp.depp"), "ValueError"), ("/sepp.depp", "TypeError")]
+)
+def test_from_file_error(file, error):
+    with pytest.raises(eval(error)):
+        pointcloudset.PointCloud.from_file(file)
 
 
 def test_from_file_las(testlas1: Path):

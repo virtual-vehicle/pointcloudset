@@ -20,28 +20,23 @@ def test_pointcloud_limit3(testpointcloud_mini: PointCloud):
         testpointcloud_mini.limit("wrong", minvalue=2000, maxvalue=0)
 
 
-def test_pointcloud_limit4(testpointcloud_mini: PointCloud, testpointcloud_mini_df):
+@pytest.mark.parametrize("column", ["x", "intensity"])
+def test_pointcloud_limit_x(
+    testpointcloud_mini: PointCloud, testpointcloud_mini_df, column
+):
     np.testing.assert_array_equal(
-        testpointcloud_mini.limit("x", minvalue=0.0, maxvalue=2.0).data.values,
+        testpointcloud_mini.limit(column, minvalue=0.0, maxvalue=2.0).data.values,
         testpointcloud_mini_df[0:2].values,
     )
 
 
-def test_pointcloud_limit5(testpointcloud_mini: PointCloud, testpointcloud_mini_df):
-    np.testing.assert_array_equal(
-        testpointcloud_mini.limit("intensity", minvalue=0.0, maxvalue=2.0).data.values,
-        testpointcloud_mini_df[0:2].values,
-    )
-
-
-def test_limit_6(testpointcloud: PointCloud):
-    totest = testpointcloud.limit("x", minvalue=0.0, maxvalue=500.0)
-    check.equal(len(totest), 25778)
-
-
-def test_limit_7(testpointcloud: PointCloud):
-    totest = testpointcloud.limit("intensity", minvalue=500.0, maxvalue=510.0)
-    check.equal(len(totest), 416)
+@pytest.mark.parametrize(
+    "column, minval, maxval, res",
+    [("x", 0.0, 500.0, 25778), ("intensity", 500.0, 510.0, 416)],
+)
+def test_limit_val(testpointcloud: PointCloud, column, minval, maxval, res):
+    totest = testpointcloud.limit(column, minvalue=minval, maxvalue=maxval)
+    check.equal(len(totest), res)
 
 
 def test_pointcloud_limit_chaining(
