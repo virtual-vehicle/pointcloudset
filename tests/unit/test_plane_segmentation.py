@@ -28,7 +28,7 @@ def test_plane_segmentation(testpointcloud):
 
 @pytest.mark.parametrize(
     "return_plane_model, type_out, for_len",
-    [(True, dict, "plane"), (False, PointCloud, """plane["PointCloud"]""")],
+    [(True, dict, """plane["PointCloud"]"""), (False, PointCloud, """plane""")],
 )
 def test_plane_segmentation_plane_model(
     testpointcloud, return_plane_model, type_out, for_len
@@ -40,4 +40,4 @@ def test_plane_segmentation_plane_model(
         return_plane_model=return_plane_model,
     )
     check.equal(type(plane), type_out)
-    check.equal(len(eval(for_len)), 387)
+    check.equal(eval(f"len({for_len})"), 387)
