@@ -12,11 +12,7 @@ def test_distance_to_point():
     check.equal(distance, 1.0)
 
 
-def test_distance_to_point_error1():
+@pytest.mark.parametrize("pA, pB", [([1, 0], [1, 0, 0]), ([1, 0, 0], [1, 0])])
+def test_distance_to_point_error(pA, pB):
     with pytest.raises(ValueError):
-        point.distance_to_point(point_A=np.array([1, 0]), point_B=np.array([1, 0, 0]))
-
-
-def test_distance_to_point_error2():
-    with pytest.raises(ValueError):
-        point.distance_to_point(point_A=np.array([1, 0, 0]), point_B=np.array([1, 0]))
+        point.distance_to_point(point_A=np.array(pA), point_B=np.array(pB))
