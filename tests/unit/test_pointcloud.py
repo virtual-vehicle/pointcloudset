@@ -10,6 +10,18 @@ from pyntcloud import PyntCloud
 
 from pointcloudset import PointCloud
 
+typical_columns = [
+    "x",
+    "y",
+    "z",
+    "intensity",
+    "t",
+    "reflectivity",
+    "ring",
+    "noise",
+    "range",
+]
+
 
 def test_init(testpointcloud_mini_df: pd.DataFrame):
     pointcloud = PointCloud(testpointcloud_mini_df, datetime(2020, 1, 1))
@@ -59,7 +71,7 @@ def test_points2(testpointcloud_mini):
     points = testpointcloud_mini.points
     check.equal(
         list(points.points.columns),
-        ["x", "y", "z", "intensity", "t", "reflectivity", "ring", "noise", "range"],
+        typical_columns,
     )
 
 
@@ -144,9 +156,10 @@ def test_add_column(testpointcloud_mini: PointCloud):
     newframe = testpointcloud_mini._add_column("test", testpointcloud_mini.data["x"])
     check.equal(type(newframe), PointCloud)
     after_columns = list(testpointcloud_mini.data.columns.values)
+    columns = typical_columns + ["test"]
     check.equal(
         str(after_columns),
-        "['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'test']",
+        str(columns),
     )
 
 
@@ -180,20 +193,10 @@ def test_testpointcloud_2(testpointcloud_mini: PointCloud):
 
 def test_testpointcloud_data(testpointcloud: PointCloud):
     data = testpointcloud.data
+    columns = typical_columns + ["original_id"]
     check.equal(
         list(data.columns),
-        [
-            "x",
-            "y",
-            "z",
-            "intensity",
-            "t",
-            "reflectivity",
-            "ring",
-            "noise",
-            "range",
-            "original_id",
-        ],
+        columns,
     )
     check.equal(data.shape, (45809, 10))
 
@@ -225,7 +228,7 @@ def test_testpointcloud_withzero_data(
     # data.to_pickle("/workspaces/pointcloudset/tests/testdata/testpointcloud_withzero_dataframe.pkl")
     check.equal(
         list(data.columns),
-        ["x", "y", "z", "intensity", "t", "reflectivity", "ring", "noise", "range"],
+        typical_columns,
     )
     check.equal(data.shape, (131072, 9))
     assert_frame_equal(data, reference_data_with_zero_dataframe)
