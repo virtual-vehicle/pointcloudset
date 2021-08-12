@@ -266,3 +266,10 @@ def test_centroit(testpointcloud_mini: PointCloud):
     check.almost_equal(
         list(ct), [259.95131121217355, 225.64930989164827, 365.44029720089736]
     )
+
+
+def test_random_down_sample(testpointcloud: PointCloud):
+    len_orig = len(testpointcloud)
+    smaller = testpointcloud.random_down_sample(10)
+    check.equal(len(smaller), 10)
+    check.equal(len(testpointcloud), len_orig)
