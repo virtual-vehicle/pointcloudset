@@ -22,6 +22,7 @@ from pointcloudset.io import (
 )
 from pointcloudset.plot.pointcloud import plot_overlay
 from pointcloudset.pointcloud_core import PointCloudCore
+from pointcloudset.config import PLOTLYSIZELIMIT
 
 
 class PointCloud(PointCloudCore):
@@ -244,6 +245,13 @@ class PointCloud(PointCloudCore):
         """
         if color is not None and color not in self.data.columns:
             raise ValueError(f"choose any of {list(self.data.columns)} or None")
+
+        if len(self) > PLOTLYSIZELIMIT:
+            raise ValueError(
+                f"""Pointcloud is too large to be ploted.
+            {len(self)} > {PLOTLYSIZELIMIT}.
+            Use another plotting method or reduce number of points """
+            )
 
         ids = [prepend_id + "id=" + str(i) for i in range(self.data.shape[0])]
 
