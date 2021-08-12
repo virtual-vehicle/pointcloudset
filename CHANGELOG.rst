@@ -8,6 +8,11 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 [Unreleased]
 -------------
 
+Added
+~~~~~~
+- limit the number of points which can be plotted (issue#18)
+
+
 
 [0.2.3] - 2021-07-12
 ---------------------
