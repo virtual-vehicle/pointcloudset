@@ -11,6 +11,7 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Added
 ~~~~~~
 - limit the number of points which can be plotted (issue#18)
+- random_down_sample method for pointclouds.
 
 
 
