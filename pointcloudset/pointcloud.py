@@ -22,6 +22,7 @@ from pointcloudset.io import (
 )
 from pointcloudset.plot.pointcloud import plot_overlay
 from pointcloudset.pointcloud_core import PointCloudCore
+from pointcloudset.config import PLOTLYSIZELIMIT
 
 
 class PointCloud(PointCloudCore):
@@ -169,7 +170,12 @@ class PointCloud(PointCloudCore):
 
     def to_instance(
         self, library: Literal["PYNTCLOUD", "OPEN3D", "DATAFRAME", "PANDAS"], **kwargs
-    ) -> Union[pandas.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud]:
+    ) -> Union[
+        pyntcloud.PyntCloud,
+        open3d.geometry.PointCloud,
+        pandas.DataFrame,
+        pandas.DataFrame,
+    ]:
         """Convert PointCloud to another library instance.
 
         Args:
@@ -244,6 +250,14 @@ class PointCloud(PointCloudCore):
         """
         if color is not None and color not in self.data.columns:
             raise ValueError(f"choose any of {list(self.data.columns)} or None")
+
+        if len(self) > PLOTLYSIZELIMIT:
+            warnings.warn(
+                f"""Pointcloud above limit of {PLOTLYSIZELIMIT}.
+                Plotting might fail or take a long time.
+                Consider donwsampling before plotting.
+                for example: pointcloud.random_down_sample(10000).plot()"""
+            )
 
         ids = [prepend_id + "id=" + str(i) for i in range(self.data.shape[0])]
 
@@ -490,3 +504,16 @@ class PointCloud(PointCloudCore):
             return {"PointCloud": inlier_pointcloud, "plane_model": plane_model}
         else:
             return inlier_pointcloud
+
+    def random_down_sample(self, number_of_points: int) -> PointCloud:
+        """Function to downsample input pointcloud into output pointcloud randomly.
+        Made
+
+        Args:
+            number_of_points ([int]): number_of_points
+
+        Returns:
+            PointCloud: subsampled PointCloud
+        """
+        new_data = self.data.sample(number_of_points).reset_index()
+        return PointCloud(new_data, timestamp=self.timestamp)

@@ -11,3 +11,5 @@ OPS = {
     "<=": operator.le,
     "==": operator.eq,
 }
+
+PLOTLYSIZELIMIT = 300000
