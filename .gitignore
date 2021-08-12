@@ -93,6 +93,8 @@ target/
 .mypy_cache/
 environment_noversions.yml
 tmp.sh
+
+# LaTeX
 *.aux
 *.fdb_latexmk
 reports/example.synctex.gz
@@ -105,9 +107,11 @@ pyntcloud_plot*
 dev_notebooks*
 
 tests/testdata/big.bag
+tests/notebooks/test_tree.las
+tests/notebooks/test.bag
+tests/testdata/large
+
 *.lock
 *.dirlock
 *dask-worker-space*
 logs*
-tests/notebooks/test_tree.las
-tests/notebooks/test.bag
