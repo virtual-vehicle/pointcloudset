@@ -14,6 +14,11 @@ Added
 - random_down_sample method for pointclouds.
 
 
+Changed
+~~~~~~
+
+- set conda environment name to "pointcloudset" not "base"
+
 
 [0.2.3] - 2021-07-12
 ---------------------
