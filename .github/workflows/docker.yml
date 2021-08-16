@@ -47,7 +47,8 @@ jobs:
       - name: Build and push tgoelles/pointcloudset_base
         if: steps.changed-files-specific.outputs.any_changed == 'true'
         run: |
-          docker build . --file docker/Dockerfile --tag tgoelles/pointcloudset_base:latest --target base
-
+          docker build . --file docker/release.Dockerfile --tag tgoelles/pointcloudset_base:${{ env.TAG }} --tag tgoelles/pointcloudset_base:latest
+          docker push tgoelles/pointcloudset_base:${{ env.TAG }}
+          docker push tgoelles/pointcloudset_base:latest
 
 
