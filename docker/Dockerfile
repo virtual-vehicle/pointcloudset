@@ -84,7 +84,7 @@ RUN /opt/conda/bin/conda update -n base -c defaults conda
 RUN if [ -f "/tmp/conda-tmp/environment.yml" ]; then /opt/conda/bin/conda env update -n base -f /tmp/conda-tmp/environment.yml; fi \
     && rm -rf /tmp/conda-tmp \
     # install the kernel to use with jupyter and some extensions
-    && python -m ipykernel install --user --name base
+    && python -m ipykernel install --user --name pointcloudset
 
 # ROSPY loggging configuation file
 COPY docker/python_logging.conf /etc/ros/
