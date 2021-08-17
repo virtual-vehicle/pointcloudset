@@ -81,7 +81,7 @@ COPY conda/environment.yml* /tmp/conda-tmp/
 RUN /opt/conda/bin/conda update -n base -c defaults conda
 #RUN /opt/conda/bin/conda config --set channel_priority strict
 # Update Python environment based on environment.yml (if presenet)
-RUN if [ -f "/tmp/conda-tmp/environment.yml" ]; then /opt/conda/bin/conda env update -n base -f /tmp/conda-tmp/environment.yml; fi \
+RUN if [ -f "/tmp/conda-tmp/environment.yml" ]; then /opt/conda/bin/conda env create -f /tmp/conda-tmp/environment.yml; fi \
     && rm -rf /tmp/conda-tmp \
     # install the kernel to use with jupyter and some extensions
     && python -m ipykernel install --user --name pointcloudset
