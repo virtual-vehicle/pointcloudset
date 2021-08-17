@@ -43,12 +43,13 @@ Apart from the progress in the lidar sector, technological improvements, as well
 # Statement of Need
 Other python packages for point clouds, such as open3D, pyntcloud, and pcl [@Rusu_ICRA2011_PCL] and its python bindings [@python-pcl], focus on processing single point clouds rather than on processing time series of point clouds. Another library is PDAL [@pdal_contributors_2018_2556738] which also works with pipelines on point clouds. However, it is focused on single point cloud processing as well. ROS (robot operating system) [@ros:2018] provides a way to store, access, and visualize multiple point clouds stored as `rosbags`. However, these `rosbags` are meant to be accessed only in a serial fashion, which is not ideal for post processing and not well suited for extracting subsets of the point cloud dataset.
 
-Compared to mentioned packages, pointcloudset provides efficient analysis of time series of point clouds by parallel processing. E.g. the package is a helpful toolkit for post processing of lidar datasets recorded by ROS or for post processing of multiple lidar scans from terrestrial laser scanners. Algorithms and pipelines can be developed for a single point cloud and can then be applied to big datasets of point clouds. 
+Compared to mentioned packages, pointcloudset provides efficient analysis of time series of point clouds by parallel processing. E.g. the package is a helpful toolkit for post processing of lidar datasets recorded by ROS or for post processing of multiple lidar scans from terrestrial laser scanners. In addition, pointcloudset can be used to develop algorithms on a single point cloud and apply them to big datasets of point clouds.
 
+# Data Structures of pointcloudset
 
 ![Dataset object with main properties and ways to read and write data. \label{fig:dataset}](./figures/data_pipeline2.pdf){ width=100% }
 
-![PointCloud set with main properties and ways to read and write data. \label{fig:pointcloud}](./figures/data_pipeline3.pdf){ width=80% }
+![PointCloud object with main properties and ways to read and write data. \label{fig:pointcloud}](./figures/data_pipeline3.pdf){ width=80% }
 
 \autoref{fig:dataset} illustrates the structure of the `Dataset` class including import and export possibilities. A Dataset consists of many PointCloud objects which can be accessed like list elements in Python. Alternatively, a `PointCloud` object can also be created directly from files, as illustrated in \autoref{fig:pointcloud}.
 
