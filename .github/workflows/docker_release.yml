@@ -1,11 +1,10 @@
-name: Docker release
+name: Docker base
 
 on:
-  push:
-    branches:
-      - "!*"
-    tags:
-      - "v*"
+  release:
+    types: # This configuration does not affect the page_build event above
+      - created
+
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -14,6 +13,9 @@ on:
         description: "docker tag"
         required: true
         default: "latest"
+
+env:
+  image_name: pointcloudset_base
 
 jobs:
   build:
@@ -34,6 +36,8 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push tgoelles/pointcloudset
         run: |
-          docker build . --file docker/release.Dockerfile --tag tgoelles/pointcloudset:${{ env.TAG }} --tag tgoelles/pointcloudset:latest
-          docker push tgoelles/pointcloudset:${{ env.TAG }}
-          docker push tgoelles/pointcloudset:latest
+          docker build . --file docker/release.Dockerfile --tag tgoelles/${{ env.IMAGE_NAME }}:${{ env.TAG }} --tag tgoelles/${{ env.IMAGE_NAME }}:latest
+          docker push tgoelles/${{ env.IMAGE_NAME }}:${{ env.TAG }}
+      - name: push latest tag
+        if: github.event_name != 'workflow_dispatch'
+        run:  docker push tgoelles/pointcloudset:latest
