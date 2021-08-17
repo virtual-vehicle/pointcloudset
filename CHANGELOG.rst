@@ -8,7 +8,7 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 
 
 
-[Unreleased]
+Unreleased
 -------------
 
 Fixed
@@ -16,7 +16,7 @@ Fixed
 - conda environment name was still "base" now is "pointcloudset"
 
 
-[0.3.0] - 2021-08-17
+0.3.0 (2021-08-17)
 -------------
 
 Added
@@ -36,7 +36,7 @@ Changed
 - sticking to semantic versioning
 
 
-[0.2.3] - 2021-07-12
+0.2.3 (2021-07-12)
 ---------------------
 
 Added
