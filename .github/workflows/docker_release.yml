@@ -45,7 +45,7 @@ jobs:
         with:
           context: .
           file: docker/release.Dockerfile
-          push: false
+          push: true
           platforms: linux/amd64
           tags:  |
               tgoelles/pointcloudset:latest
