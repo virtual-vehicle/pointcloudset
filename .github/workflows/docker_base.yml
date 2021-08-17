@@ -9,10 +9,10 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
-      name:
+      tag:
         description: "docker tag"
         required: true
-        default: "latest"
+        default: "test"
 
 jobs:
   docker:
@@ -26,7 +26,7 @@ jobs:
         run: echo "TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
       - name: manual tag
         if: github.event_name == 'workflow_dispatch'
-        run: echo "TAG=${{ github.event.inputs.name }}" >> $GITHUB_ENV
+        run: echo "TAG=${{ github.event.inputs.tag }}" >> $GITHUB_ENV
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -45,7 +45,7 @@ jobs:
         with:
           context: .
           push: true
-
+          platforms: linux/amd64,linux/arm64
           tags:  |
               tgoelles/pointcloudset_base:latest
               tgoelles/pointcloudset_base:${{ env.TAG }}
