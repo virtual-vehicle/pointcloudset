@@ -19,7 +19,7 @@ ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-COPY docker/.bashrc /root/.bashrc
+COPY .bashrc /root/.bashrc
 
 # Configure apt and install packages
 RUN apt-get update \
@@ -87,6 +87,6 @@ RUN if [ -f "/tmp/conda-tmp/environment.yml" ]; then /opt/conda/bin/conda env up
     && python -m ipykernel install --user --name pointcloudset
 
 # ROSPY loggging configuation file
-COPY docker/python_logging.conf /etc/ros/
+COPY python_logging.conf /etc/ros/
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=noninteractive
