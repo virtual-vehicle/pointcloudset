@@ -46,7 +46,7 @@ jobs:
           context: .
           file: docker/Dockerfile
           push: false
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           tags:  |
               tgoelles/pointcloudset_base:latest
               tgoelles/pointcloudset_base:${{ env.TAG }}
