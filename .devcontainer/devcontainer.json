@@ -27,7 +27,7 @@
 		"python.testing.pytestEnabled": true,
 		"jupyter.alwaysTrustNotebooks": true
 	},
-	"postCreateCommand": "#conda activate pointcloudset; pip install -e .",
+	"postCreateCommand": "#pip install -e .",
 	"extensions": [
 		"ms-python.python",
 		"ms-python.vscode-pylance",

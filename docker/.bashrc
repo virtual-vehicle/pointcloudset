@@ -16,8 +16,9 @@ alias l='ls $LS_OPTIONS -lA'
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
-. /opt/conda/etc/profile.d/conda.sh
-conda activate base
 
 # jupyter lab to use with browser
 alias ju="jupyter lab --no-browser --port 8888 --ip=127.0.0.1 --allow-root"
+
+export PATH="/opt/conda/bin:$PATH"
+conda activate pointcloudset

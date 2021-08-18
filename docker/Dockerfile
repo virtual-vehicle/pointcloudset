@@ -19,8 +19,6 @@ ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-COPY docker/.bashrc /root/.bashrc
-
 # Configure apt and install packages
 RUN apt-get update \
     && apt-get -y install --no-install-recommends apt-utils dialog 2>&1 \
@@ -34,7 +32,7 @@ RUN apt-get update \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME \
     # tools to access extrenal datasets
-    && apt-get -y install netcat curl make wget unzip \
+    && apt-get -y install netcat curl make wget unzip less \
     && apt-get -y install gcc \
     # orca for plotly
     && apt-get install -y xvfb \
@@ -74,6 +72,8 @@ RUN apt-get update && \
     xvfb && \
     rm -rf /var/lib/apt/lists/*
 
+COPY docker/.bashrc /root/.bashrc
+
 # Python
 # Copy environment.yml (if found) to a temp locaition so we update the environment. Also
 # copy "noop.txt" so the COPY instruction does not fail if no environment.yml exists.
@@ -83,10 +83,10 @@ RUN /opt/conda/bin/conda update -n base -c defaults conda
 # Update Python environment based on environment.yml (if presenet)
 RUN /opt/conda/bin/conda env create -f /tmp/conda-tmp/environment.yml \
     && rm -rf /tmp/conda-tmp
-RUN echo "conda activate pointcloudset" >> ~/.bashrc
-SHELL ["/bin/bash", "--login", "-c"]
 # install the kernel to use with jupyter and some extensions
-RUN python -m ipykernel install --user --name pointcloudset
+RUN /bin/bash -c  'source activate pointcloudset && \
+    conda init bash && \
+    python -m ipykernel install --name pointcloudset'
 
 # ROSPY loggging configuation file
 COPY docker/python_logging.conf /etc/ros/
