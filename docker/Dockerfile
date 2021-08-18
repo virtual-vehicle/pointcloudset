@@ -85,7 +85,6 @@ RUN /opt/conda/bin/conda env create -f /tmp/conda-tmp/environment.yml \
     && rm -rf /tmp/conda-tmp
 # install the kernel to use with jupyter and some extensions
 RUN /bin/bash -c  'source activate pointcloudset && \
-    conda init bash && \
     python -m ipykernel install --name pointcloudset'
 
 # ROSPY loggging configuation file
@@ -93,4 +92,4 @@ COPY docker/python_logging.conf /etc/ros/
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=noninteractive
 
-ENTRYPOINT ["conda", "run", "-n", "pointcloudset"]
+ENTRYPOINT ["conda", "activate", "pointcloudset"]

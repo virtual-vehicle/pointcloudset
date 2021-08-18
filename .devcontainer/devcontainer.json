@@ -25,9 +25,15 @@
 		"python.linting.pylintPath": "/opt/conda/bin/pylint",
 		"cSpell.maxNumberOfProblems": 500,
 		"python.testing.pytestEnabled": true,
-		"jupyter.alwaysTrustNotebooks": true
+		"jupyter.alwaysTrustNotebooks": true,
+		"python.condaPath": "/opt/conda/condabin/conda",
+		"python.pythonPath": "/opt/conda/envs/pointcloudset/bin/python",
+		"python.terminal.activateEnvironment": false,
+		"python.terminal.activateEnvInCurrentTerminal": true,
+		"python.venvPath": "/opt/conda/envs"
 	},
-	"postCreateCommand": "#source activate pointcloudset; pip install -e .",
+	"postCreateCommand": "/opt/conda/envs/pointcloudset/bin/pip install -e .",
+	"postStartCommand": "echo '$conda activate pointcloudset'",
 	"extensions": [
 		"ms-python.python",
 		"ms-python.vscode-pylance",
