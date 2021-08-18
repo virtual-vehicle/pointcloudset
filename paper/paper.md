@@ -1,5 +1,5 @@
 ---
-title: '`pointcloudset`: Efficient analysis of large datasets of point clouds recorded over time'
+title: '`pointcloudset`: Efficient Analysis of Large Datasets of Point Clouds Recorded over Time'
 tags:
   - Python
   - lidar
