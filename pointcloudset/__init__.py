@@ -1,4 +1,4 @@
 from .dataset import Dataset
 from .pointcloud import PointCloud
 
-__version__ = "0.3.1"
+__version__ = "0.3.0"
