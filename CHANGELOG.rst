@@ -8,7 +8,7 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 
 
 
-0.3.1 - (2021-08-18)
+Unreleased
 -------------
 
 Fixed
@@ -19,6 +19,11 @@ Fixed
 Changed
 ~~~~~~
 - use fixed version number of pointcloudset_base image
+
+0.3.1 - (2021-08-17)
+-------------
+
+wrong release due to testing of github actions and bump2version
 
 
 0.3.0 (2021-08-17)
