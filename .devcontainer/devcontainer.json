@@ -23,11 +23,14 @@
 		],
 		"python.linting.pylintEnabled": true,
 		"autoDocstring.docstringFormat": "google",
-		"python.linting.pylintPath": "/opt/conda/bin/pylint",
+		"python.linting.pylintPath": "/opt/conda/envs/pointcloudset/bin/pylint",
 		"cSpell.maxNumberOfProblems": 500,
 		"python.testing.pytestEnabled": true,
 		"jupyter.alwaysTrustNotebooks": true,
 		"python.terminal.activateEnvironment": false,
+		"python.linting.mypyPath": "/opt/conda/envs/pointcloudset/bin/mypy",
+		"python.testing.pytestPath": "/opt/conda/envs/pointcloudset/bin/pytest",
+		"python.linting.flake8Path": "/opt/conda/envs/pointcloudset/bin/flake8"
 	},
 	"postCreateCommand": "/opt/conda/envs/pointcloudset/bin/pip install -e .",
 	"extensions": [
