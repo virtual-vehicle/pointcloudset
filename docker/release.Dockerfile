@@ -12,11 +12,14 @@ COPY README.rst ./
 ADD doc/sphinx/source/tutorial_notebooks ./tutorial_notebooks
 
 # install
-RUN sudo /opt/conda/bin/pip install  $PACKAGE_HOME
+RUN sudo /opt/conda/envs/pointcloudset/bin/pip install  $PACKAGE_HOME
+
+RUN /bin/bash -c  'source activate pointcloudset && \
+    pip install  $PACKAGE_HOME
 
 # Make sure the environment is activated:
-RUN echo "Make sure pointcloudset is installed:"
-RUN python -c "from pointcloudset import Dataset"
+RUN /bin/bash -c echo "Make sure pointcloudset is installed:"
+RUN /bin/bash -c python -c "from pointcloudset import Dataset"
 
 # Export environment variables
 ENV LANG=C.UTF-8
