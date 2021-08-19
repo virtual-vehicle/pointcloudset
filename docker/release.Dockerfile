@@ -14,8 +14,8 @@ ADD doc/sphinx/source/tutorial_notebooks ./tutorial_notebooks
 # install
 RUN sudo /opt/conda/envs/pointcloudset/bin/pip install  $PACKAGE_HOME
 
-RUN /bin/bash -c  'source activate pointcloudset && \
-    pip install  $PACKAGE_HOME
+RUN /bin/bash -c "source activate pointcloudset && \
+    pip install  $PACKAGE_HOME"
 
 # Make sure the environment is activated:
 RUN /bin/bash -c echo "Make sure pointcloudset is installed:"
