@@ -30,4 +30,6 @@ EXPOSE 8787
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=
 
-ENTRYPOINT [ "/bin/bash" ]
+ENV SHELL=/bin/bash
+
+ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "pointcloudset", "/bin/bash"]
