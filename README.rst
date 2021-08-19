@@ -13,9 +13,9 @@ pointcloudset
    :target: https://virtual-vehicle.github.io/pointcloudset/
     :alt: Documentation Status
 
-.. image:: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/docker_release.yml/badge.svg
+.. image:: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/docker.yml/badge.svg
    :target: https://hub.docker.com/repository/docker/tgoelles/pointcloudset
-   :alt: Docker release
+   :alt: Docker
 
 .. image:: https://badge.fury.io/py/pointcloudset.svg
     :target: https://badge.fury.io/py/pointcloudset
