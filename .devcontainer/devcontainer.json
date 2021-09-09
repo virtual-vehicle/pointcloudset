@@ -8,6 +8,12 @@
 	"dockerFile": "dev.Dockerfile",
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
+		"python.pythonPath": "/opt/conda/envs/pointcloudset/bin/python",
+		"python.terminal.activateEnvironment": false,
+		"python.linting.mypyPath": "/opt/conda/envs/pointcloudset/bin/mypy",
+		"python.testing.pytestPath": "/opt/conda/envs/pointcloudset/bin/pytest",
+		"python.linting.flake8Path": "/opt/conda/envs/pointcloudset/bin/flake8",
+		"python.linting.pylintPath": "/opt/conda/envs/pointcloudset/bin/pylint",
 		"python.formatting.provider": "black",
 		"python.formatting.blackPath": "/opt/conda/envs/pointcloudset/bin/black",
 		"editor.formatOnSave": true,
@@ -23,14 +29,10 @@
 		],
 		"python.linting.pylintEnabled": true,
 		"autoDocstring.docstringFormat": "google",
-		"python.linting.pylintPath": "/opt/conda/envs/pointcloudset/bin/pylint",
 		"cSpell.maxNumberOfProblems": 500,
 		"python.testing.pytestEnabled": true,
 		"jupyter.alwaysTrustNotebooks": true,
-		"python.terminal.activateEnvironment": false,
-		"python.linting.mypyPath": "/opt/conda/envs/pointcloudset/bin/mypy",
-		"python.testing.pytestPath": "/opt/conda/envs/pointcloudset/bin/pytest",
-		"python.linting.flake8Path": "/opt/conda/envs/pointcloudset/bin/flake8"
+		"editor.bracketPairColorization.enabled": true
 	},
 	"postCreateCommand": "/opt/conda/envs/pointcloudset/bin/pip install -e .",
 	"extensions": [
@@ -44,7 +46,6 @@
 		"ms-azuretools.vscode-docker",
 		"streetsidesoftware.code-spell-checker",
 		"oderwat.indent-rainbow",
-		"gua.rainbow-brackets",
 		"littlefoxteam.vscode-python-test-adapter"
 	],
 	"forwardPorts": [

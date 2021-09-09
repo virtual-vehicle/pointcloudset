@@ -14,6 +14,10 @@ test:
 	python -m coverage report -i
 	python -m coverage html -i
 
+mypy:
+	mypy -p pointcloudset --ignore-missing-imports
+
+
 sort-imports:
 	isort .
 
