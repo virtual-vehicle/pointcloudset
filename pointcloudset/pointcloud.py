@@ -286,10 +286,6 @@ class PointCloud(PointCloudCore):
             **kwargs,
         )
 
-        fig.update_traces(
-            marker=dict(size=point_size, line=dict(width=0)),
-            selector=dict(mode="markers"),
-        )
 
         if overlay:
             fig = plot_overlay(
@@ -302,6 +298,11 @@ class PointCloud(PointCloudCore):
         fig.update_layout(scene_aspectmode="data")
         if not show_hover:
             fig.update_layout(hovermode=False)
+
+        fig.update_traces(
+            marker=dict(size=point_size, line=dict(width=0)),
+            selector=dict(mode="markers"),
+        )
 
         return fig
 
