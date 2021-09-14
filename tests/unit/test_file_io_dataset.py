@@ -94,6 +94,33 @@ def test_dataset_with_empty_frame_start(
     check.equal(len(ds), len(read_dataset))
 
 
+def test_dataset_with_2_empty_frames(
+    testpointcloud_mini_real: PointCloud, tmp_path: Path
+):
+    fake_empty_df = pd.DataFrame.from_dict(
+        {
+            "x": [np.nan],
+            "y": [np.nan],
+            "z": [np.nan],
+            "intensity": [np.nan],
+            "t": [np.nan],
+            "reflectivity": [np.nan],
+            "ring": [np.nan],
+            "noise": [np.nan],
+            "range": [np.nan],
+            "original_id": [np.nan],
+        }
+    )
+    pc_empty = PointCloud(data=fake_empty_df, timestamp=datetime(2018, 1, 1, 1))
+    pc_empty2 = PointCloud(data=fake_empty_df, timestamp=datetime(2018, 1, 1, 2))
+    testfile_name = tmp_path.joinpath("dataset")
+    ds = Dataset.from_instance("pointclouds", [pc_empty, pc_empty2])
+    ds.to_file(file_path=testfile_name, use_orig_filename=False)
+    check.equal(testfile_name.exists(), True)
+    read_dataset = Dataset.from_file(testfile_name)
+    check.is_instance(read_dataset, Dataset)
+    check.equal(len(ds), len(read_dataset))
+
 def test_testdataset_with_empty_frame_r_and_w(
     testdataset_with_empty_frame: Dataset, tmp_path: Path
 ):
