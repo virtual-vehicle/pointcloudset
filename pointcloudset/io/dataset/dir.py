@@ -5,6 +5,7 @@ from pathlib import Path
 
 import dask.dataframe as dd
 import pandas as pd
+import warnings
 
 datetime_format = "%Y-%m-%d %H:%M:%S.%f"
 delimiter = ";"
@@ -28,7 +29,7 @@ def dataset_to_dir(
     if len(orig_filename) == 0:
         orig_filename = str(uuid.uuid4())
     folder = file_path.joinpath(orig_filename) if use_orig_filename else file_path
-    empty_data = pd.DataFrame(dataset_in[0].data.iloc[0]).T
+    empty_data = _get_empty_data(dataset_in)
     dataset_to_write = dataset_in._replace_empty_frames_with_nan(empty_data)
     data = dd.from_delayed(dataset_to_write.data)
     data.to_parquet(folder, **kwargs)
@@ -127,3 +128,23 @@ def _check_dir_contents_single(dir: Path):
     """checking the folder content of a written dataset."""
     assert dir.joinpath("meta.json").is_file(), f"meta.json is missing in {dir}"
     assert dir.joinpath("part.0.parquet"), f"part.0.parquet is missing in {dir}"
+
+
+def _get_empty_data(dataset_in) -> pd.DataFrame:
+    """Get an row of data to use as placeholder for empty datasets.
+
+    Args:
+        dataset_in (Dataset): Dataset which contains at least on valid pointcloud.
+
+    Returns:
+        pd.DataFrame: empta data placeholder
+    """
+    print("start empty data")
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=RuntimeWarning)
+        for pointcloud in dataset_in:
+            if len(pointcloud) > 0:
+                empty_data = pd.DataFrame(pointcloud.data.iloc[0]).T
+                break
+    print("end empty_data")
+    return empty_data

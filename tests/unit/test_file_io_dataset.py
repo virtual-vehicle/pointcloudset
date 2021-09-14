@@ -5,6 +5,7 @@ import pandas as pd
 from pandas._testing import assert_frame_equal
 import pytest
 import pytest_check as check
+from datetime import datetime
 
 from pointcloudset import Dataset, PointCloud
 from pointcloudset.io.dataset import dir
@@ -59,6 +60,33 @@ def test_dataset_with_empty_frame(testpointcloud_mini_real: PointCloud, tmp_path
     pc_empty = PointCloud(data=fake_empty_df)
     testfile_name = tmp_path.joinpath("dataset")
     ds = Dataset.from_instance("pointclouds", [testpointcloud_mini_real, pc_empty])
+    ds.to_file(file_path=testfile_name, use_orig_filename=False)
+    check.equal(testfile_name.exists(), True)
+    read_dataset = Dataset.from_file(testfile_name)
+    check.is_instance(read_dataset, Dataset)
+    check.equal(len(ds), len(read_dataset))
+
+
+def test_dataset_with_empty_frame_start(
+    testpointcloud_mini_real: PointCloud, tmp_path: Path
+):
+    fake_empty_df = pd.DataFrame.from_dict(
+        {
+            "x": [np.nan],
+            "y": [np.nan],
+            "z": [np.nan],
+            "intensity": [np.nan],
+            "t": [np.nan],
+            "reflectivity": [np.nan],
+            "ring": [np.nan],
+            "noise": [np.nan],
+            "range": [np.nan],
+            "original_id": [np.nan],
+        }
+    )
+    pc_empty = PointCloud(data=fake_empty_df, timestamp=datetime(2018, 1, 1, 1))
+    testfile_name = tmp_path.joinpath("dataset")
+    ds = Dataset.from_instance("pointclouds", [pc_empty, testpointcloud_mini_real])
     ds.to_file(file_path=testfile_name, use_orig_filename=False)
     check.equal(testfile_name.exists(), True)
     read_dataset = Dataset.from_file(testfile_name)
