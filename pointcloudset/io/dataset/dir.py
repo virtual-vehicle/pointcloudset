@@ -5,6 +5,7 @@ from pathlib import Path
 
 import dask.dataframe as dd
 import pandas as pd
+import numpy as np
 import warnings
 
 datetime_format = "%Y-%m-%d %H:%M:%S.%f"
@@ -139,12 +140,18 @@ def _get_empty_data(dataset_in) -> pd.DataFrame:
     Returns:
         pd.DataFrame: empta data placeholder
     """
-    print("start empty data")
+    empty_data = pd.DataFrame.from_dict(
+        {
+            "x": [np.nan],
+            "y": [np.nan],
+            "z": [np.nan],
+            "original_id": [np.nan],
+        }
+    )
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=RuntimeWarning)
         for pointcloud in dataset_in:
             if len(pointcloud) > 0:
                 empty_data = pd.DataFrame(pointcloud.data.iloc[0]).T
                 break
-    print("end empty_data")
     return empty_data
