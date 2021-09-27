@@ -12,6 +12,7 @@ Unreleased
 Fixed
 ~~~~~~
 - point_size option had no effect when using overlays
+- writing of dataset with an empty point cloud at the start
 
 0.3.2 - (2021-08-18)
 -------------
