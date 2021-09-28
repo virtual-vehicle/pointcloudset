@@ -25,6 +25,9 @@ pointcloudset
     :target: https://pepy.tech/project/pointcloudset
     :alt: PyPi badge
 
+.. image:: https://joss.theoj.org/papers/10.21105/joss.03471/status.svg
+   :target: https://joss.theoj.org/papers/10.21105/joss.03471#
+   :alt: JOSS badge
 
 .. inclusion-marker-do-not-remove
 
@@ -146,4 +149,24 @@ Citation and contact
 |orcid| `Thomas Gölles <https://orcid.org/0000-0002-3925-6260>`_
 email: thomas.goelles@v2c2.at
 
-ADD link to JOSS paper here and DOI
+Please cite our `JOSS paper`_ if you use pointcloudset.
+
+.. _JOSS paper: https://joss.theoj.org/papers/10.21105/joss.03471#
+
+.. code-block:: bib
+
+   @article{Goelles2021,
+     doi = {10.21105/joss.03471},
+     url = {https://doi.org/10.21105/joss.03471},
+     year = {2021},
+     publisher = {The Open Journal},
+     volume = {6},
+     number = {65},
+     pages = {3471},
+     author = {Thomas Goelles and Birgit Schlager and Stefan Muckenhuber and Sarah Haas and Tobias Hammer},
+     title = {`pointcloudset`: Efficient Analysis of Large Datasets of Point Clouds Recorded Over Time},
+     journal = {Journal of Open Source Software}
+   }
+
+
+
