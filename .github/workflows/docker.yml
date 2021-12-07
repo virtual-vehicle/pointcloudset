@@ -29,12 +29,12 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         run: echo "TAG=${{ github.event.inputs.tag }}" >> $GITHUB_ENV
 
-    - name: Set up QEMU
-        id: qemu
-        uses: docker/setup-qemu-action@v1
-        with:
-          image: tonistiigi/binfmt:latest
-          platforms: all
+      - name: Set up QEMU
+          id: qemu
+          uses: docker/setup-qemu-action@v1
+          with:
+            image: tonistiigi/binfmt:latest
+            platforms: all
 
       - name: Set up Docker Buildx
         id: buildx
@@ -56,8 +56,7 @@ jobs:
           tags:  |
               tgoelles/pointcloudset_base:latest
               tgoelles/pointcloudset_base:${{ env.TAG }}
-      -
-        name: Build and push the release image
+      - name: Build and push the release image
         uses: docker/build-push-action@v2
         with:
           context: .
