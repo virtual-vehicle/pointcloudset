@@ -8,7 +8,7 @@ dependencies:
   - open3d>=0.14
   - pandas
   - pip
-  - python>=3.8
+  - python==3.8
   - dask
   - nb_conda_kernels
   - plotly
