@@ -4,26 +4,24 @@ channels:
   - conda-forge
   - open3d-admin
 dependencies:
-  - numpy
-  - open3d=0.12.0
-  - pandas
   - pip
-  - python>=3.8
+  - python==3.8.11
   - dask
   - nb_conda_kernels
   - plotly
-  - plotly-orca
-  - ipykernel
   - pdal
   - fiona
   - pip:
+      - open3d==0.14.1
       - fastparquet
+      - ipykernel
       - jupyter
       - jupyterlab
       - jupyterlab_server
       - nbconvert
       - nbformat
       - rospkg
+      - kaleido
       - py3rosmsgs
       - pyntcloud
       - setuptools
@@ -44,7 +42,6 @@ dependencies:
       - typer
       - nbval
       - geopandas
-      - fastparquet
       - pycryptodomex
       - sphinx
       - sphinxcontrib-napoleon
