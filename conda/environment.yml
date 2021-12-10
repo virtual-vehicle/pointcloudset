@@ -12,7 +12,6 @@ dependencies:
   - pdal
   - fiona
   - pip:
-      - open3d==0.14.1
       - fastparquet
       - ipykernel
       - jupyter
