@@ -1,12 +1,28 @@
-@article{Goelles2021,
-  doi = {10.21105/joss.03471},
-  url = {https://doi.org/10.21105/joss.03471},
-  year = {2021},
-  publisher = {The Open Journal},
-  volume = {6},
-  number = {65},
-  pages = {3471},
-  author = {Thomas Goelles and Birgit Schlager and Stefan Muckenhuber and Sarah Haas and Tobias Hammer},
-  title = {`pointcloudset`: Efficient Analysis of Large Datasets of Point Clouds Recorded Over Time},
-  journal = {Journal of Open Source Software}
-}
+# YAML 1.2
+# Metadata for citation of this software according to the CFF format (https://citation-file-format.github.io/)
+cff-version: 1.0.3
+message: If you use this software, please cite it using these metadata.
+# FIXME title as repository name might not be the best name, please make human readable
+title: 'pointcloudset: Efficient Analysis of Large Datasets of Point Clouds Recorded
+  Over Time'
+doi: 10.21105/joss.03471
+# FIXME splitting of full names is error prone, please check if given/family name are correct
+authors:
+- given-names: Thomas
+  family-names: Goelles
+  affiliation: Virtual Vehicle Research GmbH
+  orcid: https://orcid.org/0000-0002-3925-6260
+- given-names: Birgit
+  family-names: Schlager
+  orcid: https://orcid.org/0000-0003-3290-5333
+- given-names: Stefan
+  family-names: Muckenhuber
+  orcid: https://orcid.org/0000-0003-1920-8437
+- given-names: Sarah
+  family-names: Haas
+- given-names: Tobias
+  family-names: Hammer
+version: 0.3.3
+date-released: 2021-09-27
+repository-code: https://github.com/virtual-vehicle/pointcloudset
+license: MIT
