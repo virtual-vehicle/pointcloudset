@@ -1,0 +1,12 @@
+@article{Goelles2021,
+  doi = {10.21105/joss.03471},
+  url = {https://doi.org/10.21105/joss.03471},
+  year = {2021},
+  publisher = {The Open Journal},
+  volume = {6},
+  number = {65},
+  pages = {3471},
+  author = {Thomas Goelles and Birgit Schlager and Stefan Muckenhuber and Sarah Haas and Tobias Hammer},
+  title = {`pointcloudset`: Efficient Analysis of Large Datasets of Point Clouds Recorded Over Time},
+  journal = {Journal of Open Source Software}
+}
