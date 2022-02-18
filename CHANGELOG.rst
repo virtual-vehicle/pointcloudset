@@ -16,6 +16,7 @@ Fixed
 Changed
 ~~~~~~
 - used open3d version 0.14 as default, which comes with arm wheels
+- use dask version 2022.02 as minimum, as there was a bug with 2021.10 and reading files
 
 
 

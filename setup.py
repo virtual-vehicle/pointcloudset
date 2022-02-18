@@ -61,7 +61,7 @@ setup(
         "open3d>=0.14.0",
         "plotly",
         "fastparquet",
-        "dask",
+        "dask>=2022.02.0",
         "tqdm",
         "rospkg",
         "py3rosmsgs",
