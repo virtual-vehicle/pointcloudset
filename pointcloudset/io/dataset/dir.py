@@ -1,15 +1,15 @@
 import json
 import uuid
+import warnings
 from datetime import datetime
 from pathlib import Path
 
 import dask.dataframe as dd
-import pandas as pd
 import numpy as np
-import warnings
+import pandas as pd
 
-datetime_format = "%Y-%m-%d %H:%M:%S.%f"
-delimiter = ";"
+DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
+DELIMITER = ";"
 
 
 def dataset_to_dir(
@@ -36,7 +36,7 @@ def dataset_to_dir(
     data.to_parquet(folder, **kwargs)
     meta = dataset_in.meta
     meta["timestamps"] = [
-        timestamp.strftime(datetime_format) for timestamp in dataset_in.timestamps
+        timestamp.strftime(DATETIME_FORMAT) for timestamp in dataset_in.timestamps
     ]
     meta["empty_data"] = empty_data.to_dict()
     with open(folder.joinpath("meta.json"), "w") as outfile:
@@ -101,7 +101,7 @@ def _dataset_from_single_dir(dir: Path) -> dict:
         meta = json.loads(infile.read())
     timestamps_raw = meta["timestamps"]
     timestamps = [
-        datetime.strptime(timestamp, datetime_format) for timestamp in timestamps_raw
+        datetime.strptime(timestamp, DATETIME_FORMAT) for timestamp in timestamps_raw
     ]
     return {
         "data": data.to_delayed(),
