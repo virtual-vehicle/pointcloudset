@@ -27,8 +27,6 @@ def test_to_dir(testbag1, tmp_path: Path):
     ds = Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=True)
     testfile_name = tmp_path.joinpath("dataset")
     ds.to_file(file_path=testfile_name, use_orig_filename=False)
-    test_local = Path("/workspaces/pointcloudset/tests/export")
-    ds.to_file(file_path=test_local, use_orig_filename=False)
     p = testfile_name.glob("*.parquet")
     files = [x for x in p if x.is_file()]
     check.equal(len(files), 2)
