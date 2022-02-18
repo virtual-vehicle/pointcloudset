@@ -5,14 +5,14 @@ channels:
   - open3d-admin
 dependencies:
   - pip
-  - python==3.8.11
-  - dask
+  - python==3.9.10
+  - dask>=2022.02.0
   - nb_conda_kernels
   - plotly
   - pdal
   - fiona
   - pip:
-      - open3d==0.14.1
+      - open3d>=0.14
       - fastparquet
       - ipykernel
       - jupyter

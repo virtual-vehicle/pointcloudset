@@ -37,7 +37,7 @@ setup(
     },
     classifiers=[
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: MIT License",
         "Operating System :: POSIX :: Linux",
         "Intended Audience :: Developers",
@@ -53,7 +53,7 @@ setup(
         "Topic :: Utilities",
         "Typing :: Typed",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=[
         "numpy",
         "pandas",
@@ -61,7 +61,7 @@ setup(
         "open3d>=0.14.0",
         "plotly",
         "fastparquet",
-        "dask",
+        "dask>=2022.02.0",
         "tqdm",
         "rospkg",
         "py3rosmsgs",

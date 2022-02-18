@@ -32,7 +32,10 @@
 		"cSpell.maxNumberOfProblems": 500,
 		"python.testing.pytestEnabled": true,
 		"jupyter.alwaysTrustNotebooks": true,
-		"editor.bracketPairColorization.enabled": true
+		"editor.bracketPairColorization.enabled": true,
+		"python.linting.pylintArgs": [
+			"--disable={C0111}"
+		]
 	},
 	"postCreateCommand": "/opt/conda/envs/pointcloudset/bin/pip install -e .",
 	"extensions": [
