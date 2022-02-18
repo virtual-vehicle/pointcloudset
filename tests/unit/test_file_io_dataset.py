@@ -1,12 +1,11 @@
+from datetime import datetime
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from pandas._testing import assert_frame_equal
 import pytest
 import pytest_check as check
-from datetime import datetime
-
+from pandas._testing import assert_frame_equal
 from pointcloudset import Dataset, PointCloud
 from pointcloudset.io.dataset import dir
 
@@ -28,6 +27,16 @@ def test_to_dir(testbag1, tmp_path: Path):
     ds = Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=True)
     testfile_name = tmp_path.joinpath("dataset")
     ds.to_file(file_path=testfile_name, use_orig_filename=False)
+    test_local = Path("/workspaces/pointcloudset/tests/export")
+    ds.to_file(file_path=test_local, use_orig_filename=False)
+    p = testfile_name.glob("*.parquet")
+    files = [x for x in p if x.is_file()]
+    check.equal(len(files), 2)
+    check.equal(files[0].stat().st_size, 5769916)
+    check.equal(files[1].stat().st_size, 5769916)
+    meta_gen = testfile_name.glob("meta.json")
+    metafile = list(meta_gen)[0]
+    check.equal(metafile.exists(), True)
     check.equal(testfile_name.exists(), True)
     read_dataset = Dataset.from_file(testfile_name)
     check.is_instance(read_dataset, Dataset)
@@ -120,6 +129,7 @@ def test_dataset_with_2_empty_frames(
     read_dataset = Dataset.from_file(testfile_name)
     check.is_instance(read_dataset, Dataset)
     check.equal(len(ds), len(read_dataset))
+
 
 def test_testdataset_with_empty_frame_r_and_w(
     testdataset_with_empty_frame: Dataset, tmp_path: Path
