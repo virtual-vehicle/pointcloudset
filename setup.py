@@ -67,9 +67,10 @@ setup(
         "py3rosmsgs",
         "pycryptodomex",
         "typer",
+        "rich",
     ],
     extras_require={"LAS": ["pylas"]},
     entry_points={
-        "console_scripts": ["bag2dataset = pointcloudset.io.dataset.commandline:app"]
+        "console_scripts": ["rosbagconvert = pointcloudset.io.dataset.commandline:app"]
     },
 )
