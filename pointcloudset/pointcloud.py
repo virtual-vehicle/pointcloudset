@@ -217,7 +217,7 @@ class PointCloud(PointCloudCore):
         overlay: Optional[dict] = None,
         point_size: float = 2,
         prepend_id: str = "",
-        hover_data: Union(List[str], bool) = None,
+        hover_data: Union(list[str], bool) = None,
         **kwargs,
     ) -> plotly.graph_objs.Figure:
         """Plot a PointCloud as a 3D scatter plot with `Plotly <https://plotly.com/>`_.
