@@ -19,7 +19,13 @@ def test_convert(testbag1: Path, tmp_path: Path):
     out_path = tmp_path.joinpath("cli")
     result = runner.invoke(
         app,
-        [testbag1.as_posix(), "/os1_cloud_node/points", out_path.as_posix()],
+        [
+            testbag1.as_posix(),
+            "-t",
+            "/os1_cloud_node/points",
+            "-d",
+            out_path.as_posix(),
+        ],
     )
     check.equal(result.exit_code, 0)
     check.equal(out_path.exists(), True)
