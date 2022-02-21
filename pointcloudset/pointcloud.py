@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import warnings
 from pathlib import Path
-from typing import List, Literal, Union, Optional
+from typing import Literal, Union, Optional
 
 import numpy as np
 import open3d
@@ -402,12 +402,12 @@ class PointCloud(PointCloudCore):
             "value", dim, "<=", maxvalue
         )
 
-    def apply_filter(self, filter_result: Union[np.ndarray, List[int]]) -> PointCloud:
+    def apply_filter(self, filter_result: Union[np.ndarray, list[int]]) -> PointCloud:
         """Generating a new PointCloud by removing points according to a call of the
         filter method.
 
         Args:
-            filter_result (Union[numpy.ndarray, List[int]]): Filter result.
+            filter_result (Union[numpy.ndarray, list[int]]): Filter result.
 
         Returns:
             PointCloud: PointCloud with filtered rows and reindexed data and points.

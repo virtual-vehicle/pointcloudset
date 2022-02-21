@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 import dask
 
@@ -8,11 +8,11 @@ if TYPE_CHECKING:
     from pointcloudset import PointCloud
 
 
-def dataset_from_pointclouds(pointclouds: List[PointCloud]) -> dict:
+def dataset_from_pointclouds(pointclouds: list[PointCloud]) -> dict:
     """Convert a list of pointcloud pointclouds to a new dataset.
 
     Args:
-        pointclouds (List[PointCloud]): A list of pointclouds.
+        pointclouds (list[PointCloud]): A list of pointclouds.
 
     Returns:
         dict: For convertion to dataset.

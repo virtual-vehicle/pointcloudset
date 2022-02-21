@@ -4,7 +4,7 @@ Functions for `ROS <https://www.ros.org/>`_ bagfiles.
 import datetime
 import itertools
 from pathlib import Path
-from typing import Callable, List, Literal, Union
+from typing import Callable, Literal, Union
 
 import numpy as np
 import pandas as pd
@@ -106,7 +106,7 @@ def dataset_from_rosbag(
     chunks = _gen_chunks(bag, topic, start_frame_number, end_frame_number, max_size)
 
     data = []
-    timestamps: List[datetime.datetime] = []
+    timestamps: list[datetime.datetime] = []
     meta = {"orig_file": bagfile.as_posix(), "topic": topic}
 
     for chunk_number, chunk in enumerate(chunks):

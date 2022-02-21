@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Callable, List, Literal, Union, get_type_hints
+from typing import Any, Callable, Literal, Union, get_type_hints
 
 import numpy as np
 import pandas
@@ -228,7 +228,7 @@ class Dataset(DatasetCore):
         agg: Union[str, list, dict],
         depth: Literal["dataset", "pointcloud", "point"] = "dataset",
     ) -> Union[
-        pandas.Series, List[pandas.DataFrame], pandas.DataFrame, pandas.DataFrame
+        pandas.Series, list[pandas.DataFrame], pandas.DataFrame, pandas.DataFrame
     ]:
         """Aggregate using one or more operations over the whole dataset.
         Similar to :meth:`pandas.DataFrame.aggregate`.
