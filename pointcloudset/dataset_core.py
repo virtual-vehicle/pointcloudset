@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime
 import warnings
-from typing import List, Union
+from typing import Union
 
 import dask
 from dask.delayed import Delayed, DelayedLeaf
@@ -15,8 +15,8 @@ class DatasetCore:
 
     def __init__(
         self,
-        data: List[dask.delayed.DelayedLeaf] = [],
-        timestamps: List[datetime.datetime] = [],
+        data: list[dask.delayed.DelayedLeaf] = [],
+        timestamps: list[datetime.datetime] = [],
         meta: dict = {"orig_file": "", "topic": ""},
     ) -> None:
         self.data = data
