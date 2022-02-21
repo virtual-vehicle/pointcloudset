@@ -11,7 +11,7 @@ from pointcloudset.geometry import plane
 )
 def test_distance_to_point(point, res):
     distance = plane.distance_to_point(
-        point_A=np.array(point), plane_model=np.array([1, 0, 0, 10])
+        point_a=np.array(point), plane_model=np.array([1, 0, 0, 10])
     )
     check.equal(distance, res)
 
@@ -19,7 +19,7 @@ def test_distance_to_point(point, res):
 @pytest.mark.parametrize("normal_dist, res", [(False, np.sqrt(2)), (True, 1.0)])
 def test_distance_to_point_normal_dist(normal_dist, res):
     distance = plane.distance_to_point(
-        point_A=np.array([2, 2, 0]),
+        point_a=np.array([2, 2, 0]),
         plane_model=np.array([1, 0, 0, -1]),
         normal_dist=normal_dist,
     )
@@ -29,14 +29,14 @@ def test_distance_to_point_normal_dist(normal_dist, res):
 def test_distance_to_point_error1():
     with pytest.raises(ValueError):
         plane.distance_to_point(
-            point_A=np.array([1, 0]), plane_model=np.array([1, 0, 0, 0])
+            point_a=np.array([1, 0]), plane_model=np.array([1, 0, 0, 0])
         )
 
 
 def test_distance_to_point_error2():
     with pytest.raises(ValueError):
         plane.distance_to_point(
-            point_A=np.array([1, 0, 0]),
+            point_a=np.array([1, 0, 0]),
             plane_model=np.array(
                 [
                     1,

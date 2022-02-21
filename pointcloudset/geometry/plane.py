@@ -10,7 +10,7 @@ from pointcloudset.geometry import point
 
 
 def distance_to_point(
-    point_A: np.ndarray, plane_model: np.ndarray, normal_dist: bool = True
+    point_a: np.ndarray, plane_model: np.ndarray, normal_dist: bool = True
 ) -> float:
     """Calculate the distance from a plane to a point.
     https://mathworld.wolfram.com/Point-PlaneDistance.html
@@ -19,7 +19,7 @@ def distance_to_point(
         Uses the plane equation a x + b y + c z + d = 0.
 
     Args:
-        point_A (numpy.ndarray): [x, y, z], point for which the distance is calculated
+        point_a (numpy.ndarray): [x, y, z], point for which the distance is calculated
             to plane.
         plane_model (numpy.ndarray):  [a, b, c, d] parameters of the plane equation,
             could be provided by :func:`pointcloudset.pointcloud.PointCloud.plane_segmentation`.
@@ -32,21 +32,21 @@ def distance_to_point(
     Raises:
         ValueError: If point does not have 3 values or if plane does not have 4 values.
     """
-    if len(point_A) != 3:
+    if len(point_a) != 3:
         raise ValueError("point needs to have 3 values")
     if len(plane_model) != 4:
         raise ValueError("plane_model needs to have 4 values")
     if normal_dist:
         distance = (
-            plane_model[0] * point_A[0]
-            + plane_model[1] * point_A[1]
-            + plane_model[2] * point_A[2]
+            plane_model[0] * point_a[0]
+            + plane_model[1] * point_a[1]
+            + plane_model[2] * point_a[2]
             + plane_model[3]
         ) / (math.sqrt(plane_model[0] ** 2 + plane_model[1] ** 2 + plane_model[2] ** 2))
     else:
-        line_of_sight = point_A
+        line_of_sight = point_a
         intersection_point = intersect_line_of_sight(line_of_sight, plane_model)
-        distance = point.distance_to_point(intersection_point, point_A)
+        distance = point.distance_to_point(intersection_point, point_a)
     return distance
 
 

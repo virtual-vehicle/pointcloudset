@@ -5,12 +5,12 @@ Utility functions for geometric calculations with points.
 import numpy as np
 
 
-def distance_to_point(point_A: np.ndarray, point_B: np.ndarray) -> float:
+def distance_to_point(point_a: np.ndarray, point_b: np.ndarray) -> float:
     """Calculate the Euclidean distance of a point to another point.
 
     Args:
-        point_A (numpy.ndarray): [x, y, z]
-        point_B (numpy.ndarray): [x, y, z]
+        point_a (numpy.ndarray): [x, y, z]
+        point_b (numpy.ndarray): [x, y, z]
 
     Returns:
         float: Euclidean distance between two points.
@@ -18,12 +18,12 @@ def distance_to_point(point_A: np.ndarray, point_B: np.ndarray) -> float:
     Raises:
         ValueError: If any of the two points does not have 3 values.
     """
-    if len(point_A) != 3:
+    if len(point_a) != 3:
         raise ValueError("point needs to have 3 values")
-    if len(point_B) != 3:
+    if len(point_b) != 3:
         raise ValueError("point needs to have 3 values")
     return np.sqrt(
-        (point_B[0] - point_A[0]) ** 2
-        + (point_B[1] - point_A[1]) ** 2
-        + (point_B[2] - point_A[2]) ** 2
+        (point_b[0] - point_a[0]) ** 2
+        + (point_b[1] - point_a[1]) ** 2
+        + (point_b[2] - point_a[2]) ** 2
     )
