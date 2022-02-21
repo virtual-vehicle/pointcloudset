@@ -34,7 +34,8 @@
 		"jupyter.alwaysTrustNotebooks": true,
 		"editor.bracketPairColorization.enabled": true,
 		"python.linting.pylintArgs": [
-			"--disable={C0111}"
+			"--disable={C0111}",
+			"--disable=protected-access"
 		]
 	},
 	"postCreateCommand": "/opt/conda/envs/pointcloudset/bin/pip install -e .",
