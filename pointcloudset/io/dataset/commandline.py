@@ -11,8 +11,8 @@ from pyntcloud.io import TO_FILE
 
 app = typer.Typer()
 
-TO_FILE_CLI = list(TO_FILE.keys())
-TO_FILE_CLI.append("POINTCLOUDSET")
+TO_FILE_PYNTCLOUD = list(TO_FILE.keys())
+TO_FILE_CLI = TO_FILE_PYNTCLOUD.append("POINTCLOUDSET")
 
 
 def _in_loop_for_cli(res, data, timestamps, folder_to_write, meta, chunk_number):
@@ -40,11 +40,11 @@ def _convert_bag2dir(
 @app.command()
 def get(
     bagfile: str,
-    topic: str = typer.Argument("/os1_cloud_node/points"),
-    folder_to_write: str = typer.Argument("."),
+    topic: str = typer.Option("/os1_cloud_node/points", "--topic", "-t"),
+    folder_to_write: str = typer.Option(".", "--output-dir", "-d"),
     start_frame_number: int = typer.Option(0, "--start", "-s"),
     end_frame_number: Optional[int] = typer.Option(None, "--end", "-e"),
-    output_format: str = "POINTCLOUDSET",
+    output_format: str = typer.Option("POINTCLOUDSET", "--output-format", "-o"),
     keep_zeros: bool = False,
     max_size: int = 100,
 ):
@@ -73,6 +73,18 @@ def get(
                 max_size=max_size,
                 in_loop_function=_in_loop_for_cli,
             )
+        elif output_format.upper() in TO_FILE_PYNTCLOUD:
+            dataset = Dataset.from_file(
+                file_path=bagfile_path, topic=topic, keep_zeros=False
+            )
+
+            pyntcloud = dataset[0].to_instance("PYNTCLOUD")
+            filename = folder_to_write_path.joinpath(
+                "converted_1" + "." + output_format.lower()
+            )
+            typer.echo(f"writing file {filename} ")
+            pyntcloud.to_file(filename.as_posix())
+
         else:
             raise typer.BadParameter(f"only one of {TO_FILE_CLI} is allowed")
     typer.echo("done")
