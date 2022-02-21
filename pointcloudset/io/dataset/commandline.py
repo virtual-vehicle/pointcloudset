@@ -77,7 +77,6 @@ def get(
             dataset = Dataset.from_file(
                 file_path=bagfile_path, topic=topic, keep_zeros=False
             )
-
             pyntcloud = dataset[0].to_instance("PYNTCLOUD")
             filename = folder_to_write_path.joinpath(
                 "converted_1" + "." + output_format.lower()

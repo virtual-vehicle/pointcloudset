@@ -35,7 +35,8 @@
 		"editor.bracketPairColorization.enabled": true,
 		"python.linting.pylintArgs": [
 			"--disable={C0111}",
-			"--disable=protected-access"
+			"--disable=protected-access",
+			"--disable=missing-function-docstring"
 		]
 	},
 	"postCreateCommand": "/opt/conda/envs/pointcloudset/bin/pip install -e .",
