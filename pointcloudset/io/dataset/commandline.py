@@ -77,12 +77,15 @@ def get(
             dataset = Dataset.from_file(
                 file_path=bagfile_path, topic=topic, keep_zeros=False
             )
-            pyntcloud = dataset[0].to_instance("PYNTCLOUD")
-            filename = folder_to_write_path.joinpath(
-                "converted_1" + "." + output_format.lower()
-            )
-            typer.echo(f"writing file {filename} ")
-            pyntcloud.to_file(filename.as_posix())
+            if end_frame_number is None:
+                end_frame_number = len(dataset)
+            for frame in range(start_frame_number, end_frame_number):
+                pyntcloud = dataset[frame].to_instance("PYNTCLOUD")
+                filename = folder_to_write_path.joinpath(
+                    f"converted_{frame}.{output_format.lower()}"
+                )
+                typer.echo(f"writing file {filename} of frame{frame}")
+                pyntcloud.to_file(filename.as_posix())
 
         else:
             raise typer.BadParameter(f"only one of {TO_FILE_CLI} is allowed")
