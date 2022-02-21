@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Literal
 
 import click  # needed for documentation
 import typer
@@ -7,7 +7,12 @@ import typer
 from pointcloudset import Dataset
 from pointcloudset.io.dataset.bag import dataset_from_rosbag
 
+from pyntcloud.io import TO_FILE
+
 app = typer.Typer()
+
+TO_FILE_CLI = list(TO_FILE.keys())
+TO_FILE_CLI.append("POINTCLOUDSET")
 
 
 def _in_loop_for_cli(res, data, timestamps, folder_to_write, meta, chunk_number):
@@ -39,29 +44,37 @@ def get(
     folder_to_write: str = typer.Argument("."),
     start_frame_number: int = typer.Option(0, "--start", "-s"),
     end_frame_number: Optional[int] = typer.Option(None, "--end", "-e"),
+    output_format: str = "POINTCLOUDSET",
     keep_zeros: bool = False,
     max_size: int = 100,
 ):
+    """The main CLI function to convert ROS bagfiles to pointcloudset or files supported
+    by pyntloud.
+    """
     if bagfile == ".":
         bagfile_paths = list(Path.cwd().rglob("*.bag"))
     else:
         bagfile_paths = [Path(bagfile)]
+
     for bagfile_path in bagfile_paths:
         typer.echo(f"converting {bagfile_path.name} ...")
         if folder_to_write == ".":
             folder_to_write_path = Path.cwd().joinpath(bagfile_path.stem)
         else:
             folder_to_write_path = Path(folder_to_write)
-        _convert_bag2dir(
-            bagfile=bagfile_path,
-            topic=topic,
-            folder_to_write=folder_to_write_path,
-            start_frame_number=start_frame_number,
-            end_frame_number=end_frame_number,
-            keep_zeros=keep_zeros,
-            max_size=max_size,
-            in_loop_function=_in_loop_for_cli,
-        )
+        if output_format == "POINTCLOUDSET":
+            _convert_bag2dir(
+                bagfile=bagfile_path,
+                topic=topic,
+                folder_to_write=folder_to_write_path,
+                start_frame_number=start_frame_number,
+                end_frame_number=end_frame_number,
+                keep_zeros=keep_zeros,
+                max_size=max_size,
+                in_loop_function=_in_loop_for_cli,
+            )
+        else:
+            raise typer.BadParameter(f"only one of {TO_FILE_CLI} is allowed")
     typer.echo("done")
 
 
