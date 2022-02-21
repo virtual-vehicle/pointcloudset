@@ -5,8 +5,6 @@ Functions to calculate differences between frames.
 import numpy as np
 import pandas as pd
 
-import pointcloudset
-
 
 def calculate_distance_to_pointcloud(pointcloud, target):
     """Calculate the differences for each point in a pointcloud which also exists in
@@ -58,27 +56,27 @@ def _calculate_difference(intersection: np.ndarray, pointcloud, target):
 
 
 def _calculate_single_point_difference(
-    pointcloud, frameB, original_id: int
+    pointcloud, pointcloud_b, original_id: int
 ) -> pd.DataFrame:
     """Calculate the difference of one element of a Point in the current PointCloud to
     the corresponding point in PointCloud B. Both frames must contain the same original_id.
 
     Args:
-        frameB (PointCloud): PointCloud which contains the point to comapare to.
+        pointcloud_b (PointCloud): PointCloud which contains the point to comapare to.
         original_id (int): Original ID of the point.
 
     Returns:
         pd.DataFrame: A single row DataFrame with the differences (A - B).
     """
-    pointA = pointcloud.extract_point(original_id, use_original_id=True)
+    point_a = pointcloud.extract_point(original_id, use_original_id=True)
     try:
-        pointB = frameB.extract_point(original_id, use_original_id=True)
-        difference = pointA - pointB
+        point_b = pointcloud_b.extract_point(original_id, use_original_id=True)
+        difference = point_a - point_b
     except IndexError:
         # there is no point with the orignal_id in frameB
-        difference = pointA
+        difference = point_a
         difference.loc[:] = np.nan
     difference = difference.drop(["original_id"], axis=1)
     difference.columns = [f"{column} difference" for column in difference.columns]
-    difference["original_id"] = pointA["original_id"]
+    difference["original_id"] = point_a["original_id"]
     return difference

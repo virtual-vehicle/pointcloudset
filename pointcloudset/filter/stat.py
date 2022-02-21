@@ -13,11 +13,11 @@ if TYPE_CHECKING:
 
 
 def quantile_filter(
-    pointcloud: pointcloudset.PointCloud,
+    pointcloud: PointCloud,
     dim: str,
     relation: str = ">=",
     cut_quantile: float = 0.5,
-) -> pointcloudset.PointCloud:
+) -> PointCloud:
     """Filtering based on quantile values of dimension dim of the data.
 
     Args:
@@ -36,11 +36,11 @@ def quantile_filter(
 
 
 def value_filter(
-    pointcloud: pointcloudset.PointCloud,
+    pointcloud: PointCloud,
     dim: str,
     relation: str,
     value: float,
-) -> pointcloudset.pointcloud.PointCloud:
+) -> PointCloud:
     """Limit the range of certain values in a PointCloud.
 
     Args:
@@ -59,8 +59,8 @@ def value_filter(
 
 
 def remove_radius_outlier(
-    pointcloud: pointcloudset.pointcloud.PointCloud, nb_points: int, radius: float
-) -> pointcloudset.pointcloud.PointCloud:
+    pointcloud: PointCloud, nb_points: int, radius: float
+) -> PointCloud:
     """Function to remove points that have less than nb_points in a given
     sphere of a given radius.
 

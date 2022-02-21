@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import warnings
 from pathlib import Path
-from typing import List, Literal, Union
+from typing import Literal, Union, Optional
 
 import numpy as np
 import open3d
@@ -30,7 +30,8 @@ class PointCloud(PointCloudCore):
     PointCloud Class with one pointcloud of lidar measurements, laser scanning,
     photogrammetry  or simular.
 
-    One PointCloud consists mainly of `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_
+    One PointCloud consists mainly of
+    `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_
     pointcloud
     (`PyntCloud.points <https://pyntcloud.readthedocs.io/en/latest/points.html#points>`_)
     and a pandas.DataFrame (.data) with all the associated data.
@@ -41,7 +42,7 @@ class PointCloud(PointCloudCore):
     each processing stage.
 
     Developer notes:
-        * All operations have to act on both, pointcloud and data and keep the timestamp.
+        * All operations have to act on both, pointcloud, data and keep the timestamp.
         * All processing methods need to return another PointCloud.
 
     Examples:
@@ -88,9 +89,10 @@ class PointCloud(PointCloudCore):
         )
 
     def to_file(self, file_path: Path = Path(), **kwargs) -> None:
-        """Exports the pointcloud as to a file for use with `CloudCompare <https://www.danielgm.net/cc/ake>`_ or similar tools.
-        Currently not all attributes of a pointcloud are saved so some information is lost
-        when using this function.
+        """Exports the pointcloud as to a file for use with
+        `CloudCompare <https://www.danielgm.net/cc/ake>`_ or similar tools.
+        Currently not all attributes of a pointcloud are saved so some information
+        is lost when using this function.
         Uses `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_ as
         backend.
 
@@ -212,10 +214,10 @@ class PointCloud(PointCloudCore):
     def plot(
         self,
         color: Union[None, str] = None,
-        overlay: dict = {},
+        overlay: Optional[dict] = None,
         point_size: float = 2,
         prepend_id: str = "",
-        hover_data: Union(List[str], bool) = None,
+        hover_data: Union(list[str], bool) = None,
         **kwargs,
     ) -> plotly.graph_objs.Figure:
         """Plot a PointCloud as a 3D scatter plot with `Plotly <https://plotly.com/>`_.
@@ -285,7 +287,6 @@ class PointCloud(PointCloudCore):
             title=self.timestamp_str,
             **kwargs,
         )
-
 
         if overlay:
             fig = plot_overlay(
@@ -401,12 +402,12 @@ class PointCloud(PointCloudCore):
             "value", dim, "<=", maxvalue
         )
 
-    def apply_filter(self, filter_result: Union[np.ndarray, List[int]]) -> PointCloud:
+    def apply_filter(self, filter_result: Union[np.ndarray, list[int]]) -> PointCloud:
         """Generating a new PointCloud by removing points according to a call of the
         filter method.
 
         Args:
-            filter_result (Union[numpy.ndarray, List[int]]): Filter result.
+            filter_result (Union[numpy.ndarray, list[int]]): Filter result.
 
         Returns:
             PointCloud: PointCloud with filtered rows and reindexed data and points.
