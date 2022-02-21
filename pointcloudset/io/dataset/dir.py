@@ -90,8 +90,7 @@ def _get_folder_number(path: Path) -> int:
     try:
         return int(path.stem)
     except ValueError:
-        print(path)
-        raise ValueError("Not a path with a dataset.")
+        raise ValueError(f"{path} is not a path with a dataset")
 
 
 def _dataset_from_single_dir(dir: Path) -> dict:
