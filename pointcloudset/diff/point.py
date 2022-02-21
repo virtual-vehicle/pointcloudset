@@ -2,7 +2,6 @@
 Functions to calculate distances between points in pointcloud and a point.
 """
 
-from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
