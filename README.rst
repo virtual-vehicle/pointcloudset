@@ -133,7 +133,7 @@ CLI to convert ROS bag files to pointcloudset or csv, las and more
 
 .. raw:: html
 
-   <script id="asciicast-jvRaIuC0dJDB70cenMZcu1tfV" src="https://asciinema.org/a/jvRaIuC0dJDB70cenMZcu1tfV.js" async></script>
+   <a href="https://asciinema.org/a/jvRaIuC0dJDB70cenMZcu1tfV" target="_blank"><img src="https://asciinema.org/a/jvRaIuC0dJDB70cenMZcu1tfV.svg" /></a>
 
 
 Comparison to related packages
