@@ -8,6 +8,7 @@ from rich.console import Console
 
 from pointcloudset import Dataset
 from pointcloudset.io.dataset.bag import dataset_from_rosbag
+import pointcloudset
 
 from pyntcloud.io import TO_FILE
 
@@ -16,6 +17,58 @@ console = Console()
 
 TO_FILE_PYNTCLOUD = list(TO_FILE.keys())
 TO_FILE_CLI = TO_FILE_PYNTCLOUD.append("POINTCLOUDSET")
+
+
+@app.command()
+def get(
+    bagfile: str,
+    topic: str = typer.Option("/os1_cloud_node/points", "--topic", "-t"),
+    folder_to_write: str = typer.Option(".", "--output-dir", "-d"),
+    start_frame_number: int = typer.Option(0, "--start", "-s"),
+    end_frame_number: Optional[int] = typer.Option(None, "--end", "-e"),
+    output_format: str = typer.Option("POINTCLOUDSET", "--output-format", "-o"),
+    keep_zeros: bool = False,
+    max_size: int = 100,
+):
+    """The main CLI function to convert ROS bagfiles to pointcloudset or files supported
+    by pyntloud.
+    """
+    console.line()
+    console.rule(f"rosbagconvert  {pointcloudset.__version__}")
+    bagfile_paths = _gen_bagfile_paths(bagfile)
+    with console.status("Converting...", spinner="runner"):
+        for bagfile_path in bagfile_paths:
+            console.rule(f"converting {bagfile_path.name} ...", style="blue")
+
+            folder_to_write_path = _gen_folder(folder_to_write, bagfile_path)
+
+            if output_format == "POINTCLOUDSET":
+                _convert_bag2dir(
+                    bagfile=bagfile_path,
+                    topic=topic,
+                    folder_to_write=folder_to_write_path,
+                    start_frame_number=start_frame_number,
+                    end_frame_number=end_frame_number,
+                    keep_zeros=keep_zeros,
+                    max_size=max_size,
+                    in_loop_function=_in_loop_for_cli,
+                )
+                console.print(
+                    f"{Path(bagfile_path).name} converted to {folder_to_write_path}"
+                )
+            elif output_format.upper() in TO_FILE_PYNTCLOUD:
+                _convert_bag2files(
+                    topic,
+                    start_frame_number,
+                    end_frame_number,
+                    output_format,
+                    bagfile_path,
+                    folder_to_write_path,
+                )
+
+            else:
+                raise typer.BadParameter(f"only one of {TO_FILE_CLI} is allowed")
+    console.rule("Done :sake:")
 
 
 def _in_loop_for_cli(res, data, timestamps, folder_to_write, meta, chunk_number):
@@ -38,53 +91,6 @@ def _convert_bag2dir(
     in_loop_function=_in_loop_for_cli,
 ):
     return dataset_from_rosbag(**locals())
-
-
-@app.command()
-def get(
-    bagfile: str,
-    topic: str = typer.Option("/os1_cloud_node/points", "--topic", "-t"),
-    folder_to_write: str = typer.Option(".", "--output-dir", "-d"),
-    start_frame_number: int = typer.Option(0, "--start", "-s"),
-    end_frame_number: Optional[int] = typer.Option(None, "--end", "-e"),
-    output_format: str = typer.Option("POINTCLOUDSET", "--output-format", "-o"),
-    keep_zeros: bool = False,
-    max_size: int = 100,
-):
-    """The main CLI function to convert ROS bagfiles to pointcloudset or files supported
-    by pyntloud.
-    """
-    bagfile_paths = _gen_bagfile_paths(bagfile)
-    with console.status("Converting...", spinner="runner"):
-        for bagfile_path in bagfile_paths:
-            typer.echo(f"converting {bagfile_path.name} ...")
-
-            folder_to_write_path = _gen_folder(folder_to_write, bagfile_path)
-
-            typer.echo(f"Writing to {folder_to_write_path}")
-            if output_format == "POINTCLOUDSET":
-                _convert_bag2dir(
-                    bagfile=bagfile_path,
-                    topic=topic,
-                    folder_to_write=folder_to_write_path,
-                    start_frame_number=start_frame_number,
-                    end_frame_number=end_frame_number,
-                    keep_zeros=keep_zeros,
-                    max_size=max_size,
-                    in_loop_function=_in_loop_for_cli,
-                )
-            elif output_format.upper() in TO_FILE_PYNTCLOUD:
-                _convert_bag2files(
-                    topic,
-                    start_frame_number,
-                    end_frame_number,
-                    output_format,
-                    bagfile_path,
-                    folder_to_write_path,
-                )
-            else:
-                raise typer.BadParameter(f"only one of {TO_FILE_CLI} is allowed")
-    console.print("Done :sake:")
 
 
 def _gen_bagfile_paths(bagfile):
@@ -139,7 +145,9 @@ def _convert_bag2files(
         filename = folder_to_write_path.joinpath(
             f"{orig_file}_{frame}.{output_format.lower()}"
         )
-        typer.echo(f"writing file {filename} of frame{frame}")
+        console.print(
+            f"frame {frame} of {Path(bagfile_path).name} converted to {filename}"
+        )
         pyntcloud.to_file(filename.as_posix())
 
 
