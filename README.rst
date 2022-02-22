@@ -127,6 +127,32 @@ This produces the plot from the animation above.
 .. _html documentation: https://virtual-vehicle.github.io/pointcloudset/
 .. _tutorial notebooks: https://github.com/virtual-vehicle/pointcloudset/tree/master/doc/sphinx/source/tutorial_notebooks
 
+
+CLI to convert ROS bag files to pointcloudset or csv, las and more
+################################################
+
+.. raw:: html
+
+    <embed>
+        <html>
+      <head>
+      <link rel="stylesheet" type="text/css" href="asciinema-player.css" />
+      </head>
+      <body>
+      <div id="player"></div>
+      <script src="asciinema-player.min.js"></script>
+      <script>
+         AsciinemaPlayer.create(
+            '470722.cast',
+            document.getElementById('player'),
+            { cols: 131, rows: 20 }
+         );
+      </script>
+      </body>
+      </html>
+    </embed>
+
+
 Comparison to related packages
 ################################################
 
