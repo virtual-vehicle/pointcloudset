@@ -1,23 +1,36 @@
-bag2dataset
+rosbagconvert
 ======================
 
-For large ROS bagfiles best way is to convert the rosbag beforehand with the provided
-command line tool.
+The best way to work with large ROS bagfiles is to convert the rosbag beforehand with
+the provided command line tool.
 
+It is also possible to convert whole or parts of rosbags to many poplar formats which
+are supported by pyntcloud:
+
+
+.asc / .pts / .txt / .csv / .xyz
+.las
+.npy / .npz
+.obj
+.off (with color support)
+.pcd
+.ply
 
 
 Example
 --------------------------
 
 An example to convert topic /os1_cloud_node/point within the test.bag rosbag to
-the same directory.
+the converted directory.
 
 .. code-block:: console
 
-   bag2dataset test.bag /os1_cloud_node/points .
+   rosbagconvert test.bag -t /os1_cloud_node/points -d converted
 
 
 
 .. click:: pointcloudset.io.dataset.commandline:typer_click_object
-   :prog: bag2dataset
+   :prog: rosbagconvert
    :nested: full
+
+    rosbagconvert . -d converted -o csv

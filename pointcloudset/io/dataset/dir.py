@@ -7,6 +7,7 @@ from pathlib import Path
 import dask.dataframe as dd
 import numpy as np
 import pandas as pd
+from rich import print
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 DELIMITER = ";"
@@ -14,7 +15,7 @@ DELIMITER = ";"
 
 def dataset_to_dir(
     dataset_in, file_path: Path, use_orig_filename: bool = True, **kwargs
-) -> None:
+) -> Path:
     """Writes Dataset to directory.
 
     Args:
@@ -42,7 +43,7 @@ def dataset_to_dir(
     with open(folder.joinpath("meta.json"), "w") as outfile:
         json.dump(dataset_in.meta, outfile)
     _check_dir_contents(folder)
-    print(f"Files written to: {folder}")
+    return folder.parent
 
 
 def dataset_from_dir(dir: Path) -> dict:
@@ -90,8 +91,7 @@ def _get_folder_number(path: Path) -> int:
     try:
         return int(path.stem)
     except ValueError:
-        print(path)
-        raise ValueError("Not a path with a dataset.")
+        raise ValueError(f"{path} is not a path with a dataset")
 
 
 def _dataset_from_single_dir(dir: Path) -> dict:

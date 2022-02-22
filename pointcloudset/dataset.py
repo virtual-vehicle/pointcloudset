@@ -56,7 +56,7 @@ class Dataset(DatasetCore):
     @classmethod
     def from_file(cls, file_path: Path, **kwargs):
         """Reads a Dataset from a file.
-        For larger ROS bagfiles files use the commandline tool bag2dataset to convert the ROS bagfile
+        For larger ROS bagfiles files use the commandline tool rosbagconvert to convert the ROS bagfile
         beforehand.
 
         Supported are the native format which is a directore filled with fastparquet frames and
