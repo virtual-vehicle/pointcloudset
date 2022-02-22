@@ -128,8 +128,10 @@ This produces the plot from the animation above.
 .. _tutorial notebooks: https://github.com/virtual-vehicle/pointcloudset/tree/master/doc/sphinx/source/tutorial_notebooks
 
 
-CLI to convert ROS bag files to pointcloudset or csv, las and more
+CLI to convert ROS bag files: rosbagconvert
 ################################################
+
+The package includes a powerfull CLI to convert ROS bag files into many formats like csv, las and many more.
 
 .. code-block:: console
 
