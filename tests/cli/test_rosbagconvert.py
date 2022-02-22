@@ -15,7 +15,7 @@ def test_help():
     check.equal("Usage:" in result.stdout, True)
 
 
-def test_convert(testbag1: Path, tmp_path: Path):
+def test_convert_one_bag_dir(testbag1: Path, tmp_path: Path):
     out_path = tmp_path.joinpath("cli")
     result = runner.invoke(
         app,
@@ -33,3 +33,23 @@ def test_convert(testbag1: Path, tmp_path: Path):
     check.is_instance(read_dataset, Dataset)
     check.equal(len(read_dataset), 2)
     check.equal(len(read_dataset.timestamps), 2)
+
+
+def test_convert_one_bag_csv(testbag1: Path, tmp_path: Path):
+    out_path = tmp_path.joinpath("cli")
+    result = runner.invoke(
+        app,
+        [
+            testbag1.as_posix(),
+            "-t",
+            "/os1_cloud_node/points",
+            "-d",
+            out_path.as_posix(),
+            "-o",
+            "csv",
+        ],
+    )
+    check.equal(result.exit_code, 0)
+    check.equal(out_path.exists(), True)
+    csv_files = list(out_path.glob("*.csv"))
+    check.equal(len(csv_files), 2)

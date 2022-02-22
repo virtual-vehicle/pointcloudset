@@ -62,6 +62,10 @@ def get(
             folder_to_write_path = Path.cwd().joinpath(bagfile_path.stem)
         else:
             folder_to_write_path = Path(folder_to_write)
+
+        if not folder_to_write_path.exists():
+            folder_to_write_path.mkdir(exist_ok=False)
+
         if output_format == "POINTCLOUDSET":
             _convert_bag2dir(
                 bagfile=bagfile_path,
@@ -81,8 +85,9 @@ def get(
                 end_frame_number = len(dataset)
             for frame in range(start_frame_number, end_frame_number):
                 pyntcloud = dataset[frame].to_instance("PYNTCLOUD")
+                orig_file = Path(bagfile_path).stem
                 filename = folder_to_write_path.joinpath(
-                    f"converted_{frame}.{output_format.lower()}"
+                    f"{orig_file}_{frame}.{output_format.lower()}"
                 )
                 typer.echo(f"writing file {filename} of frame{frame}")
                 pyntcloud.to_file(filename.as_posix())
