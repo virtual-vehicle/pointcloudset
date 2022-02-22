@@ -50,4 +50,5 @@ dependencies:
       - sphinx-click
       - coverage-badge
       - bump2version
+      - rich
 prefix: /opt/conda

@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
+
+Unreleased
+-------------
+
+Added
+~~~~~~
+- rosbagconvert CLI to export individual frames to pointcloudset dataset or files like
+    csv or las.
+- rosbagconvert has new options and strcuture
+
+
+Changed
+~~~~~~
+- bag2daset has more functionallity and a new name: rosbagconvert
+- using rich instead of tqdm
+- using rich as a nice UI for the rosbagconvert
+
+
+
 0.3.4 - (2022-02-18)
 -------------
 

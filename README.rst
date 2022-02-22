@@ -127,6 +127,22 @@ This produces the plot from the animation above.
 .. _html documentation: https://virtual-vehicle.github.io/pointcloudset/
 .. _tutorial notebooks: https://github.com/virtual-vehicle/pointcloudset/tree/master/doc/sphinx/source/tutorial_notebooks
 
+
+CLI to convert ROS bag files: rosbagconvert
+################################################
+
+The package includes a powerfull CLI to convert ROS bag files into many formats like csv, las and many more.
+
+.. code-block:: console
+
+   rosbagconvert --output-format csv --output-dir converted_csv test.bag
+
+
+.. raw:: html
+
+   <a href="https://asciinema.org/a/jvRaIuC0dJDB70cenMZcu1tfV" target="_blank"><img src="https://asciinema.org/a/jvRaIuC0dJDB70cenMZcu1tfV.svg" /></a>
+
+
 Comparison to related packages
 ################################################
 
