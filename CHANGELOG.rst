@@ -13,10 +13,15 @@ Added
 ~~~~~~
 - rosbagconvert CLI to export individual frames to pointcloudset dataset or files like
     csv or las.
+- rosbagconvert has new options and strcuture
+
 
 Changed
 ~~~~~~
 - bag2daset has more functionallity and a new name: rosbagconvert
+- using rich instead of tqdm
+- using rich as a nice UI for the rosbagconvert
+
 
 
 0.3.4 - (2022-02-18)
