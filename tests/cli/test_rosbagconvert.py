@@ -13,16 +13,6 @@ TO_FILE_PYNTCLOUD = list(TO_FILE.keys())
 runner = CliRunner()
 
 
-@pytest.fixture
-def base_path() -> Path:
-    """Get the current folder of the test"""
-    return Path(__file__).parent
-
-
-def test_something(base_path: Path, monkeypatch: pytest.MonkeyPatch):
-    monkeypatch.chdir(base_path / "data")
-
-
 def test_help():
     result = runner.invoke(app, ["--help"])
     check.equal(result.exit_code, 0)
@@ -41,9 +31,10 @@ def test_convert_one_bag_dir(testbag1: Path, tmp_path: Path):
             out_path.as_posix(),
         ],
     )
+    out_path_real = out_path.joinpath("test")
     check.equal(result.exit_code, 0)
-    check.equal(out_path.exists(), True)
-    read_dataset = Dataset.from_file(out_path)
+    check.equal(out_path_real.exists(), True)
+    read_dataset = Dataset.from_file(out_path_real)
     check.is_instance(read_dataset, Dataset)
     check.equal(len(read_dataset), 2)
     check.equal(len(read_dataset.timestamps), 2)
@@ -53,7 +44,7 @@ def test_convert_all_bags_dir(
     tmp_path: Path, testdata_path: Path, monkeypatch: pytest.MonkeyPatch
 ):
     monkeypatch.chdir(testdata_path)
-    out_path = tmp_path.joinpath("cli_multi_dir")
+    out_path = tmp_path.joinpath("cli_dirs")
     result = runner.invoke(
         app,
         [
@@ -66,8 +57,16 @@ def test_convert_all_bags_dir(
     )
     check.equal(result.exit_code, 0)
     check.equal(out_path.exists(), True)
-    dirs = list(out_path.glob("**/*"))
+    dirs = [f for f in out_path.iterdir() if f.is_dir()]
     check.equal(len(dirs), 2)
+    read_dataset = Dataset.from_file(dirs[0])
+    check.is_instance(read_dataset, Dataset)
+    check.equal(len(read_dataset), 2)
+    check.equal(len(read_dataset.timestamps), 2)
+    read_dataset = Dataset.from_file(dirs[1])
+    check.is_instance(read_dataset, Dataset)
+    check.equal(len(read_dataset), 2)
+    check.equal(len(read_dataset.timestamps), 2)
 
 
 @pytest.mark.parametrize("fileformat", TO_FILE_PYNTCLOUD)
@@ -86,8 +85,9 @@ def test_convert_one_bag_frames_to_files(testbag1: Path, tmp_path: Path, filefor
         ],
     )
     check.equal(result.exit_code, 0)
-    check.equal(out_path.exists(), True)
-    files = list(out_path.glob(f"*.{fileformat.lower()}"))
+    out_path_real = out_path.joinpath("test")
+    check.equal(out_path_real.exists(), True)
+    files = list(out_path_real.glob(f"*.{fileformat.lower()}"))
     check.equal(len(files), 2)
     check.equal(files[0].suffix.replace(".", ""), fileformat.lower())
 
@@ -111,8 +111,27 @@ def test_convert_one_bag_one_frames_to_file(testbag1: Path, tmp_path: Path, file
             "1",
         ],
     )
+    out_path_real = out_path.joinpath("test")
     check.equal(result.exit_code, 0)
-    check.equal(out_path.exists(), True)
-    files = list(out_path.glob(f"*.{fileformat.lower()}"))
+    check.equal(out_path_real.exists(), True)
+    files = list(out_path_real.glob(f"*.{fileformat.lower()}"))
     check.equal(len(files), 1)
     check.equal(files[0].suffix.replace(".", ""), fileformat.lower())
+
+
+def test_convert_all_bags_frames_files(
+    tmp_path: Path, testdata_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    monkeypatch.chdir(testdata_path)
+    out_path = tmp_path.joinpath("cli_dirs_frames")
+    result = runner.invoke(
+        app,
+        [".", "-t", "/os1_cloud_node/points", "-d", out_path.as_posix(), "-o", "csv"],
+    )
+    check.equal(result.exit_code, 0)
+    check.equal(out_path.exists(), True)
+    dirs = [f for f in out_path.iterdir() if f.is_dir()]
+    check.equal(len(dirs), 2)
+    files = list(dirs[0].glob("*.csv"))
+    check.equal(len(files), 2)
+    check.equal(files[0].suffix.replace(".", ""), "csv")
