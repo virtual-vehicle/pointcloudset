@@ -2,15 +2,12 @@ from pathlib import Path
 from typing import Optional
 
 import click  # needed for documentation
+import pointcloudset
 import typer
-from rich.console import Console
-
-
 from pointcloudset import Dataset
 from pointcloudset.io.dataset.bag import dataset_from_rosbag
-import pointcloudset
-
 from pyntcloud.io import TO_FILE
+from rich.console import Console
 
 app = typer.Typer()
 console = Console()
@@ -24,14 +21,22 @@ def get(
     bagfile: str,
     topic: str = typer.Option("/os1_cloud_node/points", "--topic", "-t"),
     folder_to_write: str = typer.Option(".", "--output-dir", "-d"),
-    start_frame_number: int = typer.Option(0, "--start", "-s"),
-    end_frame_number: Optional[int] = typer.Option(None, "--end", "-e"),
     output_format: str = typer.Option("POINTCLOUDSET", "--output-format", "-o"),
+    start_frame_number: Optional[int] = typer.Option(0, "--start", "-s"),
+    end_frame_number: Optional[int] = typer.Option(None, "--end", "-e"),
     keep_zeros: bool = False,
     max_size: int = 100,
 ):
     """The main CLI function to convert ROS bagfiles to pointcloudset or files supported
     by pyntloud.
+
+    Examples:
+
+    rosbagconvert -d converted .
+
+    rosbagconvert -o csv -d converted_csv xyz.bag
+
+    rosbagconvert -o las -d converted_las --start 1 --end 10 xyz.bag
     """
     console.line()
     console.rule(f"rosbagconvert  {pointcloudset.__version__}")
