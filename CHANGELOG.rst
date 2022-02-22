@@ -13,7 +13,7 @@ Added
 ~~~~~~
 - rosbagconvert CLI to export individual frames to pointcloudset dataset or files like
     csv or las.
-- rosbagconvert has new options and strcuture
+- rosbagconvert has new options and structure
 
 
 Changed
