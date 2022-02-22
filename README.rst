@@ -139,7 +139,7 @@ The package includes a powerfull CLI to convert ROS bag files into many formats 
 
 
 .. image:: https://asciinema.org/a/jvRaIuC0dJDB70cenMZcu1tfV.svg
-   :target: https://asciinema.org/a/jvRaIuC0dJDB70cenMZcu1tf
+   :target: https://asciinema.org/a/jvRaIuC0dJDB70cenMZcu1tfV
    :align: center
    :alt: movie of CLI
    :width: 600px
