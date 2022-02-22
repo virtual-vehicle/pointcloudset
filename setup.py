@@ -62,7 +62,6 @@ setup(
         "plotly",
         "fastparquet",
         "dask>=2022.02.0",
-        "tqdm",
         "rospkg",
         "py3rosmsgs",
         "pycryptodomex",
