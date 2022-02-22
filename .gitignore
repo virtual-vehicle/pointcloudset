@@ -110,6 +110,7 @@ tests/testdata/big.bag
 tests/notebooks/test_tree.las
 tests/notebooks/test.bag
 tests/testdata/large
+tests/testdata/converted
 
 *.lock
 *.dirlock

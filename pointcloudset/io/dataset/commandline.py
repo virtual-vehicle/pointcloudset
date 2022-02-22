@@ -61,11 +61,11 @@ def get(
         if folder_to_write == ".":
             folder_to_write_path = Path.cwd().joinpath(bagfile_path.stem)
         else:
-            folder_to_write_path = Path(folder_to_write)
+            folder_to_write_path = Path(folder_to_write).joinpath(bagfile_path.stem)
 
         if not folder_to_write_path.exists():
-            folder_to_write_path.mkdir(exist_ok=False)
-
+            folder_to_write_path.mkdir(parents=True, exist_ok=False)
+        typer.echo(f"Writing to {folder_to_write_path}")
         if output_format == "POINTCLOUDSET":
             _convert_bag2dir(
                 bagfile=bagfile_path,
@@ -79,7 +79,11 @@ def get(
             )
         elif output_format.upper() in TO_FILE_PYNTCLOUD:
             dataset = Dataset.from_file(
-                file_path=bagfile_path, topic=topic, keep_zeros=False
+                file_path=bagfile_path,
+                topic=topic,
+                keep_zeros=False,
+                start_frame_number=start_frame_number,
+                end_frame_number=end_frame_number,
             )
             if end_frame_number is None:
                 end_frame_number = len(dataset)
