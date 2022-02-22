@@ -32,3 +32,5 @@ the converted directory.
 .. click:: pointcloudset.io.dataset.commandline:typer_click_object
    :prog: rosbagconvert
    :nested: full
+
+    rosbagconvert . -d converted -o csv
