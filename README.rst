@@ -131,6 +131,11 @@ This produces the plot from the animation above.
 CLI to convert ROS bag files to pointcloudset or csv, las and more
 ################################################
 
+.. code-block:: console
+
+   rosbagconvert --output-format csv --output-dir converted_csv test.bag
+
+
 .. raw:: html
 
    <a href="https://asciinema.org/a/jvRaIuC0dJDB70cenMZcu1tfV" target="_blank"><img src="https://asciinema.org/a/jvRaIuC0dJDB70cenMZcu1tfV.svg" /></a>
