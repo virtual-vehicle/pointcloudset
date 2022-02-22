@@ -1,10 +1,14 @@
 from pathlib import Path
 
+import pytest
 import pytest_check as check
-from typer.testing import CliRunner
-
 from pointcloudset import Dataset
 from pointcloudset.io.dataset.commandline import app
+from typer.testing import CliRunner
+
+from pyntcloud.io import TO_FILE
+
+TO_FILE_PYNTCLOUD = list(TO_FILE.keys())
 
 runner = CliRunner()
 
@@ -35,7 +39,8 @@ def test_convert_one_bag_dir(testbag1: Path, tmp_path: Path):
     check.equal(len(read_dataset.timestamps), 2)
 
 
-def test_convert_one_bag_csv(testbag1: Path, tmp_path: Path):
+@pytest.mark.parametrize("fileformat", TO_FILE_PYNTCLOUD)
+def test_convert_one_bag_frames_to_files(testbag1: Path, tmp_path: Path, fileformat):
     out_path = tmp_path.joinpath("cli")
     result = runner.invoke(
         app,
@@ -46,10 +51,11 @@ def test_convert_one_bag_csv(testbag1: Path, tmp_path: Path):
             "-d",
             out_path.as_posix(),
             "-o",
-            "csv",
+            fileformat.lower(),
         ],
     )
     check.equal(result.exit_code, 0)
     check.equal(out_path.exists(), True)
-    csv_files = list(out_path.glob("*.csv"))
-    check.equal(len(csv_files), 2)
+    files = list(out_path.glob(f"*.{fileformat.lower()}"))
+    check.equal(len(files), 2)
+    check.equal(files[0].suffix.replace(".", ""), fileformat.lower())
