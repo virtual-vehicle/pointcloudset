@@ -138,11 +138,8 @@ The package includes a powerfull CLI to convert ROS bag files into many formats 
    rosbagconvert --output-format csv --output-dir converted_csv test.bag
 
 
-.. image:: https://asciinema.org/a/jvRaIuC0dJDB70cenMZcu1tfV.svg
-   :target: https://asciinema.org/a/jvRaIuC0dJDB70cenMZcu1tfV
-   :align: center
-   :alt: movie of CLI
-   :width: 600px
+.. image:: https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/cli_demo.gif
+   :width: 600
 
 
 Comparison to related packages
