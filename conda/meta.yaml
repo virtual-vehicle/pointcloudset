@@ -29,7 +29,6 @@ requirements:
     - pyntcloud
     - python
     - rospkg
-    - tqdm
     - typer
   run:
     - dask
@@ -43,7 +42,6 @@ requirements:
     - pyntcloud
     - python
     - rospkg
-    - tqdm
     - typer
 
 test:
