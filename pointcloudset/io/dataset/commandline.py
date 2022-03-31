@@ -41,6 +41,7 @@ def get(
     console.line()
     console.rule(f"rosbagconvert  {pointcloudset.__version__}")
     bagfile_paths = _gen_bagfile_paths(bagfile)
+    console.rule(output_format)
     with console.status("Converting...", spinner="runner"):
         for bagfile_path in bagfile_paths:
             console.rule(f"converting {bagfile_path.name} ...", style="blue")
