@@ -30,7 +30,8 @@ def test_to_pyntcloud(testpointcloud_mini: PointCloud, testlas1: Path):
 
 def test_to_open3d(testpointcloud_mini: PointCloud):
     pointcloud = testpointcloud_mini.to_instance("open3d")
-    check.equal(type(pointcloud), o3d.cpu.pybind.geometry.PointCloud)
+    check.equal(type(pointcloud), o3d.geometry.PointCloud)
+    check.equal(pointcloud.dimension(), 3)
     check.equal(pointcloud.has_points(), True)
     check.equal(len(np.asarray(pointcloud.points)), len(testpointcloud_mini))
 
