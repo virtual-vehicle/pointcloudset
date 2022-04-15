@@ -5,10 +5,10 @@ channels:
   - open3d-admin
 dependencies:
   - numpy
-  - open3d>=0.14.0
+  - open3d>=0.15.1
   - pandas
   - pip
-  - python>=3.8
+  - python>=3.9
   - dask
   - nb_conda_kernels
   - plotly
