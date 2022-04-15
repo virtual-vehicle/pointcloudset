@@ -1,12 +1,12 @@
 name: tests
 
-on: [push, pull_request]
-  workflow_dispatch:
+on: workflow_dispatch
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    container: tgoelles/pointcloudset_base:latest
+    container:
+      image: tgoelles/pointcloudset_base:latest
     steps:
       - uses: actions/checkout@v2
         with:
