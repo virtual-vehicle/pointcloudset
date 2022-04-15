@@ -58,7 +58,7 @@ setup(
         "numpy",
         "pandas",
         "pyntcloud",
-        "open3d>=0.15.1",
+        "open3d>=0.15.0",
         "plotly",
         "fastparquet",
         "dask>=2022.02.0",

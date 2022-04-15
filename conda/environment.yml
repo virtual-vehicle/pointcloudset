@@ -12,7 +12,7 @@ dependencies:
   - pdal
   - fiona
   - pip:
-      - open3d>=0.15.1
+      - open3d>=0.15.0
       - fastparquet
       - ipykernel
       - jupyter
@@ -41,7 +41,6 @@ dependencies:
       - docstr-coverage
       - typer
       - nbval
-      - geopandas
       - pycryptodomex
       - sphinx
       - sphinxcontrib-napoleon
