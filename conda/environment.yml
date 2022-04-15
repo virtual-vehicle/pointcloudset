@@ -22,7 +22,6 @@ dependencies:
       - nbformat
       - rospkg
       - kaleido
-      - py3rosmsgs
       - pyntcloud
       - setuptools
       - black
@@ -41,7 +40,7 @@ dependencies:
       - docstr-coverage
       - typer
       - nbval
-      - pycryptodomex
+      - geopandas
       - sphinx
       - sphinxcontrib-napoleon
       - sphinx_rtd_theme==0.5.2

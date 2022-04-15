@@ -64,7 +64,6 @@ setup(
         "dask>=2022.02.0",
         "rospkg",
         "py3rosmsgs",
-        "pycryptodomex",
         "typer",
         "rich",
     ],
