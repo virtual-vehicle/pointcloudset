@@ -20,7 +20,7 @@ requirements:
     - dask
     - fastparquet
     - numpy
-    - open3d>=0.15.1
+    - open3d>=0.15.0
     - pandas
     - pip
     - plotly
@@ -35,7 +35,7 @@ requirements:
     - dask
     - fastparquet
     - numpy
-    - open3d>=0.15.1
+    - open3d>=0.15.0
     - pandas
     - plotly
     - py3rosmsgs
