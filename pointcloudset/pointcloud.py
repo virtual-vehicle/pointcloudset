@@ -378,13 +378,13 @@ class PointCloud(PointCloudCore):
         else:
             raise ValueError("Unsupported filter. Check docstring")
 
-    def limit(self, dim: "str", minvalue: float, maxvalue: float) -> PointCloud:
+    def limit(self, dim: "str", minvalue: float = None, maxvalue: float = None) -> PointCloud:
         """Limit the range of certain values in pointcloudset PointCloud. Can be chained together.
 
         Args:
             dim (str): Dimension to limit, any column in data not just x, y, or z.
-            minvalue (float): Min value to limit. (greater equal)
-            maxvalue (float): Max value to limit. (smaller equal)
+            minvalue (float): Min value to limit. (greater equal) Defaults to None.
+            maxvalue (float): Max value to limit. (smaller equal) Defaults to None.
 
         Returns:
             PointCloud: Limited pointcloud, where columns which did not match the criteria were
@@ -396,11 +396,20 @@ class PointCloud(PointCloudCore):
 
                 limitedpointcloud = testpointcloud.limit("x", -1.0, 1.0).limit("intensity", 0.0, 50.0)
         """
-        if maxvalue < minvalue:
+        
+        if minvalue is None and maxvalue is None:
+            print('No limit applied')
+            return self
+        elif minvalue is None:
+            return self.filter("value", dim, "<=", maxvalue)
+        elif maxvalue is None:
+            return self.filter("value", dim, ">=", minvalue)
+        elif maxvalue < minvalue:
             raise ValueError("maxvalue must be greater than minvalue")
-        return self.filter("value", dim, ">=", minvalue).filter(
-            "value", dim, "<=", maxvalue
-        )
+        else:
+            return self.filter("value", dim, ">=", minvalue).filter(
+                "value", dim, "<=", maxvalue
+            )
 
     def apply_filter(self, filter_result: Union[np.ndarray, list[int]]) -> PointCloud:
         """Generating a new PointCloud by removing points according to a call of the
