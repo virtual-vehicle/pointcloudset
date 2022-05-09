@@ -92,4 +92,8 @@ COPY docker/python_logging.conf /etc/ros/
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=noninteractive
 
-ENTRYPOINT ["conda", "activate", "pointcloudset"]
+# prepend conda environment to path
+ENV PATH $CONDA_DIR/envs/${conda_env}/bin:$PATH
+
+SHELL ["conda", "run", "-n", "pointcloudset", "/bin/bash", "-c"]
+ENTRYPOINT ["/bin/bash"]
