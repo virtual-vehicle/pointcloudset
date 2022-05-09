@@ -14,7 +14,7 @@ ADD doc/sphinx/source/tutorial_notebooks ./tutorial_notebooks
 # install
 RUN sudo /opt/conda/envs/pointcloudset/bin/pip install  $PACKAGE_HOME
 
-RUN /bin/bash -c "source activate pointcloudset && \
+RUN /bin/bash -c "source activate base && \
     pip install  $PACKAGE_HOME"
 
 # Make sure the environment is activated:
@@ -30,4 +30,4 @@ EXPOSE 8787
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=
 
-ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "pointcloudset", "/bin/bash"]
+ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "base", "/bin/bash"]
