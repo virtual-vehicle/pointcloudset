@@ -95,5 +95,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # prepend conda environment to path
 ENV PATH $CONDA_DIR/envs/${conda_env}/bin:$PATH
 
+ENV SHELL /bin/bash
+
 SHELL ["conda", "run", "-n", "pointcloudset", "/bin/bash", "-c"]
 ENTRYPOINT ["/bin/bash"]
