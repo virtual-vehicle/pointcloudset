@@ -1,40 +1,25 @@
-name: pointcloudset
+name: base
 channels:
   - defaults
   - conda-forge
-  - open3d-admin
 dependencies:
-  - pip
-  - python>=3.9.10
   - dask>=2022.02.0
-  - nb_conda_kernels
-  - plotly
   - pdal
   - fiona
   - pip:
       - open3d>=0.15.0
       - fastparquet
       - ipykernel
-      - jupyter
-      - jupyterlab
-      - jupyterlab_server
       - nbconvert
       - nbformat
       - rospkg
       - kaleido
       - pyntcloud
       - setuptools
-      - black
       - blackcellmagic
-      - coverage
       - isort
       - laspy<2.0.0
       - pylas
-      - mypy
-      - pylint
-      - flake8
-      - pytest-check
-      - pandoc
       - pytest
       - pytest-cov
       - docstr-coverage
@@ -48,5 +33,4 @@ dependencies:
       - sphinx-click
       - coverage-badge
       - bump2version
-      - rich
 prefix: /opt/conda
