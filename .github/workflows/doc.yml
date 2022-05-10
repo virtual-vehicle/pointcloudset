@@ -21,7 +21,6 @@ jobs:
           fetch-depth: 0
 
       - name: install pointcloudset
-        shell: bash -l {0}
         run: |
           pip install -e .
           conda info
@@ -29,7 +28,6 @@ jobs:
           pandoc --version
 
       - name: make doc
-        shell: bash -l {0}
         run: make doc
 
       - name: add .nojekyll
