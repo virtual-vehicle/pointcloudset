@@ -6,6 +6,7 @@ dependencies:
   - dask-core=2022.5.0
   - pdal=2.4
   - fiona=1.8.21
+  - pandoc
   - pip:
       - open3d>=0.15.0
       - fastparquet
@@ -35,6 +36,6 @@ dependencies:
       - sphinx-click
       - coverage-badge
       - bump2version
-      - pandoc
       - matplotlib
 prefix: /opt/conda
+
