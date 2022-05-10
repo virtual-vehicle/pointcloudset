@@ -6,7 +6,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     container:
-      image: tgoelles/pointcloudset_base:test2
+      image: tgoelles/pointcloudset_base:latest
     steps:
       - uses: actions/checkout@v2
         with:
