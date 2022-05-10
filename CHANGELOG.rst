@@ -13,6 +13,11 @@ Changed
 ~~~~~~
 - better entry point for docker images
 - using pintcloudset docker images for github actions testing
+- streamlined docker images with new base image
+
+Fixed
+~~~~~~
+- bug with dask 2022.5.0 where meta.json was also read not just the parquet files
 
 0.4.1 - (2022-02-22)
 -------------
