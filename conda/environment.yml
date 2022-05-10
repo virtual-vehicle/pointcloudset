@@ -3,9 +3,9 @@ channels:
   - defaults
   - conda-forge
 dependencies:
-  - dask>=2022.02.0
-  - pdal
-  - fiona
+  - dask-core=2022.5.0
+  - pdal=2.4
+  - fiona=1.8.21
   - pip:
       - open3d>=0.15.0
       - fastparquet
@@ -15,6 +15,7 @@ dependencies:
       - rospkg
       - kaleido
       - pyntcloud
+      - py3rosmsgs
       - setuptools
       - blackcellmagic
       - isort
