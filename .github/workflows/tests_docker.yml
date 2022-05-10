@@ -11,17 +11,14 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: test conda
-        shell: bash -l {0}
+      - name: install pointcloudset
         run: |
           pip install -e .
           conda info
           conda list
       - name: make test
-        shell: bash -l {0}
         run: make test
       - name: generate badge
-        shell: bash -l {0}
         run: coverage-badge -f -o images/coverage.svg
       - name: Verify Changed files
         uses: tj-actions/verify-changed-files@v6
