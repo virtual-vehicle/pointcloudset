@@ -13,18 +13,12 @@ on:
 jobs:
   doc:
     runs-on: ubuntu-latest
+    container:
+      image: tgoelles/pointcloudset_base:test
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
-      - name: Setup Conda Environment
-        uses: conda-incubator/setup-miniconda@v2
-        with:
-          miniconda-version: "latest"
-          environment-file: doc/sphinx/ci-environment.yml
-          activate-environment: base
-          auto-activate-base: true
 
       - name: install pointcloudset
         shell: bash -l {0}
