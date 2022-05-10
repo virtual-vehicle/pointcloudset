@@ -20,7 +20,7 @@ requirements:
     - dask
     - fastparquet
     - numpy
-    - open3d>=0.14
+    - open3d>=0.15.0
     - pandas
     - pip
     - plotly
@@ -29,13 +29,13 @@ requirements:
     - pyntcloud
     - python
     - rospkg
-    - tqdm
+    - rich
     - typer
   run:
     - dask
     - fastparquet
     - numpy
-    - open3d>=0.14.0
+    - open3d>=0.15.0
     - pandas
     - plotly
     - py3rosmsgs
@@ -43,7 +43,7 @@ requirements:
     - pyntcloud
     - python
     - rospkg
-    - tqdm
+    - rich
     - typer
 
 test:

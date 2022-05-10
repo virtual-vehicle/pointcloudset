@@ -6,6 +6,19 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
 
+Unreleased
+-------------
+
+Changed
+~~~~~~
+- better entry point for docker images
+- using pintcloudset docker images for github actions testing
+- streamlined docker images with new base image
+
+Fixed
+~~~~~~
+- bug with dask 2022.5.0 where meta.json was also read not just the parquet files
+
 0.4.1 - (2022-02-22)
 -------------
 
