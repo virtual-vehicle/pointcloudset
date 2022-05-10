@@ -96,7 +96,8 @@ def _get_folder_number(path: Path) -> int:
 
 def _dataset_from_single_dir(dir: Path) -> dict:
     _check_dir(dir)
-    data = dd.read_parquet(dir)
+    parquet_files = list(dir.glob("*.parquet"))
+    data = dd.read_parquet(parquet_files)
     with open(dir.joinpath("meta.json"), "r") as infile:
         meta = json.loads(infile.read())
     timestamps_raw = meta["timestamps"]
