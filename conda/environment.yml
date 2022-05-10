@@ -16,6 +16,7 @@ dependencies:
       - kaleido
       - pyntcloud
       - py3rosmsgs
+      - pycryptodomex
       - setuptools
       - blackcellmagic
       - isort
