@@ -35,4 +35,5 @@ dependencies:
       - sphinx-click
       - coverage-badge
       - bump2version
+      - pandoc
 prefix: /opt/conda
