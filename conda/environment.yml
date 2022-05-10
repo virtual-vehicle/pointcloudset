@@ -36,4 +36,5 @@ dependencies:
       - coverage-badge
       - bump2version
       - pandoc
+      - matplotlib
 prefix: /opt/conda
