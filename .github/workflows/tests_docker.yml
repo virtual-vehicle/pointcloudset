@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: tgoelles/pointcloudset_base:latest
+    volumes:
+     - .
     steps:
       - uses: actions/checkout@v2
         with:
