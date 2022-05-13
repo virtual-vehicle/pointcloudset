@@ -1,8 +1,8 @@
 pointcloudset
 =========================================
 
-.. image:: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/tests.yml/badge.svg
-   :target: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/tests.yml
+.. image:: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/tests_docker.yml/badge.svg
+   :target: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/tests_docker.yml
    :alt: test status
 
 .. image:: images/coverage.svg
