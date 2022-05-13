@@ -8,9 +8,15 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased
 -------------
 
+Changed
+~~~~~~
+- time format to 24h PR #45
+
+
 Fixed
 ~~~~~~
 - fixed typehints after changed open3D API
+- plot overlay larger than length of px.colors.qualitative.Plotly Pr #45
 
 Removed
 - tqdm dependency (now covered by rich)
