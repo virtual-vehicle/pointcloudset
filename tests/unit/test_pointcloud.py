@@ -143,7 +143,7 @@ def test_str(testpointcloud: PointCloud):
     check.equal(type(str(testpointcloud)), str)
     check.equal(
         str(testpointcloud),
-        "pointcloud: with 45809 points, data:['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'original_id'], from Monday, June 22, 2020 01:40:42",
+        "pointcloud: with 45809 points, data:['x', 'y', 'z', 'intensity', 't', 'reflectivity', 'ring', 'noise', 'range', 'original_id'], from Monday, June 22, 2020 13:40:42",
     )
 
 
