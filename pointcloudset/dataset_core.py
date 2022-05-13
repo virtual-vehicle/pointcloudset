@@ -154,14 +154,17 @@ class DatasetCore:
     def _check(self):
         assert "orig_file" in self.meta, "meta data does not contain orig_file"
         if len(self) > 0:
+
             assert len(self.timestamps) == len(
                 self.data
             ), f"Length of timestamps {len(self.timestamps)} do not match the data {len(self.data)}"
+
             if any(
                 self.timestamps[i] >= self.timestamps[i + 1]
                 for i in range(len(self.timestamps) - 1)
             ):
                 raise ValueError("Timestamps are not monotonic increasing")
+
             assert isinstance(
                 self.data[0], (DelayedLeaf, Delayed)
             ), f"data needs to be a dask delayed object got {type(self.data[0])}"

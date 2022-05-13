@@ -1,6 +1,6 @@
 ########################################################################################
 # Docker image including the release
-FROM tgoelles/pointcloudset_base:v0.4.1
+FROM tgoelles/pointcloudset_base:v0.4.3
 
 # Copy local code to the container image.
 ENV PACKAGE_HOME /pointcloudset
@@ -12,9 +12,9 @@ COPY README.rst ./
 ADD doc/sphinx/source/tutorial_notebooks ./tutorial_notebooks
 
 # install
-RUN sudo /opt/conda/envs/pointcloudset/bin/pip install  $PACKAGE_HOME
+RUN sudo /opt/conda/bin/pip install  $PACKAGE_HOME
 
-RUN /bin/bash -c "source activate pointcloudset && \
+RUN /bin/bash -c "source activate base && \
     pip install  $PACKAGE_HOME"
 
 # Make sure the environment is activated:
@@ -30,6 +30,4 @@ EXPOSE 8787
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=
 
-ENV SHELL=/bin/bash
-
-ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "pointcloudset", "/bin/bash"]
+ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "base", "/bin/bash"]

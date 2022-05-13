@@ -8,14 +8,14 @@
 	"dockerFile": "dev.Dockerfile",
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
-		"python.pythonPath": "/opt/conda/envs/pointcloudset/bin/python",
+		"python.pythonPath": "/opt/conda/bin/python",
 		"python.terminal.activateEnvironment": false,
-		"python.linting.mypyPath": "/opt/conda/envs/pointcloudset/bin/mypy",
-		"python.testing.pytestPath": "/opt/conda/envs/pointcloudset/bin/pytest",
-		"python.linting.flake8Path": "/opt/conda/envs/pointcloudset/bin/flake8",
-		"python.linting.pylintPath": "/opt/conda/envs/pointcloudset/bin/pylint",
+		"python.linting.mypyPath": "/opt/conda/bin/mypy",
+		"python.testing.pytestPath": "/opt/conda/bin/pytest",
+		"python.linting.flake8Path": "/opt/conda/bin/flake8",
+		"python.linting.pylintPath": "/opt/conda/bin/pylint",
 		"python.formatting.provider": "black",
-		"python.formatting.blackPath": "/opt/conda/envs/pointcloudset/bin/black",
+		"python.formatting.blackPath": "/opt/conda/bin/black",
 		"editor.formatOnSave": true,
 		"[latex]": {
 			"editor.wordWrap": "on",
@@ -39,7 +39,7 @@
 			"--disable=missing-function-docstring"
 		]
 	},
-	"postCreateCommand": "/opt/conda/envs/pointcloudset/bin/pip install -e .",
+	"postCreateCommand": "/opt/conda/bin/pip install -e .",
 	"extensions": [
 		"ms-python.python",
 		"ms-python.vscode-pylance",
