@@ -1,11 +1,5 @@
 
-# base docker container for pointcloudset without the installed package
-# used for CI/CD and in vscode for development
-FROM continuumio/miniconda3 AS base
-#-------------------------------------------------------------------------------------------------------------
-# Based on a template by  Microsoft Corporation.
-# Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
-#-------------------------------------------------------------------------------------------------------------
+FROM ghcr.io/tgoelles/python_docker:v0.3.5_py3.9
 
 
 # Avoid warnings by switching to noninteractive
@@ -19,33 +13,6 @@ ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-# Configure apt and install packages
-RUN apt-get update \
-    && apt-get -y install --no-install-recommends apt-utils dialog 2>&1 \
-    # Verify git, process tools, lsb-release (common in install instructions for CLIs) installed
-    && apt-get -y install git iproute2 procps iproute2 lsb-release \
-    # Create a non-root user to use if preferred - see https://aka.ms/vscode-remote/containers/non-root-user.
-    && groupadd --gid $USER_GID $USERNAME \
-    && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME \
-    # [Optional] Add sudo support for the non-root user
-    && apt-get install -y sudo \
-    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
-    && chmod 0440 /etc/sudoers.d/$USERNAME \
-    # tools to access extrenal datasets
-    && apt-get -y install netcat curl make wget unzip less \
-    && apt-get -y install gcc \
-    # orca for plotly
-    && apt-get install -y xvfb \
-    && apt-get install -y libgtk2.0-0 \
-    && apt-get install -y libasound2 \
-    && apt-get install -y libxrender1 libxtst6 libxi6 libxss1 libgconf-2-4 libnss3-dev \
-    && conda install -y psutil \
-    && alias orca="xvfb-run orca" \
-    && conda install -y xlrd  \
-    # Clean up
-    && apt-get autoremove -y \
-    && apt-get clean -y \
-    && rm -rf /var/lib/apt/lists/*
 
 # install Open3D dependencies
 RUN apt-get update && \
@@ -72,24 +39,14 @@ RUN apt-get update && \
     xvfb && \
     rm -rf /var/lib/apt/lists/*
 
-COPY docker/.bashrc /root/.bashrc
 
-# Python
-# Copy environment.yml (if found) to a temp locaition so we update the environment. Also
-# copy "noop.txt" so the COPY instruction does not fail if no environment.yml exists.
+# Python update conda base environment
 COPY conda/environment.yml* /tmp/conda-tmp/
-RUN /opt/conda/bin/conda update -n base -c defaults conda
-#RUN /opt/conda/bin/conda config --set channel_priority strict
-# Update Python environment based on environment.yml (if presenet)
-RUN /opt/conda/bin/conda env create -f /tmp/conda-tmp/environment.yml \
-    && rm -rf /tmp/conda-tmp
-# install the kernel to use with jupyter and some extensions
-RUN /bin/bash -c  'source activate pointcloudset && \
-    python -m ipykernel install --name pointcloudset'
+RUN /opt/conda/bin/conda env update -n base -f /tmp/conda-tmp/environment.yml
 
 # ROSPY loggging configuation file
 COPY docker/python_logging.conf /etc/ros/
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=noninteractive
+ENV SHELL /bin/bash
 
-ENTRYPOINT ["conda", "activate", "pointcloudset"]

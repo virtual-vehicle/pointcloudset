@@ -33,4 +33,4 @@ the converted directory.
    :prog: rosbagconvert
    :nested: full
 
-    rosbagconvert . -d converted -o csv
+   rosbagconvert . -d converted -o csv
