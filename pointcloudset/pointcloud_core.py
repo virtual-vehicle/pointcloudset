@@ -53,7 +53,7 @@ class PointCloudCore:
         Returns:
             str: Date/time string.
         """
-        return self.timestamp.strftime("%A, %B %d, %Y %I:%M:%S")
+        return self.timestamp.strftime("%A, %B %d, %Y %H:%M:%S")
 
     @property
     def data(self):

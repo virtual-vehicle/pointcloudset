@@ -3,6 +3,7 @@ Functions for plotting frames.
 Used mainly by :func:`pointcloudset.pointcloud.PointCloud.plot` but could also be used
 on its own.
 """
+import math
 import numpy as np
 import plotly.express as px
 import plotly.graph_objs as go
@@ -32,9 +33,15 @@ def plot_overlay(fig, pointcloud, overlay: dict, **kwargs):
     fig.update_traces(
         marker=dict(size=1.5, line=dict(width=0)), selector=dict(mode="markers")
     )
-    i = 1
-    colors = px.colors.qualitative.Plotly
-    for name, from_dict in overlay.items():
+
+    # Create color list dependend on length of overlay.
+    if len(overlay) <= 9:
+        colors = px.colors.qualitative.Plotly
+    else:
+        fact = len(overlay) / 24
+        colors = px.colors.qualitative.Light24 * math.ceil(fact)
+
+    for i, (name, from_dict) in enumerate(overlay.items()):
         marker_color = colors[i]
         if isinstance(from_dict, np.ndarray):
             fig = _plot_overlay_plane(
@@ -58,9 +65,6 @@ def plot_overlay(fig, pointcloud, overlay: dict, **kwargs):
                 f"{from_dict} is not supported, use either a PointCloud or plane model"
             )
 
-        i = i + 1
-        if i > len(colors):
-            i = 0
     return fig
 
 
