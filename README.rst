@@ -28,6 +28,11 @@ pointcloudset
 .. image:: https://joss.theoj.org/papers/10.21105/joss.03471/status.svg
    :target: https://joss.theoj.org/papers/10.21105/joss.03471#
    :alt: JOSS badge
+   
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+   :target: https://github.com/psf/black
+   :alt: code style black
+
 
 .. inclusion-marker-do-not-remove
 
