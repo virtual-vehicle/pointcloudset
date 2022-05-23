@@ -519,3 +519,7 @@ class PointCloud(PointCloudCore):
         """
         new_data = self.data.sample(number_of_points).reset_index()
         return PointCloud(new_data, timestamp=self.timestamp)
+
+    def _add_original_id_from_index(self) -> PointCloud:
+        """Add orginal ID column from index."""
+        return self._add_column("original_id", self.data.index)
