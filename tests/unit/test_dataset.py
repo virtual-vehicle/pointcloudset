@@ -19,40 +19,46 @@ def test_dataset_len(testbag1: str, testset: Dataset):
     check.equal(len(testset), 2)
 
 
-def test_getitem(testset: Dataset):
-    check.equal(type(testset[0]), PointCloud)
+@pytest.mark.parametrize("test_sets", ["testset", "testdataset_vz6000"], indirect=True)
+def test_getitem(test_sets: Dataset):
+    check.equal(type(test_sets[0]), PointCloud)
 
 
-def test_getitem_late(testset):
-    check.equal(type(testset[1]), PointCloud)
+@pytest.mark.parametrize("test_sets", ["testset", "testdataset_vz6000"], indirect=True)
+def test_getitem_late(test_sets):
+    check.equal(type(test_sets[1]), PointCloud)
 
 
-def test_getitem_2times(testset):
-    check.equal(type(testset[0]), PointCloud)
-    check.equal(type(testset[1]), PointCloud)
-    check.equal(type(testset[0]), PointCloud)
-    check.equal(type(testset[1]), PointCloud)
+@pytest.mark.parametrize("test_sets", ["testset", "testdataset_vz6000"], indirect=True)
+def test_getitem_2times(test_sets):
+    check.equal(type(test_sets[0]), PointCloud)
+    check.equal(type(test_sets[1]), PointCloud)
+    check.equal(type(test_sets[0]), PointCloud)
+    check.equal(type(test_sets[1]), PointCloud)
 
 
-def test_getitem_slice(testset: Dataset):
-    test = testset[0:2]
+@pytest.mark.parametrize("test_sets", ["testset", "testdataset_vz6000"], indirect=True)
+def test_getitem_slice(test_sets: Dataset):
+    test = test_sets[0:2]
     testlist = [0, 1, 2, 3]
     check.is_instance(test, Dataset)
     check.equal(len(test), 2)
     check.equal(len(test), len(testlist[0:2]))
-    check.equal(type(testset[0:2][0]), PointCloud)
+    check.equal(type(test_sets[0:2][0]), PointCloud)
 
 
-def test_getitem_error(testset: Dataset):
+@pytest.mark.parametrize("test_sets", ["testset", "testdataset_vz6000"], indirect=True)
+def test_getitem_error(test_sets: Dataset):
     with pytest.raises(TypeError):
-        testset["fake"]
+        test_sets["fake"]
 
 
-def test_get_pointcloud_number_from_time(testset):
-    res = testset._get_pointcloud_number_from_time(testset.start_time)
+@pytest.mark.parametrize("test_sets", ["testset", "testdataset_vz6000"], indirect=True)
+def test_get_pointcloud_number_from_time(test_sets):
+    res = test_sets._get_pointcloud_number_from_time(test_sets.start_time)
     check.equal(res, 0)
-    res2 = testset._get_pointcloud_number_from_time(testset.end_time)
-    check.equal(res2 + 1, len(testset))
+    res2 = test_sets._get_pointcloud_number_from_time(test_sets.end_time)
+    check.equal(res2 + 1, len(test_sets))
 
 
 def test_getitem_timerange(testset: Dataset):
@@ -71,8 +77,9 @@ def test_getitem_strange(testset):
     check.equal(len(testset[2:0]), 0)
 
 
-def test_has_pointclouds(testset: Dataset):
-    check.equal(testset.has_pointclouds(), True)
+@pytest.mark.parametrize("test_sets", ["testset", "testdataset_vz6000"], indirect=True)
+def test_has_pointclouds(test_sets: Dataset):
+    check.equal(test_sets.has_pointclouds(), True)
 
 
 def test_str(testset: Dataset):
@@ -100,8 +107,9 @@ def test_end_time(testset: Dataset):
     check.equal(et, datetime.datetime(2020, 6, 22, 13, 40, 42, 755912))
 
 
-def test_time(testset: Dataset):
-    check.greater(testset.end_time, testset.start_time)
+@pytest.mark.parametrize("test_sets", ["testset", "testdataset_vz6000"], indirect=True)
+def test_time(test_sets: Dataset):
+    check.greater(test_sets.end_time, test_sets.start_time)
 
 
 def test_extend(testbag1):

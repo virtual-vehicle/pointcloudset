@@ -180,3 +180,9 @@ def testdataset_vz6000(testlasvz6000_1, testlasvz6000_2) -> Dataset:
     pointcloud1 = PointCloud.from_file(testlasvz6000_1)
     pointcloud2 = PointCloud.from_file(testlasvz6000_2)
     return Dataset.from_instance("pointclouds", [pointcloud1, pointcloud2])
+
+
+@pytest.fixture
+def test_sets(request):
+    """for testing with different datasets"""
+    return request.getfixturevalue(request.param)
