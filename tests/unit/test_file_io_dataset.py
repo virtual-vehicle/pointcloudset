@@ -165,3 +165,10 @@ def test_check_meta_file(testset: Dataset, tmp_path: Path):
     testfile_name.joinpath("meta.json").unlink()
     with pytest.raises(AssertionError):
         dir._check_dir_contents_single(testfile_name)
+
+
+def test_dataset_vz6000(testdataset_vz6000: Dataset):
+    check.is_instance(testdataset_vz6000, Dataset)
+    check.is_instance(testdataset_vz6000[0], PointCloud)
+    check.is_false(testdataset_vz6000[0].has_original_id)
+
