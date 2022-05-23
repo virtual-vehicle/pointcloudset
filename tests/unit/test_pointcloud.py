@@ -275,7 +275,7 @@ def test_random_down_sample(testpointcloud: PointCloud):
     check.equal(len(testpointcloud), len_orig)
 
 
-def test_add_original_id(testpointcloud_mini_df):
+def test_add_original_id_from_index(testpointcloud_mini_df):
     test_pc = PointCloud(data=testpointcloud_mini_df)
     check.is_false(test_pc.has_original_id)
     test_pc = test_pc._add_original_id_from_index()
