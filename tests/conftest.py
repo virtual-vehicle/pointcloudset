@@ -176,10 +176,18 @@ def testdataset_with_empty_frame(testdataset_mini_real: Dataset):
 
 
 @pytest.fixture()
-def testdataset_vz6000(testlasvz6000_1, testlasvz6000_2) -> Dataset:
-    pointcloud1 = PointCloud.from_file(testlasvz6000_1)
-    pointcloud2 = PointCloud.from_file(testlasvz6000_2)
-    return Dataset.from_instance("pointclouds", [pointcloud1, pointcloud2])
+def testvz6000_1(testlasvz6000_1):
+    return PointCloud.from_file(testlasvz6000_1)
+
+
+@pytest.fixture()
+def testvz6000_2(testlasvz6000_2):
+    return PointCloud.from_file(testlasvz6000_2)
+
+
+@pytest.fixture()
+def testdataset_vz6000(testvz6000_1, testvz6000_2) -> Dataset:
+    return Dataset.from_instance("pointclouds", [testvz6000_1, testvz6000_2])
 
 
 @pytest.fixture

@@ -490,12 +490,24 @@ def test_all_have_origianl_ids(testset: Dataset, testdataset_vz6000: Dataset):
     check.is_false(testdataset_vz6000.has_original_id)
 
 
-def test_dataset_vz6000_agg_dataset(testdataset_vz6000: Dataset):
-    testdataset_vz6000.min(depth="dataset")
+def test_dataset_vz6000_min_dataset(
+    testdataset_vz6000: Dataset, testvz6000_1: PointCloud, testvz6000_2: PointCloud
+):
+    res = testdataset_vz6000.min(depth="dataset")
+    min_1 = testvz6000_1.data.min()
+    min_2 = testvz6000_2.data.min()
+    check.is_instance(res, pd.Series)
+    check.equal(res["intensity min"], min(min_1["intensity"], min_2["intensity"]))
 
 
-def test_dataset_vz6000_agg_pointcloud(testdataset_vz6000: Dataset):
-    testdataset_vz6000.min(depth="pointcloud")
+def test_dataset_vz6000_max_dataset(
+    testdataset_vz6000: Dataset, testvz6000_1: PointCloud, testvz6000_2: PointCloud
+):
+    res = testdataset_vz6000.max(depth="dataset")
+    max_1 = testvz6000_1.data.max()
+    max_2 = testvz6000_2.data.max()
+    check.is_instance(res, pd.Series)
+    check.equal(res["intensity max"], max(max_1["intensity"], max_2["intensity"]))
 
 
 def test_dataset_vz6000_agg_point(testdataset_vz6000: Dataset):
