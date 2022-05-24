@@ -1,6 +1,7 @@
 import datetime
 
 import pandas as pd
+import numpy as np
 import pytest
 import pytest_check as check
 import rosbag
@@ -508,6 +509,16 @@ def test_dataset_vz6000_max_dataset(
     max_2 = testvz6000_2.data.max()
     check.is_instance(res, pd.Series)
     check.equal(res["intensity max"], max(max_1["intensity"], max_2["intensity"]))
+
+
+def test_dataset_vz6000_max_pointcloud(
+    testdataset_vz6000: Dataset, testvz6000_1: PointCloud, testvz6000_2: PointCloud
+):
+    res = testdataset_vz6000.max(depth="pointcloud")
+    check.is_instance(res, pd.DataFrame)
+    max_1 = testvz6000_1.data.max().x
+    max_2 = testvz6000_2.data.max().x
+    np.testing.assert_array_equal(res["x max"].values, np.array([max_1, max_2]))
 
 
 def test_dataset_vz6000_agg_point(testdataset_vz6000: Dataset):
