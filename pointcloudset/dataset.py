@@ -228,13 +228,13 @@ class Dataset(DatasetCore):
         """Check if all pointclouds in the Dataset have original_ids
 
         Returns:
-            bool: ``True`` if all PointClouds in the the Dataset returns has_origina_id.
+            bool: ``True`` if all PointClouds in the the Dataset returns has_original_id.
         """
 
         def check_original_id(pc):
             return pc.has_original_id
 
-        return all(self.apply(check_original_id).compute())
+        return all(self.apply(check_original_id, warn=False).compute())
 
     def agg(
         self,
