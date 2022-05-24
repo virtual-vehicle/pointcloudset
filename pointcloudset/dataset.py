@@ -276,14 +276,17 @@ class Dataset(DatasetCore):
                 dataset.agg({"x" : ["min","max","mean","std"]})
         """
         if depth == "point":
-            data = self._agg(agg).compute()
-            if isinstance(agg, str):
-                data.columns = [
-                    i if i in ["N", "original_id"] else f"{i} {agg}"
-                    for i in data.columns
-                ]
+            if self.has_original_id:
+                data = self._agg(agg).compute()
+                if isinstance(agg, str):
+                    data.columns = [
+                        i if i in ["N", "original_id"] else f"{i} {agg}"
+                        for i in data.columns
+                    ]
 
-            return data
+                return data
+            else:
+                raise ValueError("this operations nees original_id in each pointcloud")
         elif depth == "pointcloud":
             return self._agg_per_pointcloud(agg)
         elif depth == "dataset":
