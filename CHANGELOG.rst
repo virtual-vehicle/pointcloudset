@@ -8,6 +8,10 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased
 -------------
 
+Added
+~~~~~~
+- has_original_id for datasets. Returns true if all pointclouds have original_id
+
 Changed
 ~~~~~~
 - time format to 24h PR #45
