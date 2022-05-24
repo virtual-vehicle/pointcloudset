@@ -483,3 +483,13 @@ def test_replace_nan_frames_with_empty(testdataset_with_empty_frame: Dataset):
     check.equal(len(test2), len(testdataset_with_empty_frame))
     check.is_false(test2[1]._has_data())
     check.equal(len(test2[1]), 0)
+
+
+def test_all_have_origianl_ids(testset: Dataset, testdataset_vz6000: Dataset):
+    check.is_true(testset.has_original_id)
+    check.is_false(testdataset_vz6000.has_original_id)
+
+
+def test_dataset_vz6000_agg_dataset(testdataset_vz6000: Dataset):
+    with pytest.raises(ValueError):
+        testdataset_vz6000.min(depth="dataset")

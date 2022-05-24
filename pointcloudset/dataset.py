@@ -223,6 +223,19 @@ class Dataset(DatasetCore):
         else:
             return DelayedResult(res)
 
+    @property
+    def has_original_id(self) -> bool:
+        """Check if all pointclouds in the Dataset have original_ids
+
+        Returns:
+            bool: ``True`` if all PointClouds in the the Dataset returns has_origina_id.
+        """
+
+        def check_original_id(pc):
+            return pc.has_original_id
+
+        return all(self.apply(check_original_id).compute())
+
     def agg(
         self,
         agg: Union[str, list, dict],

@@ -97,11 +97,13 @@ class DatasetCore:
         Returns:
             dask.dataframe.DataFrame: use .compute to get final result.
         """
-        data = self.daskdataframe.groupby("original_id").agg(agg)
-        data["N"] = self.daskdataframe.groupby("original_id").size()
-        data["original_id"] = data.index
-        data = data.reset_index(drop=True)
-        return data
+        if self.has_original_id:
+            data = self.daskdataframe.groupby("original_id").agg(agg)
+            data["N"] = self.daskdataframe.groupby("original_id").size()
+            data["original_id"] = data.index
+            return data.reset_index(drop=True)
+        else:
+            raise ValueError("all pointclouds must have original_id for this operation")
 
     def has_pointclouds(self) -> bool:
         """Check if Dataset has PointCloud.
