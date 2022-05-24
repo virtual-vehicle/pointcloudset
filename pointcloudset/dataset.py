@@ -448,20 +448,24 @@ class Dataset(DatasetCore):
     def _agg_per_pointcloud(
         self, agg: Union[str, list, dict]
     ) -> Union[pandas.DataFrame, list, pandas.DataFrame]:
-        def get(pointcloud, agg: Union[str, list, dict]):
-            return pointcloud.data.agg(agg)
+        if self.has_original_id:
 
-        res = self.apply(get, warn=False, agg=agg).compute()
-        if isinstance(agg, list):
-            return res
+            def get(pointcloud, agg: Union[str, list, dict]):
+                return pointcloud.data.agg(agg)
+
+            res = self.apply(get, warn=False, agg=agg).compute()
+            if isinstance(agg, list):
+                return res
+            else:
+                res = pandas.DataFrame(res)
+                if not isinstance(agg, dict):
+                    res = res.drop("original_id", axis=1)
+                res.columns = [f"{column} {agg}" for column in res.columns]
+                res.index.name = "pointcloud"
+                res["timestamp"] = self.timestamps
+                return res
         else:
-            res = pandas.DataFrame(res)
-            if not isinstance(agg, dict):
-                res = res.drop("original_id", axis=1)
-            res.columns = [f"{column} {agg}" for column in res.columns]
-            res.index.name = "pointcloud"
-            res["timestamp"] = self.timestamps
-            return res
+            raise ValueError("all pointclouds must have original_id for this operation")
 
     def extend(self, dataset: Dataset) -> Dataset:
         """Extends the dataset by another one.
