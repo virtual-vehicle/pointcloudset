@@ -491,5 +491,13 @@ def test_all_have_origianl_ids(testset: Dataset, testdataset_vz6000: Dataset):
 
 
 def test_dataset_vz6000_agg_dataset(testdataset_vz6000: Dataset):
+    testdataset_vz6000.min(depth="dataset")
+
+
+def test_dataset_vz6000_agg_pointcloud(testdataset_vz6000: Dataset):
+    testdataset_vz6000.min(depth="pointcloud")
+
+
+def test_dataset_vz6000_agg_point(testdataset_vz6000: Dataset):
     with pytest.raises(ValueError):
-        testdataset_vz6000.min(depth="dataset")
+        testdataset_vz6000.min(depth="point")
