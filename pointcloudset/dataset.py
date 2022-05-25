@@ -75,6 +75,12 @@ class Dataset(DatasetCore):
         Raises:
             ValueError: If file format is not supported.
             TypeError: If file_path is not a Path object.
+
+        Examples:
+
+            .. code-block:: python
+
+                pointcloudset.Dataset.from_file(bag_file, topic="lidar/points", keep_zeros=False)
         """
         from_dir = False
         if not isinstance(file_path, Path):
