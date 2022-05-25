@@ -56,13 +56,23 @@ class PointCloud(PointCloudCore):
     """
 
     @classmethod
-    def from_file(cls, file_path: Path, **kwargs):
+    def from_file(
+        cls,
+        file_path: Path,
+        timestamp: str | datetime.datetime = "from_file",
+        **kwargs,
+    ):
         """Extract data from file and construct a PointCloud with it. Uses
         `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_ as
         backend.
 
         Args:
             file_path (pathlib.Path): Path of file to read.
+            use_file_timestamp (bool): use the file creation date as timestamp.
+                Defaults to True.
+            timestamp (str | datetime.datetime): timestamp of pointcloud. If "from_file"
+                then the timesamp is taken from file creation datetimne.
+                (Defaults to "from_file")
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -82,7 +92,8 @@ class PointCloud(PointCloudCore):
                 )
             )
         file_path_str = file_path.as_posix()
-        timestamp = datetime.datetime.utcfromtimestamp(file_path.stat().st_mtime)
+        if timestamp == "from_file":
+            timestamp = datetime.datetime.utcfromtimestamp(file_path.stat().st_mtime)
         pyntcloud_in = pyntcloud.PyntCloud.from_file(file_path_str, **kwargs)
         return cls(
             data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
