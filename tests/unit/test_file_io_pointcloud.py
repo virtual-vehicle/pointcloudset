@@ -27,6 +27,27 @@ def test_from_file_las(testlas1: Path):
     check.equal(len(list(pointcloud.data.columns)), 13)
 
 
+def test_from_file_las_timestamp_file(testlas1: Path):
+    pointcloud = pointcloudset.PointCloud.from_file(testlas1, timestamp="from_file")
+    check.equal(type(pointcloud), PointCloud)
+    file_timestamp = datetime.utcfromtimestamp(testlas1.stat().st_mtime)
+    check.equal(pointcloud.timestamp, file_timestamp)
+
+
+def test_from_file_las_timestamp_default(testlas1: Path):
+    pointcloud = pointcloudset.PointCloud.from_file(testlas1)
+    check.equal(type(pointcloud), PointCloud)
+    file_timestamp = datetime.utcfromtimestamp(testlas1.stat().st_mtime)
+    check.equal(pointcloud.timestamp, file_timestamp)
+
+
+def test_from_file_las_timestamp_insert(testlas1: Path):
+    timestamp = datetime(2022, 1, 1, 1, 1)
+    pointcloud = pointcloudset.PointCloud.from_file(testlas1, timestamp=timestamp)
+    check.equal(type(pointcloud), PointCloud)
+    check.equal(pointcloud.timestamp, timestamp)
+
+
 def test_from_file_las_vz6000_1(testlasvz6000_1: Path):
     pointcloud = pointcloudset.PointCloud.from_file(testlasvz6000_1)
     check.equal(type(pointcloud), PointCloud)
