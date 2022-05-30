@@ -146,3 +146,13 @@ def test_pointcloud_diff_of_diff(testpointcloud_mini_real: PointCloud):
     res = testpointcloud_mini_real.diff("pointcloud", testpointcloud_mini_real)
     with pytest.raises(NotImplementedError):
         res.diff("pointcloud", testpointcloud_mini_real)
+
+
+def test_dataset_vz6000_distance_to_point(testvz6000_1: PointCloud):
+    testvz6000_1.diff("point", target=np.array([-1, 0, 0]))
+    check.almost_equal(testvz6000_1.data["distance to point: [-1 0 0]"][0], 1.736779)
+
+
+def test_dataset_vz6000_distance_to_origin(testvz6000_1: PointCloud):
+    testvz6000_1.diff("origin")
+    check.almost_equal(testvz6000_1.data["distance to point: [0 0 0]"][0], 1.42)
