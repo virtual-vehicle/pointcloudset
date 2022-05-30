@@ -75,6 +75,12 @@ class Dataset(DatasetCore):
         Raises:
             ValueError: If file format is not supported.
             TypeError: If file_path is not a Path object.
+
+        Examples:
+
+            .. code-block:: python
+
+                pointcloudset.Dataset.from_file(bag_file, topic="lidar/points", keep_zeros=False)
         """
         from_dir = False
         if not isinstance(file_path, Path):
@@ -223,6 +229,19 @@ class Dataset(DatasetCore):
         else:
             return DelayedResult(res)
 
+    @property
+    def has_original_id(self) -> bool:
+        """Check if all pointclouds in the Dataset have original_ids
+
+        Returns:
+            bool: ``True`` if all PointClouds in the the Dataset returns has_original_id.
+        """
+
+        def check_original_id(pc):
+            return pc.has_original_id
+
+        return all(self.apply(check_original_id, warn=False).compute())
+
     def agg(
         self,
         agg: Union[str, list, dict],
@@ -263,14 +282,17 @@ class Dataset(DatasetCore):
                 dataset.agg({"x" : ["min","max","mean","std"]})
         """
         if depth == "point":
-            data = self._agg(agg).compute()
-            if isinstance(agg, str):
-                data.columns = [
-                    i if i in ["N", "original_id"] else f"{i} {agg}"
-                    for i in data.columns
-                ]
+            if self.has_original_id:
+                data = self._agg(agg).compute()
+                if isinstance(agg, str):
+                    data.columns = [
+                        i if i in ["N", "original_id"] else f"{i} {agg}"
+                        for i in data.columns
+                    ]
 
-            return data
+                return data
+            else:
+                raise ValueError("this operations nees original_id in each pointcloud")
         elif depth == "pointcloud":
             return self._agg_per_pointcloud(agg)
         elif depth == "dataset":
@@ -443,7 +465,7 @@ class Dataset(DatasetCore):
             return res
         else:
             res = pandas.DataFrame(res)
-            if not isinstance(agg, dict):
+            if not isinstance(agg, dict) and "original_id" in res.columns:
                 res = res.drop("original_id", axis=1)
             res.columns = [f"{column} {agg}" for column in res.columns]
             res.index.name = "pointcloud"

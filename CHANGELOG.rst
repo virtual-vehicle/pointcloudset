@@ -8,6 +8,13 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased
 -------------
 
+Added
+~~~~~~
+- better support for data from terrestrial laser scanners
+- has_original_id for datasets. Returns true if all pointclouds have original_id
+- PointCloud.from_file now supports timestamp input or "from_file"
+- diff with "nearest" to calculate distance to nearest point from another pointcloud
+
 Changed
 ~~~~~~
 - time format to 24h PR #45
