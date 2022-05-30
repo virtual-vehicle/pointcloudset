@@ -142,6 +142,18 @@ def test_calculate_distance_to_point(testpointcloud_mini: PointCloud):
     check.equal(testpointcloud_mini.data["distance to point: [-1 0 0]"][0], 1.0)
 
 
+def test_calculate_distance_to_nearest_self(testpointcloud_mini: PointCloud):
+    testpointcloud_mini.diff("nearest", target=testpointcloud_mini)
+    check.equal(testpointcloud_mini.data["distance to nearest point"][0], 0.0)
+
+
+def test_calculate_distance_to_nearest(
+    testpointcloud_mini: PointCloud, testpointcloud_mini_real: PointCloud
+):
+    testpointcloud_mini.diff("nearest", target=testpointcloud_mini_real)
+    check.almost_equal(testpointcloud_mini.data["distance to nearest point"][0], 1.0)
+
+
 def test_pointcloud_diff_of_diff(testpointcloud_mini_real: PointCloud):
     res = testpointcloud_mini_real.diff("pointcloud", testpointcloud_mini_real)
     with pytest.raises(NotImplementedError):
