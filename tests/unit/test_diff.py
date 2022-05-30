@@ -179,3 +179,10 @@ def test_calculate_distance_to_plane_vz6000(
 def test_diff_vz6000_to_pointcloud(testvz6000_1: PointCloud, testvz6000_2: PointCloud):
     with pytest.raises(ValueError):  # no original ID
         testvz6000_1.diff("pointcloud", testvz6000_2)
+
+
+def test_diff_vz6000_to_pointcloud_nearest(
+    testvz6000_1: PointCloud, testvz6000_2: PointCloud
+):
+    testvz6000_1.diff("nearest", testvz6000_2)
+    check.is_true("distance to nearest point" in testvz6000_1.data.columns)

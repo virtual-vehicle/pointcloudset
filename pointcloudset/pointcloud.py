@@ -320,7 +320,7 @@ class PointCloud(PointCloudCore):
 
     def diff(
         self,
-        name: Literal["origin", "plane", "pointcloud", "point"],
+        name: Literal["origin", "plane", "pointcloud", "point", "nearest"],
         target: Union[None, PointCloud, np.ndarray] = None,
         **kwargs,
     ) -> PointCloud:
@@ -332,6 +332,7 @@ class PointCloud(PointCloudCore):
                 "plane": :func:`pointcloudset.diff.plane.calculate_distance_to_plane` \n
                 "pointcloud": :func:`pointcloudset.diff.pointcloud.calculate_distance_to_pointcloud` \n
                 "point": :func:`pointcloudset.diff.point.calculate_distance_to_point` \n
+                "nearest": :func:`pointcloudset.diff.point.calculate_distance_to_nearest` \n
             target (Union[None, PointCloud, numpy.ndarray], optional): Pass argument
                 according to chosen object. Defaults to None.
             **kwargs: Keyword arguments to pass to func.

@@ -6,10 +6,12 @@ from pointcloudset.diff.origin import calculate_distance_to_origin
 from pointcloudset.diff.plane import calculate_distance_to_plane
 from pointcloudset.diff.point import calculate_distance_to_point
 from pointcloudset.diff.pointcloud import calculate_distance_to_pointcloud
+from pointcloudset.diff.nearest import calculate_distance_to_nearest
 
 ALL_DIFFS = {
     "pointcloud": calculate_distance_to_pointcloud,
     "plane": calculate_distance_to_plane,
     "point": calculate_distance_to_point,
     "origin": calculate_distance_to_origin,
+    "nearest": calculate_distance_to_nearest,
 }
