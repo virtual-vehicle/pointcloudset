@@ -3,7 +3,8 @@ channels:
   - defaults
   - conda-forge
 dependencies:
-  - dask-core=2022.5.0
+  - dask-core=2022.5.2
+  - distributed
   - pdal=2.4
   - fiona=1.8.21
   - pandoc
@@ -21,7 +22,7 @@ dependencies:
       - setuptools
       - blackcellmagic
       - isort
-      - laspy<2.0.0
+      - laspy>2.0.0
       - pylas
       - pytest
       - pytest-cov
