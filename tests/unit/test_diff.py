@@ -156,3 +156,26 @@ def test_dataset_vz6000_distance_to_point(testvz6000_1: PointCloud):
 def test_dataset_vz6000_distance_to_origin(testvz6000_1: PointCloud):
     testvz6000_1.diff("origin")
     check.almost_equal(testvz6000_1.data["distance to point: [0 0 0]"][0], 1.42)
+
+
+def test_dataset_vz6000_distance_to_origin(testvz6000_1: PointCloud):
+    testvz6000_1.diff("origin")
+    check.almost_equal(testvz6000_1.data["distance to point: [0 0 0]"][0], 1.42)
+
+
+@pytest.mark.parametrize(
+    "plane, plane_str, absolute_values, res",
+    [
+        (np.array([-1, 0, 0, 0]), "[-1 0 0 0]", True, 0.13),
+    ],
+)
+def test_calculate_distance_to_plane_vz6000(
+    testvz6000_1: PointCloud, plane, plane_str, absolute_values, res
+):
+    testvz6000_1.diff("plane", target=plane, absolute_values=absolute_values)
+    check.almost_equal(testvz6000_1.data[f"distance to plane: {plane_str}"][1], res)
+
+
+def test_diff_vz6000_to_pointcloud(testvz6000_1: PointCloud, testvz6000_2: PointCloud):
+    with pytest.raises(ValueError):  # no original ID
+        testvz6000_1.diff("pointcloud", testvz6000_2)
