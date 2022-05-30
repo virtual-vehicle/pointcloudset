@@ -24,6 +24,16 @@ def testlas1():
 
 
 @pytest.fixture()
+def testlasvz6000_1():
+    return Path(__file__).parent.absolute() / "testdata/las_files/VZ6000_1.las"
+
+
+@pytest.fixture()
+def testlasvz6000_2():
+    return Path(__file__).parent.absolute() / "testdata/las_files/VZ6000_2.las"
+
+
+@pytest.fixture()
 def testset(testbag1):
     return Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=False)
 
@@ -163,3 +173,28 @@ def testdataset_with_empty_frame(testdataset_mini_real: Dataset):
         return pointcloud.filter("value", "x", "<", 0)
 
     return testdataset_mini_real.apply(pipeline)
+
+
+@pytest.fixture()
+def testvz6000_1(testlasvz6000_1):
+    return PointCloud.from_file(
+        testlasvz6000_1, timestamp=datetime.datetime(2022, 1, 1, 1, 1, 1)
+    )
+
+
+@pytest.fixture()
+def testvz6000_2(testlasvz6000_2):
+    return PointCloud.from_file(
+        testlasvz6000_2, timestamp=datetime.datetime(2022, 1, 1, 2, 2, 2)
+    )
+
+
+@pytest.fixture()
+def testdataset_vz6000(testvz6000_1, testvz6000_2) -> Dataset:
+    return Dataset.from_instance("pointclouds", [testvz6000_1, testvz6000_2])
+
+
+@pytest.fixture
+def test_sets(request):
+    """for testing with different datasets"""
+    return request.getfixturevalue(request.param)

@@ -142,7 +142,59 @@ def test_calculate_distance_to_point(testpointcloud_mini: PointCloud):
     check.equal(testpointcloud_mini.data["distance to point: [-1 0 0]"][0], 1.0)
 
 
+def test_calculate_distance_to_nearest_self(testpointcloud_mini: PointCloud):
+    testpointcloud_mini.diff("nearest", target=testpointcloud_mini)
+    check.equal(testpointcloud_mini.data["distance to nearest point"][0], 0.0)
+
+
+def test_calculate_distance_to_nearest(
+    testpointcloud_mini: PointCloud, testpointcloud_mini_real: PointCloud
+):
+    testpointcloud_mini.diff("nearest", target=testpointcloud_mini_real)
+    check.almost_equal(testpointcloud_mini.data["distance to nearest point"][0], 1.0)
+
+
 def test_pointcloud_diff_of_diff(testpointcloud_mini_real: PointCloud):
     res = testpointcloud_mini_real.diff("pointcloud", testpointcloud_mini_real)
     with pytest.raises(NotImplementedError):
         res.diff("pointcloud", testpointcloud_mini_real)
+
+
+def test_dataset_vz6000_distance_to_point(testvz6000_1: PointCloud):
+    testvz6000_1.diff("point", target=np.array([-1, 0, 0]))
+    check.almost_equal(testvz6000_1.data["distance to point: [-1 0 0]"][0], 1.736779)
+
+
+def test_dataset_vz6000_distance_to_origin(testvz6000_1: PointCloud):
+    testvz6000_1.diff("origin")
+    check.almost_equal(testvz6000_1.data["distance to point: [0 0 0]"][0], 1.42)
+
+
+def test_dataset_vz6000_distance_to_origin(testvz6000_1: PointCloud):
+    testvz6000_1.diff("origin")
+    check.almost_equal(testvz6000_1.data["distance to point: [0 0 0]"][0], 1.42)
+
+
+@pytest.mark.parametrize(
+    "plane, plane_str, absolute_values, res",
+    [
+        (np.array([-1, 0, 0, 0]), "[-1 0 0 0]", True, 0.13),
+    ],
+)
+def test_calculate_distance_to_plane_vz6000(
+    testvz6000_1: PointCloud, plane, plane_str, absolute_values, res
+):
+    testvz6000_1.diff("plane", target=plane, absolute_values=absolute_values)
+    check.almost_equal(testvz6000_1.data[f"distance to plane: {plane_str}"][1], res)
+
+
+def test_diff_vz6000_to_pointcloud(testvz6000_1: PointCloud, testvz6000_2: PointCloud):
+    with pytest.raises(ValueError):  # no original ID
+        testvz6000_1.diff("pointcloud", testvz6000_2)
+
+
+def test_diff_vz6000_to_pointcloud_nearest(
+    testvz6000_1: PointCloud, testvz6000_2: PointCloud
+):
+    testvz6000_1.diff("nearest", testvz6000_2)
+    check.is_true("distance to nearest point" in testvz6000_1.data.columns)

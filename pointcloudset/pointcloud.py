@@ -56,13 +56,23 @@ class PointCloud(PointCloudCore):
     """
 
     @classmethod
-    def from_file(cls, file_path: Path, **kwargs):
+    def from_file(
+        cls,
+        file_path: Path,
+        timestamp: str | datetime.datetime = "from_file",
+        **kwargs,
+    ):
         """Extract data from file and construct a PointCloud with it. Uses
         `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_ as
         backend.
 
         Args:
             file_path (pathlib.Path): Path of file to read.
+            use_file_timestamp (bool): use the file creation date as timestamp.
+                Defaults to True.
+            timestamp (str | datetime.datetime): timestamp of pointcloud. If "from_file"
+                then the timesamp is taken from file creation datetimne.
+                (Defaults to "from_file")
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -82,7 +92,8 @@ class PointCloud(PointCloudCore):
                 )
             )
         file_path_str = file_path.as_posix()
-        timestamp = datetime.datetime.utcfromtimestamp(file_path.stat().st_mtime)
+        if timestamp == "from_file":
+            timestamp = datetime.datetime.utcfromtimestamp(file_path.stat().st_mtime)
         pyntcloud_in = pyntcloud.PyntCloud.from_file(file_path_str, **kwargs)
         return cls(
             data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
@@ -309,7 +320,7 @@ class PointCloud(PointCloudCore):
 
     def diff(
         self,
-        name: Literal["origin", "plane", "pointcloud", "point"],
+        name: Literal["origin", "plane", "pointcloud", "point", "nearest"],
         target: Union[None, PointCloud, np.ndarray] = None,
         **kwargs,
     ) -> PointCloud:
@@ -321,6 +332,7 @@ class PointCloud(PointCloudCore):
                 "plane": :func:`pointcloudset.diff.plane.calculate_distance_to_plane` \n
                 "pointcloud": :func:`pointcloudset.diff.pointcloud.calculate_distance_to_pointcloud` \n
                 "point": :func:`pointcloudset.diff.point.calculate_distance_to_point` \n
+                "nearest": :func:`pointcloudset.diff.point.calculate_distance_to_nearest` \n
             target (Union[None, PointCloud, numpy.ndarray], optional): Pass argument
                 according to chosen object. Defaults to None.
             **kwargs: Keyword arguments to pass to func.
@@ -519,3 +531,7 @@ class PointCloud(PointCloudCore):
         """
         new_data = self.data.sample(number_of_points).reset_index()
         return PointCloud(new_data, timestamp=self.timestamp)
+
+    def _add_original_id_from_index(self) -> PointCloud:
+        """Add orginal ID column from index."""
+        return self._add_column("original_id", self.data.index)

@@ -1,6 +1,7 @@
 import datetime
 
 import pandas as pd
+import numpy as np
 import pytest
 import pytest_check as check
 import rosbag
@@ -19,40 +20,46 @@ def test_dataset_len(testbag1: str, testset: Dataset):
     check.equal(len(testset), 2)
 
 
-def test_getitem(testset: Dataset):
-    check.equal(type(testset[0]), PointCloud)
+@pytest.mark.parametrize("test_sets", ["testset", "testdataset_vz6000"], indirect=True)
+def test_getitem(test_sets: Dataset):
+    check.equal(type(test_sets[0]), PointCloud)
 
 
-def test_getitem_late(testset):
-    check.equal(type(testset[1]), PointCloud)
+@pytest.mark.parametrize("test_sets", ["testset", "testdataset_vz6000"], indirect=True)
+def test_getitem_late(test_sets):
+    check.equal(type(test_sets[1]), PointCloud)
 
 
-def test_getitem_2times(testset):
-    check.equal(type(testset[0]), PointCloud)
-    check.equal(type(testset[1]), PointCloud)
-    check.equal(type(testset[0]), PointCloud)
-    check.equal(type(testset[1]), PointCloud)
+@pytest.mark.parametrize("test_sets", ["testset", "testdataset_vz6000"], indirect=True)
+def test_getitem_2times(test_sets):
+    check.equal(type(test_sets[0]), PointCloud)
+    check.equal(type(test_sets[1]), PointCloud)
+    check.equal(type(test_sets[0]), PointCloud)
+    check.equal(type(test_sets[1]), PointCloud)
 
 
-def test_getitem_slice(testset: Dataset):
-    test = testset[0:2]
+@pytest.mark.parametrize("test_sets", ["testset", "testdataset_vz6000"], indirect=True)
+def test_getitem_slice(test_sets: Dataset):
+    test = test_sets[0:2]
     testlist = [0, 1, 2, 3]
     check.is_instance(test, Dataset)
     check.equal(len(test), 2)
     check.equal(len(test), len(testlist[0:2]))
-    check.equal(type(testset[0:2][0]), PointCloud)
+    check.equal(type(test_sets[0:2][0]), PointCloud)
 
 
-def test_getitem_error(testset: Dataset):
+@pytest.mark.parametrize("test_sets", ["testset", "testdataset_vz6000"], indirect=True)
+def test_getitem_error(test_sets: Dataset):
     with pytest.raises(TypeError):
-        testset["fake"]
+        test_sets["fake"]
 
 
-def test_get_pointcloud_number_from_time(testset):
-    res = testset._get_pointcloud_number_from_time(testset.start_time)
+@pytest.mark.parametrize("test_sets", ["testset", "testdataset_vz6000"], indirect=True)
+def test_get_pointcloud_number_from_time(test_sets):
+    res = test_sets._get_pointcloud_number_from_time(test_sets.start_time)
     check.equal(res, 0)
-    res2 = testset._get_pointcloud_number_from_time(testset.end_time)
-    check.equal(res2 + 1, len(testset))
+    res2 = test_sets._get_pointcloud_number_from_time(test_sets.end_time)
+    check.equal(res2 + 1, len(test_sets))
 
 
 def test_getitem_timerange(testset: Dataset):
@@ -71,8 +78,9 @@ def test_getitem_strange(testset):
     check.equal(len(testset[2:0]), 0)
 
 
-def test_has_pointclouds(testset: Dataset):
-    check.equal(testset.has_pointclouds(), True)
+@pytest.mark.parametrize("test_sets", ["testset", "testdataset_vz6000"], indirect=True)
+def test_has_pointclouds(test_sets: Dataset):
+    check.equal(test_sets.has_pointclouds(), True)
 
 
 def test_str(testset: Dataset):
@@ -100,8 +108,9 @@ def test_end_time(testset: Dataset):
     check.equal(et, datetime.datetime(2020, 6, 22, 13, 40, 42, 755912))
 
 
-def test_time(testset: Dataset):
-    check.greater(testset.end_time, testset.start_time)
+@pytest.mark.parametrize("test_sets", ["testset", "testdataset_vz6000"], indirect=True)
+def test_time(test_sets: Dataset):
+    check.greater(test_sets.end_time, test_sets.start_time)
 
 
 def test_extend(testbag1):
@@ -475,3 +484,43 @@ def test_replace_nan_frames_with_empty(testdataset_with_empty_frame: Dataset):
     check.equal(len(test2), len(testdataset_with_empty_frame))
     check.is_false(test2[1]._has_data())
     check.equal(len(test2[1]), 0)
+
+
+def test_all_have_origianl_ids(testset: Dataset, testdataset_vz6000: Dataset):
+    check.is_true(testset.has_original_id)
+    check.is_false(testdataset_vz6000.has_original_id)
+
+
+def test_dataset_vz6000_min_dataset(
+    testdataset_vz6000: Dataset, testvz6000_1: PointCloud, testvz6000_2: PointCloud
+):
+    res = testdataset_vz6000.min(depth="dataset")
+    min_1 = testvz6000_1.data.min()
+    min_2 = testvz6000_2.data.min()
+    check.is_instance(res, pd.Series)
+    check.equal(res["intensity min"], min(min_1["intensity"], min_2["intensity"]))
+
+
+def test_dataset_vz6000_max_dataset(
+    testdataset_vz6000: Dataset, testvz6000_1: PointCloud, testvz6000_2: PointCloud
+):
+    res = testdataset_vz6000.max(depth="dataset")
+    max_1 = testvz6000_1.data.max()
+    max_2 = testvz6000_2.data.max()
+    check.is_instance(res, pd.Series)
+    check.equal(res["intensity max"], max(max_1["intensity"], max_2["intensity"]))
+
+
+def test_dataset_vz6000_max_pointcloud(
+    testdataset_vz6000: Dataset, testvz6000_1: PointCloud, testvz6000_2: PointCloud
+):
+    res = testdataset_vz6000.max(depth="pointcloud")
+    check.is_instance(res, pd.DataFrame)
+    max_1 = testvz6000_1.data.max().x
+    max_2 = testvz6000_2.data.max().x
+    np.testing.assert_array_equal(res["x max"].values, np.array([max_1, max_2]))
+
+
+def test_dataset_vz6000_agg_point(testdataset_vz6000: Dataset):
+    with pytest.raises(ValueError):
+        testdataset_vz6000.min(depth="point")
