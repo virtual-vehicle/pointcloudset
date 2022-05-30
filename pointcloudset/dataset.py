@@ -297,7 +297,16 @@ class Dataset(DatasetCore):
             return self._agg_per_pointcloud(agg)
         elif depth == "dataset":
             data = self._agg(agg).compute()
-            data = data.agg(agg)
+
+            if isinstance(agg, dict):
+                data = data.iloc[:, :-2]
+                if isinstance(data, pandas.DataFrame):
+                    data.columns = data.columns.to_flat_index()
+                agg_list = list(agg.values())[0]
+                data = data.agg(agg_list)
+            else:
+                data = data.agg(agg)
+
             if not isinstance(agg, list):
                 data.index = [f"{i} {agg}" for i in data.index]
             return data
@@ -461,16 +470,14 @@ class Dataset(DatasetCore):
             return pointcloud.data.agg(agg)
 
         res = self.apply(get, warn=False, agg=agg).compute()
-        if isinstance(agg, list):
-            return res
-        else:
+        if isinstance(agg, str):
             res = pandas.DataFrame(res)
             if not isinstance(agg, dict) and "original_id" in res.columns:
                 res = res.drop("original_id", axis=1)
             res.columns = [f"{column} {agg}" for column in res.columns]
             res.index.name = "pointcloud"
             res["timestamp"] = self.timestamps
-            return res
+        return res
 
     def extend(self, dataset: Dataset) -> Dataset:
         """Extends the dataset by another one.

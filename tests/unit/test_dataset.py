@@ -158,7 +158,7 @@ def test_agg_pointcloud(
     check.equal(test.min()["x min"], x_min.values[0])
 
 
-def test_agg_1(
+def test_agg_pointcloud(
     testdataset_mini_real: Dataset,
     testpointcloud_mini_real: PointCloud,
     expected_columns,
@@ -174,18 +174,14 @@ def test_agg_1(
     check.equal(test.min()["x min"], x_min.values[0])
 
 
-def test_agg_dict1(
+def test_agg_dict_pointcloud(
     testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud
 ):
     test = testdataset_mini_real.agg({"x": "min"}, "pointcloud")
     x_min = testpointcloud_mini_real.data.agg({"x": "min"})
-    check.is_instance(test, pd.DataFrame)
+    check.is_instance(test, list)
     check.equal(len(test), len(testdataset_mini_real))
-    check.equal(
-        list(test.columns),
-        ["x {'x': 'min'}", "timestamp"],
-    )
-    check.equal(test.min()["x {'x': 'min'}"], x_min.values[0])
+    check.equal(test[0].values[0], x_min.values[0])
 
 
 def test_agg_list1(
@@ -222,7 +218,7 @@ def test_agg_dataset(
     check.equal(test["x min"], x_min.values[0])
 
 
-def test_agg_dataset_dict(
+def test_agg_dataset_dict_dataset(
     testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud
 ):
     test = testdataset_mini_real.agg({"x": "min"}, "dataset")
@@ -250,7 +246,7 @@ def test_agg_dataset_list(
     check.equal(test.x["min"]["min"], x_min.values[0])
 
 
-def test_agg_list1(testdataset_mini_real: Dataset):
+def test_agg_list_pointcoud(testdataset_mini_real: Dataset):
     test = testdataset_mini_real.agg(["min", "max"], "pointcloud")
     check.is_instance(test, list)
 
@@ -524,3 +520,48 @@ def test_dataset_vz6000_max_pointcloud(
 def test_dataset_vz6000_agg_point(testdataset_vz6000: Dataset):
     with pytest.raises(ValueError):
         testdataset_vz6000.min(depth="point")
+
+
+def test_dataset_agg_long(testset: Dataset):
+    res = testset.agg(
+        {
+            "x": ["min", "max", "std"],
+            "y": [
+                "min",
+                "max",
+            ],
+        },
+        depth="dataset",
+    )
+    check.is_instance(res, pd.DataFrame)
+
+
+def test_dataset_agg_long_point(testset: Dataset):
+    res = testset.agg(
+        {
+            "x": ["min", "max", "std"],
+            "y": [
+                "min",
+                "max",
+            ],
+        },
+        depth="point",
+    )
+    check.is_instance(res, pd.DataFrame)
+    check.equal(48124, len(res))
+
+
+def test_dataset_agg_long_pointcloud(testset: Dataset):
+    res = testset.agg(
+        {
+            "x": ["min", "max", "std"],
+            "y": [
+                "min",
+                "max",
+            ],
+        },
+        depth="pointcloud",
+    )
+    check.is_instance(res, list)
+    check.is_instance(res[0], pd.DataFrame)
+    check.equal(2, len(res))
