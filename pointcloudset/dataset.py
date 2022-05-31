@@ -6,6 +6,8 @@ from typing import Any, Callable, Literal, Union, get_type_hints
 import numpy as np
 import pandas
 from dask import delayed
+import plotly.graph_objects as go
+
 
 from pointcloudset.dataset_core import DatasetCore
 from pointcloudset.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_TO_FILE
@@ -493,6 +495,43 @@ class Dataset(DatasetCore):
         self.timestamps.extend(dataset.timestamps)
         self._check()
         return self
+
+    def animate(self, **kwargs) -> go.Figure:
+        def plot_frame(pc):
+            return pc.plot(**kwargs)
+
+        frames = self.apply(plot_frame, warn=False)
+
+        fig = go.Figure()
+
+        for frame in frames:
+            fig.add_trace(frame["data"][0])
+
+        fig.data[0].visible = True
+
+        # Create and add slider
+        steps = []
+        for i in range(len(fig.data)):
+            step = dict(
+                method="update",
+                args=[
+                    {"visible": [False] * len(fig.data)},
+                    {"title": "Slider switched to step: " + str(i)},
+                ],  # layout attribute
+            )
+            step["args"][0]["visible"][i] = True  # Toggle i'th trace to "visible"
+            steps.append(step)
+
+        sliders = [
+            dict(
+                active=10,
+                currentvalue={"prefix": "Frequency: "},
+                pad={"t": 50},
+                steps=steps,
+            )
+        ]
+        fig.update_layout(sliders=sliders)
+        return fig
 
     def _replace_empty_frames_with_nan(self, empty_data: pandas.DataFrame):
         """Function to replace empty pointclouds with pointclouds wiht 1 point with all
