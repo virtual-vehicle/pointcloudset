@@ -13,6 +13,10 @@ Added
 ~~~~~~
 - bounding_box property for datasets
 
+Changed
+~~~~~~
+- time format to include milliseconds
+
 
 0.5.1 - (2022-05-30)
 -------------
