@@ -514,6 +514,7 @@ class Dataset(DatasetCore):
         for i in range(len(fig.data)):
             step = dict(
                 method="update",
+                label=str(i),
                 args=[
                     {"visible": [False] * len(fig.data)},
                     {"title": f"Frame: {i} {self[i].timestamp_str}"},
@@ -524,8 +525,8 @@ class Dataset(DatasetCore):
 
         sliders = [
             dict(
-                active=10,
-                currentvalue={"prefix": "Frequency: "},
+                active=0,
+                currentvalue={"prefix": "Frame: "},
                 pad={"t": 50},
                 steps=steps,
             )
