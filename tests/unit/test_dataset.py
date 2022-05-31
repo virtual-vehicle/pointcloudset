@@ -524,3 +524,20 @@ def test_dataset_vz6000_max_pointcloud(
 def test_dataset_vz6000_agg_point(testdataset_vz6000: Dataset):
     with pytest.raises(ValueError):
         testdataset_vz6000.min(depth="point")
+
+
+def test_dataset_bounding_box(
+    testdataset_mini_real: Dataset,
+    testpointcloud_mini_real: PointCloud,
+    testpointcloud_mini_real_plus1: PointCloud,
+):
+    bb = testdataset_mini_real.bounding_box
+    min_1 = testpointcloud_mini_real.data.min()[["x", "y", "z"]]
+    max_2 = testpointcloud_mini_real_plus1.data.max()[["x", "y", "z"]]
+    check.is_instance(bb, pd.DataFrame)
+    pd.testing.assert_series_equal(
+        bb.iloc[0], min_1, check_dtype=False, check_names=False
+    )
+    pd.testing.assert_series_equal(
+        bb.iloc[1], max_2, check_dtype=False, check_names=False
+    )
