@@ -516,7 +516,7 @@ class Dataset(DatasetCore):
                 method="update",
                 args=[
                     {"visible": [False] * len(fig.data)},
-                    {"title": "Slider switched to step: " + str(i)},
+                    {"title": f"Frame: {i} {self[i].timestamp_str}"},
                 ],  # layout attribute
             )
             step["args"][0]["visible"][i] = True  # Toggle i'th trace to "visible"
@@ -531,6 +531,20 @@ class Dataset(DatasetCore):
             )
         ]
         fig.update_layout(sliders=sliders)
+        bb = self.bounding_box
+        fig.update_layout(
+            scene=dict(
+                xaxis=dict(
+                    range=list(bb["x"].values),
+                ),
+                yaxis=dict(
+                    range=list(bb["y"].values),
+                ),
+                zaxis=dict(
+                    range=list(bb["z"].values),
+                ),
+            )
+        )
         return fig
 
     def _replace_empty_frames_with_nan(self, empty_data: pandas.DataFrame):
