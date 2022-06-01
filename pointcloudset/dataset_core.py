@@ -176,10 +176,7 @@ class DatasetCore:
                 self.data
             ), f"Length of timestamps {len(self.timestamps)} do not match the data {len(self.data)}"
 
-            if any(
-                self.timestamps[i] >= self.timestamps[i + 1]
-                for i in range(len(self.timestamps) - 1)
-            ):
+            if not pd.Series(self.timestamps).is_monotonic_increasing:
                 raise ValueError("Timestamps are not monotonic increasing")
 
             assert isinstance(
