@@ -18,6 +18,11 @@ Changed
 ~~~~~~
 - time format to include milliseconds
 
+Fixed
+~~~~~~
+- better handling of agg with dict queries
+
+
 
 0.5.1 - (2022-05-30)
 -------------
