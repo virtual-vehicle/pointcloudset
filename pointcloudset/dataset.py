@@ -13,6 +13,7 @@ from pointcloudset.dataset_core import DatasetCore
 from pointcloudset.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_TO_FILE
 from pointcloudset.pipeline.delayed_result import DelayedResult
 from pointcloudset.pointcloud import PointCloud
+from pointcloudset.plot.dataset import animate_dataset
 
 
 def _is_pipline_returing_pointcloud(pipeline, warn=True) -> bool:
@@ -497,59 +498,32 @@ class Dataset(DatasetCore):
         return self
 
     def animate(self, **kwargs) -> go.Figure:
-        def plot_frame(pc):
-            return pc.plot(**kwargs)
+        """Plot and animate a PointClouds in a dataset as a 3D scatter plot with
+        `Plotly <https://plotly.com/>`_.
+        It uses the plot function of PointCloud and bundles them together for an
+        interactive animation :func:`pointcloudset.pointcloud.plot`.
 
-        start_frame = 0
+        You can also pass arguments to the `Plotly <https://plotly.com/>`_
+        express function :func:`plotly.express.scatter_3d`.
 
-        frames = self.apply(plot_frame, warn=False)
+        Args:
+            **kwargs: Keyword arguments to pass to plot of a single pointcloud and
+                plotly express.
 
-        fig = go.Figure()
+        Returns:
+            plotly.graph_objs.Figure: The interactive Plotly plot, best used inside a
+            Jupyter Notebook.
 
-        for frame in frames:
-            fig.add_trace(frame["data"][0])
+        Returns:
+            go.Figure: _description_
 
-        fig.data[start_frame].visible = True
+        Examples:
 
-        # Create and add slider
-        steps = []
-        for i in range(len(fig.data)):
-            step = dict(
-                method="update",
-                label=str(i),
-                args=[
-                    {"visible": [False] * len(fig.data)},
-                    {"title": f"Frame: {i} {self[i].timestamp_str}"},
-                ],  # layout attribute
-            )
-            step["args"][0]["visible"][i] = True  # Toggle i'th trace to "visible"
-            steps.append(step)
+            .. code-block:: python
 
-        sliders = [
-            dict(
-                active=0,
-                currentvalue={"prefix": "Frame: "},
-                pad={"t": 50},
-                steps=steps,
-            )
-        ]
-        fig.update_layout(sliders=sliders)
-        bb = self.bounding_box
-        fig.update_layout(
-            title=f"Frame: {start_frame} {self[start_frame].timestamp_str}",
-            scene=dict(
-                xaxis=dict(
-                    range=list(bb["x"].values),
-                ),
-                yaxis=dict(
-                    range=list(bb["y"].values),
-                ),
-                zaxis=dict(
-                    range=list(bb["z"].values),
-                ),
-            ),
-        )
-        return fig
+                dataset_bag.animate(hover_data=True, color="intensity")
+        """
+        return animate_dataset(self, **kwargs)
 
     def _replace_empty_frames_with_nan(self, empty_data: pandas.DataFrame):
         """Function to replace empty pointclouds with pointclouds wiht 1 point with all
