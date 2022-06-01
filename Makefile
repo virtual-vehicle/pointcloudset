@@ -11,6 +11,7 @@ test:
 	pytest --current-env --nbval-lax doc/sphinx/source/tutorial_notebooks/reading_las_pcd.ipynb
 	pytest --current-env --nbval-lax tests/notebooks/test_plot_plane.ipynb
 	pytest --current-env --nbval-lax tests/notebooks/test_readme.ipynb
+	pytest --current-env --nbval-lax tests/notebooks/test_animate.ipynb
 	python -m coverage report -i
 	python -m coverage html -i
 
