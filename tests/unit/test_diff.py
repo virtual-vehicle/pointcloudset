@@ -198,3 +198,5 @@ def test_diff_vz6000_to_pointcloud_nearest(
 ):
     testvz6000_1.diff("nearest", testvz6000_2)
     check.is_true("distance to nearest point" in testvz6000_1.data.columns)
+    with pytest.raises(ValueError):  # no original ID
+        testvz6000_1.diff("distance to nearest point", testvz6000_2)

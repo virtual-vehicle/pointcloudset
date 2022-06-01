@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime
 from typing import Union
+import pandas as pd
 
 import dask
 from dask.delayed import Delayed, DelayedLeaf
@@ -55,6 +56,17 @@ class DatasetCore:
             dask.dataframe.DataFrame: Dask DataFrame with data of Dataset.
         """
         return dask.dataframe.from_delayed(self.data)
+
+    @property
+    def bounding_box(self) -> pd.DataFrame:
+        """The axis aligned boundary box of the whole dataset as a :class:`pandas.DataFrame`."""
+
+        def bb(pc):
+            return pc.bounding_box
+
+        list_of_bb = self.apply(bb, warn=False).compute()
+        bb_all_df = pd.concat(list_of_bb)
+        return pd.DataFrame([bb_all_df.min(), bb_all_df.max()], index=["min", "max"])
 
     def __len__(self) -> int:
         """Number of available frames (i.e. Lidar messages)"""
@@ -164,10 +176,7 @@ class DatasetCore:
                 self.data
             ), f"Length of timestamps {len(self.timestamps)} do not match the data {len(self.data)}"
 
-            if any(
-                self.timestamps[i] >= self.timestamps[i + 1]
-                for i in range(len(self.timestamps) - 1)
-            ):
+            if not pd.Series(self.timestamps).is_monotonic_increasing:
                 raise ValueError("Timestamps are not monotonic increasing")
 
             assert isinstance(

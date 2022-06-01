@@ -4,7 +4,7 @@ channels:
   - conda-forge
 dependencies:
   - dask-core=2022.5.2
-  - distributed
+  - distributed=2022.5.0
   - pdal=2.4
   - fiona=1.8.21
   - pandoc
@@ -38,5 +38,6 @@ dependencies:
       - coverage-badge
       - bump2version
       - matplotlib
+      - bokeh
 prefix: /opt/conda
 
