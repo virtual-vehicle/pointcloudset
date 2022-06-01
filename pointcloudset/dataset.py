@@ -6,11 +6,14 @@ from typing import Any, Callable, Literal, Union, get_type_hints
 import numpy as np
 import pandas
 from dask import delayed
+import plotly.graph_objects as go
+
 
 from pointcloudset.dataset_core import DatasetCore
 from pointcloudset.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_TO_FILE
 from pointcloudset.pipeline.delayed_result import DelayedResult
 from pointcloudset.pointcloud import PointCloud
+from pointcloudset.plot.dataset import animate_dataset
 
 
 def _is_pipline_returing_pointcloud(pipeline, warn=True) -> bool:
@@ -500,6 +503,34 @@ class Dataset(DatasetCore):
         self.timestamps.extend(dataset.timestamps)
         self._check()
         return self
+
+    def animate(self, **kwargs) -> go.Figure:
+        """Plot and animate a PointClouds in a dataset as a 3D scatter plot with
+        `Plotly <https://plotly.com/>`_.
+        It uses the plot function of PointCloud and bundles them together for an
+        interactive animation :func:`pointcloudset.pointcloud.plot`.
+
+        You can also pass arguments to the `Plotly <https://plotly.com/>`_
+        express function :func:`plotly.express.scatter_3d`.
+
+        Args:
+            **kwargs: Keyword arguments to pass to plot of a single pointcloud and
+                plotly express.
+
+        Returns:
+            plotly.graph_objs.Figure: The interactive Plotly plot, best used inside a
+            Jupyter Notebook.
+
+        Returns:
+            go.Figure: _description_
+
+        Examples:
+
+            .. code-block:: python
+
+                dataset_bag.animate(hover_data=True, color="intensity")
+        """
+        return animate_dataset(self, **kwargs)
 
     def _replace_empty_frames_with_nan(self, empty_data: pandas.DataFrame):
         """Function to replace empty pointclouds with pointclouds wiht 1 point with all

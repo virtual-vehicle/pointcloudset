@@ -9,6 +9,15 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased
 -------------
 
+Added
+~~~~~~
+- bounding_box property for datasets
+- animate for datasets as an experimental feature
+
+Changed
+~~~~~~
+- time format to include milliseconds
+
 Fixed
 ~~~~~~
 - better handling of agg with dict queries
