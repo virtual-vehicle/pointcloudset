@@ -12,6 +12,7 @@ Unreleased
 Added
 ~~~~~~
 - bounding_box property for datasets
+- animate for datasets as an experimental feature
 
 Changed
 ~~~~~~
