@@ -2,6 +2,7 @@
 Functions for plotting datasets.
 """
 import plotly.graph_objs as go
+import warnings
 
 
 def animate_dataset(dataset, **kwargs) -> go.Figure:
@@ -14,11 +15,13 @@ def animate_dataset(dataset, **kwargs) -> go.Figure:
         go.Figure: interactive plotly plot
     """
 
+    warnings.warn("Experimental Feature")
+
     def plot_frame(pc):
         return pc.plot(**kwargs)
 
     start_frame = 0
-    frames = dataset.apply(plot_frame, warn=False)
+    frames = dataset.apply(plot_frame, warn=False).compute()
 
     fig = go.Figure()
 
