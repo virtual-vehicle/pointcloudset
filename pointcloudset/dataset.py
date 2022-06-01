@@ -500,6 +500,8 @@ class Dataset(DatasetCore):
         def plot_frame(pc):
             return pc.plot(**kwargs)
 
+        start_frame = 0
+
         frames = self.apply(plot_frame, warn=False)
 
         fig = go.Figure()
@@ -507,7 +509,7 @@ class Dataset(DatasetCore):
         for frame in frames:
             fig.add_trace(frame["data"][0])
 
-        fig.data[0].visible = True
+        fig.data[start_frame].visible = True
 
         # Create and add slider
         steps = []
@@ -534,6 +536,7 @@ class Dataset(DatasetCore):
         fig.update_layout(sliders=sliders)
         bb = self.bounding_box
         fig.update_layout(
+            title=f"Frame: {start_frame} {self[start_frame].timestamp_str}",
             scene=dict(
                 xaxis=dict(
                     range=list(bb["x"].values),
@@ -544,7 +547,7 @@ class Dataset(DatasetCore):
                 zaxis=dict(
                     range=list(bb["z"].values),
                 ),
-            )
+            ),
         )
         return fig
 
