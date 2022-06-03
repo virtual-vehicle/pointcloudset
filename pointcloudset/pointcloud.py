@@ -399,7 +399,7 @@ class PointCloud(PointCloudCore):
             maxvalue (float): Max value to limit. (smaller equal)
 
         Returns:
-            PointCloud: Limited pointcloud, where columns which did not match the criteria were
+            PointCloud: Limited pointcloud, where rows which did not match the criteria were
             dropped.
 
         Examples:
@@ -415,9 +415,43 @@ class PointCloud(PointCloudCore):
         )
 
     def limit_less(self, dim: str, value: float) -> PointCloud:
+        """Limit the range if a diminsion to a value.
+            Same as filter("value", dim, "<", value)
+
+        Args:
+            dim (str): Dimension to limit, any column in data not just x, y, or z.
+            value (float): Min value to limit. (less)
+
+        Returns:
+            PointCloud: Limited pointcloud, where rows which did not match the criteria
+            were dropped.
+
+        Examples:
+
+            .. code-block:: python
+
+                limitedpointcloud = testpointcloud.limit_less("x",1.0)
+        """
         return self.filter("value", dim, "<", value)
 
     def limit_greater(self, dim: str, value: float) -> PointCloud:
+        """Limit the range if a diminsion to a value.
+            Same as filter("value", dim, ">", value)
+
+        Args:
+            dim (str): Dimension to limit, any column in data not just x, y, or z.
+            value (float): Value to limit. (greater)
+
+        Returns:
+            PointCloud: Limited pointcloud, where rows which did not match the criteria
+            were dropped.
+
+        Examples:
+
+            .. code-block:: python
+
+                limitedpointcloud = testpointcloud.limit_greater("x",10.0)
+        """
         return self.filter("value", dim, ">", value)
 
     def apply_filter(self, filter_result: Union[np.ndarray, list[int]]) -> PointCloud:
