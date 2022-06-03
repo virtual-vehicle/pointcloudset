@@ -13,6 +13,7 @@ Added
 ~~~~~~
 - bounding_box property for datasets
 - animate for datasets as an experimental feature
+- limit_less and limit_greater to PointCloud
 
 Changed
 ~~~~~~
