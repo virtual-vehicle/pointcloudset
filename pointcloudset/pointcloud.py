@@ -390,7 +390,7 @@ class PointCloud(PointCloudCore):
         else:
             raise ValueError("Unsupported filter. Check docstring")
 
-    def limit(self, dim: "str", minvalue: float, maxvalue: float) -> PointCloud:
+    def limit(self, dim: str, minvalue: float, maxvalue: float) -> PointCloud:
         """Limit the range of certain values in pointcloudset PointCloud. Can be chained together.
 
         Args:
@@ -413,6 +413,12 @@ class PointCloud(PointCloudCore):
         return self.filter("value", dim, ">=", minvalue).filter(
             "value", dim, "<=", maxvalue
         )
+
+    def limit_less(self, dim: str, value: float) -> PointCloud:
+        return self.filter("value", dim, "<", value)
+
+    def limit_greater(self, dim: str, value: float) -> PointCloud:
+        return self.filter("value", dim, ">", value)
 
     def apply_filter(self, filter_result: Union[np.ndarray, list[int]]) -> PointCloud:
         """Generating a new PointCloud by removing points according to a call of the
