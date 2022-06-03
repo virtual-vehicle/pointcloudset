@@ -63,3 +63,13 @@ def test_limit_chaining3(testpointcloud_mini: PointCloud):
     totest = testpointcloud_mini.limit("x", minvalue=0.0, maxvalue=500.0)
     check.equal(totest.data.index.is_monotonic_increasing, True)
     check.equal(len(totest), 5)
+
+
+def test_limit_less(testpointcloud_mini: PointCloud):
+    totest = testpointcloud_mini.limit_less("x", value=500.0)
+    check.less(totest.data["x"].max(), 500.0)
+
+
+def test_limit_greater(testpointcloud_mini: PointCloud):
+    totest = testpointcloud_mini.limit_greater("x", value=10.0)
+    check.greater(totest.data["x"].min(), 10.0)
