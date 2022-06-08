@@ -1,0 +1,7 @@
+pointcloudset.io.dataset.bag module
+===================================
+
+.. automodule:: pointcloudset.io.dataset.bag
+   :members:
+   :undoc-members:
+   :show-inheritance:
