@@ -9,14 +9,11 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased
 -------------
 
-0.6.3 - (2022-06-08)
--------------
-
 Fixed
 ~~~~~~
 - added pycryptodomex dependency since the ROS packages do not install it but need it
 
-0.6.3 - (2022-06-03)
+0.6.2 - (2022-06-03)
 -------------
 
 Fixed
