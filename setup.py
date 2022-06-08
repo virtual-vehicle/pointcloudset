@@ -66,6 +66,7 @@ setup(
         "py3rosmsgs",
         "typer",
         "rich",
+        "pycryptodomex",
     ],
     extras_require={"LAS": ["pylas"]},
     entry_points={
