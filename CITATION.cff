@@ -15,7 +15,7 @@ preferred-citation:
     given-names: "Tobias"  
   journal: "Journal of Open Source Software"
   volume: 6
-  number: 65
+  issue: 65
   start: 3471
   end: 3471
   title: "`pointcloudset`: Efficient Analysis of Large Datasets of Point Clouds Recorded Over Time"
