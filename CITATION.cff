@@ -1,0 +1,14 @@
+ff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Goelles"
+    given-names: "Thomas"
+  journal: "Journal of Open Source Software"
+  volume: 6
+  number: 65
+  pages: 3471
+  title: "`pointcloudset`: Efficient Analysis of Large Datasets of Point Clouds Recorded Over Time"
+  url: "https://doi.org/10.21105/joss.03471"
+  year: 2021
