@@ -5,10 +5,20 @@ preferred-citation:
   authors:
   - family-names: "Goelles"
     given-names: "Thomas"
+  - family-names: "Schlager"
+    given-names: "Birgit"
+  - family-names: "Muckenhuber"
+    given-names: "Stefan"
+  - family-names: "Haas"
+    given-names: "Sarah"
+  - family-names: "Hammer"
+    given-names: "Tobias"  
   journal: "Journal of Open Source Software"
   volume: 6
   number: 65
-  pages: 3471
+  start: 3471
+  end: 3471
   title: "`pointcloudset`: Efficient Analysis of Large Datasets of Point Clouds Recorded Over Time"
   url: "https://doi.org/10.21105/joss.03471"
+  doi: "10.21105/joss.03471"
   year: 2021
