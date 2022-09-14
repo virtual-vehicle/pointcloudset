@@ -133,7 +133,7 @@ def dataset_from_rosbag(
             msg = deserialize_cdr(
                 ros1_to_cdr(rawdata, connection.msgtype), connection.msgtype
             )
-            data_of_frame = _dataframe_from_message(msg, keep_zeros=keep_zeros)
+            data_of_frame = delayed(_dataframe_from_message(msg, keep_zeros=keep_zeros))
             data.append(data_of_frame)
 
     if mode == "internal":
