@@ -68,6 +68,8 @@ setup(
     ],
     extras_require={"LAS": ["pylas"]},
     entry_points={
-        "console_scripts": ["rosbagconvert = pointcloudset.io.dataset.commandline:app"]
+        "console_scripts": [
+            "pointcloudset-convert = pointcloudset.io.dataset.commandline:app"
+        ]
     },
 )

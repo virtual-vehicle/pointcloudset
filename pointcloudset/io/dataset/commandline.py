@@ -31,14 +31,14 @@ def get(
 
     Examples:
 
-    rosbagconvert -d converted .
+    pointcloudset-convert -d converted .
 
-    rosbagconvert -o csv -d converted_csv xyz.bag
+    pointcloudset-convert -o csv -d converted_csv xyz.bag
 
-    rosbagconvert -o las -d converted_las --start 1 --end 10 xyz.bag
+    pointcloudset-convert -o las -d converted_las --start 1 --end 10 xyz.bag
     """
     console.line()
-    console.rule(f"rosbagconvert  {pointcloudset.__version__}")
+    console.rule(f"pointcloudset-convert  {pointcloudset.__version__}")
     bagfile_paths = _gen_bagfile_paths(bagfile)
     console.rule(output_format)
     with console.status("Converting...", spinner="runner"):

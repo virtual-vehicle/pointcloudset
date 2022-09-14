@@ -12,6 +12,7 @@ Unreleased
 Changed
 ~~~~~~
 - using rosbags as ROS library. This avoids the conflicts of the test explorer and dependency on some poorly maintained libraries.
+- renamed CLI rosbagconvert to pointcloudset-convert since its specific for pointcloudset and not rosbag
 
 0.6.3 - (2022-06-08)
 -------------
