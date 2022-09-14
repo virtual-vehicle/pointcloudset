@@ -9,6 +9,10 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased
 -------------
 
+Changed
+~~~~~~
+- using rosbags as ROS library. This avoids the conflicts of the test explorer and dependency on some poorly maintained libraries.
+
 0.6.3 - (2022-06-08)
 -------------
 

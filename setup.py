@@ -62,11 +62,9 @@ setup(
         "plotly",
         "fastparquet",
         "dask>=2022.02.0",
-        "rospkg",
-        "py3rosmsgs",
         "typer",
         "rich",
-        "pycryptodomex",
+        "rosbags",
     ],
     extras_require={"LAS": ["pylas"]},
     entry_points={

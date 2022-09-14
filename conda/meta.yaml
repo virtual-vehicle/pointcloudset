@@ -24,11 +24,9 @@ requirements:
     - pandas
     - pip
     - plotly
-    - py3rosmsgs
-    - pycryptodomex
     - pyntcloud
     - python
-    - rospkg
+    - rosbags
     - rich
     - typer
   run:
@@ -38,11 +36,9 @@ requirements:
     - open3d>=0.15.0
     - pandas
     - plotly
-    - py3rosmsgs
-    - pycryptodomex
     - pyntcloud
     - python
-    - rospkg
+    - rosbags
     - rich
     - typer
 
