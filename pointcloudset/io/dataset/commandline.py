@@ -5,7 +5,6 @@ import click  # needed for documentation
 import pointcloudset
 import typer
 from pointcloudset import Dataset
-from pointcloudset.io.dataset.bag import dataset_from_rosbag
 from pyntcloud.io import TO_FILE
 from rich.console import Console
 
@@ -49,15 +48,14 @@ def get(
             folder_to_write_path = _gen_folder(folder_to_write, bagfile_path)
 
             if output_format == "POINTCLOUDSET":
-                _convert_bag2dir(
+                _convert_one_bag2dir(
                     bagfile=bagfile_path,
                     topic=topic,
-                    folder_to_write=folder_to_write_path,
                     start_frame_number=start_frame_number,
                     end_frame_number=end_frame_number,
                     keep_zeros=keep_zeros,
                     max_size=max_size,
-                    in_loop_function=_in_loop_for_cli,
+                    folder_to_write=folder_to_write_path,
                 )
                 console.print(
                     f"{Path(bagfile_path).name} converted to {folder_to_write_path}"
@@ -77,15 +75,7 @@ def get(
     console.rule("Done :sake:")
 
 
-def _in_loop_for_cli(res, data, timestamps, folder_to_write, meta, chunk_number):
-    data = res["data"]
-    timestamps = res["timestamps"]
-    Dataset(data, timestamps, meta).to_file(
-        folder_to_write.joinpath(f"{chunk_number}"), use_orig_filename=False
-    )
-
-
-def _convert_bag2dir(
+def _convert_one_bag2dir(
     bagfile: Path,
     topic: str,
     start_frame_number: int = 0,
@@ -93,10 +83,22 @@ def _convert_bag2dir(
     keep_zeros: bool = False,
     max_size: int = 100,
     folder_to_write: Path = Path(),
-    mode="cli",
-    in_loop_function=_in_loop_for_cli,
 ):
-    return dataset_from_rosbag(**locals())
+    chunk_number = 0
+    dataset = Dataset.from_file(
+        file_path=bagfile,
+        topic=topic,
+        start_frame_number=start_frame_number,
+        end_frame_number=end_frame_number,
+        keep_zeros=keep_zeros,
+    )
+    if len(dataset) < max_size:
+        dataset.to_file(
+            file_path=folder_to_write.joinpath(f"{chunk_number}"),
+            use_orig_filename=False,
+        )
+    else:
+        raise NotImplementedError("TODO: support for larger files")
 
 
 def _gen_bagfile_paths(bagfile):
