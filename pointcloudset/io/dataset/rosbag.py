@@ -40,7 +40,6 @@ Parts of the code are from Willow Garage, Inc.
 from __future__ import annotations
 
 import datetime
-import itertools
 import math
 import struct
 import sys
@@ -51,22 +50,21 @@ import numpy as np
 import pandas as pd
 import rosbags
 from rosbags.typesys.types import sensor_msgs__msg__PointCloud2
-import sensor_msgs.point_cloud2 as pc2  # NEED TO GET RID OF
 from dask import delayed
 from rich.progress import track
-from sensor_msgs.msg import PointCloud2, PointField  # NEED TO GET RID OF
 from rosbags.rosbag1 import Reader
 from rosbags.serde import deserialize_cdr, ros1_to_cdr
 
-_DATATYPES = {}
-_DATATYPES[PointField.INT8] = ("b", 1)
-_DATATYPES[PointField.UINT8] = ("B", 1)
-_DATATYPES[PointField.INT16] = ("h", 2)
-_DATATYPES[PointField.UINT16] = ("H", 2)
-_DATATYPES[PointField.INT32] = ("i", 4)
-_DATATYPES[PointField.UINT32] = ("I", 4)
-_DATATYPES[PointField.FLOAT32] = ("f", 4)
-_DATATYPES[PointField.FLOAT64] = ("d", 8)
+_DATATYPES = {
+    1: ("b", 1),
+    2: ("B", 1),
+    3: ("h", 2),
+    4: ("H", 2),
+    5: ("i", 4),
+    6: ("I", 4),
+    7: ("f", 4),
+    8: ("d", 8),
+}
 
 PANDAS_TYPEMAPPING = {
     1: np.dtype("int8"),
@@ -80,44 +78,27 @@ PANDAS_TYPEMAPPING = {
 }
 
 
-def _in_loop(
-    res: dict,
-    data: list,
-    timestamps: list,
-    folder_to_write: Path,
-    meta: dict,
-    chunk_number: int,
-):
-    data.extend(res["data"])
-    timestamps.extend(res["timestamps"])
-
-
 def dataset_from_rosbag(
     bagfile: Path,
     topic: str,
     start_frame_number: int = 0,
     end_frame_number: int = None,
     keep_zeros: bool = False,
-    max_size: int = 100,
-    folder_to_write: Path = Path(),
-    mode: Literal["internal", "cli"] = "internal",
-    in_loop_function: Callable = _in_loop,
 ) -> Union[dict, None]:
     """Reads a Dataset from a bag file.
 
     Args:
         bagfile (Path): Path to bag file.
         topic (str): `ROS <https://www.ros.org/>`_ topic that should be rea
-        start_frame_number (int, optional): Start pointcloud of pointcloud sequence to read. Defaults to 0.
-        end_frame_number (int, optional): End pointcloud of pointcloud sequence to read.. Defaults to None.
-        keep_zeros (bool, optional): If ``True`` keep zeros in frames, if ``False`` do not keep
-            zeros in frames. Defaults to False.
-        max_size (int, optional): Max chunk size to read from ros file at once. Defaults to 100.
-        folder_to_write (Path, optional): Directly write to filder. Defaults to Path().
-        mode (Literal["internal", "cli"], optional): "cli" for commandline tool. Defaults to "internal".
+        start_frame_number (int, optional): Start pointcloud of pointcloud sequence to
+            read. Defaults to 0.
+        end_frame_number (int, optional): End pointcloud of pointcloud sequence to read.
+            Defaults to None.
+        keep_zeros (bool, optional): If ``True`` keep zeros in frames, if ``False``
+            do not keep zeros in frames. Defaults to False.
 
     Returns:
-        Union[dict, None]: Dict to generate Dataset or None for cli use.
+        Union[dict, None]: Dict to generate Dataset.
     """
 
     data = []
@@ -127,7 +108,9 @@ def dataset_from_rosbag(
     with Reader(bagfile.as_posix()) as reader:
         connections = [x for x in reader.connections if x.topic == topic]
 
-        for connection, timestamp, rawdata in reader.messages(connections=connections):
+        for connection, timestamp, rawdata in track(
+            reader.messages(connections=connections)
+        ):
             timestamp_datetime = datetime.datetime.fromtimestamp(timestamp * 1e-9)
             timestamps.append(timestamp_datetime)
             msg = deserialize_cdr(
@@ -136,14 +119,7 @@ def dataset_from_rosbag(
             data_of_frame = delayed(_dataframe_from_message(msg, keep_zeros=keep_zeros))
             data.append(data_of_frame)
 
-    if mode == "internal":
-        return {
-            "data": data,
-            "timestamps": timestamps,
-            "meta": meta,
-        }
-    else:
-        return None
+    return {"data": data, "timestamps": timestamps, "meta": meta}
 
 
 def _dataframe_from_message(
@@ -208,7 +184,9 @@ def _read_points(
     @return: Generator which yields a list of values for each point.
     @rtype:  generator
     """
-    # assert isinstance(cloud, roslib.message.Message) and cloud._type == 'sensor_msgs/PointCloud2', 'cloud is not a sensor_msgs.msg.PointCloud2'
+    assert isinstance(
+        cloud, sensor_msgs__msg__PointCloud2
+    ), "cloud is not a PointCloud2"
     fmt = _get_struct_fmt(cloud.is_bigendian, cloud.fields, field_names)
     width, height, point_step, row_step, data, isnan = (
         cloud.width,
