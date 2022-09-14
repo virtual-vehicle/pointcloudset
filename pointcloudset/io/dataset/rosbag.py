@@ -146,6 +146,26 @@ def dataset_from_rosbag(
         return None
 
 
+def _dataframe_from_message(
+    message: sensor_msgs__msg__PointCloud2, keep_zeros: bool = False
+) -> pd.DataFrame:
+    columnnames = [field.name for field in message.fields]
+    type_dict = {
+        item.name: PANDAS_TYPEMAPPING[item.datatype] for item in message.fields
+    }
+    frame_raw = _read_points(message)
+    frame_df = pd.DataFrame(np.array(list(frame_raw)), columns=columnnames)
+    frame_df = frame_df.astype(type_dict)
+    if not keep_zeros:
+        frame_df = frame_df[
+            (frame_df["x"] != 0.0) & (frame_df["y"] != 0.0) & (frame_df["z"] != 0.0)
+        ]
+        frame_df["original_id"] = frame_df.index
+        frame_df = frame_df.astype({"original_id": "uint32"})
+        frame_df = frame_df.reset_index(drop=True)
+    return frame_df
+
+
 def _get_struct_fmt(is_bigendian, fields, field_names=None):
     fmt = ">" if is_bigendian else "<"
 
@@ -234,23 +254,3 @@ def _read_points(
                 for u in range(width):
                     yield unpack_from(data, offset)
                     offset += point_step
-
-
-def _dataframe_from_message(
-    message: sensor_msgs__msg__PointCloud2, keep_zeros: bool = False
-) -> pd.DataFrame:
-    columnnames = [field.name for field in message.fields]
-    type_dict = {
-        item.name: PANDAS_TYPEMAPPING[item.datatype] for item in message.message.fields
-    }
-    frame_raw = _read_points(message)
-    frame_df = pd.DataFrame(np.array(list(frame_raw)), columns=columnnames)
-    frame_df = frame_df.astype(type_dict)
-    if not keep_zeros:
-        frame_df = frame_df[
-            (frame_df["x"] != 0.0) & (frame_df["y"] != 0.0) & (frame_df["z"] != 0.0)
-        ]
-        frame_df["original_id"] = frame_df.index
-        frame_df = frame_df.astype({"original_id": "uint32"})
-        frame_df = frame_df.reset_index(drop=True)
-    return frame_df
