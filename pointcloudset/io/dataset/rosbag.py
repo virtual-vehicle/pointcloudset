@@ -44,16 +44,16 @@ import math
 import struct
 import sys
 from pathlib import Path
-from typing import Callable, Literal, Union, Generator
+from typing import Union, Generator
 
 import numpy as np
 import pandas as pd
-import rosbags
 from rosbags.typesys.types import sensor_msgs__msg__PointCloud2
-from dask import delayed
-from rich.progress import track
 from rosbags.rosbag1 import Reader
 from rosbags.serde import deserialize_cdr, ros1_to_cdr
+from dask import delayed
+from rich.progress import track
+
 
 _DATATYPES = {
     1: ("b", 1),
@@ -108,16 +108,26 @@ def dataset_from_rosbag(
     with Reader(bagfile.as_posix()) as reader:
         connections = [x for x in reader.connections if x.topic == topic]
 
+        frame = -1
+        if not end_frame_number:
+            end_frame_number = reader.topics[topic].msgcount
+
         for connection, timestamp, rawdata in track(
-            reader.messages(connections=connections)
+            reader.messages(connections=connections),
+            total=end_frame_number - start_frame_number,
         ):
-            timestamp_datetime = datetime.datetime.fromtimestamp(timestamp * 1e-9)
-            timestamps.append(timestamp_datetime)
-            msg = deserialize_cdr(
-                ros1_to_cdr(rawdata, connection.msgtype), connection.msgtype
-            )
-            data_of_frame = delayed(_dataframe_from_message(msg, keep_zeros=keep_zeros))
-            data.append(data_of_frame)
+
+            frame = frame + 1
+            if start_frame_number <= frame <= end_frame_number:
+                timestamp_datetime = datetime.datetime.fromtimestamp(timestamp * 1e-9)
+                timestamps.append(timestamp_datetime)
+                msg = deserialize_cdr(
+                    ros1_to_cdr(rawdata, connection.msgtype), connection.msgtype
+                )
+                data_of_frame = delayed(
+                    _dataframe_from_message(msg, keep_zeros=keep_zeros)
+                )
+                data.append(data_of_frame)
 
     return {"data": data, "timestamps": timestamps, "meta": meta}
 

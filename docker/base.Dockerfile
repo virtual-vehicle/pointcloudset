@@ -44,8 +44,7 @@ RUN apt-get update && \
 COPY conda/environment.yml* /tmp/conda-tmp/
 RUN /opt/conda/bin/conda env update -n base -f /tmp/conda-tmp/environment.yml
 
-# ROSPY loggging configuation file
-COPY docker/python_logging.conf /etc/ros/
+
 # Switch back to dialog for any ad-hoc use of apt-get
 ENV DEBIAN_FRONTEND=noninteractive
 ENV SHELL /bin/bash

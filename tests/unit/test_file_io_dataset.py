@@ -23,6 +23,18 @@ def test_from_bag(testbag1, keep_zeros):
     check.is_instance(ds, Dataset)
 
 
+def test_from_bag_start_stop(testbag1):
+    ds = Dataset.from_file(
+        testbag1,
+        topic="/os1_cloud_node/points",
+        keep_zeros=False,
+        start_frame_number=1,
+        end_frame_number=1,
+    )
+    check.is_instance(ds, Dataset)
+    check.equal(len(ds), 1)
+
+
 def test_to_dir(testbag1, tmp_path: Path):
     ds = Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=True)
     testfile_name = tmp_path.joinpath("dataset")
@@ -171,4 +183,3 @@ def test_dataset_vz6000(testdataset_vz6000: Dataset):
     check.is_instance(testdataset_vz6000, Dataset)
     check.is_instance(testdataset_vz6000[0], PointCloud)
     check.is_false(testdataset_vz6000[0].has_original_id)
-
