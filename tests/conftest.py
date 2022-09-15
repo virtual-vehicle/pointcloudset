@@ -14,6 +14,11 @@ def testdata_path() -> Path:
 
 
 @pytest.fixture()
+def testdata_path_large() -> Path:
+    return Path(__file__).parent.absolute() / "testdata/large"
+
+
+@pytest.fixture()
 def testbag1():
     return Path(__file__).parent.absolute() / "testdata/test.bag"
 
