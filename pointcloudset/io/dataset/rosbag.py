@@ -118,7 +118,7 @@ def dataset_from_rosbag(
         ):
 
             frame = frame + 1
-            if start_frame_number <= frame <= end_frame_number:
+            if start_frame_number <= frame < end_frame_number:
                 timestamp_datetime = datetime.datetime.fromtimestamp(timestamp * 1e-9)
                 timestamps.append(timestamp_datetime)
                 msg = deserialize_cdr(
@@ -153,6 +153,9 @@ def _dataframe_from_message(
 
 
 def _get_struct_fmt(is_bigendian, fields, field_names=None):
+    """
+    code from from Willow Garage, Inc.
+    """
     fmt = ">" if is_bigendian else "<"
 
     offset = 0
@@ -182,6 +185,7 @@ def _read_points(
 ) -> Generator:
     """
     Read points from a PointCloud2 message.
+    code from from Willow Garage, Inc.
 
     @param cloud: The point cloud to read from.
     @type  cloud: L{sensor_msgs.PointCloud2}
