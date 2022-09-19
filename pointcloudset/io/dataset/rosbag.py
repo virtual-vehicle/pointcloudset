@@ -109,6 +109,7 @@ def dataset_from_rosbag(
         connections = [x for x in reader.connections if x.topic == topic]
 
         frame = -1
+
         if not end_frame_number:
             end_frame_number = reader.topics[topic].msgcount
 

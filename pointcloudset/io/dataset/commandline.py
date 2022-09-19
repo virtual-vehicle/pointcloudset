@@ -1,5 +1,5 @@
+from __future__ import annotations
 from pathlib import Path
-from typing import Optional
 
 import click  # needed for documentation
 import pointcloudset
@@ -7,6 +7,8 @@ import typer
 from pointcloudset import Dataset
 from pyntcloud.io import TO_FILE
 from rich.console import Console
+import numpy as np
+from typing import Union
 
 app = typer.Typer()
 console = Console()
@@ -21,10 +23,9 @@ def get(
     topic: str = typer.Option("/os1_cloud_node/points", "--topic", "-t"),
     folder_to_write: str = typer.Option(".", "--output-dir", "-d"),
     output_format: str = typer.Option("POINTCLOUDSET", "--output-format", "-o"),
-    start_frame_number: Optional[int] = typer.Option(0, "--start", "-s"),
-    end_frame_number: Optional[int] = typer.Option(None, "--end", "-e"),
+    start_frame_number: int = typer.Option(0, "--start", "-s"),
+    end_frame_number: Union[int, None] = typer.Option(None, "--end", "-e"),
     keep_zeros: bool = False,
-    max_size: int = 100,
 ):
     """The main CLI function to convert ROS bagfiles to pointcloudset or files supported
     by pyntloud.
@@ -54,7 +55,6 @@ def get(
                     start_frame_number=start_frame_number,
                     end_frame_number=end_frame_number,
                     keep_zeros=keep_zeros,
-                    max_size=max_size,
                     folder_to_write=folder_to_write_path,
                 )
                 console.print(
@@ -81,10 +81,8 @@ def _convert_one_bag2dir(
     start_frame_number: int = 0,
     end_frame_number: int = None,
     keep_zeros: bool = False,
-    max_size: int = 100,
     folder_to_write: Path = Path(),
 ):
-    chunk_number = 0
     dataset = Dataset.from_file(
         file_path=bagfile,
         topic=topic,
@@ -92,18 +90,18 @@ def _convert_one_bag2dir(
         end_frame_number=end_frame_number,
         keep_zeros=keep_zeros,
     )
-    if len(dataset) < max_size:
-        dataset.to_file(
-            file_path=folder_to_write.joinpath(f"{chunk_number}"),
+    if len(dataset) > 0:
+        dataset[start_frame_number:end_frame_number].to_file(
+            file_path=folder_to_write,
             use_orig_filename=False,
         )
     else:
-        raise NotImplementedError("TODO: support for larger files")
+        console.print("no data, skipping")
 
 
 def _gen_bagfile_paths(bagfile):
     if bagfile == ".":
-        bagfile_paths = list(Path.cwd().rglob("*.bag"))
+        bagfile_paths = list(Path.cwd().glob("*.bag"))
     else:
         bagfile_paths = [Path(bagfile)]
     return bagfile_paths
