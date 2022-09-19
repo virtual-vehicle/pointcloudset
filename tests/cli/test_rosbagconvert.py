@@ -135,3 +135,60 @@ def test_convert_all_bags_frames_files(
     files = list(dirs[0].glob("*.csv"))
     check.equal(len(files), 2)
     check.equal(files[0].suffix.replace(".", ""), "csv")
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize("filename", ["big_uncomp.bag", "big_comp.bag"])
+def test_convert_large_file_complete(
+    testdata_path_large: Path, tmp_path: Path, filename: str
+):
+    if testdata_path_large.exists():
+        testbag = testdata_path_large.joinpath(filename)
+        check.is_true(testbag.exists())
+        out_path = tmp_path.joinpath("cli")
+        result = runner.invoke(
+            app,
+            [
+                testbag.as_posix(),
+                "-t",
+                "/os1_cloud_node/points",
+                "-d",
+                out_path.as_posix(),
+            ],
+        )
+        out_path_real = out_path.joinpath("test")
+        check.equal(result.exit_code, 0)
+        check.equal(out_path_real.exists(), True)
+        read_dataset = Dataset.from_file(out_path_real)
+        check.is_instance(read_dataset, Dataset)
+        check.equal(len(read_dataset), 250)
+        check.equal(len(read_dataset.timestamps), 250)
+
+
+@pytest.mark.slow
+def test_convert_large_file_part1(testdata_path_large: Path, tmp_path: Path):
+    if testdata_path_large.exists():
+        testbag = testdata_path_large.joinpath("big_uncomp.bag")
+        check.is_true(testbag.exists())
+        out_path = tmp_path.joinpath("cli")
+        result = runner.invoke(
+            app,
+            [
+                testbag.as_posix(),
+                "-s",
+                "50",
+                "-e",
+                "80",
+                "-t",
+                "/os1_cloud_node/points",
+                "-d",
+                out_path.as_posix(),
+            ],
+        )
+        out_path_real = out_path.joinpath("test")
+        check.equal(result.exit_code, 0)
+        check.equal(out_path_real.exists(), True)
+        read_dataset = Dataset.from_file(out_path_real)
+        check.is_instance(read_dataset, Dataset)
+        check.equal(len(read_dataset), 30)
+        check.equal(len(read_dataset.timestamps), 30)

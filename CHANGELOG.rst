@@ -9,11 +9,6 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased
 -------------
 
-Fixed
-~~~~~~
-
-- end_frame_number is now correctly handled
-
 Changed
 ~~~~~~
 - using rosbags as ROS library. This avoids the conflicts of the test explorer and dependency on some poorly maintained libraries.

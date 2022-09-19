@@ -29,7 +29,7 @@ def test_from_bag_start_stop(testbag1):
         topic="/os1_cloud_node/points",
         keep_zeros=False,
         start_frame_number=1,
-        end_frame_number=1,
+        end_frame_number=2,
     )
     check.is_instance(ds, Dataset)
     check.equal(len(ds), 1)
@@ -113,9 +113,7 @@ def test_dataset_with_empty_frame_start(
     check.equal(len(ds), len(read_dataset))
 
 
-def test_dataset_with_2_empty_frames(
-    testpointcloud_mini_real: PointCloud, tmp_path: Path
-):
+def test_dataset_with_2_empty_frames(tmp_path: Path):
     fake_empty_df = pd.DataFrame.from_dict(
         {
             "x": [np.nan],
