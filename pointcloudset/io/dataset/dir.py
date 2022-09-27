@@ -48,7 +48,7 @@ def dataset_to_dir(
     return folder.parent
 
 
-def dataset_from_dir(dir: Path) -> dict:
+def dataset_from_dir(dir: Path, ext: str) -> dict:
     # sourcery skip: simplify-len-comparison
     """Reads a Dataset from a directory.
 
