@@ -12,11 +12,12 @@ Unreleased
 Added
 ~~~~~~
 - added version number to file metadata. If the native file format changes in the future.
+- added tests for large ROS bagfiles
 
 Changed
 ~~~~~~
 - using rosbags as ROS library. This avoids the conflicts of the test explorer and dependency on some poorly maintained libraries.
-- renamed CLI rosbagconvert to pointcloudset-convert since its specific for pointcloudset and not rosbag
+- renamed CLI rosbagconvert to pointcloudset-convert since its specific for pointcloudset and not rosbag. Complete rewrite of CLI.
 
 0.6.3 - (2022-06-08)
 -------------
