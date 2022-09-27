@@ -44,12 +44,13 @@ import math
 import struct
 import sys
 from pathlib import Path
-from typing import Union, Generator
+from typing import Union, Generator, Literal
 
 import numpy as np
 import pandas as pd
 from rosbags.typesys.types import sensor_msgs__msg__PointCloud2
-from rosbags.rosbag1 import Reader
+from rosbags.rosbag1 import Reader as Reader1
+from rosbags.rosbag2 import Reader as Reader2
 from rosbags.serde import deserialize_cdr, ros1_to_cdr
 from dask import delayed
 from rich.progress import track
@@ -78,12 +79,13 @@ PANDAS_TYPEMAPPING = {
 }
 
 
-def dataset_from_rosbag(
+def dataset_from_ros(
     bagfile: Path,
     topic: str,
     start_frame_number: int = 0,
     end_frame_number: int = None,
     keep_zeros: bool = False,
+    ext: Literal["BAG", "ROS2"] = "BAG",
 ) -> Union[dict, None]:
     """Reads a Dataset from a bag file.
 
@@ -105,6 +107,14 @@ def dataset_from_rosbag(
     timestamps: list[datetime.datetime] = []
     meta = {"orig_file": bagfile.as_posix(), "topic": topic}
 
+    if ext == "BAG":
+        Reader = Reader1
+        rosversion = 1
+    elif ext == "ROS2":
+        Reader = Reader2
+        rosversion = 2
+    else:
+        raise ValueError(f"expecting BAG or ROS2 for ext got {ext}")
     with Reader(bagfile.as_posix()) as reader:
         connections = [x for x in reader.connections if x.topic == topic]
 
@@ -122,9 +132,13 @@ def dataset_from_rosbag(
             if start_frame_number <= frame < end_frame_number:
                 timestamp_datetime = datetime.datetime.fromtimestamp(timestamp * 1e-9)
                 timestamps.append(timestamp_datetime)
-                msg = deserialize_cdr(
-                    ros1_to_cdr(rawdata, connection.msgtype), connection.msgtype
-                )
+
+                if rosversion == 1:
+                    msg = deserialize_cdr(
+                        ros1_to_cdr(rawdata, connection.msgtype), connection.msgtype
+                    )
+                elif rosversion == 2:
+                    msg = deserialize_cdr(rawdata, connection.msgtype)
                 data_of_frame = delayed(
                     _dataframe_from_message(msg, keep_zeros=keep_zeros)
                 )

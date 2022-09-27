@@ -6,8 +6,7 @@ from pyntcloud.io import (
     FROM_FILE as POINTCLOUD_FROM_FILE,
 )  # needs to be here, ignore warnings
 
-from pointcloudset.io.dataset.rosbag import dataset_from_rosbag
-from pointcloudset.io.dataset.ros2 import dataset_from_ros2
+from pointcloudset.io.dataset.ros import dataset_from_ros
 from pointcloudset.io.dataset.dir import dataset_from_dir, dataset_to_dir
 from pointcloudset.io.dataset.pointcloud import dataset_from_pointclouds
 from pointcloudset.io.pointcloud.csv import write_csv
@@ -16,9 +15,9 @@ from pointcloudset.io.pointcloud.pandas import from_dataframe, to_dataframe
 from pointcloudset.io.pointcloud.pyntcloud import from_pyntcloud, to_pyntcloud
 
 DATASET_FROM_FILE = {
-    "BAG": dataset_from_rosbag,
+    "BAG": dataset_from_ros,
     "DIR": dataset_from_dir,
-    "ROS2": dataset_from_ros2,
+    "ROS2": dataset_from_ros,
 }
 
 DATASET_TO_FILE = {"DIR": dataset_to_dir}
