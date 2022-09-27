@@ -91,7 +91,7 @@ def _convert_one_bag2dir(
         keep_zeros=keep_zeros,
     )
     if len(dataset) > 0:
-        dataset[start_frame_number:end_frame_number].to_file(
+        dataset.to_file(
             file_path=folder_to_write,
             use_orig_filename=False,
         )
