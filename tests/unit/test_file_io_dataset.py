@@ -42,8 +42,6 @@ def test_to_dir(testbag1, tmp_path: Path):
     p = testfile_name.glob("*.parquet")
     files = [x for x in p if x.is_file()]
     check.equal(len(files), 2)
-    check.equal(files[0].stat().st_size, 1992252)
-    check.equal(files[1].stat().st_size, 1994699)
     meta_gen = testfile_name.glob("meta.json")
     metafile = list(meta_gen)[0]
     check.equal(metafile.exists(), True)
