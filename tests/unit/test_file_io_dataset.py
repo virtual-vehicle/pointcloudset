@@ -1,5 +1,6 @@
 from datetime import datetime
 from pathlib import Path
+import json
 
 import numpy as np
 import pandas as pd
@@ -23,6 +24,18 @@ def test_from_bag(testbag1, keep_zeros):
     check.is_instance(ds, Dataset)
 
 
+def test_from_bag_start_stop(testbag1):
+    ds = Dataset.from_file(
+        testbag1,
+        topic="/os1_cloud_node/points",
+        keep_zeros=False,
+        start_frame_number=1,
+        end_frame_number=2,
+    )
+    check.is_instance(ds, Dataset)
+    check.equal(len(ds), 1)
+
+
 def test_to_dir(testbag1, tmp_path: Path):
     ds = Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=True)
     testfile_name = tmp_path.joinpath("dataset")
@@ -30,8 +43,6 @@ def test_to_dir(testbag1, tmp_path: Path):
     p = testfile_name.glob("*.parquet")
     files = [x for x in p if x.is_file()]
     check.equal(len(files), 2)
-    check.equal(files[0].stat().st_size, 1992252)
-    check.equal(files[1].stat().st_size, 1994699)
     meta_gen = testfile_name.glob("meta.json")
     metafile = list(meta_gen)[0]
     check.equal(metafile.exists(), True)
@@ -101,9 +112,7 @@ def test_dataset_with_empty_frame_start(
     check.equal(len(ds), len(read_dataset))
 
 
-def test_dataset_with_2_empty_frames(
-    testpointcloud_mini_real: PointCloud, tmp_path: Path
-):
+def test_dataset_with_2_empty_frames(tmp_path: Path):
     fake_empty_df = pd.DataFrame.from_dict(
         {
             "x": [np.nan],
@@ -162,6 +171,11 @@ def test_check_dir_file():
 def test_check_meta_file(testset: Dataset, tmp_path: Path):
     testfile_name = tmp_path.joinpath("dataset0")
     testset.to_file(testfile_name, use_orig_filename=False)
+    meta_in = json.loads(testfile_name.joinpath("meta.json").read_text())
+    check.equal(
+        list(meta_in.keys()),
+        ["orig_file", "topic", "timestamps", "empty_data", "version"],
+    )
     testfile_name.joinpath("meta.json").unlink()
     with pytest.raises(AssertionError):
         dir._check_dir_contents_single(testfile_name)
@@ -171,4 +185,3 @@ def test_dataset_vz6000(testdataset_vz6000: Dataset):
     check.is_instance(testdataset_vz6000, Dataset)
     check.is_instance(testdataset_vz6000[0], PointCloud)
     check.is_false(testdataset_vz6000[0].has_original_id)
-

@@ -28,7 +28,7 @@ pointcloudset
 .. image:: https://joss.theoj.org/papers/10.21105/joss.03471/status.svg
    :target: https://joss.theoj.org/papers/10.21105/joss.03471#
    :alt: JOSS badge
-   
+
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
    :alt: code style black
@@ -133,14 +133,14 @@ This produces the plot from the animation above.
 .. _tutorial notebooks: https://github.com/virtual-vehicle/pointcloudset/tree/master/doc/sphinx/source/tutorial_notebooks
 
 
-CLI to convert ROS bag files: rosbagconvert
+CLI to convert ROS bag files: pointcloudset-convert
 ################################################
 
-The package includes a powerfull CLI to convert ROS bag files into many formats like csv, las and many more.
+The package includes a powerful CLI to convert ROS bag files into many formats like csv, las and many more.
 
 .. code-block:: console
 
-   rosbagconvert --output-format csv --output-dir converted_csv test.bag
+   pointcloudset-convert --output-format csv --output-dir converted_csv test.bag
 
 
 .. image:: https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/cli_demo.gif
