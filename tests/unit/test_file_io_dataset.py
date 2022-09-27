@@ -1,5 +1,6 @@
 from datetime import datetime
 from pathlib import Path
+import json
 
 import numpy as np
 import pandas as pd
@@ -170,6 +171,11 @@ def test_check_dir_file():
 def test_check_meta_file(testset: Dataset, tmp_path: Path):
     testfile_name = tmp_path.joinpath("dataset0")
     testset.to_file(testfile_name, use_orig_filename=False)
+    meta_in = json.loads(testfile_name.joinpath("meta.json").read_text())
+    check.equal(
+        list(meta_in.keys()),
+        ["orig_file", "topic", "timestamps", "empty_data", "version"],
+    )
     testfile_name.joinpath("meta.json").unlink()
     with pytest.raises(AssertionError):
         dir._check_dir_contents_single(testfile_name)

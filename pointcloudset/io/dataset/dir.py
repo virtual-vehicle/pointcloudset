@@ -8,6 +8,7 @@ import dask.dataframe as dd
 import numpy as np
 import pandas as pd
 from rich import print
+import pointcloudset
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 DELIMITER = ";"
@@ -40,6 +41,7 @@ def dataset_to_dir(
         timestamp.strftime(DATETIME_FORMAT) for timestamp in dataset_in.timestamps
     ]
     meta["empty_data"] = empty_data.to_dict()
+    meta["version"] = pointcloudset.__version__
     with open(folder.joinpath("meta.json"), "w") as outfile:
         json.dump(dataset_in.meta, outfile)
     _check_dir_contents(folder)
