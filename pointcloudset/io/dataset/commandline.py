@@ -1,13 +1,14 @@
+from __future__ import annotations
 from pathlib import Path
-from typing import Optional
 
 import click  # needed for documentation
 import pointcloudset
 import typer
 from pointcloudset import Dataset
-from pointcloudset.io.dataset.bag import dataset_from_rosbag
 from pyntcloud.io import TO_FILE
 from rich.console import Console
+import numpy as np
+from typing import Union
 
 app = typer.Typer()
 console = Console()
@@ -22,24 +23,23 @@ def get(
     topic: str = typer.Option("/os1_cloud_node/points", "--topic", "-t"),
     folder_to_write: str = typer.Option(".", "--output-dir", "-d"),
     output_format: str = typer.Option("POINTCLOUDSET", "--output-format", "-o"),
-    start_frame_number: Optional[int] = typer.Option(0, "--start", "-s"),
-    end_frame_number: Optional[int] = typer.Option(None, "--end", "-e"),
+    start_frame_number: int = typer.Option(0, "--start", "-s"),
+    end_frame_number: Union[int, None] = typer.Option(None, "--end", "-e"),
     keep_zeros: bool = False,
-    max_size: int = 100,
 ):
     """The main CLI function to convert ROS bagfiles to pointcloudset or files supported
     by pyntloud.
 
     Examples:
 
-    rosbagconvert -d converted .
+    pointcloudset-convert -d converted .
 
-    rosbagconvert -o csv -d converted_csv xyz.bag
+    pointcloudset-convert -o csv -d converted_csv xyz.bag
 
-    rosbagconvert -o las -d converted_las --start 1 --end 10 xyz.bag
+    pointcloudset-convert -o las -d converted_las --start 1 --end 10 xyz.bag
     """
     console.line()
-    console.rule(f"rosbagconvert  {pointcloudset.__version__}")
+    console.rule(f"pointcloudset-convert  {pointcloudset.__version__}")
     bagfile_paths = _gen_bagfile_paths(bagfile)
     console.rule(output_format)
     with console.status("Converting...", spinner="runner"):
@@ -49,15 +49,13 @@ def get(
             folder_to_write_path = _gen_folder(folder_to_write, bagfile_path)
 
             if output_format == "POINTCLOUDSET":
-                _convert_bag2dir(
+                _convert_one_bag2dir(
                     bagfile=bagfile_path,
                     topic=topic,
-                    folder_to_write=folder_to_write_path,
                     start_frame_number=start_frame_number,
                     end_frame_number=end_frame_number,
                     keep_zeros=keep_zeros,
-                    max_size=max_size,
-                    in_loop_function=_in_loop_for_cli,
+                    folder_to_write=folder_to_write_path,
                 )
                 console.print(
                     f"{Path(bagfile_path).name} converted to {folder_to_write_path}"
@@ -77,31 +75,33 @@ def get(
     console.rule("Done :sake:")
 
 
-def _in_loop_for_cli(res, data, timestamps, folder_to_write, meta, chunk_number):
-    data = res["data"]
-    timestamps = res["timestamps"]
-    Dataset(data, timestamps, meta).to_file(
-        folder_to_write.joinpath(f"{chunk_number}"), use_orig_filename=False
-    )
-
-
-def _convert_bag2dir(
+def _convert_one_bag2dir(
     bagfile: Path,
     topic: str,
     start_frame_number: int = 0,
     end_frame_number: int = None,
     keep_zeros: bool = False,
-    max_size: int = 100,
     folder_to_write: Path = Path(),
-    mode="cli",
-    in_loop_function=_in_loop_for_cli,
 ):
-    return dataset_from_rosbag(**locals())
+    dataset = Dataset.from_file(
+        file_path=bagfile,
+        topic=topic,
+        start_frame_number=start_frame_number,
+        end_frame_number=end_frame_number,
+        keep_zeros=keep_zeros,
+    )
+    if len(dataset) > 0:
+        dataset.to_file(
+            file_path=folder_to_write,
+            use_orig_filename=False,
+        )
+    else:
+        console.print("no data, skipping")
 
 
 def _gen_bagfile_paths(bagfile):
     if bagfile == ".":
-        bagfile_paths = list(Path.cwd().rglob("*.bag"))
+        bagfile_paths = list(Path.cwd().glob("*.bag"))
     else:
         bagfile_paths = [Path(bagfile)]
     return bagfile_paths

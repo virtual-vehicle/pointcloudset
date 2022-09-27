@@ -135,3 +135,65 @@ def test_convert_all_bags_frames_files(
     files = list(dirs[0].glob("*.csv"))
     check.equal(len(files), 2)
     check.equal(files[0].suffix.replace(".", ""), "csv")
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize("filename", ["big_uncomp.bag", "big_comp.bag"])
+def test_convert_large_file_complete(
+    testdata_path_large: Path, tmp_path: Path, filename: str
+):
+    if testdata_path_large.exists():
+        len_target = 250
+        testbag = testdata_path_large.joinpath(filename)
+        check.is_true(testbag.exists())
+        out_path = tmp_path.joinpath("cli")
+        result = runner.invoke(
+            app,
+            [
+                testbag.as_posix(),
+                "-t",
+                "/os1_cloud_node/points",
+                "-d",
+                out_path.as_posix(),
+            ],
+        )
+        out_path_real = out_path / Path(filename).stem
+        check.equal(result.exit_code, 0)
+        check.equal(out_path_real.exists(), True)
+        check.equal(len(list(out_path_real.parent.glob("*/*"))), len_target + 1)
+        read_dataset = Dataset.from_file(out_path_real)
+        check.is_instance(read_dataset, Dataset)
+        check.equal(len(read_dataset), len_target)
+        check.equal(len(read_dataset.timestamps), len_target)
+
+
+@pytest.mark.slow
+def test_convert_large_file_part1(testdata_path_large: Path, tmp_path: Path):
+    if testdata_path_large.exists():
+        filename = "big_uncomp.bag"
+        len_target = 30
+        testbag = testdata_path_large.joinpath(filename)
+        check.is_true(testbag.exists())
+        out_path = tmp_path.joinpath("cli")
+        result = runner.invoke(
+            app,
+            [
+                testbag.as_posix(),
+                "-s",
+                "50",
+                "-e",
+                "80",
+                "-t",
+                "/os1_cloud_node/points",
+                "-d",
+                out_path.as_posix(),
+            ],
+        )
+        out_path_real = out_path / Path(filename).stem
+        check.equal(result.exit_code, 0)
+        check.equal(len(list(out_path_real.parent.glob("*/*"))), len_target + 1)
+        check.equal(out_path_real.exists(), True)
+        read_dataset = Dataset.from_file(out_path_real)
+        check.is_instance(read_dataset, Dataset)
+        check.equal(len(read_dataset), len_target)
+        check.equal(len(read_dataset.timestamps), len_target)

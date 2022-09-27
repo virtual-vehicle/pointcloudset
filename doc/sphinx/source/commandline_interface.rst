@@ -1,4 +1,4 @@
-rosbagconvert
+pointcloudset-convert
 ======================
 
 The best way to work with large ROS bagfiles is to convert the rosbag beforehand with
@@ -25,12 +25,12 @@ the converted directory.
 
 .. code-block:: console
 
-   rosbagconvert test.bag -t /os1_cloud_node/points -d converted
+   pointcloudset-convert test.bag -t /os1_cloud_node/points -d converted
 
 
 
 .. click:: pointcloudset.io.dataset.commandline:typer_click_object
-   :prog: rosbagconvert
+   :prog: pointcloudset-convert
    :nested: full
 
-   rosbagconvert . -d converted -o csv
+   pointcloudset-convert . -d converted -o csv

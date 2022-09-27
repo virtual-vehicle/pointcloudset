@@ -12,7 +12,7 @@ source:
 build:
   number: 0
   entry_points:
-    - rosbagconvert = pointcloudset.io.dataset.commandline:app
+    - pointcloudset-convert = pointcloudset.io.dataset.commandline:app
   script: "{{ PYTHON }} -m pip install . -vv"
 
 requirements:
@@ -24,11 +24,9 @@ requirements:
     - pandas
     - pip
     - plotly
-    - py3rosmsgs
-    - pycryptodomex
     - pyntcloud
     - python
-    - rospkg
+    - rosbags
     - rich
     - typer
   run:
@@ -38,11 +36,9 @@ requirements:
     - open3d>=0.15.0
     - pandas
     - plotly
-    - py3rosmsgs
-    - pycryptodomex
     - pyntcloud
     - python
-    - rospkg
+    - rosbags
     - rich
     - typer
 
@@ -58,7 +54,7 @@ test:
     - pointcloudset.pipeline
     - pointcloudset.plot
   commands:
-    - rosbagconvert --help
+    - pointcloudset-convert --help
 
 about:
   home: https://virtual-vehicle.github.io/pointcloudset/
