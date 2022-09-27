@@ -134,7 +134,7 @@ This produces the plot from the animation above.
 
 
 CLI to convert ROS bag files: pointcloudset-convert
-################################################
+##########################################################
 
 The package includes a powerful CLI to convert ROS bag files into many formats like csv, las and many more.
 
