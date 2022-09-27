@@ -143,6 +143,7 @@ def test_convert_large_file_complete(
     testdata_path_large: Path, tmp_path: Path, filename: str
 ):
     if testdata_path_large.exists():
+        len_target = 250
         testbag = testdata_path_large.joinpath(filename)
         check.is_true(testbag.exists())
         out_path = tmp_path.joinpath("cli")
@@ -156,19 +157,22 @@ def test_convert_large_file_complete(
                 out_path.as_posix(),
             ],
         )
-        out_path_real = out_path.joinpath("test")
+        out_path_real = out_path / Path(filename).stem
         check.equal(result.exit_code, 0)
         check.equal(out_path_real.exists(), True)
+        check.equal(len(list(out_path_real.parent.glob("*/*"))), len_target + 1)
         read_dataset = Dataset.from_file(out_path_real)
         check.is_instance(read_dataset, Dataset)
-        check.equal(len(read_dataset), 250)
-        check.equal(len(read_dataset.timestamps), 250)
+        check.equal(len(read_dataset), len_target)
+        check.equal(len(read_dataset.timestamps), len_target)
 
 
 @pytest.mark.slow
 def test_convert_large_file_part1(testdata_path_large: Path, tmp_path: Path):
     if testdata_path_large.exists():
-        testbag = testdata_path_large.joinpath("big_uncomp.bag")
+        filename = "big_uncomp.bag"
+        len_target = 30
+        testbag = testdata_path_large.joinpath(filename)
         check.is_true(testbag.exists())
         out_path = tmp_path.joinpath("cli")
         result = runner.invoke(
@@ -185,10 +189,11 @@ def test_convert_large_file_part1(testdata_path_large: Path, tmp_path: Path):
                 out_path.as_posix(),
             ],
         )
-        out_path_real = out_path.joinpath("test")
+        out_path_real = out_path / Path(filename).stem
         check.equal(result.exit_code, 0)
+        check.equal(len(list(out_path_real.parent.glob("*/*"))), len_target + 1)
         check.equal(out_path_real.exists(), True)
         read_dataset = Dataset.from_file(out_path_real)
         check.is_instance(read_dataset, Dataset)
-        check.equal(len(read_dataset), 30)
-        check.equal(len(read_dataset.timestamps), 30)
+        check.equal(len(read_dataset), len_target)
+        check.equal(len(read_dataset.timestamps), len_target)
