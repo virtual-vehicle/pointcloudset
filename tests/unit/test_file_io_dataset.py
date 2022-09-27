@@ -24,6 +24,11 @@ def test_from_bag(testbag1, keep_zeros):
     check.is_instance(ds, Dataset)
 
 
+def test_from_ros2(testros2):
+    ds = Dataset.from_file(testros2, topic="/os1_cloud_node/points", keep_zeros=False)
+    check.is_instance(ds, Dataset)
+
+
 def test_from_bag_start_stop(testbag1):
     ds = Dataset.from_file(
         testbag1,

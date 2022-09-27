@@ -90,8 +90,11 @@ class Dataset(DatasetCore):
             raise TypeError("Expecting a Path object for file_path")
         ext = file_path.suffix[1:].upper()
         if ext == "":
-            ext = "DIR"
-            from_dir = True
+            if file_path.joinpath("meta.json").exists():
+                from_dir = True
+                ext = "DIR"
+            else:
+                ext = "ROS2"
         if ext not in DATASET_FROM_FILE:
             raise ValueError(
                 (
