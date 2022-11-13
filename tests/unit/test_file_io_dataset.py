@@ -17,16 +17,16 @@ def test_from_bag_wrong_topic(testbag1):
 
 
 @pytest.mark.parametrize("keep_zeros", [True, False])
-def test_from_bag(testbag1, keep_zeros):
+def test_from_bag(ros_files, keep_zeros):
     ds = Dataset.from_file(
-        testbag1, topic="/os1_cloud_node/points", keep_zeros=keep_zeros
+        ros_files, topic="/os1_cloud_node/points", keep_zeros=keep_zeros
     )
     check.is_instance(ds, Dataset)
 
 
-def test_from_bag_start_stop(testbag1):
+def test_from_bag_start_stop(ros_files):
     ds = Dataset.from_file(
-        testbag1,
+        ros_files,
         topic="/os1_cloud_node/points",
         keep_zeros=False,
         start_frame_number=1,
@@ -36,8 +36,8 @@ def test_from_bag_start_stop(testbag1):
     check.equal(len(ds), 1)
 
 
-def test_to_dir(testbag1, tmp_path: Path):
-    ds = Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=True)
+def test_to_dir(ros_files, tmp_path: Path):
+    ds = Dataset.from_file(ros_files, topic="/os1_cloud_node/points", keep_zeros=True)
     testfile_name = tmp_path.joinpath("dataset")
     ds.to_file(file_path=testfile_name, use_orig_filename=False)
     p = testfile_name.glob("*.parquet")

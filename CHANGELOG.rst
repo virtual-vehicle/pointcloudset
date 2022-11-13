@@ -9,6 +9,12 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased
 -------------
 
+Added
+~~~~~~
+- support for ROS2 files (with SQLite backend). Read them in the same ways as ROS1 bag files
+- support for ROS2 conversion in pointcloudset-convert
+
+
 0.7.0 - (2022-09-27)
 -------------
 

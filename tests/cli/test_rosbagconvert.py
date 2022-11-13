@@ -19,19 +19,19 @@ def test_help():
     check.equal("Usage:" in result.stdout, True)
 
 
-def test_convert_one_bag_dir(testbag1: Path, tmp_path: Path):
+def test_convert_one_rosfile_to_dir(ros_files, tmp_path: Path):
     out_path = tmp_path.joinpath("cli")
     result = runner.invoke(
         app,
         [
-            testbag1.as_posix(),
+            ros_files.as_posix(),
             "-t",
             "/os1_cloud_node/points",
             "-d",
             out_path.as_posix(),
         ],
     )
-    out_path_real = out_path.joinpath("test")
+    out_path_real = out_path.joinpath(ros_files.stem)
     check.equal(result.exit_code, 0)
     check.equal(out_path_real.exists(), True)
     read_dataset = Dataset.from_file(out_path_real)
@@ -40,7 +40,7 @@ def test_convert_one_bag_dir(testbag1: Path, tmp_path: Path):
     check.equal(len(read_dataset.timestamps), 2)
 
 
-def test_convert_all_bags_dir(
+def test_convert_all_rosfiles_to_dir(
     tmp_path: Path, testdata_path: Path, monkeypatch: pytest.MonkeyPatch
 ):
     monkeypatch.chdir(testdata_path)
@@ -70,12 +70,12 @@ def test_convert_all_bags_dir(
 
 
 @pytest.mark.parametrize("fileformat", TO_FILE_PYNTCLOUD)
-def test_convert_one_bag_frames_to_files(testbag1: Path, tmp_path: Path, fileformat):
+def test_convert_one_ros_file_frames_to_files(ros_files, tmp_path: Path, fileformat):
     out_path = tmp_path.joinpath("cli_files")
     result = runner.invoke(
         app,
         [
-            testbag1.as_posix(),
+            ros_files.as_posix(),
             "-t",
             "/os1_cloud_node/points",
             "-d",
@@ -85,7 +85,7 @@ def test_convert_one_bag_frames_to_files(testbag1: Path, tmp_path: Path, filefor
         ],
     )
     check.equal(result.exit_code, 0)
-    out_path_real = out_path.joinpath("test")
+    out_path_real = out_path.joinpath(ros_files.stem)
     check.equal(out_path_real.exists(), True)
     files = list(out_path_real.glob(f"*.{fileformat.lower()}"))
     check.equal(len(files), 2)
@@ -93,12 +93,12 @@ def test_convert_one_bag_frames_to_files(testbag1: Path, tmp_path: Path, filefor
 
 
 @pytest.mark.parametrize("fileformat", TO_FILE_PYNTCLOUD)
-def test_convert_one_bag_one_frames_to_file(testbag1: Path, tmp_path: Path, fileformat):
+def test_convert_one_ros_file_one_frame_to_files(ros_files, tmp_path: Path, fileformat):
     out_path = tmp_path.joinpath("cli_1file")
     result = runner.invoke(
         app,
         [
-            testbag1.as_posix(),
+            ros_files.as_posix(),
             "-t",
             "/os1_cloud_node/points",
             "-d",
@@ -111,7 +111,7 @@ def test_convert_one_bag_one_frames_to_file(testbag1: Path, tmp_path: Path, file
             "1",
         ],
     )
-    out_path_real = out_path.joinpath("test")
+    out_path_real = out_path.joinpath(ros_files.stem)
     check.equal(result.exit_code, 0)
     check.equal(out_path_real.exists(), True)
     files = list(out_path_real.glob(f"*.{fileformat.lower()}"))
