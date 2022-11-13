@@ -1,11 +1,11 @@
-from __future__ import annotations
-
 import datetime
 from typing import Union
-import pandas as pd
 
 import dask
+import pandas as pd
 from dask.delayed import Delayed, DelayedLeaf
+
+from dask.dataframe.core import DataFrame
 
 
 class DatasetCore:
@@ -15,7 +15,7 @@ class DatasetCore:
 
     def __init__(
         self,
-        data: list[dask.delayed.DelayedLeaf] = [],
+        data: list[DelayedLeaf] = [],
         timestamps: list[datetime.datetime] = [],
         meta: dict = {"orig_file": "", "topic": ""},
     ) -> None:
@@ -50,7 +50,7 @@ class DatasetCore:
         return self.timestamps[-1] - self.timestamps[0]
 
     @property
-    def daskdataframe(self) -> dask.dataframe.core.DataFrame:
+    def daskdataframe(self) -> DataFrame:
         """
         Returns:
             dask.dataframe.DataFrame: Dask DataFrame with data of Dataset.
@@ -131,7 +131,7 @@ class DatasetCore:
 
     def get_pointclouds_between_timestamps(
         self, start_time: datetime.datetime, end_time: datetime.datetime
-    ) -> DatasetCore:
+    ) -> "DatasetCore":
         """Select pointclouds between start_time and end_time.
 
         Args:

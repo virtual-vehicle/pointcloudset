@@ -37,24 +37,23 @@ Parts of the code are from Willow Garage, Inc.
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 # ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-from __future__ import annotations
+
 
 import datetime
 import math
 import struct
 import sys
 from pathlib import Path
-from typing import Union, Generator, Literal
+from typing import Generator, Literal, Union
 
 import numpy as np
 import pandas as pd
-from rosbags.typesys.types import sensor_msgs__msg__PointCloud2
+from dask import delayed
+from rich.progress import track
 from rosbags.rosbag1 import Reader as Reader1
 from rosbags.rosbag2 import Reader as Reader2
 from rosbags.serde import deserialize_cdr, ros1_to_cdr
-from dask import delayed
-from rich.progress import track
-
+from rosbags.typesys.types import sensor_msgs__msg__PointCloud2
 
 _DATATYPES = {
     1: ("b", 1),

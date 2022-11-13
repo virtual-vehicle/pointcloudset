@@ -1,7 +1,6 @@
 """
 Utility function for filtering frames based on statistics.
 """
-
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
