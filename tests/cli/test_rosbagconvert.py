@@ -19,19 +19,19 @@ def test_help():
     check.equal("Usage:" in result.stdout, True)
 
 
-def test_convert_one_bag_dir(testbag1: Path, tmp_path: Path):
+def test_convert_one_bag_dir(ros_files, tmp_path: Path):
     out_path = tmp_path.joinpath("cli")
     result = runner.invoke(
         app,
         [
-            testbag1.as_posix(),
+            ros_files.as_posix(),
             "-t",
             "/os1_cloud_node/points",
             "-d",
             out_path.as_posix(),
         ],
     )
-    out_path_real = out_path.joinpath("test")
+    out_path_real = out_path.joinpath(ros_files.stem)
     check.equal(result.exit_code, 0)
     check.equal(out_path_real.exists(), True)
     read_dataset = Dataset.from_file(out_path_real)
