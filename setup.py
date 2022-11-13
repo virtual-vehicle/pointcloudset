@@ -61,7 +61,7 @@ setup(
         "open3d>=0.16.0",
         "plotly",
         "fastparquet",
-        "dask>=2022.02.0",
+        "dask>=2022.10.0",
         "typer",
         "rich",
         "rosbags",

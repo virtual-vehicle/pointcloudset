@@ -31,7 +31,6 @@
 		"jupyter.alwaysTrustNotebooks": true,
 		"editor.bracketPairColorization.enabled": true,
 		"python.linting.pylintArgs": [
-			"--disable={C0111}",
 			"--disable=protected-access",
 			"--disable=missing-function-docstring"
 		]

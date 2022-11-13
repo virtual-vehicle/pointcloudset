@@ -37,6 +37,5 @@ dependencies:
       - bump2version
       - matplotlib
       - bokeh
-      - distributed==2022.5.0
 prefix: /opt/conda
 
