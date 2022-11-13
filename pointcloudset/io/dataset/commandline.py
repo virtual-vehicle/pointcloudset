@@ -32,13 +32,17 @@ def get(
 
     Examples:
 
-    pointcloudset-convert -d converted .
+    convert all ROS1 bag files in a directory
+    $ pointcloudset-convert -d converted .
 
-    pointcloudset-convert -o csv -d converted_csv xyz.bag
+    convert all frames of bagfile xyz.bag into csv files
+    $ pointcloudset-convert -o csv -d converted_csv xyz.bag
 
-    pointcloudset-convert -d converted something_ros2
+    convert a ROS2 directoy to a pointcloudset file
+    $ pointcloudset-convert -d converted something_ros2
 
-    pointcloudset-convert -o las -d converted_las --start 1 --end 10 xyz.bag
+    convert the first 10 frames of a bag file int0las files
+    $ pointcloudset-convert -o las -d converted_las --start 1 --end 10 xyz.bag
     """
     console.line()
     console.rule(f"pointcloudset-convert  {pointcloudset.__version__}")
