@@ -1,1 +1,1 @@
-FROM tgoelles/pointcloudset_base:v0.7.0
+FROM tgoelles/pointcloudset_base:v0.8.0

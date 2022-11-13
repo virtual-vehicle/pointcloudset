@@ -75,7 +75,7 @@ Features
 * Docker image is available
 * Optimised - but not limited to - automotive lidar
 * Directly read ROS bagfiles and many pointcloud file formats
-* A command line tool to convert ROS bagfiles
+* A command line tool to convert ROS 1 & 2 files
 
 
 Use case examples
@@ -133,10 +133,10 @@ This produces the plot from the animation above.
 .. _tutorial notebooks: https://github.com/virtual-vehicle/pointcloudset/tree/master/doc/sphinx/source/tutorial_notebooks
 
 
-CLI to convert ROS bag files: pointcloudset-convert
+CLI to convert ROS1 and ROS2 files: pointcloudset-convert
 ##########################################################
 
-The package includes a powerful CLI to convert ROS bag files into many formats like csv, las and many more.
+The package includes a powerful CLI to convert ROS1 & 2 files into many formats like csv, las and many more.
 
 .. code-block:: console
 

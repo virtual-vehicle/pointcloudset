@@ -7,6 +7,9 @@ import pytest
 
 from pointcloudset import Dataset, PointCloud
 
+ROS1FILE = Path(__file__).parent.absolute() / "testdata/test.bag"
+ROS2FILE = Path(__file__).parent.absolute() / "testdata/ros2"
+
 
 @pytest.fixture()
 def testdata_path() -> Path:
@@ -20,7 +23,12 @@ def testdata_path_large() -> Path:
 
 @pytest.fixture()
 def testbag1():
-    return Path(__file__).parent.absolute() / "testdata/test.bag"
+    return ROS1FILE
+
+
+@pytest.fixture()
+def testros2():
+    return ROS2FILE
 
 
 @pytest.fixture()
@@ -203,3 +211,8 @@ def testdataset_vz6000(testvz6000_1, testvz6000_2) -> Dataset:
 def test_sets(request):
     """for testing with different datasets"""
     return request.getfixturevalue(request.param)
+
+
+@pytest.fixture(params=[ROS1FILE, ROS2FILE])
+def ros_files(request):
+    return request.param

@@ -14,6 +14,15 @@ Changed
 - using Python 3.10
 - using open3d = 0.16
 
+0.8.0 - (2022-11-13)
+-------------
+
+Added
+~~~~~~
+- support for ROS2 files (with SQLite backend). Read them in the same ways as ROS1 bag files
+- support for ROS2 conversion in pointcloudset-convert
+
+
 0.7.0 - (2022-09-27)
 -------------
 

@@ -1,0 +1,85 @@
+rosbag2_bagfile_information:
+  compression_format: ''
+  compression_mode: ''
+  custom_data: {}
+  duration:
+    nanoseconds: 182772439
+  files:
+  - duration:
+      nanoseconds: 182772439
+    message_count: 273
+    path: ros2.db3
+    starting_time:
+      nanoseconds_since_epoch: 1592833242605385634
+  message_count: 273
+  relative_file_paths:
+  - ros2.db3
+  starting_time:
+    nanoseconds_since_epoch: 1592833242605385634
+  storage_identifier: sqlite3
+  topics_with_message_count:
+  - message_count: 1
+    topic_metadata:
+      name: /tf_static
+      offered_qos_profiles: ''
+      serialization_format: cdr
+      type: tf2_msgs/msg/TFMessage
+  - message_count: 12
+    topic_metadata:
+      name: /rosout
+      offered_qos_profiles: "- history: 3\n  depth: 0\n  reliability: 1\n  durability:
+        1\n  deadline:\n    sec: 2147483647\n    nsec: 4294967295\n  lifespan:\n    sec:
+        2147483647\n    nsec: 4294967295\n  liveliness: 1\n  liveliness_lease_duration:\n
+        \   sec: 2147483647\n    nsec: 4294967295\n  avoid_ros_namespace_conventions:
+        false"
+      serialization_format: cdr
+      type: rosgraph_msgs/msg/Log
+  - message_count: 12
+    topic_metadata:
+      name: /rosout_agg
+      offered_qos_profiles: ''
+      serialization_format: cdr
+      type: rosgraph_msgs/msg/Log
+  - message_count: 17
+    topic_metadata:
+      name: /os1_node/imu_packets
+      offered_qos_profiles: ''
+      serialization_format: cdr
+      type: ouster_ros/msg/PacketMsg
+  - message_count: 206
+    topic_metadata:
+      name: /os1_node/lidar_packets
+      offered_qos_profiles: ''
+      serialization_format: cdr
+      type: ouster_ros/msg/PacketMsg
+  - message_count: 17
+    topic_metadata:
+      name: /os1_cloud_node/imu
+      offered_qos_profiles: ''
+      serialization_format: cdr
+      type: sensor_msgs/msg/Imu
+  - message_count: 2
+    topic_metadata:
+      name: /os1_cloud_node/points
+      offered_qos_profiles: ''
+      serialization_format: cdr
+      type: sensor_msgs/msg/PointCloud2
+  - message_count: 2
+    topic_metadata:
+      name: /img_node/range_image
+      offered_qos_profiles: ''
+      serialization_format: cdr
+      type: sensor_msgs/msg/Image
+  - message_count: 2
+    topic_metadata:
+      name: /img_node/noise_image
+      offered_qos_profiles: ''
+      serialization_format: cdr
+      type: sensor_msgs/msg/Image
+  - message_count: 2
+    topic_metadata:
+      name: /img_node/intensity_image
+      offered_qos_profiles: ''
+      serialization_format: cdr
+      type: sensor_msgs/msg/Image
+  version: 6

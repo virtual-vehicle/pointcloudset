@@ -90,8 +90,11 @@ class Dataset(DatasetCore):
             raise TypeError("Expecting a Path object for file_path")
         ext = file_path.suffix[1:].upper()
         if ext == "":
-            ext = "DIR"
-            from_dir = True
+            if file_path.joinpath("meta.json").exists():
+                from_dir = True
+                ext = "DIR"  # native pointcloudset format
+            else:
+                ext = "ROS2"  # ROS2 is also a directory
         if ext not in DATASET_FROM_FILE:
             raise ValueError(
                 (
@@ -99,7 +102,7 @@ class Dataset(DatasetCore):
                     " {DATASET_FROM_FILE.keys()}"
                 )
             )
-        res = DATASET_FROM_FILE[ext](file_path, **kwargs)
+        res = DATASET_FROM_FILE[ext](file_path, ext=ext, **kwargs)
         meta = res["meta"]
         out = cls(data=res["data"], timestamps=res["timestamps"], meta=meta)
         if from_dir:

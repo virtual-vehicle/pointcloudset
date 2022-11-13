@@ -1,10 +1,10 @@
 pointcloudset-convert
 ======================
 
-The best way to work with large ROS bagfiles is to convert the rosbag beforehand with
+The best way to work with large ROS1 or ROS2 files is to convert the rosbag beforehand with
 the provided command line tool.
 
-It is also possible to convert whole or parts of rosbags to many poplar formats which
+It is also possible to convert whole or parts of ROS files to many poplar formats which
 are supported by pyntcloud:
 
 

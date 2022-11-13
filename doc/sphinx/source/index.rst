@@ -15,7 +15,7 @@ Welcome to pointcloudset's documentation!
 
 .. toctree::
    :maxdepth: 1
-   :caption: Convert ROS bagfiles
+   :caption: Convert ROS 1 and ROS 2 files
 
    commandline_interface
 

@@ -4,20 +4,10 @@ import pandas as pd
 import numpy as np
 import pytest
 import pytest_check as check
-import rosbag
 from dask.delayed import DelayedLeaf
 from pandas.testing import assert_series_equal
 
 from pointcloudset import Dataset, PointCloud
-
-
-def test_dataset_len(testbag1: str, testset: Dataset):
-    bag = rosbag.Bag(testbag1)
-    len_bag = (bag.get_type_and_topic_info().topics)[
-        "/os1_cloud_node/points"
-    ].message_count
-    check.equal(len_bag, len(testset))
-    check.equal(len(testset), 2)
 
 
 @pytest.mark.parametrize("test_sets", ["testset", "testdataset_vz6000"], indirect=True)
@@ -522,7 +512,6 @@ def test_dataset_vz6000_agg_point(testdataset_vz6000: Dataset):
         testdataset_vz6000.min(depth="point")
 
 
-
 def test_dataset_bounding_box(
     testdataset_mini_real: Dataset,
     testpointcloud_mini_real: PointCloud,
@@ -538,6 +527,7 @@ def test_dataset_bounding_box(
     pd.testing.assert_series_equal(
         bb.iloc[1], max_2, check_dtype=False, check_names=False
     )
+
 
 def test_dataset_agg_long(testset: Dataset):
     res = testset.agg(
@@ -582,4 +572,3 @@ def test_dataset_agg_long_pointcloud(testset: Dataset):
     check.is_instance(res, list)
     check.is_instance(res[0], pd.DataFrame)
     check.equal(2, len(res))
-
