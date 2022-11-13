@@ -3,12 +3,13 @@ channels:
   - defaults
   - conda-forge
 dependencies:
-  - dask-core=2022.5.2
+  - dask-core=2022.10.0
   - pdal=2.4
   - fiona=1.8.21
   - pandoc
+  - pip
   - pip:
-      - open3d>=0.15.0
+      - open3d>=0.16.0
       - fastparquet
       - ipykernel
       - nbconvert
