@@ -9,6 +9,9 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased
 -------------
 
+0.8.0 - (2022-11-13)
+-------------
+
 Added
 ~~~~~~
 - support for ROS2 files (with SQLite backend). Read them in the same ways as ROS1 bag files
