@@ -1,6 +1,8 @@
 pointcloudset
 =========================================
 
+*Analyze large datasets of point clouds recorded over time in an efficient way.*
+
 .. image:: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/tests_docker.yml/badge.svg
    :target: https://github.com/virtual-vehicle/pointcloudset/actions/workflows/tests_docker.yml
    :alt: test status
@@ -36,7 +38,12 @@ pointcloudset
 
 .. inclusion-marker-do-not-remove
 
-Analyze large datasets of point clouds recorded over time in an efficient way.
+`Code`_ `Documentation`_
+
+.. _Code: https://github.com/virtual-vehicle/pointcloudset
+.. _Documentation: https://virtual-vehicle.github.io/pointcloudset/
+
+
 
 
 Features
@@ -59,6 +66,12 @@ Features
       return pointcloud.diff("pointcloud", to_compare)
 
    result = dataset.apply(isolate_target).apply(diff_to_pointcloud, to_compare=dataset[0])
+
+* Includes powerful aggregation method *agg* similar to pandas
+
+.. code-block:: python
+
+  dataset.agg(["min","max","mean","std"])
 
 * Support for large files with lazy evaluation and parallel processing
 
