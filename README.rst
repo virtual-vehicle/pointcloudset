@@ -38,7 +38,7 @@ pointcloudset
 
 .. inclusion-marker-do-not-remove
 
-`Code`_ `Documentation`_
+`Code`_ | `Documentation`_
 
 .. _Code: https://github.com/virtual-vehicle/pointcloudset
 .. _Documentation: https://virtual-vehicle.github.io/pointcloudset/
