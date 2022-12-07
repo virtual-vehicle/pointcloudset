@@ -87,7 +87,7 @@ Features
 * High level processing based on dask, pandas, open3D and pyntcloud
 * Docker image is available
 * Optimised - but not limited to - automotive lidar
-* Directly read ROS bagfiles and many pointcloud file formats
+* Directly read ROS files and many pointcloud file formats
 * A command line tool to convert ROS 1 & 2 files
 
 
