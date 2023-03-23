@@ -9,6 +9,15 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased
 -------------
 
+Added
+~~~~~~
+- tested with open3d 0.17
+
+Changed
+~~~~~~
+- updated open3d version for the docker image
+
+
 0.8.0 - (2022-11-13)
 -------------
 
