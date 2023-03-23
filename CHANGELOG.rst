@@ -12,10 +12,11 @@ Unreleased
 Added
 ~~~~~~
 - tested with open3d 0.17
+- tested with dask 2023.3.1
 
 Changed
 ~~~~~~
-- updated open3d version for the docker image
+- updated open3d, dask version for the docker image
 
 
 0.8.0 - (2022-11-13)
