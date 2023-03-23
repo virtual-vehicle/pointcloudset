@@ -1,6 +1,5 @@
 
-FROM ghcr.io/tgoelles/python_docker:v0.3.5_py3.9
-
+FROM ghcr.io/tgoelles/python_docker:v0.4.1_py3.10
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
