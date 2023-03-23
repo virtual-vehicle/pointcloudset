@@ -13,6 +13,7 @@ Added
 ~~~~~~
 - tested with open3d 0.17
 - tested with dask 2023.3.1
+- tested with python 3.10.2 and new versions of pandas and numpy
 
 Changed
 ~~~~~~
