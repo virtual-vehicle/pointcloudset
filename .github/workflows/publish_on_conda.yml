@@ -8,14 +8,14 @@ on:
       - "v*"
   workflow_dispatch:
 
+
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v1
     - name: publish-to-conda
-      uses: tgoelles/conda-publish-action@v1.3_open3d
+      uses: maxibor/conda-package-publish-action@v1.1
       with:
-        subdir: 'conda'
-        anacondatoken: ${{ secrets.ANACONDA_TOKEN }}
-        platforms: 'win osx linux'
+        subDir: 'conda'
+        AnacondaToken: ${{ secrets.ANACONDA_TOKEN }}
