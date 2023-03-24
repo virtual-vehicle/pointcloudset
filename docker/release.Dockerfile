@@ -1,6 +1,6 @@
 ########################################################################################
 # Docker image including the release
-FROM tgoelles/pointcloudset_base:vtgoelles/pointcloudset_base:v0.8.1
+FROM tgoelles/pointcloudset_base:v0.8.1
 
 # Copy local code to the container image.
 ENV PACKAGE_HOME /pointcloudset
