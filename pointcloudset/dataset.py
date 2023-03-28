@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Callable, Literal, Union, get_type_hints
+from typing import Any, Literal, get_type_hints
+from collections.abc import Callable
 
 import numpy as np
 import pandas
@@ -23,10 +24,8 @@ def _is_pipline_returing_pointcloud(pipeline, warn=True) -> bool:
         res = get_type_hints(pipeline)["return"] == PointCloud
     elif warn:
         print(
-            (
-                f"No return type was defined in {pipeline.__name__}:"
-                "will not return a new dataset"
-            )
+            f"No return type was defined in {pipeline.__name__}:"
+            "will not return a new dataset"
         )
     return res
 
@@ -39,9 +38,7 @@ class Dataset(DatasetCore):
     section of the docu.
     """
 
-    def __getitem__(
-        self, pointcloud_number: Union[slice, int]
-    ) -> Union[DatasetCore, PointCloud]:
+    def __getitem__(self, pointcloud_number: slice | int) -> DatasetCore | PointCloud:
         if isinstance(pointcloud_number, slice):
             data = self.data[pointcloud_number]
             timestamps = self.timestamps[pointcloud_number]
@@ -54,7 +51,7 @@ class Dataset(DatasetCore):
                 data=df, orig_file=self.meta["orig_file"], timestamp=timestamp
             )
         else:
-            raise TypeError("Wrong type {}".format(type(pointcloud_number).__name__))
+            raise TypeError(f"Wrong type {type(pointcloud_number).__name__}")
 
     @classmethod
     def from_file(cls, file_path: Path, **kwargs):
@@ -97,10 +94,8 @@ class Dataset(DatasetCore):
                 ext = "ROS2"  # ROS2 is also a directory
         if ext not in DATASET_FROM_FILE:
             raise ValueError(
-                (
-                    f"Unsupported file format {ext}; supported formats are:"
-                    " {DATASET_FROM_FILE.keys()}"
-                )
+                f"Unsupported file format {ext}; supported formats are:"
+                " {DATASET_FROM_FILE.keys()}"
             )
         res = DATASET_FROM_FILE[ext](file_path, ext=ext, **kwargs)
         meta = res["meta"]
@@ -162,10 +157,10 @@ class Dataset(DatasetCore):
 
     def apply(
         self,
-        func: Union[Callable[[PointCloud], PointCloud], Callable[[PointCloud], Any]],
+        func: Callable[[PointCloud], PointCloud] | Callable[[PointCloud], Any],
         warn: bool = True,
         **kwargs,
-    ) -> Union[Dataset, DelayedResult]:
+    ) -> Dataset | DelayedResult:
         """Applies a function to the dataset. It is also possible to pass keyword
         arguments.
 
@@ -250,11 +245,9 @@ class Dataset(DatasetCore):
 
     def agg(
         self,
-        agg: Union[str, list, dict],
+        agg: str | list | dict,
         depth: Literal["dataset", "pointcloud", "point"] = "dataset",
-    ) -> Union[
-        pandas.Series, list[pandas.DataFrame], pandas.DataFrame, pandas.DataFrame
-    ]:
+    ) -> pandas.Series | list[pandas.DataFrame] | pandas.DataFrame | pandas.DataFrame:
         """Aggregate using one or more operations over the whole dataset.
         Similar to :meth:`pandas.DataFrame.aggregate`.
         Uses :class:`dask.dataframe.DataFrame` with parallel processing.
@@ -470,9 +463,9 @@ class Dataset(DatasetCore):
         return self.agg("std", depth=depth)
 
     def _agg_per_pointcloud(
-        self, agg: Union[str, list, dict]
-    ) -> Union[pandas.DataFrame, list, pandas.DataFrame]:
-        def get(pointcloud, agg: Union[str, list, dict]):
+        self, agg: str | list | dict
+    ) -> pandas.DataFrame | list | pandas.DataFrame:
+        def get(pointcloud, agg: str | list | dict):
             return pointcloud.data.agg(agg)
 
         res = self.apply(get, warn=False, agg=agg).compute()

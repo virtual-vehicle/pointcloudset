@@ -127,7 +127,6 @@ def dataset_from_ros(
             reader.messages(connections=connections),
             total=end_frame_number - start_frame_number,
         ):
-
             frame = frame + 1
             if start_frame_number <= frame < end_frame_number:
                 timestamp_datetime = datetime.datetime.fromtimestamp(timestamp * 1e-9)

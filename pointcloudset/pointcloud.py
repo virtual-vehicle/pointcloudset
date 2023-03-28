@@ -140,9 +140,7 @@ class PointCloud(PointCloudCore):
     def from_instance(
         cls,
         library: Literal["PYNTCLOUD", "OPEN3D", "DATAFRAME", "PANDAS"],
-        instance: (
-            pandas.DataFrame | pyntcloud.PyntCloud | open3d.geometry.PointCloud
-        ),
+        instance: (pandas.DataFrame | pyntcloud.PyntCloud | open3d.geometry.PointCloud),
         **kwargs,
     ) -> PointCloud:
         """Converts a library instance to a pointcloudset PointCloud.
@@ -184,10 +182,10 @@ class PointCloud(PointCloudCore):
     def to_instance(
         self, library: Literal["PYNTCLOUD", "OPEN3D", "DATAFRAME", "PANDAS"], **kwargs
     ) -> (
-        pyntcloud.PyntCloud |
-        open3d.geometry.PointCloud |
-        pandas.DataFrame |
-        pandas.DataFrame
+        pyntcloud.PyntCloud
+        | open3d.geometry.PointCloud
+        | pandas.DataFrame
+        | pandas.DataFrame
     ):
         """Convert PointCloud to another library instance.
 
@@ -476,8 +474,8 @@ class PointCloud(PointCloudCore):
             new_data = self.data.iloc[filter_result].reset_index(drop=True)
         else:
             raise TypeError(
-                    "Wrong filter_result expecting array with boolean values or"
-                    "list of indices"
+                "Wrong filter_result expecting array with boolean values or"
+                "list of indices"
             )
         return PointCloud(new_data, timestamp=self.timestamp)
 
