@@ -100,7 +100,7 @@ def _dataset_from_single_dir(dir: Path) -> dict:
     _check_dir(dir)
     parquet_files = list(dir.glob("*.parquet"))
     data = dd.read_parquet(parquet_files)
-    with open(dir.joinpath("meta.json"), "r") as infile:
+    with open(dir.joinpath("meta.json")) as infile:
         meta = json.loads(infile.read())
     timestamps_raw = meta["timestamps"]
     timestamps = [

@@ -8,7 +8,6 @@ from pointcloudset import Dataset
 from pyntcloud.io import TO_FILE
 from rich.console import Console
 
-from typing import Union
 
 app = typer.Typer()
 console = Console()
@@ -24,7 +23,7 @@ def get(
     folder_to_write: str = typer.Option(".", "--output-dir", "-d"),
     output_format: str = typer.Option("POINTCLOUDSET", "--output-format", "-o"),
     start_frame_number: int = typer.Option(0, "--start", "-s"),
-    end_frame_number: Union[int, None] = typer.Option(None, "--end", "-e"),
+    end_frame_number: int | None = typer.Option(None, "--end", "-e"),
     keep_zeros: bool = False,
 ):
     """The main CLI function to convert ROS1 and ROS2 files to pointcloudset or files
