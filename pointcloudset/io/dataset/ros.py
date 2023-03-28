@@ -110,11 +110,14 @@ def dataset_from_ros(
     if ext == "BAG":
         Reader = Reader1
         rosversion = 1
+    elif ext == "MCAP":
+        Reader = Reader2
+        rosversion = 2
     elif ext == "ROS2":
         Reader = Reader2
         rosversion = 2
     else:
-        raise ValueError(f"expecting BAG or ROS2 for ext got {ext}")
+        raise ValueError(f"unexpected file extension got {ext}")
     with Reader(bagfile.as_posix()) as reader:
         connections = [x for x in reader.connections if x.topic == topic]
 
@@ -127,7 +130,6 @@ def dataset_from_ros(
             reader.messages(connections=connections),
             total=end_frame_number - start_frame_number,
         ):
-
             frame = frame + 1
             if start_frame_number <= frame < end_frame_number:
                 timestamp_datetime = datetime.datetime.fromtimestamp(timestamp * 1e-9)

@@ -18,11 +18,9 @@ def test_from_bag_wrong_topic(testbag1):
 
 @pytest.mark.parametrize("keep_zeros", [True, False])
 def test_from_bag(ros_files, keep_zeros):
-    if "mcap" in str(ros_files):
-        topic = "/sensing/lidar_top/points"
-    else:
-        topic = "/os1_cloud_node/points"
-    ds = Dataset.from_file(ros_files, topic=topic, keep_zeros=keep_zeros)
+    ds = Dataset.from_file(
+        ros_files, topic="/os1_cloud_node/points", keep_zeros=keep_zeros
+    )
     check.is_instance(ds, Dataset)
 
 
