@@ -66,7 +66,7 @@ nbsphinx_execute = "never"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.coverage",
-    "sphinx.ext.napoleonn",
+    "sphinx.ext.napoleon",
     "nbsphinx",
     "sphinx.ext.intersphinx",
     "sphinx_click",
