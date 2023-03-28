@@ -71,3 +71,6 @@ def test_read_and_write_bag_big_part(
         read_dataset = Dataset.from_file(testfile_name)
         check.is_instance(read_dataset, Dataset)
         check.equal(len(ds), len(read_dataset))
+
+
+#
