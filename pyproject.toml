@@ -1,0 +1,66 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pointcloudset"
+dynamic = ["version"]
+description = "Analyze large datasets of point clouds recorded over time in an efficient way"
+readme = "README.rst"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [
+    { name = "VIRTUAL VEHICLE Research GmbH", email = "thomas.goelles@v2c2.at" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Other Audience",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Utilities",
+    "Typing :: Typed",
+]
+dependencies = [
+    "dask>=2022.02.0",
+    "fastparquet",
+    "numpy",
+    "open3d>=0.15.0",
+    "pandas",
+    "plotly",
+    "pyntcloud",
+    "rich",
+    "rosbags",
+    "typer",
+]
+
+[project.optional-dependencies]
+LAS = [
+    "pylas",
+]
+
+[project.scripts]
+pointcloudset-convert = "pointcloudset.io.dataset.commandline:app"
+
+[project.urls]
+"Bug Tracker" = "https://github.com/virtual-vehicle/pointcloudset/issues"
+Documentation = "https://virtual-vehicle.github.io/pointcloudset/"
+Source = "https://github.com/virtual-vehicle/pointcloudset"
+
+[tool.hatch.version]
+path = "pointcloudset/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/pointcloudset",
+]
