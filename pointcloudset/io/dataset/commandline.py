@@ -8,7 +8,8 @@ from pointcloudset import Dataset
 from pyntcloud.io import TO_FILE
 from rich.console import Console
 
-from typing import Union
+from typing import Union  # still needed for Typer
+
 
 app = typer.Typer()
 console = Console()

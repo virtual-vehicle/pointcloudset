@@ -3,7 +3,6 @@ from __future__ import annotations
 import traceback
 import warnings
 from datetime import datetime
-from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -64,7 +63,7 @@ class PointCloudCore:
     def data(self, df: pd.DataFrame):
         if not isinstance(df, pd.DataFrame):
             raise TypeError("Data argument must be a DataFrame")
-        elif not set(["x", "y", "z"]).issubset(df.columns):
+        elif not {"x", "y", "z"}.issubset(df.columns):
             raise ValueError("Data must have x, y and z coordinates")
         self._update_data(df)
         self._check_index()
@@ -94,13 +93,13 @@ class PointCloudCore:
     def __len__(self) -> int:
         return len(self.data)
 
-    def __getitem__(self, id: Union[int, slice]) -> pd.DataFrame:
+    def __getitem__(self, id: int | slice) -> pd.DataFrame:
         if isinstance(id, slice):
             return self.data.iloc[id]
         elif isinstance(id, int):
             return self.data.iloc[[id]]
         else:
-            raise TypeError("Wrong type {}".format(type(id).__name__))
+            raise TypeError(f"Wrong type {type(id).__name__}")
 
     def _update_data(self, df: pd.DataFrame):
         """Utility function. Implicitly called when self.data is assigned."""

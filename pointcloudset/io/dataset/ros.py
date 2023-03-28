@@ -44,7 +44,8 @@ import math
 import struct
 import sys
 from pathlib import Path
-from typing import Union, Generator, Literal
+from typing import Literal
+from collections.abc import Generator
 
 import numpy as np
 import pandas as pd
@@ -86,7 +87,7 @@ def dataset_from_ros(
     end_frame_number: int = None,
     keep_zeros: bool = False,
     ext: Literal["BAG", "ROS2"] = "BAG",
-) -> Union[dict, None]:
+) -> dict | None:
     """Reads a Dataset from a bag file.
 
     Args:
@@ -127,7 +128,6 @@ def dataset_from_ros(
             reader.messages(connections=connections),
             total=end_frame_number - start_frame_number,
         ):
-
             frame = frame + 1
             if start_frame_number <= frame < end_frame_number:
                 timestamp_datetime = datetime.datetime.fromtimestamp(timestamp * 1e-9)
