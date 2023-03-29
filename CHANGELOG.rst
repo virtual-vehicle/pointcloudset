@@ -9,6 +9,10 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased
 -------------
 
+Changed
+~~~~~~
+- pointcloudset-convert now defaults to generating a directory named after the bagfile with added _pointcloudset to the directory name
+
 Fixed
 ~~~~~~
 - using nbformat==5.7.0 to avoid error with open3d 0.17
