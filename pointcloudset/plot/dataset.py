@@ -1,8 +1,9 @@
 """
 Functions for plotting datasets.
 """
-import plotly.graph_objs as go
 import warnings
+
+import plotly.graph_objs as go
 
 
 def animate_dataset(dataset, **kwargs) -> go.Figure:

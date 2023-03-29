@@ -1,23 +1,19 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any, Literal, get_type_hints
-from collections.abc import Callable
-from typing import Any, Callable, Literal, Union, get_type_hints
 
 import numpy as np
 import pandas
+import plotly.graph_objects as go
 from dask import delayed
-import plotly.graph_objects as go
-
-import plotly.graph_objects as go
-
 
 from pointcloudset.dataset_core import DatasetCore
 from pointcloudset.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_TO_FILE
 from pointcloudset.pipeline.delayed_result import DelayedResult
-from pointcloudset.pointcloud import PointCloud
 from pointcloudset.plot.dataset import animate_dataset
+from pointcloudset.pointcloud import PointCloud
 
 
 def _is_pipline_returing_pointcloud(pipeline, warn=True) -> bool:
@@ -219,21 +215,12 @@ class Dataset(DatasetCore):
 
                 dataset.apply(func, test=10)
         """
-
         returns_pointcloud = _is_pipline_returing_pointcloud(func, warn=warn)
-
-        columns = list(self[0].data.columns)
-
         columns = list(self[0].data.columns)
 
         if returns_pointcloud:
 
             def pipeline_delayed(element_in, timestamp):
-                pointcloud_in = PointCloud(data=element_in, timestamp=timestamp)
-                pointcloud = func(pointcloud_in, **kwargs)
-                if not pointcloud._has_data():
-                    pointcloud = PointCloud(columns=columns)
-                return pointcloud.data  # to generate an empty pointcloud
                 pointcloud_in = PointCloud(data=element_in, timestamp=timestamp)
                 pointcloud = func(pointcloud_in, **kwargs)
                 if not pointcloud._has_data():
@@ -255,19 +242,6 @@ class Dataset(DatasetCore):
             return Dataset(data=res, timestamps=self.timestamps, meta=self.meta)
         else:
             return DelayedResult(res)
-
-    @property
-    def has_original_id(self) -> bool:
-        """Check if all pointclouds in the Dataset have original_ids
-
-        Returns:
-            bool: ``True`` if all PointClouds in the the Dataset returns has_original_id.
-        """
-
-        def check_original_id(pc):
-            return pc.has_original_id
-
-        return all(self.apply(check_original_id, warn=False).compute())
 
     @property
     def has_original_id(self) -> bool:

@@ -1,14 +1,15 @@
 from __future__ import annotations
+
 from pathlib import Path
+from typing import Union
 
 import click  # needed for documentation
-import pointcloudset
 import typer
-from pointcloudset import Dataset
 from pyntcloud.io import TO_FILE
 from rich.console import Console
 
-from typing import Union
+import pointcloudset
+from pointcloudset import Dataset
 
 app = typer.Typer()
 console = Console()

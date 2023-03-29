@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import datetime
-import pandas as pd
 
 import dask
+import pandas as pd
 from dask.delayed import Delayed, DelayedLeaf
 
 

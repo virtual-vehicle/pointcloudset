@@ -4,6 +4,7 @@ Used mainly by :func:`pointcloudset.pointcloud.PointCloud.plot` but could also b
 on its own.
 """
 import math
+
 import numpy as np
 import plotly.express as px
 import plotly.graph_objs as go
