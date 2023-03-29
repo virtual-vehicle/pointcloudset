@@ -85,7 +85,7 @@ def test_convert_one_ros_file_frames_to_files(ros_files, tmp_path: Path, filefor
         ],
     )
     check.equal(result.exit_code, 0)
-    out_path_real = out_path.joinpath(ros_files.stem)
+    out_path_real = out_path.joinpath(ros_files.stem + "_pointcloudset")
     check.equal(out_path_real.exists(), True)
     files = list(out_path_real.glob(f"*.{fileformat.lower()}"))
     check.equal(len(files), 2)
@@ -111,7 +111,7 @@ def test_convert_one_ros_file_one_frame_to_files(ros_files, tmp_path: Path, file
             "1",
         ],
     )
-    out_path_real = out_path.joinpath(ros_files.stem)
+    out_path_real = out_path.joinpath(ros_files.stem + "_pointcloudset")
     check.equal(result.exit_code, 0)
     check.equal(out_path_real.exists(), True)
     files = list(out_path_real.glob(f"*.{fileformat.lower()}"))
@@ -157,7 +157,7 @@ def test_convert_large_file_complete(
                 out_path.as_posix(),
             ],
         )
-        out_path_real = out_path / Path(filename).stem
+        out_path_real = out_path.joinpath(Path(filename).stem + "_pointcloudset")
         check.equal(result.exit_code, 0)
         check.equal(out_path_real.exists(), True)
         check.equal(len(list(out_path_real.parent.glob("*/*"))), len_target + 1)
@@ -189,7 +189,7 @@ def test_convert_large_file_part1(testdata_path_large: Path, tmp_path: Path):
                 out_path.as_posix(),
             ],
         )
-        out_path_real = out_path / Path(filename).stem
+        out_path_real = out_path.joinpath(Path(filename).stem + "_pointcloudset")
         check.equal(result.exit_code, 0)
         check.equal(len(list(out_path_real.parent.glob("*/*"))), len_target + 1)
         check.equal(out_path_real.exists(), True)
