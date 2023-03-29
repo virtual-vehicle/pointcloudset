@@ -149,7 +149,8 @@ This produces the plot from the animation above.
 CLI to convert ROS1 and ROS2 files: pointcloudset-convert
 ##########################################################
 
-The package includes a powerful CLI to convert ROS1 & 2 files into many formats like pointcloudset, csv, las and many more.
+The package includes a powerful CLI to convert pointclouds in ROS1 & 2 files into many formats like pointcloudset, csv, las and many more.
+It is capable of handling both mcap and db3 ROS files.
 
 .. code-block:: console
 
