@@ -111,7 +111,7 @@ def test_convert_one_ros_file_one_frame_to_files(ros_files, tmp_path: Path, file
             "1",
         ],
     )
-    out_path_real = out_path.joinpath(ros_files.stem + "_pointcloudset")
+    out_path_real = out_path.joinpath(ros_files.stem)
     check.equal(result.exit_code, 0)
     check.equal(out_path_real.exists(), True)
     files = list(out_path_real.glob(f"*.{fileformat.lower()}"))
