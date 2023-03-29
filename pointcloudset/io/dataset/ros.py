@@ -86,11 +86,11 @@ def dataset_from_ros(
     keep_zeros: bool = False,
     ext: Literal["BAG", "ROS2"] = "BAG",
 ) -> Union[dict, None]:
-    """Reads a Dataset from a bag file.
+    """Reads a Dataset from a ROS1 bag of ROS2 mcap or db3 file.
 
     Args:
         bagfile (Path): Path to bag file.
-        topic (str): `ROS <https://www.ros.org/>`_ topic that should be rea
+        topic (str): `ROS <https://www.ros.org/>`_ topic that should be read
         start_frame_number (int, optional): Start pointcloud of pointcloud sequence to
             read. Defaults to 0.
         end_frame_number (int, optional): End pointcloud of pointcloud sequence to read.
