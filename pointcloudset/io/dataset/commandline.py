@@ -114,13 +114,13 @@ def _gen_file_paths(file_name):
 
 
 def _gen_folder(folder_to_write, ros_file_path):
-    if folder_to_write == ".":
-        folder_to_write_path = Path.cwd().joinpath(ros_file_path.stem)
-    else:
-        folder_to_write_path = Path(folder_to_write).joinpath(ros_file_path.stem)
+    folder_to_write_path = Path(folder_to_write).joinpath(
+        ros_file_path.stem + "_pointcloudset"
+    )
 
     if not folder_to_write_path.exists():
-        folder_to_write_path.mkdir(parents=True, exist_ok=False)
+        folder_to_write_path.mkdir(exist_ok=False)
+
     return folder_to_write_path
 
 
