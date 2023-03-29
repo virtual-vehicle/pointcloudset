@@ -140,9 +140,7 @@ class PointCloud(PointCloudCore):
     def from_instance(
         cls,
         library: Literal["PYNTCLOUD", "OPEN3D", "DATAFRAME", "PANDAS"],
-        instance: Union[
-            pandas.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud
-        ],
+        instance: (pandas.DataFrame | pyntcloud.PyntCloud | open3d.geometry.PointCloud),
         **kwargs,
     ) -> PointCloud:
         """Converts a library instance to a pointcloudset PointCloud.
@@ -183,12 +181,12 @@ class PointCloud(PointCloudCore):
 
     def to_instance(
         self, library: Literal["PYNTCLOUD", "OPEN3D", "DATAFRAME", "PANDAS"], **kwargs
-    ) -> Union[
-        pyntcloud.PyntCloud,
-        open3d.geometry.PointCloud,
-        pandas.DataFrame,
-        pandas.DataFrame,
-    ]:
+    ) -> (
+        pyntcloud.PyntCloud
+        | open3d.geometry.PointCloud
+        | pandas.DataFrame
+        | pandas.DataFrame
+    ):
         """Convert PointCloud to another library instance.
 
         Args:
@@ -224,8 +222,8 @@ class PointCloud(PointCloudCore):
 
     def plot(
         self,
-        color: Union[None, str] = None,
-        overlay: Optional[dict] = None,
+        color: None | str = None,
+        overlay: dict | None = None,
         point_size: float = 2,
         prepend_id: str = "",
         hover_data: Union(list[str], bool) = None,
@@ -321,7 +319,7 @@ class PointCloud(PointCloudCore):
     def diff(
         self,
         name: Literal["origin", "plane", "pointcloud", "point", "nearest"],
-        target: Union[None, PointCloud, np.ndarray] = None,
+        target: None | PointCloud | np.ndarray = None,
         **kwargs,
     ) -> PointCloud:
         """Calculate differences and distances to the origin, plane, point and pointcloud.
@@ -454,7 +452,7 @@ class PointCloud(PointCloudCore):
         """
         return self.filter("value", dim, ">", value)
 
-    def apply_filter(self, filter_result: Union[np.ndarray, list[int]]) -> PointCloud:
+    def apply_filter(self, filter_result: np.ndarray | list[int]) -> PointCloud:
         """Generating a new PointCloud by removing points according to a call of the
         filter method.
 
@@ -476,10 +474,8 @@ class PointCloud(PointCloudCore):
             new_data = self.data.iloc[filter_result].reset_index(drop=True)
         else:
             raise TypeError(
-                (
-                    "Wrong filter_result expecting array with boolean values or"
-                    "list of indices"
-                )
+                "Wrong filter_result expecting array with boolean values or"
+                "list of indices"
             )
         return PointCloud(new_data, timestamp=self.timestamp)
 
@@ -524,7 +520,7 @@ class PointCloud(PointCloudCore):
         ransac_n: int,
         num_iterations: int,
         return_plane_model: bool = False,
-    ) -> Union[PointCloud, dict]:
+    ) -> PointCloud | dict:
         """Segments a plane in the point cloud using the RANSAC algorithm.
         Based on :meth:`open3d:open3d.geometry.PointCloud.segment_plane`.
 

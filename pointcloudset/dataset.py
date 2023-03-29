@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any, Literal, get_type_hints
+from collections.abc import Callable
 from typing import Any, Callable, Literal, Union, get_type_hints
 
 import numpy as np
 import pandas
 from dask import delayed
+import plotly.graph_objects as go
+
 import plotly.graph_objects as go
 
 
@@ -39,9 +43,7 @@ class Dataset(DatasetCore):
     section of the docu.
     """
 
-    def __getitem__(
-        self, pointcloud_number: Union[slice, int]
-    ) -> Union[DatasetCore, PointCloud]:
+    def __getitem__(self, pointcloud_number: slice | int) -> DatasetCore | PointCloud:
         if isinstance(pointcloud_number, slice):
             data = self.data[pointcloud_number]
             timestamps = self.timestamps[pointcloud_number]
@@ -54,11 +56,12 @@ class Dataset(DatasetCore):
                 data=df, orig_file=self.meta["orig_file"], timestamp=timestamp
             )
         else:
-            raise TypeError("Wrong type {}".format(type(pointcloud_number).__name__))
+            raise TypeError(f"Wrong type {type(pointcloud_number).__name__}")
 
     @classmethod
     def from_file(cls, file_path: Path, **kwargs):
         """Reads a Dataset from a file.
+        For larger ROS bagfiles files use the commandline tool pointcloudset-convert to convert the ROS bagfile
         For larger ROS bagfiles files use the commandline tool pointcloudset-convert to convert the ROS bagfile
         beforehand.
 
@@ -84,7 +87,14 @@ class Dataset(DatasetCore):
             .. code-block:: python
 
                 pointcloudset.Dataset.from_file(bag_file, topic="lidar/points", keep_zeros=False)
+
+        Examples:
+
+            .. code-block:: python
+
+                pointcloudset.Dataset.from_file(bag_file, topic="lidar/points", keep_zeros=False)
         """
+        from_dir = False
         from_dir = False
         if not isinstance(file_path, Path):
             raise TypeError("Expecting a Path object for file_path")
@@ -166,10 +176,10 @@ class Dataset(DatasetCore):
 
     def apply(
         self,
-        func: Union[Callable[[PointCloud], PointCloud], Callable[[PointCloud], Any]],
+        func: Callable[[PointCloud], PointCloud] | Callable[[PointCloud], Any],
         warn: bool = True,
         **kwargs,
-    ) -> Union[Dataset, DelayedResult]:
+    ) -> Dataset | DelayedResult:
         """Applies a function to the dataset. It is also possible to pass keyword
         arguments.
 
@@ -214,9 +224,16 @@ class Dataset(DatasetCore):
 
         columns = list(self[0].data.columns)
 
+        columns = list(self[0].data.columns)
+
         if returns_pointcloud:
 
             def pipeline_delayed(element_in, timestamp):
+                pointcloud_in = PointCloud(data=element_in, timestamp=timestamp)
+                pointcloud = func(pointcloud_in, **kwargs)
+                if not pointcloud._has_data():
+                    pointcloud = PointCloud(columns=columns)
+                return pointcloud.data  # to generate an empty pointcloud
                 pointcloud_in = PointCloud(data=element_in, timestamp=timestamp)
                 pointcloud = func(pointcloud_in, **kwargs)
                 if not pointcloud._has_data():
@@ -252,9 +269,22 @@ class Dataset(DatasetCore):
 
         return all(self.apply(check_original_id, warn=False).compute())
 
+    @property
+    def has_original_id(self) -> bool:
+        """Check if all pointclouds in the Dataset have original_ids
+
+        Returns:
+            bool: ``True`` if all PointClouds in the the Dataset returns has_original_id.
+        """
+
+        def check_original_id(pc):
+            return pc.has_original_id
+
+        return all(self.apply(check_original_id, warn=False).compute())
+
     def agg(
         self,
-        agg: Union[str, list, dict],
+        agg: str | list | dict,
         depth: Literal["dataset", "pointcloud", "point"] = "dataset",
     ) -> Union[
         pandas.Series, list[pandas.DataFrame], pandas.DataFrame, pandas.DataFrame
@@ -474,9 +504,9 @@ class Dataset(DatasetCore):
         return self.agg("std", depth=depth)
 
     def _agg_per_pointcloud(
-        self, agg: Union[str, list, dict]
-    ) -> Union[pandas.DataFrame, list, pandas.DataFrame]:
-        def get(pointcloud, agg: Union[str, list, dict]):
+        self, agg: str | list | dict
+    ) -> pandas.DataFrame | list | pandas.DataFrame:
+        def get(pointcloud, agg: str | list | dict):
             return pointcloud.data.agg(agg)
 
         res = self.apply(get, warn=False, agg=agg).compute()

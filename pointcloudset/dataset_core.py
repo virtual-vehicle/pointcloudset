@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import datetime
-from typing import Union
 import pandas as pd
 
 import dask
@@ -92,7 +91,7 @@ class DatasetCore:
         self.n += 1
         return result
 
-    def _agg(self, agg: Union[str, list, dict]) -> dask.dataframe.DataFrame:
+    def _agg(self, agg: str | list | dict) -> dask.dataframe.DataFrame:
         """Aggregate using one or more operations over the whole dataset.
             Similar to pandas agg. Used dask dataframes with parallel processing.
 
@@ -171,7 +170,6 @@ class DatasetCore:
     def _check(self):
         assert "orig_file" in self.meta, "meta data does not contain orig_file"
         if len(self) > 0:
-
             assert len(self.timestamps) == len(
                 self.data
             ), f"Length of timestamps {len(self.timestamps)} do not match the data {len(self.data)}"
