@@ -9,6 +9,10 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased
 -------------
 
+Added
+~~~~~~
+- added support for reading ROS2 mcap files
+
 Changed
 ~~~~~~
 - pointcloudset-convert now defaults to generating a directory named after the bagfile with added _pointcloudset to the directory name

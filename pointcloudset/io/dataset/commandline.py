@@ -52,7 +52,9 @@ def get(
         for bagfile_path in bagfile_paths:
             console.rule(f"converting {bagfile_path.name} ...", style="blue")
 
-            folder_to_write_path = _gen_folder(folder_to_write, bagfile_path)
+            folder_to_write_path = _gen_folder(
+                folder_to_write, bagfile_path, output_format
+            )
 
             if output_format == "POINTCLOUDSET":
                 _convert_one_bag2dir(
@@ -115,14 +117,13 @@ def _gen_file_paths(file_name):
     return bagfile_paths
 
 
-def _gen_folder(folder_to_write: Path, ros_file_path: Path) -> Path:
+def _gen_folder(folder_to_write: str, ros_file_path: str, output_format: str) -> Path:
+    """Generate the folder to write the converted files to."""
+    suffix = "_pointcloudset" if output_format == "POINTCLOUDSET" else ""
     folder_to_write_path = Path(folder_to_write).joinpath(
-        ros_file_path.stem + "_pointcloudset"
+        Path(ros_file_path).stem + suffix
     )
-
-    if not folder_to_write_path.exists():
-        folder_to_write_path.mkdir(exist_ok=False, parents=True)
-
+    folder_to_write_path.mkdir(exist_ok=False, parents=True)
     return folder_to_write_path
 
 
