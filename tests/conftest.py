@@ -9,7 +9,7 @@ from pointcloudset import Dataset, PointCloud
 
 ROS1FILE = Path(__file__).parent.absolute() / "testdata/test.bag"
 ROS2FILE = Path(__file__).parent.absolute() / "testdata/ros2"
-ROS2MCAPFILE = Path(__file__).parent.absolute() / "testdata/test.mcap"
+ROS2MCAPFILE = Path(__file__).parent.absolute() / "testdata/ros2_mcap"
 
 
 @pytest.fixture()

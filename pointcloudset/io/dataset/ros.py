@@ -110,9 +110,6 @@ def dataset_from_ros(
     if ext == "BAG":
         Reader = Reader1
         rosversion = 1
-    elif ext == "MCAP":
-        Reader = Reader2
-        rosversion = 2
     elif ext == "ROS2":
         Reader = Reader2
         rosversion = 2
