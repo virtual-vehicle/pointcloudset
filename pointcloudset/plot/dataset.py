@@ -18,8 +18,8 @@ def animate_dataset(dataset, **kwargs) -> go.Figure:
 
     warnings.warn("Experimental Feature")
 
-    def plot_frame(pc):
-        return pc.plot(**kwargs)
+    def plot_frame(pointcloud):
+        return pointcloud.plot(**kwargs)
 
     start_frame = 0
     frames = dataset.apply(plot_frame, warn=False).compute()

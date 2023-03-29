@@ -79,7 +79,8 @@ def _plot_overlay_pointcloud(fig, pointcloud, name: str, marker_color: str, **kw
         marker_color (str): Color of the overlay.
 
     Returns:
-        plotly.graph_objects.Figure: Plot with PointCloud overlayed with another PointCloud.
+        plotly.graph_objects.Figure: Plot with PointCloud overlayed with another
+        PointCloud.
     """
     overlay_fig = pointcloud.plot(
         color=None, point_size=2.0, prepend_id=name + " ", opacity=0.7, **kwargs
@@ -106,10 +107,10 @@ def _plot_overlay_plane(
     Returns:
         plotly.graph_objects.Figure: Plot with PointCloud overlayed with plane.
     """
-    bb = orig_pointcloud.bounding_box
-    x = np.linspace(bb.x["min"], bb.x["max"], 100)
-    y = np.linspace(bb.y["min"], bb.y["max"], 100)
-    z = np.linspace(bb.z["min"], bb.z["max"], 100)
+    bounding_box = orig_pointcloud.bounding_box
+    x = np.linspace(bounding_box.x["min"], bounding_box.x["max"], 100)
+    y = np.linspace(bounding_box.y["min"], bounding_box.y["max"], 100)
+    z = np.linspace(bounding_box.z["min"], bounding_box.z["max"], 100)
 
     a, b, c, d = plane_model
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import warnings
 from pathlib import Path
-from typing import Literal, Optional, Union
+from typing import Literal, Union
 
 import numpy as np
 import open3d
@@ -139,8 +139,15 @@ class PointCloud(PointCloudCore):
     @classmethod
     def from_instance(
         cls,
-        library: Literal["PYNTCLOUD", "OPEN3D", "DATAFRAME", "PANDAS"],
-        instance: (pandas.DataFrame | pyntcloud.PyntCloud | open3d.geometry.PointCloud),
+        library: Literal[
+            "PANDAS",
+            "PYNTCLOUD",
+            "OPEN3D",
+            "DATAFRAME",
+        ] = "PANDAS",
+        instance: (
+            pandas.DataFrame | pyntcloud.PyntCloud | open3d.geometry.PointCloud
+        ) = pandas.DataFrame(),
         **kwargs,
     ) -> PointCloud:
         """Converts a library instance to a pointcloudset PointCloud.
