@@ -94,7 +94,11 @@ class Dataset(DatasetCore):
                 from_dir = True
                 ext = "DIR"  # native pointcloudset format
             else:
-                ext = "ROS2"  # ROS2 is also a directory
+                ext = "ROS2"  # ROS2 is also a directory for both mcap and dp3
+                if not file_path.joinpath("metadata.yaml").exists():
+                    raise FileNotFoundError(
+                        "metadata.yaml not found in directory, which is required for ROS2 format"
+                    )
         if ext not in DATASET_FROM_FILE:
             raise ValueError(
                 (

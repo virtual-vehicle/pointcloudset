@@ -31,8 +31,8 @@ def test_convert_one_rosfile_to_dir(ros_files, tmp_path: Path):
             out_path.as_posix(),
         ],
     )
-    out_path_real = out_path.joinpath(ros_files.stem)
     check.equal(result.exit_code, 0)
+    out_path_real = out_path.joinpath(ros_files.stem + "_pointcloudset")
     check.equal(out_path_real.exists(), True)
     read_dataset = Dataset.from_file(out_path_real)
     check.is_instance(read_dataset, Dataset)
