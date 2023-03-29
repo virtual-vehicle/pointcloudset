@@ -9,6 +9,11 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased
 -------------
 
+Fixed
+~~~~~~
+- using nbformat==5.7.0 to avoid error with open3d 0.17
+- deleted blackcellmagic due to errors and not beeing used
+
 0.8.1 - (2023-03-23)
 -------------
 

@@ -12,12 +12,11 @@ dependencies:
       - fastparquet
       - ipykernel
       - nbconvert
-      - nbformat
+      - nbformat==5.7.0
       - rosbags
       - kaleido
       - pyntcloud
       - setuptools
-      - blackcellmagic
       - isort
       - laspy>2.0.0
       - pylas
