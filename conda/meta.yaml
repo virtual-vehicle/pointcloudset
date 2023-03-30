@@ -54,7 +54,7 @@ test:
     - pointcloudset.pipeline
     - pointcloudset.plot
   commands:
-    - pointcloudset-convert --help
+    - pointcloudset --help
 
 about:
   home: https://virtual-vehicle.github.io/pointcloudset/
