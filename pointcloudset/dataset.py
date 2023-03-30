@@ -259,9 +259,7 @@ class Dataset(DatasetCore):
         self,
         agg: str | list | dict,
         depth: Literal["dataset", "pointcloud", "point"] = "dataset",
-    ) -> Union[
-        pandas.Series, list[pandas.DataFrame], pandas.DataFrame, pandas.DataFrame
-    ]:
+    ) -> pandas.Series | list[pandas.DataFrame] | pandas.DataFrame | pandas.DataFrame:
         """Aggregate using one or more operations over the whole dataset.
         Similar to :meth:`pandas.DataFrame.aggregate`.
         Uses :class:`dask.dataframe.DataFrame` with parallel processing.

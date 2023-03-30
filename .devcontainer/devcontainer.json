@@ -12,8 +12,6 @@
 		"python.terminal.activateEnvironment": false,
 		"python.linting.mypyPath": "/opt/conda/bin/mypy",
 		"python.testing.pytestPath": "/opt/conda/bin/pytest",
-		"python.linting.flake8Path": "/opt/conda/bin/flake8",
-		"python.linting.pylintPath": "/opt/conda/bin/pylint",
 		"python.formatting.provider": "black",
 		"python.formatting.blackPath": "/opt/conda/bin/black",
 		"editor.formatOnSave": true,
@@ -24,20 +22,11 @@
 		"python.linting.mypyEnabled": true,
 		"python.linting.enabled": true,
 		"python.linting.flake8Enabled": true,
-		"python.linting.flake8Args": [
-			"--max-line-length=88"
-		],
-		"python.linting.pylintEnabled": true,
 		"autoDocstring.docstringFormat": "google",
 		"cSpell.maxNumberOfProblems": 500,
 		"python.testing.pytestEnabled": true,
 		"jupyter.alwaysTrustNotebooks": true,
 		"editor.bracketPairColorization.enabled": true,
-		"python.linting.pylintArgs": [
-			"--disable={C0111}",
-			"--disable=protected-access",
-			"--disable=missing-function-docstring"
-		]
 	},
 	"postCreateCommand": "/opt/conda/bin/pip install -e .",
 	"extensions": [
@@ -51,7 +40,8 @@
 		"ms-azuretools.vscode-docker",
 		"streetsidesoftware.code-spell-checker",
 		"oderwat.indent-rainbow",
-		"GitHub.vscode-pull-request-github"
+		"GitHub.vscode-pull-request-github",
+		"charliermarsh.ruff"
 	],
 	"forwardPorts": [
 		5920,
