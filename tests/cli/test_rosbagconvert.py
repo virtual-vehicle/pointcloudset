@@ -19,6 +19,18 @@ def test_help():
     check.equal("Usage:" in result.stdout, True)
 
 
+def test_topics(ros_files):
+    result = runner.invoke(
+        app,
+        [
+            "topics",
+            ros_files.as_posix(),
+        ],
+    )
+    check.equal(result.exit_code, 0)
+    check.equal("found" in result.stdout, True)
+
+
 def test_convert_one_rosfile_to_dir(ros_files, tmp_path: Path):
     out_path = tmp_path.joinpath("cli")
     result = runner.invoke(
