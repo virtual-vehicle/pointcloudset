@@ -24,6 +24,7 @@ def test_convert_one_rosfile_to_dir(ros_files, tmp_path: Path):
     result = runner.invoke(
         app,
         [
+            "convert",
             ros_files.as_posix(),
             "-t",
             "/os1_cloud_node/points",
@@ -48,6 +49,7 @@ def test_convert_all_rosfiles_to_dir(
     result = runner.invoke(
         app,
         [
+            "convert",
             ".",
             "-t",
             "/os1_cloud_node/points",
@@ -75,6 +77,7 @@ def test_convert_one_ros_file_frames_to_files(ros_files, tmp_path: Path, filefor
     result = runner.invoke(
         app,
         [
+            "convert",
             ros_files.as_posix(),
             "-t",
             "/os1_cloud_node/points",
@@ -98,6 +101,7 @@ def test_convert_one_ros_file_one_frame_to_files(ros_files, tmp_path: Path, file
     result = runner.invoke(
         app,
         [
+            "convert",
             ros_files.as_posix(),
             "-t",
             "/os1_cloud_node/points",
@@ -126,7 +130,16 @@ def test_convert_all_bags_frames_files(
     out_path = tmp_path.joinpath("cli_dirs_frames")
     result = runner.invoke(
         app,
-        [".", "-t", "/os1_cloud_node/points", "-d", out_path.as_posix(), "-o", "csv"],
+        [
+            "convert",
+            ".",
+            "-t",
+            "/os1_cloud_node/points",
+            "-d",
+            out_path.as_posix(),
+            "-o",
+            "csv",
+        ],
     )
     check.equal(result.exit_code, 0)
     check.equal(out_path.exists(), True)
@@ -150,6 +163,7 @@ def test_convert_large_file_complete(
         result = runner.invoke(
             app,
             [
+                "convert",
                 testbag.as_posix(),
                 "-t",
                 "/os1_cloud_node/points",
@@ -178,6 +192,7 @@ def test_convert_large_file_part1(testdata_path_large: Path, tmp_path: Path):
         result = runner.invoke(
             app,
             [
+                "convert",
                 testbag.as_posix(),
                 "-s",
                 "50",
