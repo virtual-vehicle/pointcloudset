@@ -15,6 +15,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    needs: virtual-vehicle/pointcloudset/tests_docker.test
     steps:
       - uses: actions/checkout@v2
       - name: get python build setup
