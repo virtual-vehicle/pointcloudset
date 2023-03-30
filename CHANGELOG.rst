@@ -12,7 +12,7 @@ Unreleased
 Added
 ~~~~~~
 - added support for reading ROS2 mcap files
-- added a way to investigate the topic names of PointCloud2 messages inside ROS files "$ pointcloudset topics test.bag"
+- added a way to investigate the topic names of PointCloud2 messages inside ROS files with the CLI "$ pointcloudset topics test.bag"
 
 Changed
 ~~~~~~
@@ -22,7 +22,7 @@ Changed
 Fixed
 ~~~~~~
 - using nbformat==5.7.0 to avoid error with open3d 0.17
-- deleted blackcellmagic due to errors and not beeing used
+- deleted blackcellmagic due to errors and not being used
 - documentation of CLI where the examples where wrong
 
 0.8.1 - (2023-03-23)
