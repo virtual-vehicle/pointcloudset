@@ -9,6 +9,9 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased
 -------------
 
+0.9.0 - (2023-03-30)
+-------------
+
 Added
 ~~~~~~
 - added support for reading ROS2 mcap files
