@@ -9,6 +9,22 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased
 -------------
 
+Added
+~~~~~~
+- added support for reading ROS2 mcap files
+- added a way to investigate the topic names of PointCloud2 messages inside ROS files "$ pointcloudset topics test.bag"
+
+Changed
+~~~~~~
+- changed the name of the CLI from pointcloudset-convert to pointcloudset like "$ pointcloudset convert -t /os1_cloud_node/points test.bag"
+- pointcloudset convert now defaults to generating a directory named after the bagfile with added _pointcloudset to the directory name
+
+Fixed
+~~~~~~
+- using nbformat==5.7.0 to avoid error with open3d 0.17
+- deleted blackcellmagic due to errors and not beeing used
+- documentation of CLI where the examples where wrong
+
 0.8.1 - (2023-03-23)
 -------------
 

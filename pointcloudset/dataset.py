@@ -1,20 +1,19 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any, Literal, get_type_hints
-from collections.abc import Callable
 
 import numpy as np
 import pandas
-from dask import delayed
 import plotly.graph_objects as go
-
+from dask import delayed
 
 from pointcloudset.dataset_core import DatasetCore
 from pointcloudset.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_TO_FILE
 from pointcloudset.pipeline.delayed_result import DelayedResult
-from pointcloudset.pointcloud import PointCloud
 from pointcloudset.plot.dataset import animate_dataset
+from pointcloudset.pointcloud import PointCloud
 
 
 def _is_pipline_returing_pointcloud(pipeline, warn=True) -> bool:
@@ -24,8 +23,10 @@ def _is_pipline_returing_pointcloud(pipeline, warn=True) -> bool:
         res = get_type_hints(pipeline)["return"] == PointCloud
     elif warn:
         print(
-            f"No return type was defined in {pipeline.__name__}:"
-            "will not return a new dataset"
+            (
+                f"No return type was defined in {pipeline.__name__}:"
+                "will not return a new dataset"
+            )
         )
     return res
 
@@ -55,9 +56,9 @@ class Dataset(DatasetCore):
 
     @classmethod
     def from_file(cls, file_path: Path, **kwargs):
-        """Reads a Dataset from a file.
-        For larger ROS bagfiles files use the commandline tool pointcloudset-convert to convert the ROS bagfile
-        beforehand.
+        """Reads a Dataset from a file.gfile
+        For larger ROS bagfiles files use the commandline tool pointcloudset to convert
+        the ROS file beforehand.
 
         Supported are the native format which is a directore filled with fastparquet frames and
         ROS bag files (.bag).
@@ -81,7 +82,14 @@ class Dataset(DatasetCore):
             .. code-block:: python
 
                 pointcloudset.Dataset.from_file(bag_file, topic="lidar/points", keep_zeros=False)
+
+        Examples:
+
+            .. code-block:: python
+
+                pointcloudset.Dataset.from_file(bag_file, topic="lidar/points", keep_zeros=False)
         """
+        from_dir = False
         from_dir = False
         if not isinstance(file_path, Path):
             raise TypeError("Expecting a Path object for file_path")
@@ -91,11 +99,17 @@ class Dataset(DatasetCore):
                 from_dir = True
                 ext = "DIR"  # native pointcloudset format
             else:
-                ext = "ROS2"  # ROS2 is also a directory
+                ext = "ROS2"  # ROS2 is also a directory for both mcap and dp3
+                if not file_path.joinpath("metadata.yaml").exists():
+                    raise FileNotFoundError(
+                        "metadata.yaml not found in directory, which is required for ROS2 format"
+                    )
         if ext not in DATASET_FROM_FILE:
             raise ValueError(
-                f"Unsupported file format {ext}; supported formats are:"
-                " {DATASET_FROM_FILE.keys()}"
+                (
+                    f"Unsupported file format {ext}; supported formats are:"
+                    " {DATASET_FROM_FILE.keys()}"
+                )
             )
         res = DATASET_FROM_FILE[ext](file_path, ext=ext, **kwargs)
         meta = res["meta"]
@@ -200,9 +214,7 @@ class Dataset(DatasetCore):
 
                 dataset.apply(func, test=10)
         """
-
         returns_pointcloud = _is_pipline_returing_pointcloud(func, warn=warn)
-
         columns = list(self[0].data.columns)
 
         if returns_pointcloud:
@@ -247,7 +259,9 @@ class Dataset(DatasetCore):
         self,
         agg: str | list | dict,
         depth: Literal["dataset", "pointcloud", "point"] = "dataset",
-    ) -> pandas.Series | list[pandas.DataFrame] | pandas.DataFrame | pandas.DataFrame:
+    ) -> Union[
+        pandas.Series, list[pandas.DataFrame], pandas.DataFrame, pandas.DataFrame
+    ]:
         """Aggregate using one or more operations over the whole dataset.
         Similar to :meth:`pandas.DataFrame.aggregate`.
         Uses :class:`dask.dataframe.DataFrame` with parallel processing.

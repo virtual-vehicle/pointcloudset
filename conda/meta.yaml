@@ -12,7 +12,7 @@ source:
 build:
   number: 0
   entry_points:
-    - pointcloudset-convert = pointcloudset.io.dataset.commandline:app
+    - pointcloudset = pointcloudset.io.dataset.commandline:app
   script: "{{ PYTHON }} -m pip install . -vv"
 
 requirements:
@@ -54,7 +54,7 @@ test:
     - pointcloudset.pipeline
     - pointcloudset.plot
   commands:
-    - pointcloudset-convert --help
+    - pointcloudset --help
 
 about:
   home: https://virtual-vehicle.github.io/pointcloudset/

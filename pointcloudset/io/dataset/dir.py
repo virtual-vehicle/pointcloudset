@@ -8,6 +8,7 @@ import dask.dataframe as dd
 import numpy as np
 import pandas as pd
 from rich import print
+
 import pointcloudset
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
@@ -100,7 +101,7 @@ def _dataset_from_single_dir(dir: Path) -> dict:
     _check_dir(dir)
     parquet_files = list(dir.glob("*.parquet"))
     data = dd.read_parquet(parquet_files)
-    with open(dir.joinpath("meta.json")) as infile:
+    with open(dir.joinpath("meta.json"), "r") as infile:
         meta = json.loads(infile.read())
     timestamps_raw = meta["timestamps"]
     timestamps = [

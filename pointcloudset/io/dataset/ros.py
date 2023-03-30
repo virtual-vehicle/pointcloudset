@@ -44,18 +44,16 @@ import math
 import struct
 import sys
 from pathlib import Path
-from typing import Literal
-from collections.abc import Generator
+from typing import Generator, Literal, Union
 
 import numpy as np
 import pandas as pd
-from rosbags.typesys.types import sensor_msgs__msg__PointCloud2
+from dask import delayed
+from rich.progress import track
 from rosbags.rosbag1 import Reader as Reader1
 from rosbags.rosbag2 import Reader as Reader2
 from rosbags.serde import deserialize_cdr, ros1_to_cdr
-from dask import delayed
-from rich.progress import track
-
+from rosbags.typesys.types import sensor_msgs__msg__PointCloud2
 
 _DATATYPES = {
     1: ("b", 1),
@@ -87,12 +85,12 @@ def dataset_from_ros(
     end_frame_number: int = None,
     keep_zeros: bool = False,
     ext: Literal["BAG", "ROS2"] = "BAG",
-) -> dict | None:
-    """Reads a Dataset from a bag file.
+) -> Union[dict, None]:
+    """Reads a Dataset from a ROS1 bag of ROS2 mcap or db3 file.
 
     Args:
         bagfile (Path): Path to bag file.
-        topic (str): `ROS <https://www.ros.org/>`_ topic that should be rea
+        topic (str): `ROS <https://www.ros.org/>`_ topic that should be read
         start_frame_number (int, optional): Start pointcloud of pointcloud sequence to
             read. Defaults to 0.
         end_frame_number (int, optional): End pointcloud of pointcloud sequence to read.
@@ -115,7 +113,7 @@ def dataset_from_ros(
         Reader = Reader2
         rosversion = 2
     else:
-        raise ValueError(f"expecting BAG or ROS2 for ext got {ext}")
+        raise ValueError(f"unexpected file extension got {ext}")
     with Reader(bagfile.as_posix()) as reader:
         connections = [x for x in reader.connections if x.topic == topic]
 

@@ -1,4 +1,4 @@
-pointcloudset-convert
+pointcloudset CLI
 ======================
 
 The best way to work with large ROS1 or ROS2 files is to convert the rosbag beforehand with
@@ -25,12 +25,17 @@ the converted directory.
 
 .. code-block:: console
 
-   pointcloudset-convert test.bag -t /os1_cloud_node/points -d converted
+   pointcloudset convert -t /os1_cloud_node/points -d converted test.bag
 
+List all PointCloud2 topics in a ROS file.
+
+.. code-block:: console
+
+   pointcloudset topics test.bag
 
 
 .. click:: pointcloudset.io.dataset.commandline:typer_click_object
-   :prog: pointcloudset-convert
+   :prog: pointcloudset
    :nested: full
 
-   pointcloudset-convert . -d converted -o csv
+   pointcloudset -d converted -o csv .

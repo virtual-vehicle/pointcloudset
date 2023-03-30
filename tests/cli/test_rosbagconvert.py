@@ -19,11 +19,24 @@ def test_help():
     check.equal("Usage:" in result.stdout, True)
 
 
+def test_topics(ros_files):
+    result = runner.invoke(
+        app,
+        [
+            "topics",
+            ros_files.as_posix(),
+        ],
+    )
+    check.equal(result.exit_code, 0)
+    check.equal("found" in result.stdout, True)
+
+
 def test_convert_one_rosfile_to_dir(ros_files, tmp_path: Path):
     out_path = tmp_path.joinpath("cli")
     result = runner.invoke(
         app,
         [
+            "convert",
             ros_files.as_posix(),
             "-t",
             "/os1_cloud_node/points",
@@ -31,8 +44,8 @@ def test_convert_one_rosfile_to_dir(ros_files, tmp_path: Path):
             out_path.as_posix(),
         ],
     )
-    out_path_real = out_path.joinpath(ros_files.stem)
     check.equal(result.exit_code, 0)
+    out_path_real = out_path.joinpath(ros_files.stem + "_pointcloudset")
     check.equal(out_path_real.exists(), True)
     read_dataset = Dataset.from_file(out_path_real)
     check.is_instance(read_dataset, Dataset)
@@ -48,6 +61,7 @@ def test_convert_all_rosfiles_to_dir(
     result = runner.invoke(
         app,
         [
+            "convert",
             ".",
             "-t",
             "/os1_cloud_node/points",
@@ -75,6 +89,7 @@ def test_convert_one_ros_file_frames_to_files(ros_files, tmp_path: Path, filefor
     result = runner.invoke(
         app,
         [
+            "convert",
             ros_files.as_posix(),
             "-t",
             "/os1_cloud_node/points",
@@ -98,6 +113,7 @@ def test_convert_one_ros_file_one_frame_to_files(ros_files, tmp_path: Path, file
     result = runner.invoke(
         app,
         [
+            "convert",
             ros_files.as_posix(),
             "-t",
             "/os1_cloud_node/points",
@@ -126,7 +142,16 @@ def test_convert_all_bags_frames_files(
     out_path = tmp_path.joinpath("cli_dirs_frames")
     result = runner.invoke(
         app,
-        [".", "-t", "/os1_cloud_node/points", "-d", out_path.as_posix(), "-o", "csv"],
+        [
+            "convert",
+            ".",
+            "-t",
+            "/os1_cloud_node/points",
+            "-d",
+            out_path.as_posix(),
+            "-o",
+            "csv",
+        ],
     )
     check.equal(result.exit_code, 0)
     check.equal(out_path.exists(), True)
@@ -150,6 +175,7 @@ def test_convert_large_file_complete(
         result = runner.invoke(
             app,
             [
+                "convert",
                 testbag.as_posix(),
                 "-t",
                 "/os1_cloud_node/points",
@@ -157,7 +183,7 @@ def test_convert_large_file_complete(
                 out_path.as_posix(),
             ],
         )
-        out_path_real = out_path / Path(filename).stem
+        out_path_real = out_path.joinpath(Path(filename).stem + "_pointcloudset")
         check.equal(result.exit_code, 0)
         check.equal(out_path_real.exists(), True)
         check.equal(len(list(out_path_real.parent.glob("*/*"))), len_target + 1)
@@ -178,6 +204,7 @@ def test_convert_large_file_part1(testdata_path_large: Path, tmp_path: Path):
         result = runner.invoke(
             app,
             [
+                "convert",
                 testbag.as_posix(),
                 "-s",
                 "50",
@@ -189,7 +216,7 @@ def test_convert_large_file_part1(testdata_path_large: Path, tmp_path: Path):
                 out_path.as_posix(),
             ],
         )
-        out_path_real = out_path / Path(filename).stem
+        out_path_real = out_path.joinpath(Path(filename).stem + "_pointcloudset")
         check.equal(result.exit_code, 0)
         check.equal(len(list(out_path_real.parent.glob("*/*"))), len_target + 1)
         check.equal(out_path_real.exists(), True)

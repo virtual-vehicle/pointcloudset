@@ -1,15 +1,16 @@
 from __future__ import annotations
+
 from pathlib import Path
+from typing import Union
 
 import click  # needed for documentation
-import pointcloudset
 import typer
-from pointcloudset import Dataset
 from pyntcloud.io import TO_FILE
 from rich.console import Console
+from rosbags.highlevel import AnyReader
 
-from typing import Union  # still needed for Typer
-
+import pointcloudset
+from pointcloudset import Dataset
 
 app = typer.Typer()
 console = Console()
@@ -19,7 +20,7 @@ TO_FILE_CLI = TO_FILE_PYNTCLOUD.append("POINTCLOUDSET")
 
 
 @app.command()
-def get(
+def convert(
     ros_file: str,
     topic: str = typer.Option("/os1_cloud_node/points", "--topic", "-t"),
     folder_to_write: str = typer.Option(".", "--output-dir", "-d"),
@@ -34,26 +35,28 @@ def get(
     Examples:
 
     convert all ROS1 bag files in a directory
-    $ pointcloudset-convert -d converted .
+    $ pointcloudset convert -d converted .
 
     convert all frames of bagfile xyz.bag into csv files
-    $ pointcloudset-convert -o csv -d converted_csv xyz.bag
+    $ pointcloudset convert -o csv -d converted_csv xyz.bag
 
     convert a ROS2 directoy to a pointcloudset file
-    $ pointcloudset-convert -d converted something_ros2
+    $ pointcloudset convert -d converted something_ros2
 
     convert the first 10 frames of a bag file int0las files
-    $ pointcloudset-convert -o las -d converted_las --start 1 --end 10 xyz.bag
+    $ pointcloudset convert -o las -d converted_las --start 1 --end 10 xyz.bag
     """
     console.line()
-    console.rule(f"pointcloudset-convert  {pointcloudset.__version__}")
+    console.rule(f"pointcloudset {pointcloudset.__version__}")
     bagfile_paths = _gen_file_paths(ros_file)
     console.rule(output_format)
     with console.status("Converting...", spinner="runner"):
         for bagfile_path in bagfile_paths:
             console.rule(f"converting {bagfile_path.name} ...", style="blue")
 
-            folder_to_write_path = _gen_folder(folder_to_write, bagfile_path)
+            folder_to_write_path = _gen_folder(
+                folder_to_write, bagfile_path, output_format
+            )
 
             if output_format == "POINTCLOUDSET":
                 _convert_one_bag2dir(
@@ -82,6 +85,34 @@ def get(
     console.rule("Done :sake:")
 
 
+@app.command()
+def topics(ros_file: str):
+    """List all ROS PointCloud2 topics which can be converted.
+
+    Args:
+        ros_file (str): ROS1 or ROS2 file or directory
+
+    Examples:
+
+    show all PointCloud2 topis in a  ROS1 bag file
+    $ pointcloudset topics test.bag
+    """
+    with AnyReader([Path(ros_file)]) as reader:
+        all_topics = reader.topics
+    pointcloud_topics = {
+        k: f"{v.msgtype} with {v.msgcount} messages"
+        for k, v in all_topics.items()
+        if v.msgtype == "sensor_msgs/msg/PointCloud2"
+    }
+
+    if len(pointcloud_topics) == 0:
+        console.rule("no pointcloud topics found")
+    else:
+        console.rule(f"found {len(pointcloud_topics)} PointCloud2 topics :sake: ")
+        console.print(pointcloud_topics)
+    console.rule()
+
+
 def _convert_one_bag2dir(
     ros_file: Path,
     topic: str,
@@ -90,6 +121,8 @@ def _convert_one_bag2dir(
     keep_zeros: bool = False,
     folder_to_write: Path = Path(),
 ):
+    if not ros_file.exists():
+        raise typer.BadParameter(f"{ros_file} does not exist")
     dataset = Dataset.from_file(
         file_path=ros_file,
         topic=topic,
@@ -114,14 +147,13 @@ def _gen_file_paths(file_name):
     return bagfile_paths
 
 
-def _gen_folder(folder_to_write, ros_file_path):
-    if folder_to_write == ".":
-        folder_to_write_path = Path.cwd().joinpath(ros_file_path.stem)
-    else:
-        folder_to_write_path = Path(folder_to_write).joinpath(ros_file_path.stem)
-
-    if not folder_to_write_path.exists():
-        folder_to_write_path.mkdir(parents=True, exist_ok=False)
+def _gen_folder(folder_to_write: str, ros_file_path: str, output_format: str) -> Path:
+    """Generate the folder to write the converted files to."""
+    suffix = "_pointcloudset" if output_format == "POINTCLOUDSET" else ""
+    folder_to_write_path = Path(folder_to_write).joinpath(
+        Path(ros_file_path).stem + suffix
+    )
+    folder_to_write_path.mkdir(exist_ok=False, parents=True)
     return folder_to_write_path
 
 

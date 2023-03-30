@@ -146,18 +146,24 @@ This produces the plot from the animation above.
 .. _tutorial notebooks: https://github.com/virtual-vehicle/pointcloudset/tree/master/doc/sphinx/source/tutorial_notebooks
 
 
-CLI to convert ROS1 and ROS2 files: pointcloudset-convert
+CLI to convert ROS1 and ROS2 files: pointcloudset convert
 ##########################################################
 
-The package includes a powerful CLI to convert ROS1 & 2 files into many formats like pointcloudset, csv, las and many more.
+The package includes a powerful CLI to convert pointclouds in ROS1 & 2 files into many formats like pointcloudset, csv, las and many more.
+It is capable of handling both mcap and db3 ROS files.
 
 .. code-block:: console
 
-   pointcloudset-convert --output-format csv --output-dir converted_csv test.bag
-
+   pointcloudset convert --output-format csv --output-dir converted_csv test.bag
 
 .. image:: https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/cli_demo.gif
    :width: 600
+
+You can view PointCloud2 messages with
+
+.. code-block:: console
+
+   pointcloudset topics test.bag
 
 
 Comparison to related packages

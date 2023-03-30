@@ -3,7 +3,7 @@ from __future__ import annotations
 import datetime
 import warnings
 from pathlib import Path
-from typing import Literal, Union, Optional
+from typing import Literal, Union
 
 import numpy as np
 import open3d
@@ -12,6 +12,7 @@ import plotly
 import plotly.express as px
 import pyntcloud
 
+from pointcloudset.config import PLOTLYSIZELIMIT
 from pointcloudset.diff import ALL_DIFFS
 from pointcloudset.filter import ALL_FILTERS
 from pointcloudset.io import (
@@ -22,7 +23,6 @@ from pointcloudset.io import (
 )
 from pointcloudset.plot.pointcloud import plot_overlay
 from pointcloudset.pointcloud_core import PointCloudCore
-from pointcloudset.config import PLOTLYSIZELIMIT
 
 
 class PointCloud(PointCloudCore):
@@ -139,8 +139,15 @@ class PointCloud(PointCloudCore):
     @classmethod
     def from_instance(
         cls,
-        library: Literal["PYNTCLOUD", "OPEN3D", "DATAFRAME", "PANDAS"],
-        instance: (pandas.DataFrame | pyntcloud.PyntCloud | open3d.geometry.PointCloud),
+        library: Literal[
+            "PANDAS",
+            "PYNTCLOUD",
+            "OPEN3D",
+            "DATAFRAME",
+        ] = "PANDAS",
+        instance: (
+            pandas.DataFrame | pyntcloud.PyntCloud | open3d.geometry.PointCloud
+        ) = pandas.DataFrame(),
         **kwargs,
     ) -> PointCloud:
         """Converts a library instance to a pointcloudset PointCloud.
