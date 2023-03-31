@@ -7,41 +7,45 @@
 	// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
 	"dockerFile": "dev.Dockerfile",
 	// Set *default* container specific settings.json values on container create.
-	"settings": {
-		"python.pythonPath": "/opt/conda/bin/python",
-		"python.terminal.activateEnvironment": false,
-		"python.linting.mypyPath": "/opt/conda/bin/mypy",
-		"python.testing.pytestPath": "/opt/conda/bin/pytest",
-		"python.formatting.provider": "black",
-		"python.formatting.blackPath": "/opt/conda/bin/black",
-		"editor.formatOnSave": true,
-		"[latex]": {
-			"editor.wordWrap": "on",
-			"editor.formatOnSave": false,
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"njpwerner.autodocstring",
+				"ms-azuretools.vscode-docker",
+				"mhutchie.git-graph",
+				"eamodio.gitlens",
+				"tomoki1207.pdf",
+				"ms-azuretools.vscode-docker",
+				"streetsidesoftware.code-spell-checker",
+				"oderwat.indent-rainbow",
+				"GitHub.vscode-pull-request-github",
+				"charliermarsh.ruff"
+			],
+			"settings": {
+				"python.pythonPath": "/opt/conda/bin/python",
+				"python.terminal.activateEnvironment": false,
+				"python.linting.mypyPath": "/opt/conda/bin/mypy",
+				"python.testing.pytestPath": "/opt/conda/bin/pytest",
+				"python.formatting.provider": "black",
+				"python.formatting.blackPath": "/opt/conda/bin/black",
+				"editor.formatOnSave": true,
+				"[latex]": {
+					"editor.wordWrap": "on",
+					"editor.formatOnSave": false,
+				},
+				"python.linting.mypyEnabled": true,
+				"python.linting.enabled": true,
+				"autoDocstring.docstringFormat": "google",
+				"cSpell.maxNumberOfProblems": 500,
+				"python.testing.pytestEnabled": true,
+				"jupyter.alwaysTrustNotebooks": true,
+				"editor.bracketPairColorization.enabled": true,
+				"notebook.formatOnSave.enabled": true
+			},
 		},
-		"python.linting.mypyEnabled": true,
-		"python.linting.enabled": true,
-		"autoDocstring.docstringFormat": "google",
-		"cSpell.maxNumberOfProblems": 500,
-		"python.testing.pytestEnabled": true,
-		"jupyter.alwaysTrustNotebooks": true,
-		"editor.bracketPairColorization.enabled": true,
 	},
 	"postCreateCommand": "/opt/conda/bin/pip install -e .",
-	"extensions": [
-		"ms-python.python",
-		"ms-python.vscode-pylance",
-		"njpwerner.autodocstring",
-		"ms-azuretools.vscode-docker",
-		"mhutchie.git-graph",
-		"eamodio.gitlens",
-		"tomoki1207.pdf",
-		"ms-azuretools.vscode-docker",
-		"streetsidesoftware.code-spell-checker",
-		"oderwat.indent-rainbow",
-		"GitHub.vscode-pull-request-github",
-		"charliermarsh.ruff"
-	],
 	"forwardPorts": [
 		5920,
 		5900,
