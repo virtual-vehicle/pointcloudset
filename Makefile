@@ -15,6 +15,12 @@ test:
 	python -m coverage report -i
 	python -m coverage html -i
 
+ruff:
+	ruff pointcloudset
+
+ruff-fix:
+	ruff pointcloudset --fix
+
 mypy:
 	mypy -p pointcloudset --ignore-missing-imports
 

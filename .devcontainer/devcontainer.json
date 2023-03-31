@@ -21,7 +21,6 @@
 		},
 		"python.linting.mypyEnabled": true,
 		"python.linting.enabled": true,
-		"python.linting.flake8Enabled": true,
 		"autoDocstring.docstringFormat": "google",
 		"cSpell.maxNumberOfProblems": 500,
 		"python.testing.pytestEnabled": true,

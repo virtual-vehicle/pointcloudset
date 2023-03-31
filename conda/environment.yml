@@ -18,6 +18,7 @@ dependencies:
       - pyntcloud
       - setuptools
       - isort
+      - ruff
       - laspy>2.0.0
       - pylas
       - pytest
