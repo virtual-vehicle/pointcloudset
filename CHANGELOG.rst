@@ -9,6 +9,10 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased
 -------------
 
+Changed
+~~~~~~
+- using ruff instead of flake8 and pylint
+
 0.9.0 - (2023-03-30)
 -------------
 
