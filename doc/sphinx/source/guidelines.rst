@@ -5,4 +5,4 @@ Guidelines
 * Write tests for every method/function which manipulates data.
 * Have a look at the Makefile and the available make commands.
 * Use typehints when declaring a function, class or method.
-* VS code settings in the dev container take care of linting with mypy, flake8 and code formatting with black.
+* VS code settings in the dev container take care of linting with mypy, ruff and code formatting with black.
