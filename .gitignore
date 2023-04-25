@@ -117,6 +117,8 @@ tests/testdata/converted
 *.dirlock
 *dask-worker-space*
 logs*
+*.bkp
+*.dtmp
 
 #ignoring large ros2 files
 tests/testdata/ros2_mcap/molisens_2022_09_27-16_37_57
