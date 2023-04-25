@@ -1,0 +1,7 @@
+pointcloudset.dataset\_core module
+==================================
+
+.. automodule:: pointcloudset.dataset_core
+   :members:
+   :undoc-members:
+   :show-inheritance:

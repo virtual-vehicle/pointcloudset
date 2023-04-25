@@ -1,0 +1,7 @@
+pointcloudset.geometry.point module
+===================================
+
+.. automodule:: pointcloudset.geometry.point
+   :members:
+   :undoc-members:
+   :show-inheritance:

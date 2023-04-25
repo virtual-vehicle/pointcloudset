@@ -1,0 +1,7 @@
+pointcloudset.io.dataset.ros module
+===================================
+
+.. automodule:: pointcloudset.io.dataset.ros
+   :members:
+   :undoc-members:
+   :show-inheritance:
