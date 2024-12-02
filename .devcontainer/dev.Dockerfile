@@ -28,13 +28,11 @@ RUN apt-get update && \
     libusb-1.0-0 \
     libgomp1 \
     pybind11-dev \
+    pandoc \
     software-properties-common \
     mesa-utils && \
     rm -rf /var/lib/apt/lists/*
 
-# Python update conda base environment
-COPY .devcontainer/requirements.txt /tmp/pip-tmp/
-RUN pip install --no-cache-dir -r /tmp/pip-tmp/requirements.txt
 
 
 # Switch back to dialog for any ad-hoc use of apt-get

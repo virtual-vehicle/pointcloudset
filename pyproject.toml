@@ -43,6 +43,7 @@ dependencies = [
     "rosbags",
     "ipywidgets",
 ]
+[project.optional-dependencies]
 dev = [
     "pytest",
     "pytest-cov",
@@ -65,15 +66,13 @@ doc = [
     "sphinx-click",
     "pandoc",
 ]
+LAS = ["pylas"]
 
 [project.urls]
 "Bug Tracker" = "https://github.com/virtual-vehicle/pointcloudset/issues"
 "Source" = "https://github.com/virtual-vehicle/pointcloudset"
 "Documentation" = "https://virtual-vehicle.github.io/pointcloudset/"
 
-
-[project.optional-dependencies]
-LAS = ["pylas"]
 
 [project.scripts]
 pointcloudset = "pointcloudset.io.dataset.commandline:app"
