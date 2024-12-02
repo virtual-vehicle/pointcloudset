@@ -41,6 +41,7 @@ dependencies = [
     "typer",
     "rich",
     "rosbags",
+    "ipywidgets",
 ]
 dev = [
     "pytest",
