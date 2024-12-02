@@ -16,26 +16,20 @@ test:
 	python -m coverage html -i
 
 ruff:
-	ruff pointcloudset
+	ruff check pointcloudset
 
 ruff-fix:
-	ruff pointcloudset --fix
+	ruff check pointcloudset --fix
 
 mypy:
 	mypy -p pointcloudset --ignore-missing-imports
 
 
 sort-imports:
-	isort .
+	ruff check --select I --fix .
+	ruff format .
 
 clean:
 	py3clean .
 	cd doc/sphinx/ && make $@
 	rm -r doc/sphinx/source/python-api
-
-black:
-	black . --exclude=notebooks
-
-
-build:
-	python3 setup.py sdist bdist_wheel
