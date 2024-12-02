@@ -21,8 +21,9 @@
 				"ms-python.mypy-type-checker"
 			],
 			"settings": {
+				"python.defaultInterpreterPath": "/usr/local/bin/python",
 				"python.terminal.activateEnvironment": false,
-				"python.formatting.provider": "black",
+				"python.formatting.provider": "ruff",
 				"editor.formatOnSave": true,
 				"[latex]": {
 					"editor.wordWrap": "on",

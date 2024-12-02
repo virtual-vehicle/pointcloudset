@@ -30,11 +30,6 @@ classifiers = [
     "Typing :: Typed",
 ]
 
-[project.urls]
-"Bug Tracker" = "https://github.com/virtual-vehicle/pointcloudset/issues"
-"Source" = "https://github.com/virtual-vehicle/pointcloudset"
-"Documentation" = "https://virtual-vehicle.github.io/pointcloudset/"
-
 dependencies = [
     "numpy<2",
     "pandas",
@@ -47,6 +42,13 @@ dependencies = [
     "rich",
     "rosbags",
 ]
+
+
+[project.urls]
+"Bug Tracker" = "https://github.com/virtual-vehicle/pointcloudset/issues"
+"Source" = "https://github.com/virtual-vehicle/pointcloudset"
+"Documentation" = "https://virtual-vehicle.github.io/pointcloudset/"
+
 
 [project.optional-dependencies]
 LAS = ["pylas"]
