@@ -37,8 +37,7 @@ setup(
     },
     classifiers=[
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "License :: OSI Approved :: MIT License",
         "Operating System :: POSIX :: Linux",
         "Intended Audience :: Developers",
@@ -54,21 +53,19 @@ setup(
         "Topic :: Utilities",
         "Typing :: Typed",
     ],
-    python_requires=">=3.9",
+    python_requires=">=3.11, <3.12",
     install_requires=[
         "numpy",
         "pandas",
         "pyntcloud",
-        "open3d>=0.15.0",
+        "open3d>=0.18.0",
         "plotly",
         "fastparquet",
-        "dask>=2022.02.0",
+        "dask>=2024.11.0",
         "typer",
         "rich",
         "rosbags",
     ],
     extras_require={"LAS": ["pylas"]},
-    entry_points={
-        "console_scripts": ["pointcloudset = pointcloudset.io.dataset.commandline:app"]
-    },
+    entry_points={"console_scripts": ["pointcloudset = pointcloudset.io.dataset.commandline:app"]},
 )

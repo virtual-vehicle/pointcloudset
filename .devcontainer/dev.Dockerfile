@@ -1,1 +1,51 @@
-FROM tgoelles/pointcloudset_base:v0.9.0
+FROM python:3.11-slim
+
+# Avoid warnings by switching to noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
+
+# This Dockerfile adds a non-root 'vscode' user with sudo access. However, for Linux,
+# this user's GID/UID must match your local user UID/GID to avoid permission issues
+# with bind mounts. Update USER_UID / USER_GID if yours is not 1000. See
+# https://aka.ms/vscode-remote/containers/non-root-user for details.
+ARG USERNAME=vscode
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+
+# install Open3D dependencies
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+    gdb \
+    git \
+    less \
+    make \
+    libeigen3-dev \
+    libgl1-mesa-dev \
+    libgl1-mesa-glx \
+    libglew-dev \
+    libglfw3-dev \
+    libglu1-mesa-dev \
+    libosmesa6-dev \
+    libpng-dev \
+    libusb-1.0-0 \
+    lxde \
+    mesa-utils \
+    ne \
+    pybind11-dev \
+    software-properties-common \
+    x11vnc \
+    xorg-dev \
+    xterm \
+    xvfb && \
+    rm -rf /var/lib/apt/lists/*
+
+
+# Python update conda base environment
+COPY .devcontainer/requirements.txt /tmp/pip-tmp/
+RUN pip install --no-cache-dir -r /tmp/pip-tmp/requirements.txt
+
+
+# Switch back to dialog for any ad-hoc use of apt-get
+ENV DEBIAN_FRONTEND=noninteractive
+ENV SHELL /bin/bash
