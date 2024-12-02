@@ -11,6 +11,7 @@ pylas
 pytest
 pytest-cov
 docstr-coverage
+pytest-check
 typer
 nbval
 geopandas==1.0.1

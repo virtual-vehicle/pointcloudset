@@ -55,7 +55,7 @@ setup(
     ],
     python_requires=">=3.11, <3.12",
     install_requires=[
-        "numpy",
+        "numpy < 2",
         "pandas",
         "pyntcloud",
         "open3d>=0.18.0",

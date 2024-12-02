@@ -20,7 +20,8 @@
 				"streetsidesoftware.code-spell-checker",
 				"oderwat.indent-rainbow",
 				"GitHub.vscode-pull-request-github",
-				"charliermarsh.ruff"
+				"charliermarsh.ruff",
+				"ms-toolsai.jupyter"
 			],
 			"settings": {
 				"python.pythonPath": "/opt/conda/bin/python",

@@ -18,28 +18,19 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     gdb \
     git \
-    less \
     make \
     libeigen3-dev \
     libgl1-mesa-dev \
-    libgl1-mesa-glx \
     libglew-dev \
     libglfw3-dev \
     libglu1-mesa-dev \
-    libosmesa6-dev \
     libpng-dev \
     libusb-1.0-0 \
-    lxde \
-    mesa-utils \
-    ne \
+    libgomp1 \
     pybind11-dev \
     software-properties-common \
-    x11vnc \
-    xorg-dev \
-    xterm \
-    xvfb && \
+    mesa-utils && \
     rm -rf /var/lib/apt/lists/*
-
 
 # Python update conda base environment
 COPY .devcontainer/requirements.txt /tmp/pip-tmp/
