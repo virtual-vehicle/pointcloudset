@@ -23,3 +23,4 @@ sphinx-click
 coverage-badge
 bump2version
 distributed==2024.11.1
+matplotlib
