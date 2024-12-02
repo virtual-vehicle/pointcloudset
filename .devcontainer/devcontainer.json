@@ -38,5 +38,5 @@
 			},
 		},
 	},
-	"postCreateCommand": "pip install -e ."
+	"postCreateCommand": "pip install -e .[dev,doc,LAS]"
 }

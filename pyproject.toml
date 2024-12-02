@@ -42,7 +42,28 @@ dependencies = [
     "rich",
     "rosbags",
 ]
-
+dev = [
+    "pytest",
+    "pytest-cov",
+    "docstr-coverage",
+    "pytest-check",
+    "ruff",
+    "coverage-badge",
+    "bump2version",
+    "nbval",
+    "ipykernel",
+    "nbconvert",
+    "nbformat",
+    "matplotlib",
+]
+doc = [
+    "sphinx",
+    "sphinxcontrib-napoleon",
+    "sphinx_rtd_theme==0.5.2",
+    "nbsphinx",
+    "sphinx-click",
+    "pandoc",
+]
 
 [project.urls]
 "Bug Tracker" = "https://github.com/virtual-vehicle/pointcloudset/issues"
