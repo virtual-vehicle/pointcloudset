@@ -30,6 +30,11 @@ classifiers = [
     "Typing :: Typed",
 ]
 
+[project.urls]
+"Bug Tracker" = "https://github.com/virtual-vehicle/pointcloudset/issues"
+"Source" = "https://github.com/virtual-vehicle/pointcloudset"
+"Documentation" = "https://virtual-vehicle.github.io/pointcloudset/"
+
 dependencies = [
     "numpy<2",
     "pandas",
@@ -43,13 +48,6 @@ dependencies = [
     "rosbags",
 ]
 
-
-[project.urls]
-"Bug Tracker" = "https://github.com/virtual-vehicle/pointcloudset/issues"
-"Source" = "https://github.com/virtual-vehicle/pointcloudset"
-"Documentation" = "https://virtual-vehicle.github.io/pointcloudset/"
-
-
 [project.optional-dependencies]
 LAS = ["pylas"]
 
@@ -60,10 +58,12 @@ pointcloudset = "pointcloudset.io.dataset.commandline:app"
 addopts = "-p no:warnings --verbose --color=yes"
 
 [tool.ruff]
-
+# The default line length for Black is 88, but we set it to 120.
 line-length = 120
+
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
 # Assume Python 3.11.
 target-version = "py311"
 
@@ -72,3 +72,10 @@ isort = { known-first-party = ["pointcloudset", "tests"] }
 [tool.ruff.per-file-ignores]
 "__init__.py" = ["F401"]
 "pointcloudset/io/dataset/commandline.py" = ["F401"]
+
+[tool.coverage.run]
+omit = ["*test*"]
+relative_files = true
+
+[tool.coverage.report]
+exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:"]
