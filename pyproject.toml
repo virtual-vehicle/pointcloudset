@@ -82,18 +82,16 @@ pointcloudset = "pointcloudset.io.dataset.commandline:app"
 addopts = "-p no:warnings --verbose --color=yes"
 
 [tool.ruff]
-# The default line length for Black is 88, but we set it to 120.
+# General Ruff settings
 line-length = 120
+target-version = "py310"
 
-# Allow unused variables when underscore-prefixed.
+[tool.ruff.lint]
+# Import-related settings moved under [tool.ruff.lint]
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
-
-# Assume Python 3.11.
-target-version = "py311"
-
 isort = { known-first-party = ["pointcloudset", "tests"] }
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
 "pointcloudset/io/dataset/commandline.py" = ["F401"]
 

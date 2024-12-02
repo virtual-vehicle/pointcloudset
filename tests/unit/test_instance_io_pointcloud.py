@@ -3,9 +3,9 @@ from pathlib import Path
 import numpy as np
 import open3d as o3d
 import pandas as pd
+import pytest
 import pytest_check as check
 from pyntcloud import PyntCloud
-import pytest
 
 import pointcloudset
 from pointcloudset import PointCloud

@@ -1,12 +1,13 @@
+import json
 from datetime import datetime
 from pathlib import Path
-import json
 
 import numpy as np
 import pandas as pd
 import pytest
 import pytest_check as check
 from pandas._testing import assert_frame_equal
+
 from pointcloudset import Dataset, PointCloud
 from pointcloudset.io.dataset import dir
 

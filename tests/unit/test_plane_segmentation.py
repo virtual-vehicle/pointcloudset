@@ -1,8 +1,8 @@
+import pytest
 import pytest_check as check
 
 from pointcloudset import PointCloud
 from pointcloudset.pointcloud_core import PointCloudCore
-import pytest
 
 
 def test_plane_segmentation_of_open3d(testpointcloud):

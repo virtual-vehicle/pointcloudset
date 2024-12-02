@@ -1,7 +1,7 @@
 import datetime
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import pytest
 import pytest_check as check
 from dask.delayed import DelayedLeaf
