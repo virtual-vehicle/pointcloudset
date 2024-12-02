@@ -3,12 +3,10 @@ channels:
   - defaults
   - conda-forge
 dependencies:
-  - dask-core=2023.3.1
-  - pdal=2.4
-  - fiona=1.8.21
-  - pandoc
   - pip:
-      - open3d>=0.17.0
+      - dask-core=2024.11.2
+      - pandoc
+      - open3d>=0.18.0
       - fastparquet
       - ipykernel
       - nbconvert
@@ -16,8 +14,6 @@ dependencies:
       - rosbags
       - kaleido
       - pyntcloud
-      - setuptools
-      - isort
       - ruff
       - laspy>2.0.0
       - pylas
@@ -26,7 +22,7 @@ dependencies:
       - docstr-coverage
       - typer
       - nbval
-      - geopandas
+      - geopandas==1.0.1
       - sphinx
       - sphinxcontrib-napoleon
       - sphinx_rtd_theme==0.5.2
@@ -36,6 +32,5 @@ dependencies:
       - bump2version
       - matplotlib
       - bokeh
-      - distributed==2023.3.1
+      - distributed==2024.11.1
 prefix: /opt/conda
-
