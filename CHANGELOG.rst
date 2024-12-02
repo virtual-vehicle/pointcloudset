@@ -9,6 +9,18 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased
 -------------
 
+Added
+~~~~~~
+- support for python 3.11 and open3d 0.18 (which needs numpy <2)
+
+Changed
+~~~~~~
+- using pyproject.toml instead of setup.py and for all tool settings
+- no more conda dependency use pure pip and the pre-install the open3d requirments
+- use of official python:3.11-slim docker image
+- using pyproject.toml instead of environment.yml
+- using ruff instead of black and isort
+
 Changed
 ~~~~~~
 - using ruff instead of flake8 and pylint
