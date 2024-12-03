@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         python-version: [3.9, 3.10, 3.11]
-        open3d-version: [0.16, 0.17, 0.18]
+        open3d-version: [0.18]
 
     steps:
       - name: Checkout code
