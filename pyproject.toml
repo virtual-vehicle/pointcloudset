@@ -44,6 +44,7 @@ dependencies = [
     "rich",
     "rosbags",
     "ipywidgets",
+    "pylas",
 ]
 [project.optional-dependencies]
 dev = [
@@ -68,7 +69,6 @@ doc = [
     "sphinx-click",
     "pandoc",
 ]
-LAS = ["pylas"]
 
 [project.urls]
 "Bug Tracker" = "https://github.com/virtual-vehicle/pointcloudset/issues"

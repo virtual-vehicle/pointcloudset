@@ -23,6 +23,7 @@ Changed
 - using ruff instead of black and isort
 - github actions now use python base images
 - moved status to Beta
+- make pylas a dependencies, was optional before
 
 
 Removed
