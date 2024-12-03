@@ -1,6 +1,4 @@
-# This is a basic workflow to help you get started with Actions
-
-name: Publish to pypi
+name: Publish to PyPI
 
 on:
   push:
@@ -9,21 +7,29 @@ on:
     tags:
       - "v*"
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    needs: virtual-vehicle/pointcloudset/tests_docker.test
     steps:
-      - uses: actions/checkout@v2
-      - name: get python build setup
-        run: pip install build twine
-      - name: build package
-        run: python3 -m build
-      - name: Publish package to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          user: __token__
+          python-version: 3.11
+
+      - name: Install dependencies for building
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - name: Build package
+        run: python -m build
+
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@v1
+        with:
           password: ${{ secrets.PYPI_TOKEN }}

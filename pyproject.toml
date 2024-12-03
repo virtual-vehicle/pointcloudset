@@ -7,12 +7,14 @@ name = "pointcloudset"
 version = "0.9.0"
 description = "Analyze large datasets of point clouds recorded over time in an efficient way"
 readme = "README.rst"
-requires-python = ">=3.11, <3.12"
+requires-python = ">=3.9, <3.12"
 authors = [
     { name = "VIRTUAL VEHICLE Research GmbH", email = "thomas.goelles@v2c2.at" },
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "License :: OSI Approved :: MIT License",
     "Operating System :: POSIX :: Linux",
@@ -34,10 +36,10 @@ dependencies = [
     "numpy<2",
     "pandas",
     "pyntcloud",
-    "open3d>=0.18.0",
+    "open3d>=0.16.0",
     "plotly",
     "fastparquet",
-    "dask>=2024.11.0",
+    "dask>=2023.11.0",
     "typer",
     "rich",
     "rosbags",
@@ -83,7 +85,7 @@ addopts = "-p no:warnings --verbose --color=yes"
 [tool.ruff]
 # General Ruff settings
 line-length = 120
-target-version = "py310"
+target-version = "py311"
 
 [tool.ruff.lint]
 # Import-related settings moved under [tool.ruff.lint]

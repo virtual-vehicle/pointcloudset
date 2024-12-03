@@ -1,30 +1,72 @@
 name: tests_docker
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    container:
-      image: tgoelles/pointcloudset_base:latest
+    strategy:
+      matrix:
+        python-version: [3.9, 3.10, 3.11]
+        open3d-version: [0.16, 0.17, 0.18]
+
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: install pointcloudset
+
+      - name: Install system dependencies
         run: |
+          sudo apt-get update && \
+          sudo apt-get upgrade -y && \
+          sudo apt-get install -y --no-install-recommends \
+          gdb \
+          git \
+          make \
+          libeigen3-dev \
+          libgl1-mesa-dev \
+          libglew-dev \
+          libglfw3-dev \
+          libglu1-mesa-dev \
+          libpng-dev \
+          libusb-1.0-0 \
+          libgomp1 \
+          pybind11-dev \
+          pandoc \
+          software-properties-common \
+          mesa-utils && \
+          sudo rm -rf /var/lib/apt/lists/*
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install open3d==${{ matrix.open3d-version }}
           pip install -e .
-          conda info
-          conda list
-      - name: make test
+
+      - name: Run tests
         run: make test
-      - name: generate badge
+
+      - name: Generate coverage badge
         run: coverage-badge -f -o images/coverage.svg
-      - name: Verify Changed files
+
+      - name: Verify changed files
         uses: tj-actions/verify-changed-files@v6
         id: changed_files
         with:
           files: images/coverage.svg
+
       - name: Commit badge
         if: steps.changed_files.outputs.files_changed == 'true'
         run: |
@@ -32,9 +74,10 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add images/coverage.svg
           git commit -m "Updated coverage.svg"
+
       - name: Push changes
         if: steps.changed_files.outputs.files_changed == 'true'
-        uses: ad-m/github-push-action@master
+        uses: ad-m/github-push-action@v0.6.0
         with:
-          github_token: ${{ secrets.github_token }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
