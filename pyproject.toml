@@ -39,6 +39,7 @@ dependencies = [
     "plotly",
     "fastparquet",
     "dask>=2023.11.0",
+    "dask[dataframe]",
     "typer",
     "rich",
     "rosbags>=0.9.15",
