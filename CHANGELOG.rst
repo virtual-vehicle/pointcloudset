@@ -11,8 +11,9 @@ Unreleased
 
 Added
 ~~~~~~
-- support for python 3.11 and open3d 0.18 (which needs numpy <2)
-- testing for the latest 3 versions which are supported by open3d
+- support for python 3.11 and open3d 0.18 (which still needs numpy <2)
+- testing for the latest 3 python versions which are supported by the latestt open3d
+- testing and supporting the last 3 open3d versions
 
 Changed
 ~~~~~~
@@ -22,6 +23,7 @@ Changed
 - using pyproject.toml instead of environment.yml
 - using ruff instead of black and isort
 - github actions now use python base images
+- moved status to Beta
 
 
 Removed

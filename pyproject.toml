@@ -22,7 +22,7 @@ classifiers = [
     "Intended Audience :: Education",
     "Intended Audience :: Other Audience",
     "Intended Audience :: Science/Research",
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Natural Language :: English",
     "Topic :: Scientific/Engineering",
     "Topic :: Scientific/Engineering :: GIS",
