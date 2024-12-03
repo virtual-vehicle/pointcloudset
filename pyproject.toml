@@ -41,7 +41,7 @@ dependencies = [
     "dask>=2023.11.0",
     "typer",
     "rich",
-    "rosbags",
+    "rosbags>=0.9.15",
     "ipywidgets",
     "laspy",
 ]
