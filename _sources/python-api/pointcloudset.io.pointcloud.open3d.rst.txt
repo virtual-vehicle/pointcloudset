@@ -1,0 +1,7 @@
+pointcloudset.io.pointcloud.open3d module
+=========================================
+
+.. automodule:: pointcloudset.io.pointcloud.open3d
+   :members:
+   :undoc-members:
+   :show-inheritance:

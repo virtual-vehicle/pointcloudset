@@ -1,0 +1,7 @@
+pointcloudset.diff.nearest module
+=================================
+
+.. automodule:: pointcloudset.diff.nearest
+   :members:
+   :undoc-members:
+   :show-inheritance:

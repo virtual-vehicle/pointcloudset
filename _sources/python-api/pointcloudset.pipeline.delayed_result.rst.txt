@@ -1,0 +1,7 @@
+pointcloudset.pipeline.delayed\_result module
+=============================================
+
+.. automodule:: pointcloudset.pipeline.delayed_result
+   :members:
+   :undoc-members:
+   :show-inheritance:
