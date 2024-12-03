@@ -2,11 +2,11 @@ from pathlib import Path
 
 import pytest
 import pytest_check as check
-from pointcloudset import Dataset
-from pointcloudset.io.dataset.commandline import app
+from pyntcloud.io import TO_FILE
 from typer.testing import CliRunner
 
-from pyntcloud.io import TO_FILE
+from pointcloudset import Dataset
+from pointcloudset.io.dataset.commandline import app
 
 TO_FILE_PYNTCLOUD = list(TO_FILE.keys())
 

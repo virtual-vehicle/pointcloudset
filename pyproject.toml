@@ -1,0 +1,103 @@
+[build-system]
+requires = ["flit_core>=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "pointcloudset"
+version = "0.9.0"
+description = "Analyze large datasets of point clouds recorded over time in an efficient way"
+readme = "README.rst"
+requires-python = ">=3.10, <3.12"
+authors = [
+    { name = "VIRTUAL VEHICLE Research GmbH", email = "thomas.goelles@v2c2.at" },
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Other Audience",
+    "Intended Audience :: Science/Research",
+    "Development Status :: 4 - Beta",
+    "Natural Language :: English",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Utilities",
+    "Typing :: Typed",
+]
+
+dependencies = [
+    "numpy<2",
+    "pandas",
+    "pyntcloud",
+    "open3d>=0.16.0",
+    "plotly",
+    "fastparquet",
+    "dask>=2023.11.0",
+    "typer",
+    "rich",
+    "rosbags",
+    "ipywidgets",
+    "laspy",
+]
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "docstr-coverage",
+    "pytest-check",
+    "ruff",
+    "coverage-badge",
+    "bump2version",
+    "nbval",
+    "ipykernel",
+    "nbconvert",
+    "nbformat",
+    "matplotlib",
+]
+doc = [
+    "sphinx",
+    "sphinxcontrib-napoleon",
+    "sphinx_rtd_theme==0.5.2",
+    "nbsphinx",
+    "sphinx-click",
+    "pandoc",
+]
+
+[project.urls]
+"Bug Tracker" = "https://github.com/virtual-vehicle/pointcloudset/issues"
+"Source" = "https://github.com/virtual-vehicle/pointcloudset"
+"Documentation" = "https://virtual-vehicle.github.io/pointcloudset/"
+
+
+[project.scripts]
+pointcloudset = "pointcloudset.io.dataset.commandline:app"
+
+[tool.pytest.ini_options]
+addopts = "-p no:warnings --verbose --color=yes"
+
+[tool.ruff]
+# General Ruff settings
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+# Import-related settings moved under [tool.ruff.lint]
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+isort = { known-first-party = ["pointcloudset", "tests"] }
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+"pointcloudset/io/dataset/commandline.py" = ["F401"]
+
+[tool.coverage.run]
+omit = ["*test*"]
+relative_files = true
+
+[tool.coverage.report]
+exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:"]
