@@ -3,10 +3,10 @@ name: tests_docker
 on:
   push:
     branches:
-      - main
+      - '**'  # Matches all branches
   pull_request:
     branches:
-      - main
+      - '**'  # Matches all branches
 
 jobs:
   test:
