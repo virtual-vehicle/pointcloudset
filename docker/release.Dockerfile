@@ -31,7 +31,7 @@ ENV PACKAGE_HOME /pointcloudset
 
 WORKDIR $PACKAGE_HOME
 ADD pointcloudset ./pointcloudset
-COPY pyroject.toml ./
+COPY pyproject.toml ./
 COPY README.rst ./
 ADD doc/sphinx/source/tutorial_notebooks ./tutorial_notebooks
 
