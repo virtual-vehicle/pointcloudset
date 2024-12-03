@@ -12,7 +12,7 @@ Unreleased
 Added
 ~~~~~~
 - support for python 3.11 and open3d 0.18 (which still needs numpy <2)
-- testing for the latest 3 python versions which are supported by the latestt open3d
+- testing for the latest 2 python versions which are supported by the latestt open3d
 
 Changed
 ~~~~~~
