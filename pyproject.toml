@@ -44,7 +44,7 @@ dependencies = [
     "rich",
     "rosbags",
     "ipywidgets",
-    "pylas",
+    "laspy",
 ]
 [project.optional-dependencies]
 dev = [
