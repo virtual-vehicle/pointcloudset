@@ -120,6 +120,9 @@ logs*
 *.bkp
 *.dtmp
 
+#
+dev_notebooks
+
 #ignoring large ros2 files
 tests/testdata/ros2_mcap/molisens_2022_09_27-16_37_57
 tests/testdata/ros2/molisens_2022_11_21-15_55_25
