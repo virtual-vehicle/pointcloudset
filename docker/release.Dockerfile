@@ -38,8 +38,7 @@ ADD doc/sphinx/source/tutorial_notebooks ./tutorial_notebooks
 # install
 RUN /usr/local/bin/pip install $PACKAGE_HOME
 
-RUN /bin/bash -c "source activate base && \
-    pip install  $PACKAGE_HOME"
+RUN pip install $PACKAGE_HOME"
 
 # Make sure the environment is activated:
 RUN /bin/bash -c echo "Make sure pointcloudset is installed:"
