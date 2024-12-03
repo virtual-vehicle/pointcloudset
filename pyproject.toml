@@ -59,6 +59,7 @@ dev = [
     "nbconvert",
     "nbformat",
     "matplotlib",
+    "hatch",
 ]
 doc = [
     "sphinx",
@@ -101,3 +102,12 @@ relative_files = true
 
 [tool.coverage.report]
 exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:"]
+
+[tool.hatch.version]
+path = "pointcloudset/__init__.py"
+
+[tool.hatch.metadata.hooks.version-bump]
+files = [
+    { path = "pyproject.toml", search = 'version = "{current_version}"', replace = 'version = "{new_version}"' },
+    { path = "CHANGELOG.rst", search = "Unreleased", replace = "Unreleased\n\t-------------\n\t\n\t{new_version} - ({now:%Y-%m-%d})" },
+]
