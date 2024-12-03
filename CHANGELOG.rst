@@ -12,6 +12,7 @@ Unreleased
 Added
 ~~~~~~
 - support for python 3.11 and open3d 0.18 (which needs numpy <2)
+- testing for the latest 3 versions which are supported by open3d
 
 Changed
 ~~~~~~
@@ -20,6 +21,13 @@ Changed
 - use of official python:3.11-slim docker image
 - using pyproject.toml instead of environment.yml
 - using ruff instead of black and isort
+- github actions now use python base images
+
+
+Removed
+~~~~~~
+- conda dependency. It is not needed anymore and works just with pip
+- docker base image, not needed any more. Just use the python one and install the open3d dependencies
 
 Changed
 ~~~~~~
