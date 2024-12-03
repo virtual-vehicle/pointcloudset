@@ -4,9 +4,13 @@ on:
   push:
     branches:
       - '**'  # Matches all branches
+    tags-ignore:
+      - '**'  # Exclude tag pushes
   pull_request:
-    branches:
-      - '**'  # Matches all branches
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
   test:
