@@ -113,9 +113,8 @@ Install python package with pip:
 Installation with Docker
 ################################################
 
-The easiest way to get started is to use the pre-build docker `tgoelles/pointcloudset`_ or use `tgoelles/pointcloudset_base`_ to get a container with all dependencies and install pointcloudset there.
+The easiest way to get started is to use the pre-build docker `tgoelles/pointcloudset`_.
 
-.. _tgoelles/pointcloudset_base: https://hub.docker.com/repository/docker/tgoelles/pointcloudset_base
 .. _tgoelles/pointcloudset: https://hub.docker.com/repository/docker/tgoelles/pointcloudset
 
 Quickstart
