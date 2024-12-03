@@ -31,9 +31,9 @@ pointcloudset
    :target: https://joss.theoj.org/papers/10.21105/joss.03471#
    :alt: JOSS badge
 
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-   :target: https://github.com/psf/black
-   :alt: code style black
+.. image:: https://img.shields.io/badge/code%20style-ruff-000000.svg
+   :target: https://github.com/astral-sh/ruff
+   :alt: code style ruff
 
 
 .. inclusion-marker-do-not-remove
