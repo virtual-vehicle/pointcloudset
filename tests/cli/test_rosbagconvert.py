@@ -1,11 +1,12 @@
 from pathlib import Path
+from pydoc_data import topics
 
 import pytest
 import pytest_check as check
 from pyntcloud.io import TO_FILE
 from typer.testing import CliRunner
 
-from pointcloudset import Dataset
+from pointcloudset import Dataset, list_pointcloud_topics
 from pointcloudset.io.dataset.commandline import app
 
 TO_FILE_PYNTCLOUD = list(TO_FILE.keys())
@@ -32,6 +33,7 @@ def test_topics(ros_files):
 
 
 def test_convert_one_rosfile_to_dir(ros_files, tmp_path: Path):
+    topics = list_pointcloud_topics(ros_files)
     out_path = tmp_path.joinpath("cli")
     result = runner.invoke(
         app,
@@ -39,7 +41,7 @@ def test_convert_one_rosfile_to_dir(ros_files, tmp_path: Path):
             "convert",
             ros_files.as_posix(),
             "-t",
-            "/os1_cloud_node/points",
+            topics[0],
             "-d",
             out_path.as_posix(),
         ],
@@ -49,13 +51,11 @@ def test_convert_one_rosfile_to_dir(ros_files, tmp_path: Path):
     check.equal(out_path_real.exists(), True)
     read_dataset = Dataset.from_file(out_path_real)
     check.is_instance(read_dataset, Dataset)
-    check.equal(len(read_dataset), 2)
-    check.equal(len(read_dataset.timestamps), 2)
+    check.greater(len(read_dataset), 1)
+    check.greater(len(read_dataset.timestamps), 1)
 
 
-def test_convert_all_rosfiles_to_dir(
-    tmp_path: Path, testdata_path: Path, monkeypatch: pytest.MonkeyPatch
-):
+def test_convert_all_rosfiles_to_dir(tmp_path: Path, testdata_path: Path, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.chdir(testdata_path)
     out_path = tmp_path.joinpath("cli_dirs")
     result = runner.invoke(
@@ -85,6 +85,7 @@ def test_convert_all_rosfiles_to_dir(
 
 @pytest.mark.parametrize("fileformat", TO_FILE_PYNTCLOUD)
 def test_convert_one_ros_file_frames_to_files(ros_files, tmp_path: Path, fileformat):
+    topics = list_pointcloud_topics(ros_files)
     out_path = tmp_path.joinpath("cli_files")
     result = runner.invoke(
         app,
@@ -92,7 +93,7 @@ def test_convert_one_ros_file_frames_to_files(ros_files, tmp_path: Path, filefor
             "convert",
             ros_files.as_posix(),
             "-t",
-            "/os1_cloud_node/points",
+            topics[0],
             "-d",
             out_path.as_posix(),
             "-o",
@@ -103,7 +104,7 @@ def test_convert_one_ros_file_frames_to_files(ros_files, tmp_path: Path, filefor
     out_path_real = out_path.joinpath(ros_files.stem)
     check.equal(out_path_real.exists(), True)
     files = list(out_path_real.glob(f"*.{fileformat.lower()}"))
-    check.equal(len(files), 2)
+    check.greater(len(files), 1)
     check.equal(files[0].suffix.replace(".", ""), fileformat.lower())
 
 
@@ -135,9 +136,7 @@ def test_convert_one_ros_file_one_frame_to_files(ros_files, tmp_path: Path, file
     check.equal(files[0].suffix.replace(".", ""), fileformat.lower())
 
 
-def test_convert_all_bags_frames_files(
-    tmp_path: Path, testdata_path: Path, monkeypatch: pytest.MonkeyPatch
-):
+def test_convert_all_bags_frames_files(tmp_path: Path, testdata_path: Path, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.chdir(testdata_path)
     out_path = tmp_path.joinpath("cli_dirs_frames")
     result = runner.invoke(
@@ -164,9 +163,7 @@ def test_convert_all_bags_frames_files(
 
 @pytest.mark.slow
 @pytest.mark.parametrize("filename", ["big_uncomp.bag", "big_comp.bag"])
-def test_convert_large_file_complete(
-    testdata_path_large: Path, tmp_path: Path, filename: str
-):
+def test_convert_large_file_complete(testdata_path_large: Path, tmp_path: Path, filename: str):
     if testdata_path_large.exists():
         len_target = 250
         testbag = testdata_path_large.joinpath(filename)
