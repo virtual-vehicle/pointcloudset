@@ -38,11 +38,10 @@ ADD doc/sphinx/source/tutorial_notebooks ./tutorial_notebooks
 # install
 RUN /usr/local/bin/pip install $PACKAGE_HOME
 
-RUN pip install $PACKAGE_HOME"
-
 # Make sure the environment is activated:
 RUN /bin/bash -c echo "Make sure pointcloudset is installed:"
-RUN /bin/bash -c python -c "from pointcloudset import Dataset"
+RUN /bin/bash -c "python -c 'import pointcloudset; print(pointcloudset.__version__); from pointcloudset import Dataset'"
+RUN /bin/bash -c "pointcloudset --help || (echo 'CLI not installed' && exit 1)"
 
 # Export environment variables
 ENV LANG=C.UTF-8
