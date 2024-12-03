@@ -36,7 +36,7 @@ COPY README.rst ./
 ADD doc/sphinx/source/tutorial_notebooks ./tutorial_notebooks
 
 # install
-RUN sudo /usr/local/bin/pip install  $PACKAGE_HOME
+RUN /usr/local/bin/pip install $PACKAGE_HOME
 
 RUN /bin/bash -c "source activate base && \
     pip install  $PACKAGE_HOME"
