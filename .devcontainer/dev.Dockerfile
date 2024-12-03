@@ -33,6 +33,17 @@ RUN apt-get update && \
     mesa-utils && \
     rm -rf /var/lib/apt/lists/*
 
+# Set up a custom prompt and colored output in the shell
+RUN echo '\
+    RESET="\\[\\e[0m\\]"\n\
+    BOLD="\\[\\e[1m\\]"\n\
+    GREEN="\\[\\e[32m\\]"\n\
+    BLUE="\\[\\e[34m\\]"\n\
+    export PS1="${BLUE}pointcoudset ${BLUE}${BOLD}\\w${RESET} $ "\n\
+    export LS_OPTIONS="--color=auto"\n\
+    eval "$(dircolors -b)"\n\
+    alias ls="ls $LS_OPTIONS"\n\
+    ' >> /root/.bashrc
 
 
 # Switch back to dialog for any ad-hoc use of apt-get
