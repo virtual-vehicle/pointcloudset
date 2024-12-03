@@ -1,36 +1,59 @@
 name: doc to github pages
 
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [master]
   pull_request:
     branches: [master]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
   doc:
     runs-on: ubuntu-latest
-    container:
-      image: tgoelles/pointcloudset_base:latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: install pointcloudset
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+
+      - name: Install system dependencies
         run: |
-          pip install -e .
-          conda info
-          conda list
+          sudo apt-get update && \
+          sudo apt-get upgrade -y && \
+          sudo apt-get install -y --no-install-recommends \
+          gdb \
+          git \
+          make \
+          libeigen3-dev \
+          libgl1-mesa-dev \
+          libglew-dev \
+          libglfw3-dev \
+          libglu1-mesa-dev \
+          libpng-dev \
+          libusb-1.0-0 \
+          libgomp1 \
+          pybind11-dev \
+          pandoc \
+          software-properties-common \
+          mesa-utils && \
+          sudo rm -rf /var/lib/apt/lists/*
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev,doc,LAS]
           pandoc --version
 
-      - name: make doc
+      - name: Build documentation
         run: make doc
 
-      - name: add .nojekyll
+      - name: Add .nojekyll
         run: touch doc/sphinx/build/html/.nojekyll
 
       - name: Deploy to GitHub Pages
