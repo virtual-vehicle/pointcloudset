@@ -19,6 +19,8 @@ RUN apt-get update && \
     gdb \
     git \
     make \
+    wget \
+    unzip \
     libeigen3-dev \
     libgl1-mesa-dev \
     libglew-dev \
