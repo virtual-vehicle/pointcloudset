@@ -11,8 +11,11 @@ Unreleased
 Added
 ~~~~~~
 - list_pointcloud_topics at the package top level to list pointcloud2 topics
-- dask[dataframe] as a dependency for the CLI
 - livox test data
+
+Fixed
+~~~~~~
+- dask[dataframe] as a dependency for the CLI
 
 
 0.10.0 - (2024-12-03)
