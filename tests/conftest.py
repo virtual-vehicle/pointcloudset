@@ -10,7 +10,8 @@ from pointcloudset import Dataset, PointCloud
 ROS1FILE = Path(__file__).parent.absolute() / "testdata/test.bag"
 ROS2FILE = Path(__file__).parent.absolute() / "testdata/ros2"
 ROS2MCAPFILE = Path(__file__).parent.absolute() / "testdata/ros2_mcap"
-ROS2MCAPFILE_LIVOX = Path(__file__).parent.absolute() / "testdata/ros2_mcap_livox"
+ROS2MCAPFILE_LIVOX_DIR = Path(__file__).parent.absolute() / "testdata/ros2_mcap_livox"
+ROS2MCAPFILE_LIVOX_MCAP = Path(__file__).parent.absolute() / "testdata/ros2_mcap_livox/testrecord_mcap_AVIA_5_0.mcap"
 
 
 @pytest.fixture()
@@ -204,6 +205,6 @@ def test_sets(request):
     return request.getfixturevalue(request.param)
 
 
-@pytest.fixture(params=[ROS1FILE, ROS2FILE, ROS2MCAPFILE, ROS2MCAPFILE_LIVOX])
+@pytest.fixture(params=[ROS1FILE, ROS2FILE, ROS2MCAPFILE, ROS2MCAPFILE_LIVOX_DIR, ROS2MCAPFILE_LIVOX_MCAP])
 def ros_files(request):
     return request.param
