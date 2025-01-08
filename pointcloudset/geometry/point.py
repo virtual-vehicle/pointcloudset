@@ -22,8 +22,4 @@ def distance_to_point(point_a: np.ndarray, point_b: np.ndarray) -> float:
         raise ValueError("point needs to have 3 values")
     if len(point_b) != 3:
         raise ValueError("point needs to have 3 values")
-    return np.sqrt(
-        (point_b[0] - point_a[0]) ** 2
-        + (point_b[1] - point_a[1]) ** 2
-        + (point_b[2] - point_a[2]) ** 2
-    )
+    return np.sqrt((point_b[0] - point_a[0]) ** 2 + (point_b[1] - point_a[1]) ** 2 + (point_b[2] - point_a[2]) ** 2)

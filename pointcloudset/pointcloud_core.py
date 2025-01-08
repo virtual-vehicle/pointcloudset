@@ -79,16 +79,10 @@ class PointCloudCore:
         return self.points.centroid
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.data}, "
-            f"{self.timestamp}, {self.orig_file})"
-        )
+        return f"{self.__class__.__name__}({self.data}, " f"{self.timestamp}, {self.orig_file})"
 
     def __str__(self) -> str:
-        return (
-            f"pointcloud: with {len(self)} points, data:{list(self.data.columns)},"
-            f" from {self.timestamp_str}"
-        )
+        return f"pointcloud: with {len(self)} points, data:{list(self.data.columns)}," f" from {self.timestamp_str}"
 
     def __len__(self) -> int:
         return len(self.data)
@@ -110,12 +104,8 @@ class PointCloudCore:
         """A private function to check if the index of self.data is sane."""
         if len(self) > 0:
             assert self.data.index[0] == 0, "index should start with 0"
-            assert self.data.index[-1] + 1 == len(
-                self
-            ), "index should be as long as the data"
-            assert (
-                self.data.index.is_monotonic_increasing
-            ), "index should be monotonic increasing"
+            assert self.data.index[-1] + 1 == len(self), "index should be as long as the data"
+            assert self.data.index.is_monotonic_increasing, "index should be monotonic increasing"
 
     def _add_column(self, column_name: str, values: np.array) -> PointCloudCore:
         """Adding a new column with a scalar value to the data of the pointcloud.

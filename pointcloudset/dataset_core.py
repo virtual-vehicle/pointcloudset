@@ -75,9 +75,7 @@ class DatasetCore:
         return f"Lidar Dataset with {len(self)} pointcloud(s)"
 
     def __repr__(self) -> str:
-        return (
-            f"""{self.__class__.__name__}({self.data},{self.timestamps},{self.meta})"""
-        )
+        return f"""{self.__class__.__name__}({self.data},{self.timestamps},{self.meta})"""
 
     def __iter__(self):
         self.n = 0
@@ -163,9 +161,7 @@ class DatasetCore:
         """
         if time < self.start_time or time > self.end_time:
             raise ValueError("time is outside of range")
-        return min(
-            range(len(self.timestamps)), key=lambda i: abs(self.timestamps[i] - time)
-        )
+        return min(range(len(self.timestamps)), key=lambda i: abs(self.timestamps[i] - time))
 
     def _check(self):
         assert "orig_file" in self.meta, "meta data does not contain orig_file"

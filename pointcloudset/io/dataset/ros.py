@@ -1,4 +1,4 @@
-"""" Reading pointcloud 2.
+""" " Reading pointcloud 2.
 
 `ROS <https://www.ros.org/>`_ bagfiles.
 
@@ -84,7 +84,7 @@ def dataset_from_ros(
     start_frame_number: int = 0,
     end_frame_number: int = None,
     keep_zeros: bool = False,
-    ext: Literal["BAG", "ROS2"] = "BAG",
+    ext: Literal["BAG", "ROS2", "MCAP"] = "BAG",
 ) -> Union[dict, None]:
     """Reads a Dataset from a ROS1 bag of ROS2 mcap or db3 file.
 
@@ -109,7 +109,7 @@ def dataset_from_ros(
     if ext == "BAG":
         Reader = Reader1
         rosversion = 1
-    elif ext == "ROS2":
+    elif ext == "ROS2" or ext == "MCAP":
         Reader = Reader2
         rosversion = 2
     else:
@@ -132,33 +132,23 @@ def dataset_from_ros(
                 timestamps.append(timestamp_datetime)
 
                 if rosversion == 1:
-                    msg = deserialize_cdr(
-                        ros1_to_cdr(rawdata, connection.msgtype), connection.msgtype
-                    )
+                    msg = deserialize_cdr(ros1_to_cdr(rawdata, connection.msgtype), connection.msgtype)
                 elif rosversion == 2:
                     msg = deserialize_cdr(rawdata, connection.msgtype)
-                data_of_frame = delayed(
-                    _dataframe_from_message(msg, keep_zeros=keep_zeros)
-                )
+                data_of_frame = delayed(_dataframe_from_message(msg, keep_zeros=keep_zeros))
                 data.append(data_of_frame)
 
     return {"data": data, "timestamps": timestamps, "meta": meta}
 
 
-def _dataframe_from_message(
-    message: sensor_msgs__msg__PointCloud2, keep_zeros: bool = False
-) -> pd.DataFrame:
+def _dataframe_from_message(message: sensor_msgs__msg__PointCloud2, keep_zeros: bool = False) -> pd.DataFrame:
     columnnames = [field.name for field in message.fields]
-    type_dict = {
-        item.name: PANDAS_TYPEMAPPING[item.datatype] for item in message.fields
-    }
+    type_dict = {item.name: PANDAS_TYPEMAPPING[item.datatype] for item in message.fields}
     frame_raw = _read_points(message)
     frame_df = pd.DataFrame(np.array(list(frame_raw)), columns=columnnames)
     frame_df = frame_df.astype(type_dict)
     if not keep_zeros:
-        frame_df = frame_df[
-            (frame_df["x"] != 0.0) & (frame_df["y"] != 0.0) & (frame_df["z"] != 0.0)
-        ]
+        frame_df = frame_df[(frame_df["x"] != 0.0) & (frame_df["y"] != 0.0) & (frame_df["z"] != 0.0)]
         frame_df["original_id"] = frame_df.index
         frame_df = frame_df.astype({"original_id": "uint32"})
         frame_df = frame_df.reset_index(drop=True)
@@ -172,11 +162,7 @@ def _get_struct_fmt(is_bigendian, fields, field_names=None):
     fmt = ">" if is_bigendian else "<"
 
     offset = 0
-    for field in (
-        f
-        for f in sorted(fields, key=lambda f: f.offset)
-        if field_names is None or f.name in field_names
-    ):
+    for field in (f for f in sorted(fields, key=lambda f: f.offset) if field_names is None or f.name in field_names):
         if offset < field.offset:
             fmt += "x" * (field.offset - offset)
             offset = field.offset
@@ -193,9 +179,7 @@ def _get_struct_fmt(is_bigendian, fields, field_names=None):
     return fmt
 
 
-def _read_points(
-    cloud: sensor_msgs__msg__PointCloud2, field_names=None, skip_nans=False, uvs=[]
-) -> Generator:
+def _read_points(cloud: sensor_msgs__msg__PointCloud2, field_names=None, skip_nans=False, uvs=[]) -> Generator:
     """
     Read points from a PointCloud2 message.
     code from from Willow Garage, Inc.
@@ -211,9 +195,7 @@ def _read_points(
     @return: Generator which yields a list of values for each point.
     @rtype:  generator
     """
-    assert isinstance(
-        cloud, sensor_msgs__msg__PointCloud2
-    ), "cloud is not a PointCloud2"
+    assert isinstance(cloud, sensor_msgs__msg__PointCloud2), "cloud is not a PointCloud2"
     fmt = _get_struct_fmt(cloud.is_bigendian, cloud.fields, field_names)
     width, height, point_step, row_step, data, isnan = (
         cloud.width,

@@ -1,6 +1,7 @@
 """
 Functions for plotting datasets.
 """
+
 import warnings
 
 import plotly.graph_objs as go

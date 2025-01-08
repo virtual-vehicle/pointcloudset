@@ -58,9 +58,7 @@ def value_filter(
     return pointcloud.apply_filter(bool_array)
 
 
-def remove_radius_outlier(
-    pointcloud: PointCloud, nb_points: int, radius: float
-) -> PointCloud:
+def remove_radius_outlier(pointcloud: PointCloud, nb_points: int, radius: float) -> PointCloud:
     """Function to remove points that have less than nb_points in a given
     sphere of a given radius.
 

@@ -86,18 +86,12 @@ class PointCloud(PointCloudCore):
             raise TypeError("Expecting a Path object for file_path")
         ext = file_path.suffix[1:].upper()
         if ext not in POINTCLOUD_FROM_FILE:
-            raise ValueError(
-                "Unsupported file format; supported formats are: {}".format(
-                    list(POINTCLOUD_FROM_FILE)
-                )
-            )
+            raise ValueError("Unsupported file format; supported formats are: {}".format(list(POINTCLOUD_FROM_FILE)))
         file_path_str = file_path.as_posix()
         if timestamp == "from_file":
             timestamp = datetime.datetime.utcfromtimestamp(file_path.stat().st_mtime)
         pyntcloud_in = pyntcloud.PyntCloud.from_file(file_path_str, **kwargs)
-        return cls(
-            data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp
-        )
+        return cls(data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp)
 
     def to_file(self, file_path: Path = Path(), **kwargs) -> None:
         """Exports the pointcloud as to a file for use with
@@ -117,11 +111,7 @@ class PointCloud(PointCloudCore):
         """
         ext = file_path.suffix[1:].upper()
         if ext not in POINTCLOUD_TO_FILE:
-            raise ValueError(
-                "Unsupported file format; supported formats are: {}".format(
-                    list(POINTCLOUD_TO_FILE)
-                )
-            )
+            raise ValueError("Unsupported file format; supported formats are: {}".format(list(POINTCLOUD_TO_FILE)))
 
         orig_file_name = Path(self.orig_file).stem
         if file_path == Path():
@@ -145,9 +135,7 @@ class PointCloud(PointCloudCore):
             "OPEN3D",
             "DATAFRAME",
         ] = "PANDAS",
-        instance: (
-            pandas.DataFrame | pyntcloud.PyntCloud | open3d.geometry.PointCloud
-        ) = pandas.DataFrame(),
+        instance: (pandas.DataFrame | pyntcloud.PyntCloud | open3d.geometry.PointCloud) = pandas.DataFrame(),
         **kwargs,
     ) -> PointCloud:
         """Converts a library instance to a pointcloudset PointCloud.
@@ -178,22 +166,13 @@ class PointCloud(PointCloudCore):
         """
         library = library.upper()
         if library not in POINTCLOUD_FROM_INSTANCE:
-            raise ValueError(
-                "Unsupported library; supported libraries are: {}".format(
-                    list(POINTCLOUD_FROM_INSTANCE)
-                )
-            )
+            raise ValueError("Unsupported library; supported libraries are: {}".format(list(POINTCLOUD_FROM_INSTANCE)))
         else:
             return cls(**POINTCLOUD_FROM_INSTANCE[library](instance, **kwargs))
 
     def to_instance(
         self, library: Literal["PYNTCLOUD", "OPEN3D", "DATAFRAME", "PANDAS"], **kwargs
-    ) -> (
-        pyntcloud.PyntCloud
-        | open3d.geometry.PointCloud
-        | pandas.DataFrame
-        | pandas.DataFrame
-    ):
+    ) -> pyntcloud.PyntCloud | open3d.geometry.PointCloud | pandas.DataFrame | pandas.DataFrame:
         """Convert PointCloud to another library instance.
 
         Args:
@@ -219,11 +198,7 @@ class PointCloud(PointCloudCore):
         """
         library = library.upper()
         if library not in POINTCLOUD_TO_INSTANCE:
-            raise ValueError(
-                "Unsupported library; supported libraries are: {}".format(
-                    list(POINTCLOUD_TO_INSTANCE)
-                )
-            )
+            raise ValueError("Unsupported library; supported libraries are: {}".format(list(POINTCLOUD_TO_INSTANCE)))
 
         return POINTCLOUD_TO_INSTANCE[library](self, **kwargs)
 
@@ -360,9 +335,7 @@ class PointCloud(PointCloudCore):
         else:
             raise ValueError("Unsupported diff. Check docstring")
 
-    def filter(
-        self, name: Literal["quantile", "value", "radiusoutlier"], *args, **kwargs
-    ) -> PointCloud:
+    def filter(self, name: Literal["quantile", "value", "radiusoutlier"], *args, **kwargs) -> PointCloud:
         """Filters a PointCloud according to criteria.
 
         Args:
@@ -415,9 +388,7 @@ class PointCloud(PointCloudCore):
         """
         if maxvalue < minvalue:
             raise ValueError("maxvalue must be greater than minvalue")
-        return self.filter("value", dim, ">=", minvalue).filter(
-            "value", dim, "<=", maxvalue
-        )
+        return self.filter("value", dim, ">=", minvalue).filter("value", dim, "<=", maxvalue)
 
     def limit_less(self, dim: str, value: float) -> PointCloud:
         """Limit the range if a diminsion to a value.
@@ -480,10 +451,7 @@ class PointCloud(PointCloudCore):
             # from open3d filters
             new_data = self.data.iloc[filter_result].reset_index(drop=True)
         else:
-            raise TypeError(
-                "Wrong filter_result expecting array with boolean values or"
-                "list of indices"
-            )
+            raise TypeError("Wrong filter_result expecting array with boolean values or" "list of indices")
         return PointCloud(new_data, timestamp=self.timestamp)
 
     def get_cluster(self, eps: float, min_points: int) -> pandas.DataFrame:
@@ -499,15 +467,11 @@ class PointCloud(PointCloudCore):
             pandas.DataFrame: Dataframe with list of clusters.
         """
         labels = np.array(
-            self.to_instance("open3d").cluster_dbscan(
-                eps=eps, min_points=min_points, print_progress=False
-            )
+            self.to_instance("open3d").cluster_dbscan(eps=eps, min_points=min_points, print_progress=False)
         )
         return pandas.DataFrame(labels, columns=["cluster"])
 
-    def take_cluster(
-        self, cluster_number: int, cluster_labels: pandas.DataFrame
-    ) -> PointCloud:
+    def take_cluster(self, cluster_number: int, cluster_labels: pandas.DataFrame) -> PointCloud:
         """Takes only the points belonging to the cluster_number.
 
         Args:

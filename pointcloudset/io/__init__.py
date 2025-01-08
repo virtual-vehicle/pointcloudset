@@ -18,6 +18,7 @@ DATASET_FROM_FILE = {
     "BAG": dataset_from_ros,
     "DIR": dataset_from_dir,
     "ROS2": dataset_from_ros,
+    "MCAP": dataset_from_ros,
 }
 
 DATASET_TO_FILE = {"DIR": dataset_to_dir}
