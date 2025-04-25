@@ -8,15 +8,13 @@ import dask.dataframe as dd
 import numpy as np
 import pandas as pd
 
-import src
+import pointcloudset
 
 DATETIME_FORMAT = "%Y-%m-%d %H:%M:%S.%f"
 DELIMITER = ";"
 
 
-def dataset_to_dir(
-    dataset_in, file_path: Path, use_orig_filename: bool = True, **kwargs
-) -> Path:
+def dataset_to_dir(dataset_in, file_path: Path, use_orig_filename: bool = True, **kwargs) -> Path:
     """Writes Dataset to directory.
 
     Args:
@@ -37,11 +35,9 @@ def dataset_to_dir(
     data = dd.from_delayed(dataset_to_write.data)
     data.to_parquet(folder, **kwargs)
     meta = dataset_in.meta
-    meta["timestamps"] = [
-        timestamp.strftime(DATETIME_FORMAT) for timestamp in dataset_in.timestamps
-    ]
+    meta["timestamps"] = [timestamp.strftime(DATETIME_FORMAT) for timestamp in dataset_in.timestamps]
     meta["empty_data"] = empty_data.to_dict()
-    meta["version"] = src.__version__
+    meta["version"] = pointcloudset.__version__
     with open(folder.joinpath("meta.json"), "w") as outfile:
         json.dump(dataset_in.meta, outfile)
     _check_dir_contents(folder)
@@ -103,9 +99,7 @@ def _dataset_from_single_dir(dir: Path) -> dict:
     with open(dir.joinpath("meta.json"), "r") as infile:
         meta = json.loads(infile.read())
     timestamps_raw = meta["timestamps"]
-    timestamps = [
-        datetime.strptime(timestamp, DATETIME_FORMAT) for timestamp in timestamps_raw
-    ]
+    timestamps = [datetime.strptime(timestamp, DATETIME_FORMAT) for timestamp in timestamps_raw]
     return {
         "data": data.to_delayed(),
         "timestamps": timestamps,

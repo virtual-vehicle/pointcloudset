@@ -9,8 +9,8 @@ from pyntcloud.io import TO_FILE
 from rich.console import Console
 from rosbags.highlevel import AnyReader
 
-import src
-from src import Dataset
+import pointcloudset
+from pointcloudset import Dataset
 
 app = typer.Typer()
 console = Console()
@@ -47,16 +47,14 @@ def convert(
     $ pointcloudset convert -o las -d converted_las --start 1 --end 10 xyz.bag
     """
     console.line()
-    console.rule(f"pointcloudset {src.__version__}")
+    console.rule(f"pointcloudset {pointcloudset.__version__}")
     bagfile_paths = _gen_file_paths(ros_file)
     console.rule(output_format)
     with console.status("Converting...", spinner="runner"):
         for bagfile_path in bagfile_paths:
             console.rule(f"converting {bagfile_path.name} ...", style="blue")
 
-            folder_to_write_path = _gen_folder(
-                folder_to_write, bagfile_path, output_format
-            )
+            folder_to_write_path = _gen_folder(folder_to_write, bagfile_path, output_format)
 
             if output_format == "POINTCLOUDSET":
                 _convert_one_bag2dir(
@@ -67,9 +65,7 @@ def convert(
                     keep_zeros=keep_zeros,
                     folder_to_write=folder_to_write_path,
                 )
-                console.print(
-                    f"{Path(bagfile_path).name} converted to {folder_to_write_path}"
-                )
+                console.print(f"{Path(bagfile_path).name} converted to {folder_to_write_path}")
             elif output_format.upper() in TO_FILE_PYNTCLOUD:
                 _convert_bag2files(
                     topic,
@@ -150,9 +146,7 @@ def _gen_file_paths(file_name):
 def _gen_folder(folder_to_write: str, ros_file_path: str, output_format: str) -> Path:
     """Generate the folder to write the converted files to."""
     suffix = "_pointcloudset" if output_format == "POINTCLOUDSET" else ""
-    folder_to_write_path = Path(folder_to_write).joinpath(
-        Path(ros_file_path).stem + suffix
-    )
+    folder_to_write_path = Path(folder_to_write).joinpath(Path(ros_file_path).stem + suffix)
     folder_to_write_path.mkdir(exist_ok=False, parents=True)
     return folder_to_write_path
 
@@ -187,12 +181,8 @@ def _convert_bag2files(
     for frame in range(start_frame_number, end_frame_number):
         pyntcloud = dataset[frame].to_instance("PYNTCLOUD")
         orig_file = Path(ros_file_path).stem
-        filename = folder_to_write_path.joinpath(
-            f"{orig_file}_{frame}.{output_format.lower()}"
-        )
-        console.print(
-            f"frame {frame} of {Path(ros_file_path).name} converted to {filename}"
-        )
+        filename = folder_to_write_path.joinpath(f"{orig_file}_{frame}.{output_format.lower()}")
+        console.print(f"frame {frame} of {Path(ros_file_path).name} converted to {filename}")
         pyntcloud.to_file(filename.as_posix())
 
 

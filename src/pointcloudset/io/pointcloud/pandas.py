@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import pandas as pd
 
 if TYPE_CHECKING:
-    from src import PointCloud
+    from pointcloudset import PointCloud
 
 
 def from_dataframe(df: pd.DataFrame) -> dict:

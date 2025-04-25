@@ -21,7 +21,7 @@
 				"ms-python.mypy-type-checker"
 			],
 			"settings": {
-				"python.defaultInterpreterPath": "/usr/local/bin/python",
+				"python.defaultInterpreterPath": "/workspaces/pointcloudset/.venv/bin/python",
 				"python.terminal.activateEnvironment": false,
 				"python.formatting.provider": "ruff",
 				"editor.formatOnSave": true,
@@ -38,5 +38,6 @@
 			},
 		},
 	},
-	"postCreateCommand": "uv sync"
+	"postCreateCommand": "uv sync",
+	"postStartCommand": "source /workspaces/pointcloudset/.venv/bin/activate",
 }

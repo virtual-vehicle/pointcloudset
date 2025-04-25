@@ -6,7 +6,7 @@ import open3d as o3d
 from pyntcloud import PyntCloud
 
 if TYPE_CHECKING:
-    from src import PointCloud
+    from pointcloudset import PointCloud
 
 
 def from_open3d(open3d_data: o3d.geometry.PointCloud) -> dict:

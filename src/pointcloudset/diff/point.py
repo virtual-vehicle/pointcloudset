@@ -9,12 +9,12 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 if TYPE_CHECKING:
-    import src
+    import pointcloudset
 
 
 def calculate_distance_to_point(
-    pointcloud: src.pointcloud.PointCloud, target: np.ndarray, **kwargs
-) -> src.pointcloud.PointCloud:
+    pointcloud: pointcloudset.pointcloud.PointCloud, target: np.ndarray, **kwargs
+) -> pointcloudset.pointcloud.PointCloud:
     """Calculate the Euclidian distance to a point for each point in the pointcloud.
 
     Note:

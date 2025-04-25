@@ -38,7 +38,7 @@ RUN echo '\
     BOLD="\\[\\e[1m\\]"\n\
     GREEN="\\[\\e[32m\\]"\n\
     BLUE="\\[\\e[34m\\]"\n\
-    export PS1="${BLUE}backend ${BLUE}${BOLD}\\w${RESET} $ "\n\
+    export PS1="${BLUE}pointcloudset ${BLUE}${BOLD}\\w${RESET} $ "\n\
     export LS_OPTIONS="--color=auto"\n\
     eval "$(dircolors -b)"\n\
     alias ls="ls $LS_OPTIONS"\n\

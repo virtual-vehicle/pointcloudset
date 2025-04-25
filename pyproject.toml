@@ -37,13 +37,13 @@ dependencies = [
     "pyntcloud",
     "open3d>=0.16.0,<0.19.0",
     "plotly",
-    "fastparquet",
     "dask>=2023.11.0",
     "typer",
     "rich",
-    "rosbags>=0.9.15",
+    "rosbags>=0.9.15,<0.10.0",
     "ipywidgets",
     "laspy",
+    "pyarrow>=19.0.1",
 ]
 [dependency-groups]
 dev = [

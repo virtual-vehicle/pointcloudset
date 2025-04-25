@@ -6,10 +6,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from src.config import OPS
+from pointcloudset.config import OPS
 
 if TYPE_CHECKING:
-    from src import PointCloud
+    from pointcloudset import PointCloud
 
 
 def quantile_filter(
@@ -58,9 +58,7 @@ def value_filter(
     return pointcloud.apply_filter(bool_array)
 
 
-def remove_radius_outlier(
-    pointcloud: PointCloud, nb_points: int, radius: float
-) -> PointCloud:
+def remove_radius_outlier(pointcloud: PointCloud, nb_points: int, radius: float) -> PointCloud:
     """Function to remove points that have less than nb_points in a given
     sphere of a given radius.
 

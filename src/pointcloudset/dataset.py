@@ -9,11 +9,11 @@ import pandas
 import plotly.graph_objects as go
 from dask import delayed
 
-from src.dataset_core import DatasetCore
-from src.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_TO_FILE
-from src.pipeline.delayed_result import DelayedResult
-from src.plot.dataset import animate_dataset
-from src.pointcloud import PointCloud
+from pointcloudset.dataset_core import DatasetCore
+from pointcloudset.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_TO_FILE
+from pointcloudset.pipeline.delayed_result import DelayedResult
+from pointcloudset.plot.dataset import animate_dataset
+from pointcloudset.pointcloud import PointCloud
 
 
 def _is_pipline_returing_pointcloud(pipeline, warn=True) -> bool:
@@ -22,12 +22,7 @@ def _is_pipline_returing_pointcloud(pipeline, warn=True) -> bool:
     if "return" in type_hints:
         res = get_type_hints(pipeline)["return"] == PointCloud
     elif warn:
-        print(
-            (
-                f"No return type was defined in {pipeline.__name__}:"
-                "will not return a new dataset"
-            )
-        )
+        print((f"No return type was defined in {pipeline.__name__}:will not return a new dataset"))
     return res
 
 
@@ -48,9 +43,7 @@ class Dataset(DatasetCore):
         elif isinstance(pointcloud_number, int):
             df = self.data[pointcloud_number].compute()
             timestamp = self.timestamps[pointcloud_number]
-            return PointCloud(
-                data=df, orig_file=self.meta["orig_file"], timestamp=timestamp
-            )
+            return PointCloud(data=df, orig_file=self.meta["orig_file"], timestamp=timestamp)
         else:
             raise TypeError(f"Wrong type {type(pointcloud_number).__name__}")
 
@@ -60,7 +53,7 @@ class Dataset(DatasetCore):
         For larger ROS bagfiles files use the commandline tool pointcloudset to convert
         the ROS file beforehand.
 
-        Supported are the native format which is a directore filled with fastparquet frames and
+        Supported are the native format which is a directore filled with parquet frames and
         ROS bag files (.bag).
 
 
@@ -101,16 +94,9 @@ class Dataset(DatasetCore):
             else:
                 ext = "ROS2"  # ROS2 is also a directory for both mcap and dp3
                 if not file_path.joinpath("metadata.yaml").exists():
-                    raise FileNotFoundError(
-                        "metadata.yaml not found in directory, which is required for ROS2 format"
-                    )
+                    raise FileNotFoundError("metadata.yaml not found in directory, which is required for ROS2 format")
         if ext not in DATASET_FROM_FILE:
-            raise ValueError(
-                (
-                    f"Unsupported file format {ext}; supported formats are:"
-                    " {DATASET_FROM_FILE.keys()}"
-                )
-            )
+            raise ValueError((f"Unsupported file format {ext}; supported formats are: {{DATASET_FROM_FILE.keys()}}"))
         res = DATASET_FROM_FILE[ext](file_path, ext=ext, **kwargs)
         meta = res["meta"]
         out = cls(data=res["data"], timestamps=res["timestamps"], meta=meta)
@@ -121,7 +107,7 @@ class Dataset(DatasetCore):
     def to_file(self, file_path: Path = Path(), **kwargs) -> None:
         """Writes a Dataset to a file.
 
-        Supported is the native format which is a directory full of fastparquet files
+        Supported is the native format which is a directory full of parquet files
         with meta data.
 
         Args:
@@ -161,11 +147,7 @@ class Dataset(DatasetCore):
         """
         library = library.upper()
         if library not in DATASET_FROM_INSTANCE:
-            raise ValueError(
-                "Unsupported library; supported libraries are: {}".format(
-                    list(DATASET_FROM_INSTANCE)
-                )
-            )
+            raise ValueError("Unsupported library; supported libraries are: {}".format(list(DATASET_FROM_INSTANCE)))
         else:
             return cls(**DATASET_FROM_INSTANCE[library](instance, **kwargs))
 
@@ -296,10 +278,7 @@ class Dataset(DatasetCore):
             if self.has_original_id:
                 data = self._agg(agg).compute()
                 if isinstance(agg, str):
-                    data.columns = [
-                        i if i in ["N", "original_id"] else f"{i} {agg}"
-                        for i in data.columns
-                    ]
+                    data.columns = [i if i in ["N", "original_id"] else f"{i} {agg}" for i in data.columns]
 
                 return data
             else:
@@ -474,9 +453,7 @@ class Dataset(DatasetCore):
         """
         return self.agg("std", depth=depth)
 
-    def _agg_per_pointcloud(
-        self, agg: str | list | dict
-    ) -> pandas.DataFrame | list | pandas.DataFrame:
+    def _agg_per_pointcloud(self, agg: str | list | dict) -> pandas.DataFrame | list | pandas.DataFrame:
         def get(pointcloud, agg: str | list | dict):
             return pointcloud.data.agg(agg)
 

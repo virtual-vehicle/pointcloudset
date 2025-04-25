@@ -4,7 +4,7 @@ Functions to calculate distances of points in pointcloud and a plane.
 
 import numpy as np
 
-from src.geometry import plane
+from pointcloudset.geometry import plane
 
 
 def calculate_distance_to_plane(
@@ -32,9 +32,7 @@ def calculate_distance_to_plane(
         PointCloud: PointCloud including distances to a plane for each point.
     """
     points = pointcloud.points.xyz
-    distances = np.asarray(
-        [plane.distance_to_point(point, target, normal_dist) for point in points]
-    )
+    distances = np.asarray([plane.distance_to_point(point, target, normal_dist) for point in points])
     if absolute_values:
         distances = np.absolute(distances)
     plane_str = np.array2string(target, formatter={"float_kind": lambda x: "%.4f" % x})
