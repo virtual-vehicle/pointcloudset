@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM ghcr.io/astral-sh/uv:bookworm-slim
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
@@ -27,7 +27,7 @@ RUN apt-get update && \
 
 
 # Copy local code to the container image.
-ENV PACKAGE_HOME /pointcloudset
+ENV PACKAGE_HOME=/pointcloudset
 
 WORKDIR $PACKAGE_HOME
 ADD pointcloudset ./pointcloudset
@@ -36,7 +36,7 @@ COPY README.rst ./
 ADD doc/sphinx/source/tutorial_notebooks ./tutorial_notebooks
 
 # install
-RUN /usr/local/bin/pip install $PACKAGE_HOME
+RUN uv sync --no-dev
 
 # Make sure the everything is installed ok
 RUN /bin/bash -c echo "Make sure pointcloudset is installed:"
