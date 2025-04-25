@@ -4,7 +4,7 @@ Functions to calculate distances of points in pointcloud to origin.
 
 import numpy as np
 
-from pointcloudset.diff.point import calculate_distance_to_point
+from src.diff.point import calculate_distance_to_point
 
 
 def calculate_distance_to_origin(pointcloud, **kwargs):

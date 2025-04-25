@@ -6,7 +6,7 @@ import math
 
 import numpy as np
 
-from pointcloudset.geometry import point
+from src.geometry import point
 
 
 def distance_to_point(

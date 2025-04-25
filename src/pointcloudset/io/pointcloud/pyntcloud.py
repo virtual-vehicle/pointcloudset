@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import pyntcloud
 
 if TYPE_CHECKING:
-    from pointcloudset import PointCloud
+    from src import PointCloud
 
 
 def from_pyntcloud(pyntcloud_data: pyntcloud.PyntCloud) -> dict:

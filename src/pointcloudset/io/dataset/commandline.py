@@ -9,8 +9,8 @@ from pyntcloud.io import TO_FILE
 from rich.console import Console
 from rosbags.highlevel import AnyReader
 
-import pointcloudset
-from pointcloudset import Dataset
+import src
+from src import Dataset
 
 app = typer.Typer()
 console = Console()
@@ -47,7 +47,7 @@ def convert(
     $ pointcloudset convert -o las -d converted_las --start 1 --end 10 xyz.bag
     """
     console.line()
-    console.rule(f"pointcloudset {pointcloudset.__version__}")
+    console.rule(f"pointcloudset {src.__version__}")
     bagfile_paths = _gen_file_paths(ros_file)
     console.rule(output_format)
     with console.status("Converting...", spinner="runner"):

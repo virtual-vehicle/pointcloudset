@@ -4,7 +4,7 @@ Functions to calculate distances of points in pointcloud and a plane.
 
 import numpy as np
 
-from pointcloudset.geometry import plane
+from src.geometry import plane
 
 
 def calculate_distance_to_plane(

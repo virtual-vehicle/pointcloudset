@@ -12,17 +12,17 @@ import plotly
 import plotly.express as px
 import pyntcloud
 
-from pointcloudset.config import PLOTLYSIZELIMIT
-from pointcloudset.diff import ALL_DIFFS
-from pointcloudset.filter import ALL_FILTERS
-from pointcloudset.io import (
+from src.config import PLOTLYSIZELIMIT
+from src.diff import ALL_DIFFS
+from src.filter import ALL_FILTERS
+from src.io import (
     POINTCLOUD_FROM_FILE,
     POINTCLOUD_FROM_INSTANCE,
     POINTCLOUD_TO_FILE,
     POINTCLOUD_TO_INSTANCE,
 )
-from pointcloudset.plot.pointcloud import plot_overlay
-from pointcloudset.pointcloud_core import PointCloudCore
+from src.plot.pointcloud import plot_overlay
+from src.pointcloud_core import PointCloudCore
 
 
 class PointCloud(PointCloudCore):

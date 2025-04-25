@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import dask
 
 if TYPE_CHECKING:
-    from pointcloudset import PointCloud
+    from src import PointCloud
 
 
 def dataset_from_pointclouds(pointclouds: list[PointCloud]) -> dict:

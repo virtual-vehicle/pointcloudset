@@ -9,11 +9,11 @@ import pandas
 import plotly.graph_objects as go
 from dask import delayed
 
-from pointcloudset.dataset_core import DatasetCore
-from pointcloudset.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_TO_FILE
-from pointcloudset.pipeline.delayed_result import DelayedResult
-from pointcloudset.plot.dataset import animate_dataset
-from pointcloudset.pointcloud import PointCloud
+from src.dataset_core import DatasetCore
+from src.io import DATASET_FROM_FILE, DATASET_FROM_INSTANCE, DATASET_TO_FILE
+from src.pipeline.delayed_result import DelayedResult
+from src.plot.dataset import animate_dataset
+from src.pointcloud import PointCloud
 
 
 def _is_pipline_returing_pointcloud(pipeline, warn=True) -> bool:

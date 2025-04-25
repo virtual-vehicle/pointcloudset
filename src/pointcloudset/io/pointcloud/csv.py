@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from pointcloudset import PointCloud
+    from src import PointCloud
 
 
 def write_csv(pointcloud: PointCloud, file_path: Path) -> None:

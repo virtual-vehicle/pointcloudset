@@ -6,10 +6,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from pointcloudset.config import OPS
+from src.config import OPS
 
 if TYPE_CHECKING:
-    from pointcloudset import PointCloud
+    from src import PointCloud
 
 
 def quantile_filter(

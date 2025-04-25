@@ -2,7 +2,7 @@
 Utiliy functions for filtering of frames.
 """
 
-from pointcloudset.filter.stat import (
+from src.filter.stat import (
     quantile_filter,
     remove_radius_outlier,
     value_filter,
