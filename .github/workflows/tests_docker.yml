@@ -19,11 +19,8 @@ jobs:
       matrix:
         python-version: ["3.10", "3.11"]  # Define Python versions as strings
         open3d-version: [0.18]
-
     env:
       UV_PYTHON: ${{ matrix.python-version }}
-    steps:
-      - uses: actions/checkout@v4
 
     steps:
       - name: Checkout code
