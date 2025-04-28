@@ -51,7 +51,9 @@ jobs:
         run: uv sync --locked --all-groups
 
       - name: Build documentation
-        run: make doc
+        run: |
+          source .venv/bin/activate
+          make doc
 
       - name: Add .nojekyll
         run: touch doc/sphinx/build/html/.nojekyll
