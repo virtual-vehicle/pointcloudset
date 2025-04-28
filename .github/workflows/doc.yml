@@ -52,8 +52,7 @@ jobs:
 
       - name: Build documentation
         run: |
-          source .venv/bin/activate
-          make doc
+          uv run make doc
 
       - name: Add .nojekyll
         run: touch doc/sphinx/build/html/.nojekyll
