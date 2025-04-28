@@ -40,6 +40,5 @@
 			},
 		},
 	},
-	"postCreateCommand": "uv sync --all-groups",
-	"postStartCommand": "source /workspaces/pointcloudset/.venv/bin/activate",
+	"postCreateCommand": "uv sync --all-groups"
 }

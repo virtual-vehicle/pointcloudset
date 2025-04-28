@@ -25,7 +25,7 @@ the converted directory.
 
 .. code-block:: console
 
-   pointcloudset convert -t /os1_cloud_node/points -d converted test.bag
+   uvx pointcloudset convert -t /os1_cloud_node/points -d converted test.bag
 
 List all PointCloud2 topics in a ROS file.
 
@@ -38,4 +38,4 @@ List all PointCloud2 topics in a ROS file.
    :prog: pointcloudset
    :nested: full
 
-   pointcloudset -d converted -o csv .
+   uvx pointcloudset -d converted -o csv .
