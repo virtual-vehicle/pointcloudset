@@ -1,4 +1,4 @@
-name: tests_docker
+name: tests
 
 on:
   push:
@@ -19,10 +19,12 @@ jobs:
       matrix:
         python-version: ["3.10", "3.11"]  # Define Python versions as strings
         open3d-version: [0.18]
+    env:
+      UV_PYTHON: ${{ matrix.python-version }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -48,40 +50,13 @@ jobs:
           mesa-utils && \
           sudo rm -rf /var/lib/apt/lists/*
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install open3d==${{ matrix.open3d-version }}
-          pip install -e .[dev]
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
 
       - name: Run tests
-        run: make test
+        run: uv run pytest tests
 
-      - name: Generate coverage badge
-        run: coverage-badge -f -o images/coverage.svg
-
-      - name: Verify changed files
-        uses: tj-actions/verify-changed-files@v6
-        id: changed_files
-        with:
-          files: images/coverage.svg
-
-      - name: Commit badge
-        if: steps.changed_files.outputs.files_changed == 'true'
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add images/coverage.svg
-          git commit -m "Updated coverage.svg"
-
-      - name: Push changes
-        if: steps.changed_files.outputs.files_changed == 'true'
-        uses: ad-m/github-push-action@v0.6.0
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ github.ref }}

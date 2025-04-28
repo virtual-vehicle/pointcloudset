@@ -1,6 +1,6 @@
 .PHONY: doc doccoverage
 doc:
-	sphinx-apidoc --no-toc --module-first -f -e -o ./doc/sphinx/source/python-api ./pointcloudset pointcloudset/config.py pointcloudset/io/dataset/commandline.py pointcloudset/io/dataset/convert_rosbagconvert.py && cd doc/sphinx/ && make html
+	sphinx-apidoc --no-toc --module-first -f -e -o ./doc/sphinx/source/python-api ./src/pointcloudset pointcloudset/config.py src/pointcloudset/io/dataset/commandline.py src/pointcloudset/io/dataset/convert_rosbagconvert.py && cd doc/sphinx/ && make html
 
 doccoverage:
 	docstr-coverage pointcloudset --skipmagic

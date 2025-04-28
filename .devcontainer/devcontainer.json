@@ -21,9 +21,11 @@
 				"ms-python.mypy-type-checker"
 			],
 			"settings": {
-				"python.defaultInterpreterPath": "/usr/local/bin/python",
-				"python.terminal.activateEnvironment": false,
+				"python.defaultInterpreterPath": "/workspaces/pointcloudset/.venv/bin/python",
+				"python.terminal.activateEnvironment": true,
 				"python.formatting.provider": "ruff",
+				"python.testing.pytestEnabled": true,
+				"python.testing.unittestEnabled": false,
 				"editor.formatOnSave": true,
 				"[latex]": {
 					"editor.wordWrap": "on",
@@ -38,5 +40,5 @@
 			},
 		},
 	},
-	"postCreateCommand": "pip install -e .[dev,doc,LAS]"
+	"postCreateCommand": "uv sync --all-groups"
 }

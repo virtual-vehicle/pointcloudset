@@ -9,9 +9,7 @@ import numpy as np
 from pointcloudset.geometry import point
 
 
-def distance_to_point(
-    point_a: np.ndarray, plane_model: np.ndarray, normal_dist: bool = True
-) -> float:
+def distance_to_point(point_a: np.ndarray, plane_model: np.ndarray, normal_dist: bool = True) -> float:
     """Calculate the distance from a plane to a point.
     https://mathworld.wolfram.com/Point-PlaneDistance.html
 
@@ -38,10 +36,7 @@ def distance_to_point(
         raise ValueError("plane_model needs to have 4 values")
     if normal_dist:
         distance = (
-            plane_model[0] * point_a[0]
-            + plane_model[1] * point_a[1]
-            + plane_model[2] * point_a[2]
-            + plane_model[3]
+            plane_model[0] * point_a[0] + plane_model[1] * point_a[1] + plane_model[2] * point_a[2] + plane_model[3]
         ) / (math.sqrt(plane_model[0] ** 2 + plane_model[1] ** 2 + plane_model[2] ** 2))
     else:
         line_of_sight = point_a
@@ -72,9 +67,7 @@ def intersect_line_of_sight(line: np.ndarray, plane_model: np.ndarray) -> np.nda
         raise ValueError("line needs to have 3 values")
     if len(plane_model) != 4:
         raise ValueError("plane_model needs to have 4 values")
-    t = (-plane_model[3]) / (
-        line[0] * plane_model[0] + line[1] * plane_model[1] + line[2] * plane_model[2]
-    )
+    t = (-plane_model[3]) / (line[0] * plane_model[0] + line[1] * plane_model[1] + line[2] * plane_model[2])
     px = line[0] * t
     py = line[1] * t
     pz = line[2] * t

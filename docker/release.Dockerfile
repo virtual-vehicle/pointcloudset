@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM ghcr.io/astral-sh/uv:bookworm-slim
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
@@ -27,21 +27,21 @@ RUN apt-get update && \
 
 
 # Copy local code to the container image.
-ENV PACKAGE_HOME /pointcloudset
+ENV PACKAGE_HOME=/pointcloudset
 
 WORKDIR $PACKAGE_HOME
-ADD pointcloudset ./pointcloudset
+ADD src ./src
 COPY pyproject.toml ./
 COPY README.rst ./
 ADD doc/sphinx/source/tutorial_notebooks ./tutorial_notebooks
 
 # install
-RUN /usr/local/bin/pip install $PACKAGE_HOME
+RUN uv sync --no-dev
 
 # Make sure the everything is installed ok
 RUN /bin/bash -c echo "Make sure pointcloudset is installed:"
-RUN /bin/bash -c "python -c 'import pointcloudset; print(pointcloudset.__version__); from pointcloudset import Dataset'"
-RUN /bin/bash -c "pointcloudset --help || (echo 'CLI not installed' && exit 1)"
+RUN /bin/bash -c "uv run python -c 'import pointcloudset; print(pointcloudset.__version__); from pointcloudset import Dataset'"
+RUN /bin/bash -c "uv run pointcloudset --help || (echo 'CLI not installed' && exit 1)"
 
 # Export environment variables
 ENV LANG=C.UTF-8

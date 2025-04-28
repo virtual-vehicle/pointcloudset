@@ -38,4 +38,4 @@ List all PointCloud2 topics in a ROS file.
    :prog: pointcloudset
    :nested: full
 
-   pointcloudset -d converted -o csv .
+   pointcloudset convert -d converted -o csv .
