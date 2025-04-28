@@ -15,7 +15,7 @@ import codecs
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath("../../../pointcloudset"))
+sys.path.insert(0, os.path.abspath("../../../src/pointcloudset"))
 
 
 def read(rel_path):
@@ -39,12 +39,10 @@ def get_version(rel_path):
 
 project = "pointcloudset"
 copyright = "VIRTUAL VEHICLE Research GmbH"
-author = (
-    "Thomas Goelles, Birgit Schlager, Stefan Muckenhuber, Sarah Haas, Tobias Hammer"
-)
+author = "Thomas Goelles, Birgit Schlager, Stefan Muckenhuber, Sarah Haas, Tobias Hammer"
 
 
-version = get_version("../../../pointcloudset/__init__.py")
+version = get_version("../../../src/pointcloudset/__init__.py")
 release = version
 
 # --nbshinx settings ---------------------------------------------------
