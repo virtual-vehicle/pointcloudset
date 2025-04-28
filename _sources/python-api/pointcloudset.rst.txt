@@ -1,0 +1,32 @@
+pointcloudset package
+=====================
+
+.. automodule:: pointcloudset
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   pointcloudset.diff
+   pointcloudset.filter
+   pointcloudset.geometry
+   pointcloudset.io
+   pointcloudset.pipeline
+   pointcloudset.plot
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   pointcloudset.config
+   pointcloudset.dataset
+   pointcloudset.dataset_core
+   pointcloudset.pointcloud
+   pointcloudset.pointcloud_core

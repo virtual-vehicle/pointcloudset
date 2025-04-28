@@ -1,0 +1,7 @@
+pointcloudset.config module
+===========================
+
+.. automodule:: pointcloudset.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
