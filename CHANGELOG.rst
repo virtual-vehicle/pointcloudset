@@ -11,6 +11,7 @@ Changed
 ~~~~~~
 - using uv for package management
 - using uv base image for docker images
+- using pyarrow for parquet files
 
 
 0.10.0 - (2024-12-03)
