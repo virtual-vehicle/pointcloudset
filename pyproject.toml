@@ -4,7 +4,7 @@ build-backend = "uv_build"
 
 [project]
 name = "pointcloudset"
-version = "0.10.0"
+version = "0.10.1"
 description = "Analyze large datasets of point clouds recorded over time in an efficient way"
 readme = "README.rst"
 requires-python = ">=3.10, <3.12"
@@ -103,21 +103,3 @@ relative_files = true
 
 [tool.coverage.report]
 exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:"]
-
-[tool.hatch.version]
-path = "pointcloudset/__init__.py"
-
-[[tool.hatch.version.files]]
-path = "pyproject.toml"
-search = 'version = "{current_version}"'
-replace = 'version = "{new_version}"'
-
-[[tool.hatch.version.files]]
-path = "CHANGELOG.rst"
-search = "Unreleased"
-replace = """
-Unreleased
--------------
-
-{new_version} - ({now:%Y-%m-%d})
-"""
