@@ -49,6 +49,8 @@ pointcloudset
 Features
 ################################################
 * Handles point clouds over time
+* Directly read ROS files and many pointcloud file formats. 
+* Generate a dataset from multiple pointclouds. For example from thousands of .las files and a timestamps.
 * Building complex pipelines with a clean and maintainable code
 
 .. code-block:: python
@@ -87,7 +89,6 @@ Features
 * High level processing based on dask, pandas, open3D and pyntcloud
 * Docker image is available
 * Optimised - but not limited to - automotive lidar
-* Directly read ROS files and many pointcloud file formats
 * A command line tool to convert ROS 1 & 2 files
 
 
