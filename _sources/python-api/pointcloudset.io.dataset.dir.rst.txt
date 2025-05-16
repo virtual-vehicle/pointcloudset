@@ -1,0 +1,7 @@
+pointcloudset.io.dataset.dir module
+===================================
+
+.. automodule:: pointcloudset.io.dataset.dir
+   :members:
+   :undoc-members:
+   :show-inheritance:

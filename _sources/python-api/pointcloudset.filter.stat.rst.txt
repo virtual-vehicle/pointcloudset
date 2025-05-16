@@ -1,0 +1,7 @@
+pointcloudset.filter.stat module
+================================
+
+.. automodule:: pointcloudset.filter.stat
+   :members:
+   :undoc-members:
+   :show-inheritance:
