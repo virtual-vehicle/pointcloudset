@@ -49,7 +49,7 @@ pointcloudset
 Features
 ################################################
 * Handles point clouds over time
-* Directly read ROS files and many pointcloud file formats. 
+* Directly read ROS files and many pointcloud file formats.
 * Generate a dataset from multiple pointclouds. For example from thousands of .las files and a timestamps.
 * Building complex pipelines with a clean and maintainable code
 
@@ -121,22 +121,42 @@ The easiest way to get started is to use the pre-build docker `tgoelles/pointclo
 Quickstart
 ################################################
 
+Reading ROS1 or ROS2 files:
 .. code-block:: python
-
-   from pointcloudset import Dataset, PointCloud
+   import pointcloudset as pcs
    from pathlib import Path
    import urllib.request
 
-   urllib.request.urlretrieve("https://github.com/virtual-vehicle/pointcloudset/raw/master/tests/testdata/test.bag", "test.bag")
-   urllib.request.urlretrieve("https://github.com/virtual-vehicle/pointcloudset/raw/master/tests/testdata/las_files/test_tree.las", "test_tree.las")
+   urllib.request.urlretrieve(
+      "https://github.com/virtual-vehicle/pointcloudset/raw/master/tests/testdata/test.bag", "test.bag"
+   )
 
-   dataset = Dataset.from_file(Path("test.bag"), topic="/os1_cloud_node/points", keep_zeros=False)
+   dataset = pcs.Dataset.from_file(Path("test.bag"), topic="/os1_cloud_node/points", keep_zeros=False)
    pointcloud = dataset[1]
-   tree = PointCloud.from_file(Path("test_tree.las"))
+   pointcloud.plot("x", hover_data=True)
 
-   tree.plot("x", hover_data=True)
+You can also genreate a dataset from multiple pointclouds form a large variety or formats like las, pcd, csv and more.
+.. code-block:: python
 
-This produces the plot from the animation above.
+   import pointcloudset as pcs
+   from pathlib import Path
+   import urllib.request
+
+   urllib.request.urlretrieve(
+      "https://github.com/virtual-vehicle/pointcloudset/raw/master/tests/testdata/las_files/test_tree.las",
+      "test_tree.las",
+   )
+   urllib.request.urlretrieve(
+      "https://github.com/virtual-vehicle/pointcloudset/raw/master/tests/testdata/las_files/test_tree.pcd",
+      "test_tree.pcd",
+   )
+
+   las_pc = pcs.PointCloud.from_file(Path("test_tree.las"))
+   pcd_pc = pcs.PointCloud.from_file(Path("test_tree.pcd"))
+   dataset = pcs.Dataset.from_instance("pointclouds", [las_pc, pcd_pc])
+   pointcloud = dataset[1]
+
+   pointcloud.plot("z", hover_data=True)
 
 * Read the `html documentation`_.
 * Have a look at the `tutorial notebooks`_ in the documentation folder
@@ -144,6 +164,8 @@ This produces the plot from the animation above.
 
 .. _html documentation: https://virtual-vehicle.github.io/pointcloudset/
 .. _tutorial notebooks: https://github.com/virtual-vehicle/pointcloudset/tree/master/doc/sphinx/source/tutorial_notebooks
+
+
 
 
 CLI to convert ROS1 and ROS2 files: pointcloudset convert

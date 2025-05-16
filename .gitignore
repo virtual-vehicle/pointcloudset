@@ -124,3 +124,6 @@ logs*
 tests/testdata/ros2_mcap/molisens_2022_09_27-16_37_57
 tests/testdata/ros2/molisens_2022_11_21-15_55_25
 pointcloudset/tmp.py
+#ignore test notebooks files
+doc/sphinx/source/tutorial_notebooks/test*
+
