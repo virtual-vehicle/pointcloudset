@@ -137,7 +137,7 @@ Reading ROS1 or ROS2 files:
    pointcloud = dataset[1]
    pointcloud.plot("x", hover_data=True)
 
-You can also genreate a dataset from multiple pointclouds form a large variety or formats like las, pcd, csv and more.
+You can also generate a dataset from multiple pointclouds form a large variety or formats like las, pcd, csv and more.
 
 .. code-block:: python
 
