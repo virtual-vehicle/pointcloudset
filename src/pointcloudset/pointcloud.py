@@ -98,7 +98,7 @@ class PointCloud(PointCloudCore):
         `CloudCompare <https://www.danielgm.net/cc/ake>`_ or similar tools.
         Currently not all attributes of a pointcloud are saved so some information
         is lost when using this function.
-        Uses `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_ as
+        Uses `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_ and `laspy <https://laspy.readthedocs.io/en/latest/>`
         backend.
 
         Args:
