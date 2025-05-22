@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 LAS_POINT_FORMAT = 7
 LAS_VERSION = "1.4"
-LAS_PRECISION = 0.0001  # m
+LAS_PRECISION = 0.000001  # m
 
 
 def _choose_scale_offset(axis: np.ndarray) -> tuple[float, float]:
@@ -84,39 +84,42 @@ def _best_las_type(arr: np.ndarray) -> str:
 
 def write_las(pointcloud: "PointCloud", file_path: Path) -> None:
     """
-    Export to LAS/LAZ (point format 7).  Coordinates are stored at *precision_hint* or the
-    finest safe resolution, whichever is coarser.
-    Intensity is stored in the built-in PF-7 field, but all other fields are
-    stored as ExtraBytes, see https://laspy.readthedocs.io/en/latest/intro.html
-    Args:
-        file_path (Path): Destination.
-    Returns:
-        None
+    Export a PointCloud to LAS/LAZ (point-format 7, LAS 1.4).
     """
     df = pointcloud.data
     if not {"x", "y", "z"}.issubset(df.columns):
         raise ValueError("PointCloud must have x, y, z columns")
 
+    # ── header ----------------------------------------------------------------
     header = laspy.LasHeader(point_format=LAS_POINT_FORMAT, version=LAS_VERSION)
     header.scales, header.offsets = zip(*(_choose_scale_offset(df[c].to_numpy()) for c in ("x", "y", "z")))
     las = laspy.LasData(header)
 
-    # LAS coordinates
-    las.x = df["x"].to_numpy()
-    las.y = df["y"].to_numpy()
-    las.z = df["z"].to_numpy()
+    # ── coordinates -----------------------------------------------------------
+    las.x, las.y, las.z = (df[c].to_numpy() for c in ("x", "y", "z"))
 
-    # LAS built-in point format 7 fields
+    # ── built-in PF-7 dimensions ---------------------------------------------
     builtin = {n.lower() for n in las.point_format.dimension_names}
-    for name in builtin - {"x", "y", "z"}:
-        col = name if name in df.columns else None
-        if col:
-            setattr(las, name, df[col].to_numpy())
+    builtin.update(
+        {
+            "bit_fields",
+            "classification_flags",
+            "return_number",
+            "number_of_returns",
+            "scan_direction_flag",
+            "edge_of_flight_line",
+        }
+    )
 
-    #  LAS ExtraBytes for everything else
-    extra = {c for c in df.columns if c.lower() not in builtin}
-    for col in sorted(extra):
+    for name in builtin - {"x", "y", "z"}:
+        if name in df.columns:
+            setattr(las, name, df[name].to_numpy())
+
+    # ── ExtraBytes for user columns ------------------------------------------
+    extra_cols = [c for c in df.columns if c.lower() not in builtin]
+    for col in sorted(extra_cols):
         las_type = _best_las_type(df[col].to_numpy())
         las.add_extra_dim(laspy.ExtraBytesParams(name=col, type=las_type))
         las[col] = df[col].to_numpy()
+
     las.write(Path(file_path))

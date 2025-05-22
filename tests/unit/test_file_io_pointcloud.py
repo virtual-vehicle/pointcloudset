@@ -1,6 +1,7 @@
 from datetime import datetime
 from pathlib import Path
 
+import laspy
 import numpy as np
 import pandas as pd
 import pytest
@@ -180,3 +181,23 @@ def test_to_laz_not_implemented(testpointcloud: PointCloud, tmp_path: Path):
     testfile_name = tmp_path.joinpath("just_test.laz")
     with pytest.raises(ValueError):
         testpointcloud.to_file(file_path=testfile_name)
+
+
+def test_las_read_write_read1(testlas1: Path, tmp_path: Path):
+    pointcloud = pointcloudset.PointCloud.from_file(testlas1, timestamp="from_file")
+    testfile_name = tmp_path.joinpath("just_test.las")
+    check.equal(type(pointcloud), PointCloud)
+    pointcloud.to_file(file_path=testfile_name)
+    check.equal(testfile_name.exists(), True)
+    read_pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+    check.equal(type(read_pointcloud), PointCloud)
+
+
+def test_las_read_write_read_tree(test_las_tree: Path, tmp_path: Path):
+    pointcloud = pointcloudset.PointCloud.from_file(test_las_tree, timestamp="from_file")
+    testfile_name = tmp_path.joinpath("just_test.las")
+    check.equal(type(pointcloud), PointCloud)
+    pointcloud.to_file(file_path=testfile_name)
+    check.equal(testfile_name.exists(), True)
+    read_pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+    check.equal(type(read_pointcloud), PointCloud)
