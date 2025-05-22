@@ -50,7 +50,7 @@ Features
 ################################################
 * Handles point clouds over time
 * Directly read ROS files and many pointcloud file formats.
-* Generate a dataset from multiple pointclouds. For example from thousands of .las files and a timestamps.
+* Generate a dataset from multiple pointclouds. For example from thousands of .las files.
 * Building complex pipelines with a clean and maintainable code
 
 .. code-block:: python
@@ -174,12 +174,12 @@ You can also generate a dataset from multiple pointclouds form a large variety o
 CLI to convert ROS1 and ROS2 files: pointcloudset convert
 ##########################################################
 
-The package includes a powerful CLI to convert pointclouds in ROS1 & 2 files into many formats like pointcloudset, csv, las and many more.
-It is capable of handling both mcap and db3 ROS files.
+The package includes a powerful CLI to convert pointclouds in ROS1 & 2 files into formats like pointcloudset and a folder with csv or las.
+It is capable of handling both mcap and db3 ROS2 files.
 
 .. code-block:: console
 
-   pointcloudset convert --output-format csv --output-dir converted_csv test.bag
+   pointcloudset convert test.bag --output-format las --output-dir converted_las
 
 .. image:: https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/cli_demo.gif
    :width: 600
