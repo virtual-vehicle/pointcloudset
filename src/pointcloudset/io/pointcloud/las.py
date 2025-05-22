@@ -8,8 +8,9 @@ import numpy as np
 if TYPE_CHECKING:
     from pointcloudset import PointCloud
 
-LAS_POINT_FORMAT = 7  # fixed
+LAS_POINT_FORMAT = 7
 LAS_VERSION = "1.4"
+PRECISION_HINT = 0.001  # m (1 mm)
 
 _NUMPY2LAS = {
     "uint8": "u1",
@@ -25,10 +26,10 @@ _NUMPY2LAS = {
 }
 
 
-def _choose_scale_offset(axis: np.ndarray, precision_hint: float | None = None) -> tuple[float, float]:
+def _choose_scale_offset(axis: np.ndarray) -> tuple[float, float]:
     """
     Return (scale, offset) guaranteeing int32 fit.
-    *precision_hint* – user-desired resolution (e.g. 0.001 m for mm).  If None,
+    PRECISION_HINT – user-desired resolution (e.g. 0.001 m for mm).  If None,
     we keep the finest resolution allowed by the int32 range, rounded to 10^n.
     """
     lo, hi = float(axis.min()), float(axis.max())
@@ -36,46 +37,45 @@ def _choose_scale_offset(axis: np.ndarray, precision_hint: float | None = None) 
     span = hi - lo
 
     if span == 0:  # flat axis
-        return (precision_hint or 0.001), offset
+        return (PRECISION_HINT), offset
 
     min_scale = span / (2**31 - 1)  # theoretical minimum
     rounded = 10 ** ceil(log10(min_scale))  # 10^n ≥ min_scale
-    scale = max(rounded, precision_hint or 0)
+    scale = max(rounded, PRECISION_HINT or 0)
 
     return scale, offset
 
 
-def write_las(
-    pointcloud: "PointCloud",
-    file_path: Path,
-    *,
-    precision_hint: float | None = None,  # e.g. 0.001 for millimetres
-) -> None:
+def write_las(pointcloud: "PointCloud", file_path: Path) -> None:
     """
-    Export to LAS/LAZ (PF-7).  Coordinates are stored at *precision_hint* or the
-    finest safe resolution, whichever is coarser.  All remaining numeric
-    columns become ExtraBytes unless already defined by PF-7.
+    Export to LAS/LAZ (point format 7).  Coordinates are stored at *precision_hint* or the
+    finest safe resolution, whichever is coarser.
+    Intensity is stored in the built-in PF-7 field, but all other fields are
+    stored as ExtraBytes, see https://laspy.readthedocs.io/en/latest/intro.html
+    Args:
+        file_path (Path): Destination.
+    Returns:
+        None
     """
     df = pointcloud.data
     if not {"x", "y", "z"}.issubset(df.columns):
         raise ValueError("PointCloud must have x, y, z columns")
 
-    # ---------- header ------------------------------------------------------
-    hdr = laspy.LasHeader(point_format=LAS_POINT_FORMAT, version=LAS_VERSION)
-    hdr.scales, hdr.offsets = zip(*(_choose_scale_offset(df[c].to_numpy(), precision_hint) for c in ("x", "y", "z")))
-    las = laspy.LasData(hdr)
+    header = laspy.LasHeader(point_format=LAS_POINT_FORMAT, version=LAS_VERSION)
+    header.scales, header.offsets = zip(*(_choose_scale_offset(df[c].to_numpy()) for c in ("x", "y", "z")))
+    las = laspy.LasData(header)
 
-    # ---------- coordinates -------------------------------------------------
+    # LAS coordinates
     las.x, las.y, las.z = df["x"].to_numpy(), df["y"].to_numpy(), df["z"].to_numpy()
 
-    # ---------- built-in PF-7 fields ----------------------------------------
+    #  built-in PF-7 fields
     builtin = {n.lower() for n in las.point_format.dimension_names}
     for name in builtin - {"x", "y", "z"}:
         col = name if name in df.columns else None
         if col:
             setattr(las, name, df[col].to_numpy())
 
-    # ---------- ExtraBytes for everything else -----------------------------
+    #  ExtraBytes for everything else
     extra = {c for c in df.columns if c.lower() not in builtin}
     for col in sorted(extra):
         las_type = _NUMPY2LAS.get(df[col].dtype.name, "f8")
