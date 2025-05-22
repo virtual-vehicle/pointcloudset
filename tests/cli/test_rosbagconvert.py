@@ -2,13 +2,14 @@ from pathlib import Path
 
 import pytest
 import pytest_check as check
-from pyntcloud.io import TO_FILE
 from typer.testing import CliRunner
 
 from pointcloudset import Dataset
+from pointcloudset.io import POINTCLOUD_TO_FILE
 from pointcloudset.io.dataset.commandline import app
 
-TO_FILE_PYNTCLOUD = list(TO_FILE.keys())
+TO_FILE_FORMATS = list(POINTCLOUD_TO_FILE.keys())
+
 
 runner = CliRunner()
 
@@ -53,9 +54,7 @@ def test_convert_one_rosfile_to_dir(ros_files, tmp_path: Path):
     check.equal(len(read_dataset.timestamps), 2)
 
 
-def test_convert_all_rosfiles_to_dir(
-    tmp_path: Path, testdata_path: Path, monkeypatch: pytest.MonkeyPatch
-):
+def test_convert_all_rosfiles_to_dir(tmp_path: Path, testdata_path: Path, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.chdir(testdata_path)
     out_path = tmp_path.joinpath("cli_dirs")
     result = runner.invoke(
@@ -83,7 +82,7 @@ def test_convert_all_rosfiles_to_dir(
     check.equal(len(read_dataset.timestamps), 2)
 
 
-@pytest.mark.parametrize("fileformat", TO_FILE_PYNTCLOUD)
+@pytest.mark.parametrize("fileformat", TO_FILE_FORMATS)
 def test_convert_one_ros_file_frames_to_files(ros_files, tmp_path: Path, fileformat):
     out_path = tmp_path.joinpath("cli_files")
     result = runner.invoke(
@@ -107,7 +106,7 @@ def test_convert_one_ros_file_frames_to_files(ros_files, tmp_path: Path, filefor
     check.equal(files[0].suffix.replace(".", ""), fileformat.lower())
 
 
-@pytest.mark.parametrize("fileformat", TO_FILE_PYNTCLOUD)
+@pytest.mark.parametrize("fileformat", TO_FILE_FORMATS)
 def test_convert_one_ros_file_one_frame_to_files(ros_files, tmp_path: Path, fileformat):
     out_path = tmp_path.joinpath("cli_1file")
     result = runner.invoke(
@@ -135,9 +134,7 @@ def test_convert_one_ros_file_one_frame_to_files(ros_files, tmp_path: Path, file
     check.equal(files[0].suffix.replace(".", ""), fileformat.lower())
 
 
-def test_convert_all_bags_frames_files(
-    tmp_path: Path, testdata_path: Path, monkeypatch: pytest.MonkeyPatch
-):
+def test_convert_all_bags_frames_files(tmp_path: Path, testdata_path: Path, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.chdir(testdata_path)
     out_path = tmp_path.joinpath("cli_dirs_frames")
     result = runner.invoke(
@@ -164,9 +161,7 @@ def test_convert_all_bags_frames_files(
 
 @pytest.mark.slow
 @pytest.mark.parametrize("filename", ["big_uncomp.bag", "big_comp.bag"])
-def test_convert_large_file_complete(
-    testdata_path_large: Path, tmp_path: Path, filename: str
-):
+def test_convert_large_file_complete(testdata_path_large: Path, tmp_path: Path, filename: str):
     if testdata_path_large.exists():
         len_target = 250
         testbag = testdata_path_large.joinpath(filename)

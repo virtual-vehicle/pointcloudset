@@ -12,9 +12,13 @@ Added
 ~~~~~~
 - exporting of las file using laspy
 
+Changed
+~~~~~~
+- CLI exporting direct via pointcloud and not via pyntcloud
+
 Fixed
 ~~~~~~
-- wrong helpt for pointcloudset convert CLI: the bag or mcap dir needs to come right after the command
+- wrong help for pointcloudset convert CLI: the bag or mcap dir needs to come right after the command
 
 0.10.1- (2025-04-28)
 -------------

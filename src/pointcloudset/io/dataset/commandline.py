@@ -146,7 +146,7 @@ def _gen_file_paths(file_name):
 
 def _gen_folder(folder_to_write: str, ros_file_path: str, output_format: str) -> Path:
     """Generate the folder to write the converted files to."""
-    suffix = "_pointcloudset" if output_format == "POINTCLOUDSET" else f"_{output_format.lower()}"
+    suffix = "_pointcloudset" if output_format == "POINTCLOUDSET" else ""
     folder_to_write_path = Path(folder_to_write).joinpath(Path(ros_file_path).stem + suffix)
     folder_to_write_path.mkdir(exist_ok=False, parents=True)
     return folder_to_write_path
