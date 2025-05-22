@@ -12,19 +12,6 @@ LAS_POINT_FORMAT = 7
 LAS_VERSION = "1.4"
 LAS_PRECISION = 0.0001  # m
 
-_NUMPY2LAS = {
-    "uint8": "u1",
-    "int8": "i1",
-    "uint16": "u2",
-    "int16": "i2",
-    "uint32": "u4",
-    "int32": "i4",
-    "uint64": "u8",
-    "int64": "i8",
-    "float32": "f4",
-    "float64": "f8",
-}
-
 
 def _choose_scale_offset(axis: np.ndarray) -> tuple[float, float]:
     """
@@ -44,6 +31,55 @@ def _choose_scale_offset(axis: np.ndarray) -> tuple[float, float]:
     scale = max(rounded, LAS_PRECISION or 0)
 
     return scale, offset
+
+
+def _best_las_type(arr: np.ndarray) -> str:
+    """
+    Return the smallest LAS data-type code ('u1', 'i1', …, 'f8') that can
+    represent *arr* loss-lessly.
+
+    LAS → NumPy mapping codes:
+    u1/i1  : unsigned/signed   8-bit integer
+    u2/i2  : unsigned/signed  16-bit integer
+    u4/i4  : unsigned/signed  32-bit integer
+    u8/i8  : unsigned/signed  64-bit integer
+    f4/f8  : 32- / 64-bit float
+    """
+    dt = arr.dtype
+
+    # Integers
+    if dt.kind in {"u", "i"}:
+        lo, hi = int(arr.min()), int(arr.max())
+        if dt.kind == "u":  # unsigned
+            if hi <= np.iinfo(np.uint8).max:
+                return "u1"
+            if hi <= np.iinfo(np.uint16).max:
+                return "u2"
+            if hi <= np.iinfo(np.uint32).max:
+                return "u4"
+            return "u8"
+        else:  # signed
+            if lo >= np.iinfo(np.int8).min and hi <= np.iinfo(np.int8).max:
+                return "i1"
+            if lo >= np.iinfo(np.int16).min and hi <= np.iinfo(np.int16).max:
+                return "i2"
+            if lo >= np.iinfo(np.int32).min and hi <= np.iinfo(np.int32).max:
+                return "i4"
+            return "i8"
+
+    # Floats
+    if dt.kind == "f":
+        # If nothing is lost when casting to f4, prefer it.
+        if np.allclose(arr.astype(np.float32), arr, rtol=0, atol=0):
+            return "f4"
+        return "f8"
+
+    #  Booleans / bit-fields
+    if dt.kind == "b":
+        return "u1"  # 0 / 1
+
+    # default to 64-bit float
+    return "f8"
 
 
 def write_las(pointcloud: "PointCloud", file_path: Path) -> None:
@@ -80,8 +116,7 @@ def write_las(pointcloud: "PointCloud", file_path: Path) -> None:
     #  LAS ExtraBytes for everything else
     extra = {c for c in df.columns if c.lower() not in builtin}
     for col in sorted(extra):
-        las_type = _NUMPY2LAS.get(df[col].dtype.name, "f8")
+        las_type = _best_las_type(df[col].to_numpy())
         las.add_extra_dim(laspy.ExtraBytesParams(name=col, type=las_type))
         las[col] = df[col].to_numpy()
-
     las.write(Path(file_path))
