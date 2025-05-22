@@ -43,6 +43,11 @@ def testlas1():
 
 
 @pytest.fixture()
+def test_las_tree():
+    return Path(__file__).parent.absolute() / "testdata/las_files/test_tree.las"
+
+
+@pytest.fixture()
 def testlasvz6000_1():
     return Path(__file__).parent.absolute() / "testdata/las_files/VZ6000_1.las"
 
@@ -103,19 +108,13 @@ def testpointcloud_mini_df():
 
 @pytest.fixture()
 def reference_data_with_zero_dataframe():
-    filename = (
-        Path(__file__).parent.absolute()
-        / "testdata/testpointcloud_withzero_dataframe.pkl"
-    )
+    filename = Path(__file__).parent.absolute() / "testdata/testpointcloud_withzero_dataframe.pkl"
     return pd.read_pickle(filename)
 
 
 @pytest.fixture()
 def reference_pointcloud_withzero_dataframe():
-    filename = (
-        Path(__file__).parent.absolute()
-        / "testdata/testpointcloud_withzero_pointcloud.pkl"
-    )
+    filename = Path(__file__).parent.absolute() / "testdata/testpointcloud_withzero_pointcloud.pkl"
     return pd.read_pickle(filename)
 
 
@@ -130,18 +129,14 @@ def testpointcloud_mini(testpointcloud_mini_df) -> PointCloud:
 
 @pytest.fixture()
 def testpointcloud_mini_real(testpointcloud) -> PointCloud:
-    testpointcloud_mini_real = (
-        testpointcloud.limit("x", -1, 1).limit("y", -1, 1).limit("intensity", 0, 10)
-    )
+    testpointcloud_mini_real = testpointcloud.limit("x", -1, 1).limit("y", -1, 1).limit("intensity", 0, 10)
     testpointcloud_mini_real.timestamp = datetime.datetime(2020, 1, 1, 0, 0)
     return testpointcloud_mini_real
 
 
 @pytest.fixture()
 def testpointcloud_mini_real_later(testpointcloud) -> PointCloud:
-    testpointcloud_mini_real_later = (
-        testpointcloud.limit("x", -1, 1).limit("y", -1, 1).limit("intensity", 0, 10)
-    )
+    testpointcloud_mini_real_later = testpointcloud.limit("x", -1, 1).limit("y", -1, 1).limit("intensity", 0, 10)
     testpointcloud_mini_real_later.timestamp = datetime.datetime(2020, 1, 1, 0, 1)
     return testpointcloud_mini_real_later
 
@@ -162,27 +157,20 @@ def testpointcloud_mini_real_other_original_id(testpointcloud_mini_real) -> Poin
 
 
 @pytest.fixture()
-def testdataset_mini_real(
-    testpointcloud_mini_real, testpointcloud_mini_real_plus1
-) -> Dataset:
+def testdataset_mini_real(testpointcloud_mini_real, testpointcloud_mini_real_plus1) -> Dataset:
     pointclouds = [testpointcloud_mini_real, testpointcloud_mini_real_plus1]
     return Dataset.from_instance("POINTCLOUDS", pointclouds)
 
 
 @pytest.fixture()
-def testdataset_mini_same(
-    testpointcloud_mini_real, testpointcloud_mini_real_later
-) -> Dataset:
+def testdataset_mini_same(testpointcloud_mini_real, testpointcloud_mini_real_later) -> Dataset:
     pointclouds = [testpointcloud_mini_real, testpointcloud_mini_real_later]
     return Dataset.from_instance("POINTCLOUDS", pointclouds)
 
 
 @pytest.fixture()
 def test_kitti() -> Dataset:
-    filename = (
-        Path(__file__).parent.absolute()
-        / "testdata/kitti_velodyne/kitti_2011_09_26_drive_0002_synce"
-    )
+    filename = Path(__file__).parent.absolute() / "testdata/kitti_velodyne/kitti_2011_09_26_drive_0002_synce"
     return Dataset.from_file(filename)
 
 
@@ -196,16 +184,12 @@ def testdataset_with_empty_frame(testdataset_mini_real: Dataset):
 
 @pytest.fixture()
 def testvz6000_1(testlasvz6000_1):
-    return PointCloud.from_file(
-        testlasvz6000_1, timestamp=datetime.datetime(2022, 1, 1, 1, 1, 1)
-    )
+    return PointCloud.from_file(testlasvz6000_1, timestamp=datetime.datetime(2022, 1, 1, 1, 1, 1))
 
 
 @pytest.fixture()
 def testvz6000_2(testlasvz6000_2):
-    return PointCloud.from_file(
-        testlasvz6000_2, timestamp=datetime.datetime(2022, 1, 1, 2, 2, 2)
-    )
+    return PointCloud.from_file(testlasvz6000_2, timestamp=datetime.datetime(2022, 1, 1, 2, 2, 2))
 
 
 @pytest.fixture()
