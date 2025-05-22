@@ -1,0 +1,685 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pointcloudset.dataset module &mdash; pointcloudset 0.11.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pointcloudset.dataset_core module" href="pointcloudset.dataset_core.html" />
+    <link rel="prev" title="pointcloudset.config module" href="pointcloudset.config.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pointcloudset
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.11.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial_notebooks/usage.html">Usage of Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial_notebooks/usage.html#Working-with-the-whole-Dataset">Working with the whole Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial_notebooks/usage.html#Working-with-a-PointCloud">Working with a PointCloud</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial_notebooks/usage.html#Plane-segmenation,-Clustering-and-Overlaying-Several-Plots">Plane segmenation, Clustering and Overlaying Several Plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial_notebooks/usage.html#Applying-Functions-to-the-whole-Dataset">Applying Functions to the whole Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial_notebooks/reading_las_pcd.html">Working with LAS and PCD Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial_notebooks/reading_las_pcd.html#Combining-them-to-a-pointcloudset-dataset">Combining them to a pointcloudset dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial_notebooks/reading_las_pcd.html#Exporting-of-Las">Exporting of Las</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial_notebooks/Working_with_kitti_dataset.html">Use Kitti Dataset</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Convert ROS 1 and ROS 2 files</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../commandline_interface.html">pointcloudset CLI</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contribute</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../how_to_contribute.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started_contribution.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guidelines.html">Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html">Support</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python API</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../description_python_api.html">How to read the API documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="pointcloudset.html">pointcloudset package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pointcloudset.diff.html">pointcloudset.diff package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pointcloudset.filter.html">pointcloudset.filter package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pointcloudset.geometry.html">pointcloudset.geometry package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pointcloudset.io.html">pointcloudset.io package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pointcloudset.pipeline.html">pointcloudset.pipeline package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pointcloudset.plot.html">pointcloudset.plot package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pointcloudset.config.html">pointcloudset.config module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">pointcloudset.dataset module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pointcloudset.dataset_core.html">pointcloudset.dataset_core module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pointcloudset.pointcloud.html">pointcloudset.pointcloud module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pointcloudset.pointcloud_core.html">pointcloudset.pointcloud_core module</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pointcloudset</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="pointcloudset.html">pointcloudset package</a> &raquo;</li>
+        
+      <li>pointcloudset.dataset module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/python-api/pointcloudset.dataset.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="pointcloudset.dataset_core.html" class="btn btn-neutral float-right" title="pointcloudset.dataset_core module" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+      
+      
+        <a href="pointcloudset.config.html" class="btn btn-neutral float-left" title="pointcloudset.config module" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pointcloudset.dataset">
+<span id="pointcloudset-dataset-module"></span><h1>pointcloudset.dataset module<a class="headerlink" href="#module-pointcloudset.dataset" title="Permalink to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pointcloudset.dataset.Dataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pointcloudset.dataset.</span></span><span class="sig-name descname"><span class="pre">Dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">dask.delayed.DelayedLeaf</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.13)"><span class="pre">datetime.datetime</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">{'orig_file':</span> <span class="pre">'',</span> <span class="pre">'topic':</span> <span class="pre">''}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pointcloudset.dataset.Dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="pointcloudset.dataset_core.html#pointcloudset.dataset_core.DatasetCore" title="pointcloudset.dataset_core.DatasetCore"><code class="xref py py-class docutils literal notranslate"><span class="pre">DatasetCore</span></code></a></p>
+<p>Dataset Class which contains multiple pointclouds, timestamps and metadata.
+For more details on how to use the Dataset Class please refer to the usage.ipynb
+notebook for an interactive tutorial. The notebook can also be found in the tutorial
+section of the docu.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pointcloudset.dataset.Dataset.from_file">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pointcloudset.dataset.Dataset.from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a Dataset from a file.gfile
+For larger ROS bagfiles files use the commandline tool pointcloudset to convert
+the ROS file beforehand.</p>
+<p>Supported are the native format which is a directore filled with parquet frames and
+ROS bag files (.bag).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a>) – <p>File path where Dataset should be read from.</p>
+<p>If file format is a directory: <a class="reference internal" href="pointcloudset.io.dataset.dir.html#pointcloudset.io.dataset.dir.dataset_from_dir" title="pointcloudset.io.dataset.dir.dataset_from_dir"><code class="xref py py-func docutils literal notranslate"><span class="pre">pointcloudset.io.dataset.dir.dataset_from_dir()</span></code></a></p>
+<p>If file format is a ROS bag file: <code class="xref py py-func docutils literal notranslate"><span class="pre">pointcloudset.io.dataset.bag.dataset_from_rosbag()</span></code></p>
+</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments to pass to func.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dataset object from file.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pointcloudset.dataset.Dataset" title="pointcloudset.dataset.Dataset">Dataset</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If file format is not supported.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.13)"><strong>TypeError</strong></a> – If file_path is not a Path object.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pointcloudset</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">bag_file</span><span class="p">,</span> <span class="n">topic</span><span class="o">=</span><span class="s2">&quot;lidar/points&quot;</span><span class="p">,</span> <span class="n">keep_zeros</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pointcloudset</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">bag_file</span><span class="p">,</span> <span class="n">topic</span><span class="o">=</span><span class="s2">&quot;lidar/points&quot;</span><span class="p">,</span> <span class="n">keep_zeros</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointcloudset.dataset.Dataset.to_file">
+<span class="sig-name descname"><span class="pre">to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><span class="pre">Path</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('.')</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#pointcloudset.dataset.Dataset.to_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes a Dataset to a file.</p>
+<p>Supported is the native format which is a directory full of parquet files
+with meta data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.13)"><em>pathlib.Path</em></a>) – <p>File path where Dataset should be saved.</p>
+<p>If file format is a directory: <a class="reference internal" href="pointcloudset.io.dataset.dir.html#pointcloudset.io.dataset.dir.dataset_to_dir" title="pointcloudset.io.dataset.dir.dataset_to_dir"><code class="xref py py-func docutils literal notranslate"><span class="pre">pointcloudset.io.dataset.dir.dataset_to_dir()</span></code></a></p>
+</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments to pass to func.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointcloudset.dataset.Dataset.from_instance">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_instance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">library</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="pointcloudset.pointcloud.html#pointcloudset.pointcloud.PointCloud" title="pointcloudset.pointcloud.PointCloud"><span class="pre">pointcloudset.pointcloud.PointCloud</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pointcloudset.dataset.Dataset" title="pointcloudset.dataset.Dataset"><span class="pre">Dataset</span></a></span></span><a class="headerlink" href="#pointcloudset.dataset.Dataset.from_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a library instance to a pointcloudset Dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>library</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – <p>Name of the library.</p>
+<p>If “pointclouds”: <code class="xref py py-func docutils literal notranslate"><span class="pre">pointcloudset.io.dataset.pointclouds.dataset_from_pointclouds()</span></code></p>
+</p></li>
+<li><p><strong>instance</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference internal" href="pointcloudset.pointcloud.html#pointcloudset.pointcloud.PointCloud" title="pointcloudset.pointcloud.PointCloud"><em>PointCloud</em></a><em>]</em>) – Instance from which to convert.</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments to pass to func.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dataset object derived from the instance.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pointcloudset.dataset.Dataset" title="pointcloudset.dataset.Dataset">Dataset</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If instance is not supported.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pointcloudset</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_instance</span><span class="p">(</span><span class="s2">&quot;pointclouds&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">pc1</span><span class="p">,</span> <span class="n">pc2</span><span class="p">])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointcloudset.dataset.Dataset.apply">
+<span class="sig-name descname"><span class="pre">apply</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><span class="pre">collections.abc.Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="pointcloudset.pointcloud.html#pointcloudset.pointcloud.PointCloud" title="pointcloudset.pointcloud.PointCloud"><span class="pre">pointcloudset.pointcloud.PointCloud</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="pointcloudset.pointcloud.html#pointcloudset.pointcloud.PointCloud" title="pointcloudset.pointcloud.PointCloud"><span class="pre">pointcloudset.pointcloud.PointCloud</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable" title="(in Python v3.13)"><span class="pre">collections.abc.Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="pointcloudset.pointcloud.html#pointcloudset.pointcloud.PointCloud" title="pointcloudset.pointcloud.PointCloud"><span class="pre">pointcloudset.pointcloud.PointCloud</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pointcloudset.dataset.Dataset" title="pointcloudset.dataset.Dataset"><span class="pre">pointcloudset.dataset.Dataset</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="pointcloudset.pipeline.delayed_result.html#pointcloudset.pipeline.delayed_result.DelayedResult" title="pointcloudset.pipeline.delayed_result.DelayedResult"><span class="pre">pointcloudset.pipeline.delayed_result.DelayedResult</span></a></span></span><a class="headerlink" href="#pointcloudset.dataset.Dataset.apply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies a function to the dataset. It is also possible to pass keyword
+arguments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> (<em>Union</em><em>[</em><em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="pointcloudset.pointcloud.html#pointcloudset.pointcloud.PointCloud" title="pointcloudset.pointcloud.PointCloud"><em>PointCloud</em></a><em>]</em><em>, </em><a class="reference internal" href="pointcloudset.pointcloud.html#pointcloudset.pointcloud.PointCloud" title="pointcloudset.pointcloud.PointCloud"><em>PointCloud</em></a><em>]</em><em>, </em><em>Callable</em><em>[</em><em>[</em><a class="reference internal" href="pointcloudset.pointcloud.html#pointcloudset.pointcloud.PointCloud" title="pointcloudset.pointcloud.PointCloud"><em>PointCloud</em></a><em>]</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – Function to
+apply. If it returns a PointCloud and has the according type hint a new
+Dataset will be generated.</p></li>
+<li><p><strong>warn</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> warning if result is not a Dataset, if <code class="docutils literal notranslate"><span class="pre">False</span></code>
+warning is turned off.</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments to pass to func.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A Dataset if the function returns a PointCloud,
+otherwise a DelayedResult object which is a tuple of dask delayed objects.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Union[<a class="reference internal" href="#pointcloudset.dataset.Dataset" title="pointcloudset.dataset.Dataset">Dataset</a>, <a class="reference internal" href="pointcloudset.pipeline.delayed_result.html#pointcloudset.pipeline.delayed_result.DelayedResult" title="pointcloudset.pipeline.delayed_result.DelayedResult">DelayedResult</a>]</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">pointcloud</span><span class="p">:</span><span class="n">pointcloudset</span> <span class="o">.</span><span class="n">PointCloud</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pointcloudset</span><span class="o">.</span><span class="n">PointCloud</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">pointcloud</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">dataset</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+<span class="c1"># This results in a new Dataset</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">pointcloud</span><span class="p">:</span><span class="n">pointcloudset</span><span class="o">.</span><span class="n">PointCloud</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">pointcloud</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+<span class="n">dataset</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">func</span><span class="p">(</span><span class="n">pointcloud</span><span class="p">:</span><span class="n">pointcloudset</span><span class="o">.</span><span class="n">PointCloud</span><span class="p">,</span> <span class="n">test</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">pointcloud</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">test</span>
+
+<span class="n">dataset</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">test</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="pointcloudset.dataset.Dataset.has_original_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">has_original_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#pointcloudset.dataset.Dataset.has_original_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if all pointclouds in the Dataset have original_ids</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if all PointClouds in the the Dataset returns has_original_id.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointcloudset.dataset.Dataset.agg">
+<span class="sig-name descname"><span class="pre">agg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.13)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dataset'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'pointcloud'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'point'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dataset'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">pandas.core.series.Series</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">pandas.core.frame.DataFrame</span></span></span><a class="headerlink" href="#pointcloudset.dataset.Dataset.agg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Aggregate using one or more operations over the whole dataset.
+Similar to <a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.aggregate.html#pandas.DataFrame.aggregate" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pandas.DataFrame.aggregate()</span></code></a>.
+Uses <a class="reference external" href="https://docs.dask.org/en/latest/generated/dask.dataframe.DataFrame.html#dask.dataframe.DataFrame" title="(in Dask)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dask.dataframe.DataFrame</span></code></a> with parallel processing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>agg</strong> (<em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>]</em>) – Function to use for aggregating.</p></li>
+<li><p><strong>depth</strong> (<em>Literal</em><em>[</em><em>&quot;dataset&quot;</em><em>, </em><em>&quot;pointcloud&quot;</em><em>, </em><em>&quot;point&quot;</em><em>]</em><em>, </em><em>optional</em>) – Aggregation level: “dataset”, “pointcloud” or
+“point”. Defaults to “dataset”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Results of the
+aggregation. This can be a pandas DataFrame or Series, depending on the
+depth and aggregation.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Union[<a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)">pandas.DataFrame</a>, <a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)">pandas.DataFrame</a>, <a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)">pandas.Series</a>]</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If depth is not “dataset”, “pointcloud” or “point”.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="s2">&quot;max&quot;</span><span class="p">,</span> <span class="s2">&quot;pointcloud&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s2">&quot;min&quot;</span><span class="p">,</span><span class="s2">&quot;max&quot;</span><span class="p">,</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span><span class="s2">&quot;std&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s2">&quot;x&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">,</span><span class="s2">&quot;max&quot;</span><span class="p">,</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span><span class="s2">&quot;std&quot;</span><span class="p">]})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointcloudset.dataset.Dataset.min">
+<span class="sig-name descname"><span class="pre">min</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dataset'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pointcloudset.dataset.Dataset.min" title="Permalink to this definition">¶</a></dt>
+<dd><p>Aggregate using min operation over the whole dataset.
+Similar to <a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.aggregate.html#pandas.DataFrame.aggregate" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pandas.DataFrame.aggregate()</span></code></a>.
+Uses <a class="reference external" href="https://docs.dask.org/en/latest/generated/dask.dataframe.DataFrame.html#dask.dataframe.DataFrame" title="(in Dask)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dask.dataframe.DataFrame</span></code></a> with parallel processing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>depth</strong> (<em>Literal</em><em>[</em><em>&quot;dataset&quot;</em><em>, </em><em>&quot;pointcloud&quot;</em><em>, </em><em>&quot;point&quot;</em><em>]</em><em>, </em><em>optional</em>) – Aggregation level:</p></li>
+<li><p><strong>&quot;dataset&quot;</strong> – </p></li>
+<li><p><strong>&quot;dataset&quot;.</strong> (<em>&quot;pointcloud&quot;</em><em> or </em><em>&quot;point&quot;. Defaults to</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Aggregated
+Dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Union[<a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)">pandas.DataFrame</a>, <a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)">pandas.DataFrame</a>, <a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)">pandas.Series</a>]</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="s2">&quot;pointcloud&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="s2">&quot;point&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>See also: <a class="reference internal" href="#pointcloudset.dataset.Dataset.agg" title="pointcloudset.dataset.Dataset.agg"><code class="xref py py-func docutils literal notranslate"><span class="pre">pointcloudset.dataset.Dataset.agg()</span></code></a></p>
+<p>Same as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s2">&quot;min&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointcloudset.dataset.Dataset.max">
+<span class="sig-name descname"><span class="pre">max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dataset'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pointcloudset.dataset.Dataset.max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Aggregate using max operation over the whole dataset.
+Similar to <a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.aggregate.html#pandas.DataFrame.aggregate" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pandas.DataFrame.aggregate()</span></code></a>.
+Uses <a class="reference external" href="https://docs.dask.org/en/latest/generated/dask.dataframe.DataFrame.html#dask.dataframe.DataFrame" title="(in Dask)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dask.dataframe.DataFrame</span></code></a> with parallel processing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>depth</strong> (<em>Literal</em><em>[</em><em>&quot;dataset&quot;</em><em>, </em><em>&quot;pointcloud&quot;</em><em>, </em><em>&quot;point&quot;</em><em>]</em><em>, </em><em>optional</em>) – Aggregation level:</p></li>
+<li><p><strong>&quot;dataset&quot;</strong> – </p></li>
+<li><p><strong>&quot;dataset&quot;.</strong> (<em>&quot;pointcloud&quot;</em><em> or </em><em>&quot;point&quot;. Defaults to</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Aggregated
+Dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Union[<a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)">pandas.DataFrame</a>, <a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)">pandas.DataFrame</a>, <a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)">pandas.Series</a>]</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="s2">&quot;pointcloud&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="s2">&quot;point&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>See also: <a class="reference internal" href="#pointcloudset.dataset.Dataset.agg" title="pointcloudset.dataset.Dataset.agg"><code class="xref py py-func docutils literal notranslate"><span class="pre">pointcloudset.dataset.Dataset.agg()</span></code></a></p>
+<p>Same as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s2">&quot;max&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointcloudset.dataset.Dataset.mean">
+<span class="sig-name descname"><span class="pre">mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dataset'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pointcloudset.dataset.Dataset.mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Aggregate using mean operation over the whole dataset.
+Similar to <a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.aggregate.html#pandas.DataFrame.aggregate" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pandas.DataFrame.aggregate()</span></code></a>.
+Uses <a class="reference external" href="https://docs.dask.org/en/latest/generated/dask.dataframe.DataFrame.html#dask.dataframe.DataFrame" title="(in Dask)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dask.dataframe.DataFrame</span></code></a> with parallel processing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>depth</strong> (<em>Literal</em><em>[</em><em>&quot;dataset&quot;</em><em>, </em><em>&quot;pointcloud&quot;</em><em>, </em><em>&quot;point&quot;</em><em>]</em><em>, </em><em>optional</em>) – Aggregation level:</p></li>
+<li><p><strong>&quot;dataset&quot;</strong> – </p></li>
+<li><p><strong>&quot;dataset&quot;.</strong> (<em>&quot;pointcloud&quot;</em><em> or </em><em>&quot;point&quot;. Defaults to</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Aggregated Dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Union[<a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)">pandas.DataFrame</a>, <a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)">pandas.DataFrame</a>, <a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)">pandas.Series</a>]</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;pointcloud&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s2">&quot;point&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>See also: <a class="reference internal" href="#pointcloudset.dataset.Dataset.agg" title="pointcloudset.dataset.Dataset.agg"><code class="xref py py-func docutils literal notranslate"><span class="pre">pointcloudset.dataset.Dataset.agg()</span></code></a></p>
+<p>Same as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s2">&quot;mean&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointcloudset.dataset.Dataset.std">
+<span class="sig-name descname"><span class="pre">std</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">depth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'dataset'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pointcloudset.dataset.Dataset.std" title="Permalink to this definition">¶</a></dt>
+<dd><p>Aggregate using std operation over the whole dataset.
+Similar to <a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.aggregate.html#pandas.DataFrame.aggregate" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pandas.DataFrame.aggregate()</span></code></a>.
+Uses <a class="reference external" href="https://docs.dask.org/en/latest/generated/dask.dataframe.DataFrame.html#dask.dataframe.DataFrame" title="(in Dask)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dask.dataframe.DataFrame</span></code></a> with parallel processing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>depth</strong> (<em>Literal</em><em>[</em><em>&quot;dataset&quot;</em><em>, </em><em>&quot;pointcloud&quot;</em><em>, </em><em>&quot;point&quot;</em><em>]</em><em>, </em><em>optional</em>) – Aggregation level:</p></li>
+<li><p><strong>&quot;dataset&quot;</strong> – </p></li>
+<li><p><strong>&quot;dataset&quot;.</strong> (<em>&quot;pointcloud&quot;</em><em> or </em><em>&quot;point&quot;. Defaults to</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Aggregated Dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Union[<a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)">pandas.DataFrame</a>, <a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.DataFrame.html#pandas.DataFrame" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)">pandas.DataFrame</a>, <a class="reference external" href="http://pandas.pydata.org/pandas-docs/dev/reference/api/pandas.Series.html#pandas.Series" title="(in pandas v3.0.0.dev0+2123.ge2bd8e60f0)">pandas.Series</a>]</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="s2">&quot;pointcloud&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="s2">&quot;point&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>See also: <a class="reference internal" href="#pointcloudset.dataset.Dataset.agg" title="pointcloudset.dataset.Dataset.agg"><code class="xref py py-func docutils literal notranslate"><span class="pre">pointcloudset.dataset.Dataset.agg()</span></code></a></p>
+<p>Same as:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s2">&quot;std&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointcloudset.dataset.Dataset.extend">
+<span class="sig-name descname"><span class="pre">extend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#pointcloudset.dataset.Dataset" title="pointcloudset.dataset.Dataset"><span class="pre">Dataset</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#pointcloudset.dataset.Dataset" title="pointcloudset.dataset.Dataset"><span class="pre">Dataset</span></a></span></span><a class="headerlink" href="#pointcloudset.dataset.Dataset.extend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extends the dataset by another one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dataset</strong> (<a class="reference internal" href="#pointcloudset.dataset.Dataset" title="pointcloudset.dataset.Dataset"><em>Dataset</em></a>) – Dataset to extend another dataset.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Extended dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#pointcloudset.dataset.Dataset" title="pointcloudset.dataset.Dataset">Dataset</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pointcloudset.dataset.Dataset.animate">
+<span class="sig-name descname"><span class="pre">animate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Figure</span></span></span><a class="headerlink" href="#pointcloudset.dataset.Dataset.animate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot and animate a PointClouds in a dataset as a 3D scatter plot with
+<a class="reference external" href="https://plotly.com/">Plotly</a>.
+It uses the plot function of PointCloud and bundles them together for an
+interactive animation <code class="xref py py-func docutils literal notranslate"><span class="pre">pointcloudset.pointcloud.plot()</span></code>.</p>
+<p>You can also pass arguments to the <a class="reference external" href="https://plotly.com/">Plotly</a>
+express function <a class="reference external" href="https://plotly.com/python-api-reference/generated/plotly.express.scatter_3d.html#plotly.express.scatter_3d" title="(in )"><code class="xref py py-func docutils literal notranslate"><span class="pre">plotly.express.scatter_3d()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – Keyword arguments to pass to plot of a single pointcloud and
+plotly express.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The interactive Plotly plot, best used inside a
+Jupyter Notebook.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://plotly.com/python-api-reference/generated/plotly.graph_objs.Figure.html#id0" title="(in )">plotly.graph_objs.Figure</a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>_description_</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>go.Figure</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset_bag</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span><span class="n">hover_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;intensity&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="pointcloudset.dataset_core.html" class="btn btn-neutral float-right" title="pointcloudset.dataset_core module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pointcloudset.config.html" class="btn btn-neutral float-left" title="pointcloudset.config module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright VIRTUAL VEHICLE Research GmbH.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

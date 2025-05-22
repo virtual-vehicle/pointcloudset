@@ -1,0 +1,538 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Welcome to pointcloudset’s documentation! &mdash; pointcloudset 0.11.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Usage of Package" href="tutorial_notebooks/usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home"> pointcloudset
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.11.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html">Usage of Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html#Working-with-the-whole-Dataset">Working with the whole Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html#Working-with-a-PointCloud">Working with a PointCloud</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html#Plane-segmenation,-Clustering-and-Overlaying-Several-Plots">Plane segmenation, Clustering and Overlaying Several Plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html#Applying-Functions-to-the-whole-Dataset">Applying Functions to the whole Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/reading_las_pcd.html">Working with LAS and PCD Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/reading_las_pcd.html#Combining-them-to-a-pointcloudset-dataset">Combining them to a pointcloudset dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/reading_las_pcd.html#Exporting-of-Las">Exporting of Las</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/Working_with_kitti_dataset.html">Use Kitti Dataset</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Convert ROS 1 and ROS 2 files</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="commandline_interface.html">pointcloudset CLI</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contribute</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="how_to_contribute.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started_contribution.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guidelines.html">Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="description_python_api.html">How to read the API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-api/pointcloudset.html">pointcloudset package</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">pointcloudset</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Welcome to pointcloudset’s documentation!</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="tutorial_notebooks/usage.html" class="btn btn-neutral float-right" title="Usage of Package" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+      
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="welcome-to-pointcloudset-s-documentation">
+<h1>Welcome to pointcloudset’s documentation!<a class="headerlink" href="#welcome-to-pointcloudset-s-documentation" title="Permalink to this heading">¶</a></h1>
+<p><a class="reference external" href="https://github.com/virtual-vehicle/pointcloudset">Code</a> | <a class="reference external" href="https://virtual-vehicle.github.io/pointcloudset/">Documentation</a></p>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Handles point clouds over time</p></li>
+<li><p>Directly read ROS files and many pointcloud file formats.</p></li>
+<li><p>Generate a dataset from multiple pointclouds. For example from thousands of .las files.</p></li>
+<li><p>Building complex pipelines with a clean and maintainable code</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">newpointcloud</span> <span class="o">=</span> <span class="n">pointcloud</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s2">&quot;quantile&quot;</span><span class="p">,</span><span class="s2">&quot;reflectivity&quot;</span><span class="p">,</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Apply arbitrary functions to datasets of point clouds</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">isolate_target</span><span class="p">(</span><span class="n">frame</span><span class="p">:</span> <span class="n">PointCloud</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PointCloud</span><span class="p">:</span>
+   <span class="k">return</span> <span class="n">frame</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">diff_to_pointcloud</span><span class="p">(</span><span class="n">pointcloud</span><span class="p">:</span> <span class="n">PointCloud</span><span class="p">,</span> <span class="n">to_compare</span><span class="p">:</span> <span class="n">PointCloud</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PointCloud</span><span class="p">:</span>
+   <span class="k">return</span> <span class="n">pointcloud</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;pointcloud&quot;</span><span class="p">,</span> <span class="n">to_compare</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">isolate_target</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">diff_to_pointcloud</span><span class="p">,</span> <span class="n">to_compare</span><span class="o">=</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Includes powerful aggregation method <em>agg</em> similar to pandas</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s2">&quot;min&quot;</span><span class="p">,</span><span class="s2">&quot;max&quot;</span><span class="p">,</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span><span class="s2">&quot;std&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Support for large files with lazy evaluation and parallel processing</p></li>
+</ul>
+<a class="reference internal image-reference" href="https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/dask.gif"><img alt="https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/dask.gif" src="https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/dask.gif" style="width: 600px;" /></a>
+<ul class="simple">
+<li><p>Support for numerical data per point (intensity, range, noise …)</p></li>
+<li><p>Interactive 3D visualisation</p></li>
+</ul>
+<a class="reference internal image-reference" href="https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/tree.gif"><img alt="https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/tree.gif" src="https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/tree.gif" style="width: 600px;" /></a>
+<ul class="simple">
+<li><p>High level processing based on dask, pandas, open3D and pyntcloud</p></li>
+<li><p>Docker image is available</p></li>
+<li><p>Optimised - but not limited to - automotive lidar</p></li>
+<li><p>A command line tool to convert ROS 1 &amp; 2 files</p></li>
+</ul>
+</div>
+<div class="section" id="use-case-examples">
+<h2>Use case examples<a class="headerlink" href="#use-case-examples" title="Permalink to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Post processing and analytics of a lidar dataset recorded by ROS</p></li>
+<li><p>A collection of multiple lidar scans from a terrestrial laser scanner</p></li>
+<li><p>Comparison of multiple point clouds to a ground truth</p></li>
+<li><p>Analytics of point clouds over time</p></li>
+<li><p>Developing algorithms on a single frame and then applying them to huge datasets</p></li>
+</ul>
+</div>
+<div class="section" id="installation-with-pip">
+<h2>Installation with pip<a class="headerlink" href="#installation-with-pip" title="Permalink to this heading">¶</a></h2>
+<p>Install python package with pip:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install pointcloudset</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="installation-with-docker">
+<h2>Installation with Docker<a class="headerlink" href="#installation-with-docker" title="Permalink to this heading">¶</a></h2>
+<p>The easiest way to get started is to use the pre-build docker <a class="reference external" href="https://hub.docker.com/repository/docker/tgoelles/pointcloudset">tgoelles/pointcloudset</a>.</p>
+</div>
+<div class="section" id="quickstart">
+<h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this heading">¶</a></h2>
+<p>Reading ROS1 or ROS2 files:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pointcloudset</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pcs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">urllib.request</span>
+
+<span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
+   <span class="s2">&quot;https://github.com/virtual-vehicle/pointcloudset/raw/master/tests/testdata/test.bag&quot;</span><span class="p">,</span> <span class="s2">&quot;test.bag&quot;</span>
+<span class="p">)</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">pcs</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;test.bag&quot;</span><span class="p">),</span> <span class="n">topic</span><span class="o">=</span><span class="s2">&quot;/os1_cloud_node/points&quot;</span><span class="p">,</span> <span class="n">keep_zeros</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">pointcloud</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">pointcloud</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">hover_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also generate a dataset from multiple pointclouds form a large variety or formats like las, pcd, csv and more.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pointcloudset</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pcs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">urllib.request</span>
+
+<span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
+   <span class="s2">&quot;https://github.com/virtual-vehicle/pointcloudset/raw/master/tests/testdata/las_files/test_tree.las&quot;</span><span class="p">,</span>
+   <span class="s2">&quot;test_tree.las&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span>
+   <span class="s2">&quot;https://github.com/virtual-vehicle/pointcloudset/raw/master/tests/testdata/las_files/test_tree.pcd&quot;</span><span class="p">,</span>
+   <span class="s2">&quot;test_tree.pcd&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">las_pc</span> <span class="o">=</span> <span class="n">pcs</span><span class="o">.</span><span class="n">PointCloud</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;test_tree.las&quot;</span><span class="p">))</span>
+<span class="n">pcd_pc</span> <span class="o">=</span> <span class="n">pcs</span><span class="o">.</span><span class="n">PointCloud</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;test_tree.pcd&quot;</span><span class="p">))</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">pcs</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_instance</span><span class="p">(</span><span class="s2">&quot;pointclouds&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">las_pc</span><span class="p">,</span> <span class="n">pcd_pc</span><span class="p">])</span>
+<span class="n">pointcloud</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="n">pointcloud</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="n">hover_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Read the <a class="reference external" href="https://virtual-vehicle.github.io/pointcloudset/">html documentation</a>.</p></li>
+<li><p>Have a look at the <a class="reference external" href="https://github.com/virtual-vehicle/pointcloudset/tree/master/doc/sphinx/source/tutorial_notebooks">tutorial notebooks</a> in the documentation folder</p></li>
+<li><p>For even more usage examples you can have a look at the tests</p></li>
+</ul>
+</div>
+<div class="section" id="cli-to-convert-ros1-and-ros2-files-pointcloudset-convert">
+<h2>CLI to convert ROS1 and ROS2 files: pointcloudset convert<a class="headerlink" href="#cli-to-convert-ros1-and-ros2-files-pointcloudset-convert" title="Permalink to this heading">¶</a></h2>
+<p>The package includes a powerful CLI to convert pointclouds in ROS1 &amp; 2 files into formats like pointcloudset and a folder with csv or las.
+It is capable of handling both mcap and db3 ROS2 files.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pointcloudset convert test.bag --output-format las --output-dir converted_las</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/cli_demo.gif"><img alt="https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/cli_demo.gif" src="https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/cli_demo.gif" style="width: 600px;" /></a>
+<p>You can view PointCloud2 messages with</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pointcloudset topics test.bag</span>
+</pre></div>
+</div>
+<p>Tipp: If you have uv installed you can simply run:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">uvx pointcloudset --help</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="comparison-to-related-packages">
+<h2>Comparison to related packages<a class="headerlink" href="#comparison-to-related-packages" title="Permalink to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p><a class="reference external" href="http://wiki.ros.org/rosbag/Code%20API">ROS</a> -  bagfiles can contain many point clouds from different sensors.
+The downside of the format is that it is only suitable for serial access and not well suited for data analytics and post processing.</p></li>
+<li><p><a class="reference external" href="https://github.com/daavoo/pyntcloud">pyntcloud</a> - Only for single point clouds. This package is used as the basis for the
+PointCloud object.</p></li>
+<li><p><a class="reference external" href="https://github.com/intel-isl/Open3D">open3d</a> - Only for single point clouds. Excellent package, which is used for some
+methods on the PointCloud.</p></li>
+<li><p><a class="reference external" href="https://github.com/PDAL/PDAL">pdal</a> - Works also with pipelines on point clouds but is mostly focused on single point cloud processing.
+Pointcloudset is purely in python and based on pandas DataFrames. In addition pointcloudset works in parallel to process large datasets.</p></li>
+</ol>
+</div>
+<div class="section" id="citation-and-contact">
+<h2>Citation and contact<a class="headerlink" href="#citation-and-contact" title="Permalink to this heading">¶</a></h2>
+<p><a class="reference external" href="https://orcid.org/0000-0002-3925-6260&gt;"><img alt="orcid" src="https://orcid.org/sites/default/files/images/orcid_16x16.png" /></a> <a class="reference external" href="https://orcid.org/0000-0002-3925-6260">Thomas Gölles</a>
+email: <a class="reference external" href="mailto:thomas&#46;goelles&#37;&#52;&#48;v2c2&#46;at">thomas<span>&#46;</span>goelles<span>&#64;</span>v2c2<span>&#46;</span>at</a></p>
+<p>Please cite our <a class="reference external" href="https://joss.theoj.org/papers/10.21105/joss.03471#">JOSS paper</a> if you use pointcloudset.</p>
+<div class="highlight-bib notranslate"><div class="highlight"><pre><span></span><span class="nc">@article</span><span class="p">{</span><span class="nl">Goelles2021</span><span class="p">,</span>
+<span class="w">  </span><span class="na">doi</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{10.21105/joss.03471}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">url</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{https://doi.org/10.21105/joss.03471}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">year</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{2021}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">publisher</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{The Open Journal}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">volume</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{6}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">number</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{65}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">pages</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{3471}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">author</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Thomas Goelles and Birgit Schlager and Stefan Muckenhuber and Sarah Haas and Tobias Hammer}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">title</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{`pointcloudset`: Efficient Analysis of Large Datasets of Point Clouds Recorded Over Time}</span><span class="p">,</span>
+<span class="w">  </span><span class="na">journal</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s">{Journal of Open Source Software}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html">Usage of Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html#Working-with-the-whole-Dataset">Working with the whole Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html#Working-with-a-PointCloud">Working with a PointCloud</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html#Plane-segmenation,-Clustering-and-Overlaying-Several-Plots">Plane segmenation, Clustering and Overlaying Several Plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html#Applying-Functions-to-the-whole-Dataset">Applying Functions to the whole Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/reading_las_pcd.html">Working with LAS and PCD Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/reading_las_pcd.html#Combining-them-to-a-pointcloudset-dataset">Combining them to a pointcloudset dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/reading_las_pcd.html#Exporting-of-Las">Exporting of Las</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/Working_with_kitti_dataset.html">Use Kitti Dataset</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Convert ROS 1 and ROS 2 files</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="commandline_interface.html">pointcloudset CLI</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contribute</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="how_to_contribute.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started_contribution.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guidelines.html">Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Python API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="description_python_api.html">How to read the API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-api/pointcloudset.html">pointcloudset package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="python-api/pointcloudset.diff.html">pointcloudset.diff package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="python-api/pointcloudset.diff.nearest.html">pointcloudset.diff.nearest module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api/pointcloudset.diff.origin.html">pointcloudset.diff.origin module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api/pointcloudset.diff.plane.html">pointcloudset.diff.plane module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api/pointcloudset.diff.point.html">pointcloudset.diff.point module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api/pointcloudset.diff.pointcloud.html">pointcloudset.diff.pointcloud module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="python-api/pointcloudset.filter.html">pointcloudset.filter package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="python-api/pointcloudset.filter.stat.html">pointcloudset.filter.stat module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="python-api/pointcloudset.geometry.html">pointcloudset.geometry package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="python-api/pointcloudset.geometry.plane.html">pointcloudset.geometry.plane module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api/pointcloudset.geometry.point.html">pointcloudset.geometry.point module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="python-api/pointcloudset.io.html">pointcloudset.io package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="python-api/pointcloudset.io.dataset.html">pointcloudset.io.dataset package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="python-api/pointcloudset.io.dataset.dir.html">pointcloudset.io.dataset.dir module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="python-api/pointcloudset.io.dataset.pointcloud.html">pointcloudset.io.dataset.pointcloud module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="python-api/pointcloudset.io.dataset.ros.html">pointcloudset.io.dataset.ros module</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="python-api/pointcloudset.io.pointcloud.html">pointcloudset.io.pointcloud package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="python-api/pointcloudset.io.pointcloud.csv.html">pointcloudset.io.pointcloud.csv module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="python-api/pointcloudset.io.pointcloud.las.html">pointcloudset.io.pointcloud.las module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="python-api/pointcloudset.io.pointcloud.open3d.html">pointcloudset.io.pointcloud.open3d module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="python-api/pointcloudset.io.pointcloud.pandas.html">pointcloudset.io.pointcloud.pandas module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="python-api/pointcloudset.io.pointcloud.pyntcloud.html">pointcloudset.io.pointcloud.pyntcloud module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="python-api/pointcloudset.pipeline.html">pointcloudset.pipeline package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="python-api/pointcloudset.pipeline.delayed_result.html">pointcloudset.pipeline.delayed_result module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="python-api/pointcloudset.plot.html">pointcloudset.plot package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="python-api/pointcloudset.plot.dataset.html">pointcloudset.plot.dataset module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="python-api/pointcloudset.plot.pointcloud.html">pointcloudset.plot.pointcloud module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="python-api/pointcloudset.config.html">pointcloudset.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-api/pointcloudset.dataset.html">pointcloudset.dataset module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-api/pointcloudset.dataset_core.html">pointcloudset.dataset_core module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-api/pointcloudset.pointcloud.html">pointcloudset.pointcloud module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="python-api/pointcloudset.pointcloud_core.html">pointcloudset.pointcloud_core module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id1">0.11.0- (2025-05-22)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id2">0.10.1- (2025-04-28)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id4">0.10.0 - (2024-12-03)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id8">0.9.0 - (2023-03-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id12">0.8.1 - (2023-03-23)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id15">0.8.0 - (2022-11-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id17">0.7.0 - (2022-09-27)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id20">0.6.3 - (2022-06-08)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id22">0.6.2 - (2022-06-03)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id24">0.6.1 - (2022-06-03)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id28">0.6.0 - (2022-06-03)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id29">0.5.1 - (2022-05-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id32">0.5.0 - (2022-05-30)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id36">0.4.3 - (2022-05-10)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id38">0.4.2 - (2022-05-10)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id41">0.4.1 - (2022-02-22)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id43">0.4.0 - (2022-02-22)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id46">0.3.4 - (2022-02-18)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id49">0.3.3 - (2021-09-27)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id51">0.3.2 - (2021-08-18)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id54">0.3.1 - (2021-08-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id55">0.3.0 (2021-08-17)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#id59">0.2.3 (2021-07-12)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="tutorial_notebooks/usage.html" class="btn btn-neutral float-right" title="Usage of Package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright VIRTUAL VEHICLE Research GmbH.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

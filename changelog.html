@@ -1,0 +1,618 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Changelog &mdash; pointcloudset 0.11.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="pointcloudset.pointcloud_core module" href="python-api/pointcloudset.pointcloud_core.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pointcloudset
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.11.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html">Usage of Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html#Working-with-the-whole-Dataset">Working with the whole Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html#Working-with-a-PointCloud">Working with a PointCloud</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html#Plane-segmenation,-Clustering-and-Overlaying-Several-Plots">Plane segmenation, Clustering and Overlaying Several Plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html#Applying-Functions-to-the-whole-Dataset">Applying Functions to the whole Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/reading_las_pcd.html">Working with LAS and PCD Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/reading_las_pcd.html#Combining-them-to-a-pointcloudset-dataset">Combining them to a pointcloudset dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/reading_las_pcd.html#Exporting-of-Las">Exporting of Las</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/Working_with_kitti_dataset.html">Use Kitti Dataset</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Convert ROS 1 and ROS 2 files</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="commandline_interface.html">pointcloudset CLI</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contribute</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="how_to_contribute.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started_contribution.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guidelines.html">Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="description_python_api.html">How to read the API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-api/pointcloudset.html">pointcloudset package</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pointcloudset</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Changelog</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/changelog.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+      
+        <a href="python-api/pointcloudset.pointcloud_core.html" class="btn btn-neutral float-left" title="pointcloudset.pointcloud_core module" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="changelog">
+<h1>Changelog<a class="headerlink" href="#changelog" title="Permalink to this heading">¶</a></h1>
+<p>All notable changes to this project will be documented in this file.</p>
+<p>The format is based on <a class="reference external" href="https://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>,
+and this project adheres to <a class="reference external" href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
+<div class="section" id="id1">
+<h2>0.11.0- (2025-05-22)<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="added">
+<h3>Added<a class="headerlink" href="#added" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>support for exporting of las files</p></li>
+</ul>
+</div>
+<div class="section" id="changed">
+<h3>Changed<a class="headerlink" href="#changed" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>CLI exporting direct via pointcloudset and not via pyntcloud. Therefore currently only las and csv are supported</p></li>
+</ul>
+</div>
+<div class="section" id="fixed">
+<h3>Fixed<a class="headerlink" href="#fixed" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>wrong help for pointcloudset convert CLI: the bag file or mcap dir needs to come right after the command</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id2">
+<h2>0.10.1- (2025-04-28)<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id3">
+<h3>Changed<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>using uv for package management</p></li>
+<li><p>using uv base image for docker images</p></li>
+<li><p>using pyarrow for parquet files</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>0.10.0 - (2024-12-03)<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id5">
+<h3>Added<a class="headerlink" href="#id5" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>support for python 3.11 and open3d 0.18 (which still needs numpy &lt;2)</p></li>
+<li><p>testing for the latest 2 python versions which are supported by the latestt open3d</p></li>
+</ul>
+</div>
+<div class="section" id="id6">
+<h3>Changed<a class="headerlink" href="#id6" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>using pyproject.toml instead of setup.py and for all tool settings</p></li>
+<li><p>no more conda dependency use pure pip and the pre-install the open3d requirments</p></li>
+<li><p>use of official python:3.11-slim docker image</p></li>
+<li><p>using pyproject.toml instead of environment.yml</p></li>
+<li><p>using ruff instead of black and isort</p></li>
+<li><p>github actions now use python base images</p></li>
+<li><p>moved status to Beta</p></li>
+<li><p>make pylas a dependencies, was optional before</p></li>
+</ul>
+</div>
+<div class="section" id="removed">
+<h3>Removed<a class="headerlink" href="#removed" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>conda dependency. It is not needed anymore and works just with pip</p></li>
+<li><p>docker base image, not needed any more. Just use the python one and install the open3d dependencies</p></li>
+</ul>
+</div>
+<div class="section" id="id7">
+<h3>Changed<a class="headerlink" href="#id7" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>using ruff instead of flake8 and pylint</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id8">
+<h2>0.9.0 - (2023-03-30)<a class="headerlink" href="#id8" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id9">
+<h3>Added<a class="headerlink" href="#id9" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>added support for reading ROS2 mcap files</p></li>
+<li><p>added a way to investigate the topic names of PointCloud2 messages inside ROS files with the CLI “$ pointcloudset topics test.bag”</p></li>
+</ul>
+</div>
+<div class="section" id="id10">
+<h3>Changed<a class="headerlink" href="#id10" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>changed the name of the CLI from pointcloudset-convert to pointcloudset like “$ pointcloudset convert -t /os1_cloud_node/points test.bag”</p></li>
+<li><p>pointcloudset convert now defaults to generating a directory named after the bagfile with added _pointcloudset to the directory name</p></li>
+</ul>
+</div>
+<div class="section" id="id11">
+<h3>Fixed<a class="headerlink" href="#id11" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>using nbformat==5.7.0 to avoid error with open3d 0.17</p></li>
+<li><p>deleted blackcellmagic due to errors and not being used</p></li>
+<li><p>documentation of CLI where the examples where wrong</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id12">
+<h2>0.8.1 - (2023-03-23)<a class="headerlink" href="#id12" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id13">
+<h3>Added<a class="headerlink" href="#id13" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>tested with open3d 0.17</p></li>
+<li><p>tested with dask 2023.3.1</p></li>
+<li><p>tested with python 3.10.2 and new versions of pandas and numpy</p></li>
+</ul>
+</div>
+<div class="section" id="id14">
+<h3>Changed<a class="headerlink" href="#id14" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>updated open3d, dask version for the docker image</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id15">
+<h2>0.8.0 - (2022-11-13)<a class="headerlink" href="#id15" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id16">
+<h3>Added<a class="headerlink" href="#id16" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>support for ROS2 files (with SQLite backend). Read them in the same ways as ROS1 bag files</p></li>
+<li><p>support for ROS2 conversion in pointcloudset-convert</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id17">
+<h2>0.7.0 - (2022-09-27)<a class="headerlink" href="#id17" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id18">
+<h3>Added<a class="headerlink" href="#id18" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>added version number to file metadata. If the native file format changes in the future.</p></li>
+<li><p>added tests for large ROS bagfiles</p></li>
+</ul>
+</div>
+<div class="section" id="id19">
+<h3>Changed<a class="headerlink" href="#id19" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>using rosbags as ROS library. This avoids the conflicts of the test explorer and dependency on some poorly maintained libraries.</p></li>
+<li><p>renamed CLI rosbagconvert to pointcloudset-convert since its specific for pointcloudset and not rosbag. Complete rewrite of CLI.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id20">
+<h2>0.6.3 - (2022-06-08)<a class="headerlink" href="#id20" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id21">
+<h3>Fixed<a class="headerlink" href="#id21" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>added pycryptodomex dependency since the ROS packages do not install it but need it</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id22">
+<h2>0.6.2 - (2022-06-03)<a class="headerlink" href="#id22" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id23">
+<h3>Fixed<a class="headerlink" href="#id23" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>distrubted package installation</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id24">
+<h2>0.6.1 - (2022-06-03)<a class="headerlink" href="#id24" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id25">
+<h3>Added<a class="headerlink" href="#id25" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>bounding_box property for datasets</p></li>
+<li><p>animate method for datasets as an experimental feature</p></li>
+<li><p>limit_less and limit_greater methods to PointCloud</p></li>
+</ul>
+</div>
+<div class="section" id="id26">
+<h3>Changed<a class="headerlink" href="#id26" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>time format to include milliseconds</p></li>
+</ul>
+</div>
+<div class="section" id="id27">
+<h3>Fixed<a class="headerlink" href="#id27" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>better handling of agg with dict queries</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id28">
+<h2>0.6.0 - (2022-06-03)<a class="headerlink" href="#id28" title="Permalink to this heading">¶</a></h2>
+<p>Wrong version due to CI</p>
+</div>
+<div class="section" id="id29">
+<h2>0.5.1 - (2022-05-30)<a class="headerlink" href="#id29" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id30">
+<h3>Fixed<a class="headerlink" href="#id30" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>laspy in docker image based. Updated to &gt; 2.00</p></li>
+</ul>
+</div>
+<div class="section" id="id31">
+<h3>Added<a class="headerlink" href="#id31" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>dask distributed library in docker image</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id32">
+<h2>0.5.0 - (2022-05-30)<a class="headerlink" href="#id32" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id33">
+<h3>Added<a class="headerlink" href="#id33" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>better support for data from terrestrial laser scanners</p></li>
+<li><p>has_original_id for datasets. Returns true if all pointclouds have original_id</p></li>
+<li><p>PointCloud.from_file now supports timestamp input or “from_file”</p></li>
+<li><p>diff with “nearest” to calculate distance to nearest point from another pointcloud</p></li>
+</ul>
+</div>
+<div class="section" id="id34">
+<h3>Changed<a class="headerlink" href="#id34" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>time format to 24h PR #45</p></li>
+</ul>
+</div>
+<div class="section" id="id35">
+<h3>Fixed<a class="headerlink" href="#id35" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>fixed typehints after changed open3D API</p></li>
+<li><p>plot overlay larger than length of px.colors.qualitative.Plotly Pr #45</p></li>
+</ul>
+<p>Removed
+- tqdm dependency (now covered by rich)</p>
+</div>
+</div>
+<div class="section" id="id36">
+<h2>0.4.3 - (2022-05-10)<a class="headerlink" href="#id36" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id37">
+<h3>Fixed<a class="headerlink" href="#id37" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>missing packaged in base image</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id38">
+<h2>0.4.2 - (2022-05-10)<a class="headerlink" href="#id38" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id39">
+<h3>Changed<a class="headerlink" href="#id39" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>better entry point for docker images</p></li>
+<li><p>using pintcloudset docker images for github actions testing</p></li>
+<li><p>streamlined docker images with new base image</p></li>
+</ul>
+</div>
+<div class="section" id="id40">
+<h3>Fixed<a class="headerlink" href="#id40" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>bug with dask 2022.5.0 where meta.json was also read not just the parquet files</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id41">
+<h2>0.4.1 - (2022-02-22)<a class="headerlink" href="#id41" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id42">
+<h3>Fixed<a class="headerlink" href="#id42" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>now raw tag for pypi in rst files</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id43">
+<h2>0.4.0 - (2022-02-22)<a class="headerlink" href="#id43" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id44">
+<h3>Added<a class="headerlink" href="#id44" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><dl class="simple">
+<dt>rosbagconvert CLI to export individual frames to pointcloudset dataset or files like</dt><dd><p>csv or las.</p>
+</dd>
+</dl>
+</li>
+<li><p>rosbagconvert has new options and structure</p></li>
+</ul>
+</div>
+<div class="section" id="id45">
+<h3>Changed<a class="headerlink" href="#id45" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>bag2daset has more functionallity and a new name: rosbagconvert</p></li>
+<li><p>using rich instead of tqdm</p></li>
+<li><p>using rich as a nice UI for the rosbagconvert</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id46">
+<h2>0.3.4 - (2022-02-18)<a class="headerlink" href="#id46" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id47">
+<h3>Fixed<a class="headerlink" href="#id47" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>now the docker containers runs also on arm64</p></li>
+</ul>
+</div>
+<div class="section" id="id48">
+<h3>Changed<a class="headerlink" href="#id48" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>used open3d version 0.14 as default, which comes with arm wheels</p></li>
+<li><p>use dask version 2022.02 as minimum, as there was a bug with 2021.10 and reading files</p></li>
+<li><p>using Python 3.9 as minimum</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id49">
+<h2>0.3.3 - (2021-09-27)<a class="headerlink" href="#id49" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id50">
+<h3>Fixed<a class="headerlink" href="#id50" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>point_size option had no effect when using overlays</p></li>
+<li><p>writing of dataset with an empty point cloud at the start</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id51">
+<h2>0.3.2 - (2021-08-18)<a class="headerlink" href="#id51" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id52">
+<h3>Fixed<a class="headerlink" href="#id52" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>conda environment name was still “base” now is “pointcloudset”</p></li>
+<li><p>automatic start of pointcloudset conda environment now working</p></li>
+</ul>
+</div>
+<div class="section" id="id53">
+<h3>Changed<a class="headerlink" href="#id53" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>use fixed version number of pointcloudset_base image</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id54">
+<h2>0.3.1 - (2021-08-17)<a class="headerlink" href="#id54" title="Permalink to this heading">¶</a></h2>
+<p>wrong release due to testing of github actions and bump2version</p>
+</div>
+<div class="section" id="id55">
+<h2>0.3.0 (2021-08-17)<a class="headerlink" href="#id55" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id56">
+<h3>Added<a class="headerlink" href="#id56" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>random_down_sample method for pointclouds.</p></li>
+</ul>
+</div>
+<div class="section" id="id57">
+<h3>Fixed<a class="headerlink" href="#id57" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Better handling of plotting large point clouds: warn when number of points is above 300k (issue#18)</p></li>
+</ul>
+</div>
+<div class="section" id="id58">
+<h3>Changed<a class="headerlink" href="#id58" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>set conda environment name to “pointcloudset” not “base”</p></li>
+<li><p>better CD of docker images</p></li>
+<li><p>sticking to semantic versioning</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="id59">
+<h2>0.2.3 (2021-07-12)<a class="headerlink" href="#id59" title="Permalink to this heading">¶</a></h2>
+<div class="section" id="id60">
+<h3>Added<a class="headerlink" href="#id60" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>empty PointCloud object (issue#6)</p></li>
+<li><p>columns option to generate empty PointClouds with a specific schema (issue#6)</p></li>
+<li><p>support for reading and writing Datasets with empty frames (issue#6)</p></li>
+<li><p>check if all required files are written when saving a dataset</p></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="python-api/pointcloudset.pointcloud_core.html" class="btn btn-neutral float-left" title="pointcloudset.pointcloud_core module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright VIRTUAL VEHICLE Research GmbH.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+pointcloudset.io package
+========================
+
+.. automodule:: pointcloudset.io
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   pointcloudset.io.dataset
+   pointcloudset.io.pointcloud

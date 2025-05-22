@@ -1,0 +1,16 @@
+pointcloudset.geometry package
+==============================
+
+.. automodule:: pointcloudset.geometry
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   pointcloudset.geometry.plane
+   pointcloudset.geometry.point

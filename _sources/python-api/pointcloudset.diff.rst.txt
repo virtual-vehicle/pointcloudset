@@ -1,0 +1,19 @@
+pointcloudset.diff package
+==========================
+
+.. automodule:: pointcloudset.diff
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   pointcloudset.diff.nearest
+   pointcloudset.diff.origin
+   pointcloudset.diff.plane
+   pointcloudset.diff.point
+   pointcloudset.diff.pointcloud

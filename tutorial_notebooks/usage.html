@@ -1,0 +1,695 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Usage of Package &mdash; pointcloudset 0.11.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/nbsphinx-code-cells.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Working with LAS and PCD Files" href="reading_las_pcd.html" />
+    <link rel="prev" title="Welcome to pointcloudset’s documentation!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pointcloudset
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.11.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage of Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#Working-with-the-whole-Dataset">Working with the whole Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#Working-with-a-PointCloud">Working with a PointCloud</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#Plane-segmenation,-Clustering-and-Overlaying-Several-Plots">Plane segmenation, Clustering and Overlaying Several Plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#Applying-Functions-to-the-whole-Dataset">Applying Functions to the whole Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reading_las_pcd.html">Working with LAS and PCD Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reading_las_pcd.html#Combining-them-to-a-pointcloudset-dataset">Combining them to a pointcloudset dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reading_las_pcd.html#Exporting-of-Las">Exporting of Las</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Working_with_kitti_dataset.html">Use Kitti Dataset</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Convert ROS 1 and ROS 2 files</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../commandline_interface.html">pointcloudset CLI</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contribute</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../how_to_contribute.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started_contribution.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guidelines.html">Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../support.html">Support</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../description_python_api.html">How to read the API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../python-api/pointcloudset.html">pointcloudset package</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pointcloudset</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Usage of Package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/tutorial_notebooks/usage.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="reading_las_pcd.html" class="btn btn-neutral float-right" title="Working with LAS and PCD Files" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+      
+      
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to pointcloudset’s documentation!" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="Usage-of-Package">
+<h1>Usage of Package<a class="headerlink" href="#Usage-of-Package" title="Permalink to this heading">¶</a></h1>
+<p>First import the package, and pathlib which is required to handle files.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pointcloudset</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pcs</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;package version: </span><span class="si">{</span><span class="n">pcs</span><span class="o">.</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;figure.figsize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.express</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">px</span>
+
+<span class="o">%</span><span class="k">load_ext</span> autoreload
+<span class="o">%</span><span class="k">autoreload</span> 2
+<span class="o">%</span><span class="k">config</span> IPCompleter.greedy=True
+</pre></div>
+</div>
+</div>
+<p>Ignore the INFO messages, which comes from the rospy package.</p>
+<div class="section" id="Reading-a-ROS-file-into-the-Dataset">
+<h2>Reading a ROS file into the Dataset<a class="headerlink" href="#Reading-a-ROS-file-into-the-Dataset" title="Permalink to this heading">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">testbag</span> <span class="o">=</span> <span class="n">Path</span><span class="p">()</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;../../../tests/testdata/test.bag&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">testset</span> <span class="o">=</span> <span class="n">pcs</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">testbag</span><span class="p">,</span><span class="n">topic</span><span class="o">=</span><span class="s2">&quot;/os1_cloud_node/points&quot;</span><span class="p">,</span><span class="n">keep_zeros</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>This reads the bagfile into the Dataset. Dataset only reads frames from the bagfile if needed, in order to save memory and make it possible to work which huge bagfiles.</p>
+<p>NotE You can also read ROS 2 files in the same way.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">testset</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">testset</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>In order to see whats availble use “tab” to see the availble properties and methods. Alterantivly, use help(), dir(), and the documentation. Also shift tab is nice inside jupyter lab.</p>
+<p>Lets enquire the start and end time of the dataset</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">testset</span><span class="o">.</span><span class="n">start_time</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">testset</span><span class="o">.</span><span class="n">end_time</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">testset</span><span class="o">.</span><span class="n">duration</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="Working-with-the-whole-Dataset">
+<h1>Working with the whole Dataset<a class="headerlink" href="#Working-with-the-whole-Dataset" title="Permalink to this heading">¶</a></h1>
+<p>You can work with the whole dataset. Even if they are huge, since the package used parallel processing with dask in the background. So make sure that your docker or computer has access to as many CPU cores as possbile.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">testset</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span><span class="n">hover_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;intensity&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">testset</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>The Dataset class supports the basic functions like min, max, mean and std. They all work on 3 different level: dataset, pointcloud and point. Lets investigate the differences. The default is over the whole dataset.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">min_pointcloud</span> <span class="o">=</span> <span class="n">testset</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="s2">&quot;pointcloud&quot;</span><span class="p">)</span>
+<span class="n">min_pointcloud</span>
+</pre></div>
+</div>
+</div>
+<p>So now we have a pandas DataFrame which gives us the min values of each column for each pointcloud. This can also be used for plotting.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">min_pointcloud</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;timestamp&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;x min&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Now lets investigate on the point level.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">min_point</span> <span class="o">=</span> <span class="n">testset</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="s2">&quot;point&quot;</span><span class="p">)</span>
+<span class="n">min_point</span>
+</pre></div>
+</div>
+</div>
+<p>So we got a DataFrame with the min value for each point of the whole Dataset. Note that the points are identified by the orginial_id. For some lidars this does not make sense since the points locations changes over time, so please think beforehand if its is usefull for your lidar. Nevertheless, for the Ouster lidars this can be used and is very usefull.</p>
+<p>Also note the “N” column which gives the count of the point over the dataset.</p>
+<p>All thes methods are based on the aggregate method similar to the one from pandas. It works also on “dataset”, “frame” and “point” level.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">testset</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="s2">&quot;min&quot;</span><span class="p">,</span><span class="s2">&quot;dataset&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">testset</span><span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="s2">&quot;min&quot;</span><span class="p">,</span><span class="s2">&quot;max&quot;</span><span class="p">,</span><span class="s2">&quot;mean&quot;</span><span class="p">],</span><span class="s2">&quot;point&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">testset</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:[</span><span class="s2">&quot;max&quot;</span><span class="p">,</span><span class="s2">&quot;min&quot;</span><span class="p">]},</span><span class="s2">&quot;point&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">testset</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s2">&quot;x&quot;</span><span class="p">:</span><span class="s2">&quot;max&quot;</span><span class="p">},</span><span class="s2">&quot;point&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Working-with-a-PointCloud">
+<h1>Working with a PointCloud<a class="headerlink" href="#Working-with-a-PointCloud" title="Permalink to this heading">¶</a></h1>
+<p>They are based on pandas dataframes and pyntcloud.</p>
+<div class="section" id="Getting-a-PointCloud-from-a-Dataset">
+<h2>Getting a PointCloud from a Dataset<a class="headerlink" href="#Getting-a-PointCloud-from-a-Dataset" title="Permalink to this heading">¶</a></h2>
+<p>First grab the first p in the dataset:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">testpointcloud</span> <span class="o">=</span> <span class="n">testset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">testpointcloud</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Note that the number of points can vary from frame to frame, since all zero elements are deltede on import (see option keep_zero in the dataset).</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">len</span><span class="p">(</span><span class="n">testpointcloud</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Reading-from-a-pointcloud-file">
+<h2>Reading from a pointcloud file<a class="headerlink" href="#Reading-from-a-pointcloud-file" title="Permalink to this heading">¶</a></h2>
+<p>Reads all common formats, provided by pyntcloud.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">lasfile</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;../../../../tests/testdata/las_files/diamond.las&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">testpointcloud2</span> <span class="o">=</span> <span class="n">pcs</span><span class="o">.</span><span class="n">PointCloud</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">lasfile</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">testpointcloud2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Plotting">
+<h2>Plotting<a class="headerlink" href="#Plotting" title="Permalink to this heading">¶</a></h2>
+<p>Plotting is based on plotly which gives interactive plots.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">testpointcloud</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;intensity&quot;</span><span class="p">,</span> <span class="n">point_size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>This plot uses plotly as the backend, which can be rather time consuming. There is currently a limit of 300k points which can be plotted which is enough to plot an Ouster lidar with 128 lines. (set in config.py)</p>
+<p>WARNING: delte the output cells with plotly plots, they make the file very big.</p>
+</div>
+<div class="section" id="Working-with-pointclouds">
+<h2>Working with pointclouds<a class="headerlink" href="#Working-with-pointclouds" title="Permalink to this heading">¶</a></h2>
+<p>The PointCloud consists mainly of the properties “data”, “points” and “timestamp”</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">testpointcloud</span><span class="o">.</span><span class="n">data</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">testpointcloud</span><span class="o">.</span><span class="n">timestamp</span>
+</pre></div>
+</div>
+</div>
+<p>So data contains everything as a pandas dataframe. With all its power.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">testpointcloud</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>Since PointCloud.data is just a pandas datframe. You can do whater you can do with dataframe.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">testpointcloud</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">hist</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Pointcloud-processing-with-build-in-methods">
+<h2>Pointcloud processing with build in methods<a class="headerlink" href="#Pointcloud-processing-with-build-in-methods" title="Permalink to this heading">¶</a></h2>
+<p>Although you can do a lot with just PointCloud.data and PointCloudpoints, on its own the PointCloud object has methods build in for processing, which in turn return a frame object. The use the power of dataframes, pyntcloud and open3d.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">newpointcloud</span> <span class="o">=</span> <span class="n">testpointcloud</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="s2">&quot;intensity&quot;</span><span class="p">,</span><span class="mi">400</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s2">&quot;quantile&quot;</span><span class="p">,</span><span class="s2">&quot;reflectivity&quot;</span><span class="p">,</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">newpointcloud</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p>So this is now a smaller PointCloud with x ranging from -5 to 5, and with intenisties above 400. Processing steps can be chained together since the return a new PointCloud object.</p>
+<p>You can also plot the newpointcloud and investiget it further with tooltips on each point.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">newpointcloud</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;intensity&quot;</span><span class="p">,</span><span class="n">hover_data</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;range&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="Plane-segmenation,-Clustering-and-Overlaying-Several-Plots">
+<h1>Plane segmenation, Clustering and Overlaying Several Plots<a class="headerlink" href="#Plane-segmenation,-Clustering-and-Overlaying-Several-Plots" title="Permalink to this heading">¶</a></h1>
+<p>Please note that not all processing methods are demonstrated here. For more info please refer to the html documenation of the PointCloud class.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plane</span> <span class="o">=</span> <span class="n">newpointcloud</span><span class="o">.</span><span class="n">plane_segmentation</span><span class="p">(</span><span class="n">distance_threshold</span><span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span><span class="n">ransac_n</span><span class="o">=</span> <span class="mi">3</span><span class="p">,</span><span class="n">num_iterations</span><span class="o">=</span> <span class="mi">50</span><span class="p">,</span> <span class="n">return_plane_model</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">plane</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plane</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">newpointcloud</span><span class="o">.</span><span class="n">bounding_box</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">clusters</span> <span class="o">=</span> <span class="n">newpointcloud</span><span class="o">.</span><span class="n">get_cluster</span><span class="p">(</span><span class="n">eps</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">min_points</span><span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">cluster1</span> <span class="o">=</span> <span class="n">newpointcloud</span><span class="o">.</span><span class="n">take_cluster</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">clusters</span><span class="p">)</span>
+<span class="n">cluster2</span> <span class="o">=</span> <span class="n">newpointcloud</span><span class="o">.</span><span class="n">take_cluster</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">clusters</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cluster1</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cluster2</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">cluster1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">newpointcloud</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overlay</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Cluster 1&quot;</span><span class="p">:</span> <span class="n">cluster1</span><span class="p">,</span><span class="s2">&quot;Cluster 2&quot;</span><span class="p">:</span> <span class="n">cluster2</span><span class="p">},</span> <span class="n">hover_data</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;intensity&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Applying-Functions-to-the-whole-Dataset">
+<h1>Applying Functions to the whole Dataset<a class="headerlink" href="#Applying-Functions-to-the-whole-Dataset" title="Permalink to this heading">¶</a></h1>
+<p>Now we can develop a pipeline and but everything together. The .agg method is powerfull but sometimes not flexible enouth. So with .apply you can apply a function to the whole dataset. This again uses dask in the background for lazy evaualtion and parallele processing.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">isolate_target</span><span class="p">(</span><span class="n">frame</span><span class="p">:</span> <span class="n">pcs</span><span class="o">.</span><span class="n">PointCloud</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pcs</span><span class="o">.</span><span class="n">PointCloud</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">frame</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Note the typehints. They are importont as they are used to determine if the result can be a new dataset are not. If the function returns a PointCloud then the result is another Dataset. This is very usefull to chain operations toghether.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">testset</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">isolate_target</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>So the result is another Dataset. Now we can chain things together</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">diff_to_pointcloud</span><span class="p">(</span><span class="n">pointcloud</span><span class="p">:</span> <span class="n">pcs</span><span class="o">.</span><span class="n">PointCloud</span><span class="p">,</span> <span class="n">to_compare</span><span class="p">:</span> <span class="n">pcs</span><span class="o">.</span><span class="n">PointCloud</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pcs</span><span class="o">.</span><span class="n">PointCloud</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">pointcloud</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="s2">&quot;pointcloud&quot;</span><span class="p">,</span> <span class="n">to_compare</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">testset</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">isolate_target</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">diff_to_pointcloud</span><span class="p">,</span> <span class="n">to_compare</span><span class="o">=</span><span class="n">testset</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<p>Note that this uses lazy evaluation from dask and therfore the result is only calulated when needed. So you could develop a complex chain and then investigate the results.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>Now we can inquire the resulte even futher by useing .agg from before</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">result</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s2">&quot;x difference&quot;</span><span class="p">:</span><span class="s2">&quot;max&quot;</span><span class="p">},</span><span class="s2">&quot;pointcloud&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="reading_las_pcd.html" class="btn btn-neutral float-right" title="Working with LAS and PCD Files" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to pointcloudset’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright VIRTUAL VEHICLE Research GmbH.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

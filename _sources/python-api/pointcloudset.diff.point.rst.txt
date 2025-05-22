@@ -1,0 +1,7 @@
+pointcloudset.diff.point module
+===============================
+
+.. automodule:: pointcloudset.diff.point
+   :members:
+   :undoc-members:
+   :show-inheritance:

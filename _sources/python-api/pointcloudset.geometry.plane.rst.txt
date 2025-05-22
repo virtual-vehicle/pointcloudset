@@ -1,0 +1,7 @@
+pointcloudset.geometry.plane module
+===================================
+
+.. automodule:: pointcloudset.geometry.plane
+   :members:
+   :undoc-members:
+   :show-inheritance:
