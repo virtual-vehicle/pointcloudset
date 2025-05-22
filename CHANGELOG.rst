@@ -5,20 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
-Unreleased
+0.11.0- (2025-05-22)
 -------------
 
 Added
 ~~~~~~
-- exporting of las file using laspy
+- support for exporting of las files
 
 Changed
 ~~~~~~
-- CLI exporting direct via pointcloud and not via pyntcloud
+- CLI exporting direct via pointcloudset and not via pyntcloud. Therefore currently only las and csv are supported
 
 Fixed
 ~~~~~~
-- wrong help for pointcloudset convert CLI: the bag or mcap dir needs to come right after the command
+- wrong help for pointcloudset convert CLI: the bag file or mcap dir needs to come right after the command
 
 0.10.1- (2025-04-28)
 -------------
