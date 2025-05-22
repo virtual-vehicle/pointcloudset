@@ -171,7 +171,7 @@ def test_to_las(testpointcloud: PointCloud, tmp_path: Path):
             4.624000e03,
         ],
         test_values,
-        rtol=1e-3,
+        rtol=1e-4,
         atol=0,
     )
 

@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 LAS_POINT_FORMAT = 7
 LAS_VERSION = "1.4"
-PRECISION_HINT = 0.001  # m (1 mm)
+LAS_PRECISION = 0.0001  # m
 
 _NUMPY2LAS = {
     "uint8": "u1",
@@ -37,11 +37,11 @@ def _choose_scale_offset(axis: np.ndarray) -> tuple[float, float]:
     span = hi - lo
 
     if span == 0:  # flat axis
-        return (PRECISION_HINT), offset
+        return (LAS_PRECISION), offset
 
     min_scale = span / (2**31 - 1)  # theoretical minimum
     rounded = 10 ** ceil(log10(min_scale))  # 10^n ≥ min_scale
-    scale = max(rounded, PRECISION_HINT or 0)
+    scale = max(rounded, LAS_PRECISION or 0)
 
     return scale, offset
 
@@ -66,16 +66,18 @@ def write_las(pointcloud: "PointCloud", file_path: Path) -> None:
     las = laspy.LasData(header)
 
     # LAS coordinates
-    las.x, las.y, las.z = df["x"].to_numpy(), df["y"].to_numpy(), df["z"].to_numpy()
+    las.x = df["x"].to_numpy()
+    las.y = df["y"].to_numpy()
+    las.z = df["z"].to_numpy()
 
-    #  built-in PF-7 fields
+    # LAS built-in point format 7 fields
     builtin = {n.lower() for n in las.point_format.dimension_names}
     for name in builtin - {"x", "y", "z"}:
         col = name if name in df.columns else None
         if col:
             setattr(las, name, df[col].to_numpy())
 
-    #  ExtraBytes for everything else
+    #  LAS ExtraBytes for everything else
     extra = {c for c in df.columns if c.lower() not in builtin}
     for col in sorted(extra):
         las_type = _NUMPY2LAS.get(df[col].dtype.name, "f8")
