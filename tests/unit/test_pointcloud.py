@@ -230,25 +230,6 @@ def test_testpointcloud_withzero_data(
     assert_frame_equal(data, reference_data_with_zero_dataframe)
 
 
-def test_testpointcloud_pointcloud(
-    testpointcloud_withzero: PointCloud,
-    reference_pointcloud_withzero_dataframe: pd.DataFrame,
-):
-    pointcloud = testpointcloud_withzero.to_instance("open3d")
-    array = np.asarray(pointcloud.points)
-    pointcloud_df = pd.DataFrame(array)
-    # pointcloud_df.to_pickle(
-    #    "/workspaces/pointcloudset/tests/testdata/testpointcloud_withzero_pointcloud.pkl"
-    # )
-    sub_points = pointcloud.select_by_index(list(range(5000, 5550)))
-    sub_array = np.asarray(sub_points.points)
-
-    check.equal(pointcloud.is_empty(), False)
-    check.equal(np.sum(sub_array), 108.0019814982079)
-    check.equal(np.sum(array), 60573.190267673606)
-    assert_frame_equal(pointcloud_df, reference_pointcloud_withzero_dataframe)
-
-
 def test_axis_aligned_bounding_box(testpointcloud_mini: PointCloud):
     bb = testpointcloud_mini.bounding_box
     check.is_instance(bb, pd.DataFrame)

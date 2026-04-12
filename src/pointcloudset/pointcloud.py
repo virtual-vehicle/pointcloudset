@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Literal, Union
 
 import numpy as np
-import open3d
 import pandas
 from sklearn.cluster import DBSCAN
 import plotly
@@ -133,10 +132,9 @@ class PointCloud(PointCloudCore):
         library: Literal[
             "PANDAS",
             "PYNTCLOUD",
-            "OPEN3D",
             "DATAFRAME",
         ] = "PANDAS",
-        instance: (pandas.DataFrame | pyntcloud.PyntCloud | open3d.geometry.PointCloud) = pandas.DataFrame(),
+        instance: (pandas.DataFrame | pyntcloud.PyntCloud) = pandas.DataFrame(),
         **kwargs,
     ) -> PointCloud:
         """Converts a library instance to a pointcloudset PointCloud.
@@ -144,12 +142,9 @@ class PointCloud(PointCloudCore):
         Args:
             library (str): Name of the library.\n
                 If PYNTCLOUD: :func:`pointcloudset.io.pointcloud.pyntcloud.from_pyntcloud`\n
-                If OPEN3D: :func:`pointcloudset.io.pointcloud.open3d.from_open3d`\n
                 If DATAFRAME: :func:`pointcloudset.io.pointcloud.pandas.from_dataframe`\n
                 If PANDAS: :func:`pointcloudset.io.pointcloud.pandas.from_dataframe`
-            instance
-                (Union[pandas.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud]):
-                Library instance to convert.
+            instance (Union[pandas.DataFrame, pyntcloud.PyntCloud]): Library instance to convert.
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -157,12 +152,6 @@ class PointCloud(PointCloudCore):
 
         Raises:
             ValueError: If instance is not supported.
-
-        Examples:
-
-            .. code-block:: python
-
-                testpointcloud = from_instance("OPEN3D", open3d_pointcloud)
 
         """
         library = library.upper()
@@ -172,30 +161,23 @@ class PointCloud(PointCloudCore):
             return cls(**POINTCLOUD_FROM_INSTANCE[library](instance, **kwargs))
 
     def to_instance(
-        self, library: Literal["PYNTCLOUD", "OPEN3D", "DATAFRAME", "PANDAS"], **kwargs
-    ) -> pyntcloud.PyntCloud | open3d.geometry.PointCloud | pandas.DataFrame | pandas.DataFrame:
+        self, library: Literal["PYNTCLOUD", "DATAFRAME", "PANDAS"], **kwargs
+    ) -> pyntcloud.PyntCloud | pandas.DataFrame:
         """Convert PointCloud to another library instance.
 
         Args:
             library (str): Name of the library.\n
                 If PYNTCLOUD: :func:`pointcloudset.io.pointcloud.pyntcloud.to_pyntcloud`\n
-                If OPEN3D: :func:`pointcloudset.io.pointcloud.open3d.to_open3d`\n
                 If DATAFRAME: :func:`pointcloudset.io.pointcloud.pandas.to_dataframe`\n
                 If PANDAS: :func:`pointcloudset.io.pointcloud.pandas.to_dataframe`
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
-            Union[ pandas.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud ]:
-            The derived instance.
+            Union[pandas.DataFrame, pyntcloud.PyntCloud]: The derived instance.
 
         Raises:
             ValueError: If library is not suppored.
 
-        Examples:
-
-            .. code-block:: python
-
-                open3d_pointcloud = testpointcloud.to_instance("OPEN3D")
         """
         library = library.upper()
         if library not in POINTCLOUD_TO_INSTANCE:
@@ -449,15 +431,14 @@ class PointCloud(PointCloudCore):
             # dataframe and pyntcloud based filters
             new_data = self.data.loc[filter_result].reset_index(drop=True)
         elif isinstance(filter_result, list):
-            # from open3d filters
+            # list of integer indices
             new_data = self.data.iloc[filter_result].reset_index(drop=True)
         else:
             raise TypeError("Wrong filter_result expecting array with boolean values orlist of indices")
         return PointCloud(new_data, timestamp=self.timestamp)
 
     def get_cluster(self, eps: float, min_points: int) -> pandas.DataFrame:
-        """Get the clusters based on
-        :meth:`open3d:open3d.geometry.PointCloud.cluster_dbscan`.
+        """Get the clusters using :class:`sklearn.cluster.DBSCAN`.
         Process further with :func:`pointcloudset.pointcloud.PointCloud.take_cluster`.
 
         Args:
@@ -510,7 +491,7 @@ class PointCloud(PointCloudCore):
         n = len(xyz)
         rng = np.random.default_rng(42)
         best_inliers: list[int] = []
-        best_model: list[float] = []
+        best_model = np.zeros(4)
 
         for _ in range(num_iterations):
             sample = xyz[rng.choice(n, ransac_n, replace=False)]
@@ -526,7 +507,7 @@ class PointCloud(PointCloudCore):
             inliers = np.where(dists < distance_threshold)[0].tolist()
             if len(inliers) > len(best_inliers):
                 best_inliers = inliers
-                best_model = [*normal, d]
+                best_model = np.array([*normal, d])
 
         inlier_pointcloud = self.apply_filter(best_inliers)
         if return_plane_model:

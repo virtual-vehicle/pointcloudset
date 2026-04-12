@@ -11,7 +11,6 @@ from pointcloudset.io.dataset.pointcloud import dataset_from_pointclouds
 from pointcloudset.io.dataset.ros import dataset_from_ros
 from pointcloudset.io.pointcloud.csv import write_csv
 from pointcloudset.io.pointcloud.las import write_las
-from pointcloudset.io.pointcloud.open3d import from_open3d, to_open3d
 from pointcloudset.io.pointcloud.pandas import from_dataframe, to_dataframe
 from pointcloudset.io.pointcloud.pyntcloud import from_pyntcloud, to_pyntcloud
 
@@ -29,13 +28,11 @@ POINTCLOUD_TO_FILE = {"CSV": write_csv, "LAS": write_las}
 
 POINTCLOUD_FROM_INSTANCE = {
     "PYNTCLOUD": from_pyntcloud,
-    "OPEN3D": from_open3d,
     "DATAFRAME": from_dataframe,
     "PANDAS": from_dataframe,
 }
 POINTCLOUD_TO_INSTANCE = {
     "PYNTCLOUD": to_pyntcloud,
-    "OPEN3D": to_open3d,
     "DATAFRAME": to_dataframe,
     "PANDAS": to_dataframe,
 }

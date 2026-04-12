@@ -28,16 +28,6 @@ def _make_flat_plane_pc(n_inliers: int = 80, n_outliers: int = 10) -> tuple[Poin
     return PointCloud(data=df), n_inliers
 
 
-def test_plane_segmentation_of_open3d(testpointcloud):
-    pcd = testpointcloud.limit("intensity", 500, 510).to_instance("open3d")
-    plane_model, inliers = pcd.segment_plane(
-        distance_threshold=0.05,
-        ransac_n=3,
-        num_iterations=500,
-    )
-    check.equal(len(inliers), 387)
-
-
 def test_plane_segmentation(testpointcloud):
     plane = testpointcloud.limit("intensity", 500, 510).plane_segmentation(
         distance_threshold=0.05,
