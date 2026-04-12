@@ -8,6 +8,7 @@ from typing import Literal, Union
 import numpy as np
 import open3d
 import pandas
+from sklearn.cluster import DBSCAN
 import plotly
 import plotly.express as px
 import pyntcloud
@@ -466,9 +467,7 @@ class PointCloud(PointCloudCore):
         Returns:
             pandas.DataFrame: Dataframe with list of clusters.
         """
-        labels = np.array(
-            self.to_instance("open3d").cluster_dbscan(eps=eps, min_points=min_points, print_progress=False)
-        )
+        labels = DBSCAN(eps=eps, min_samples=min_points).fit(self.points.xyz).labels_
         return pandas.DataFrame(labels, columns=["cluster"])
 
     def take_cluster(self, cluster_number: int, cluster_labels: pandas.DataFrame) -> PointCloud:
