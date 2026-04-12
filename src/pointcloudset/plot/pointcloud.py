@@ -3,6 +3,7 @@ Functions for plotting frames.
 Used mainly by :func:`pointcloudset.pointcloud.PointCloud.plot` but could also be used
 on its own.
 """
+
 import math
 
 import numpy as np
@@ -31,9 +32,7 @@ def plot_overlay(fig, pointcloud, overlay: dict, **kwargs):
         plotly.graph_objects.Figure: Plot with all overlays.
     """
     fig.update_traces(opacity=0.7)
-    fig.update_traces(
-        marker=dict(size=1.5, line=dict(width=0)), selector=dict(mode="markers")
-    )
+    fig.update_traces(marker=dict(size=1.5, line=dict(width=0)), selector=dict(mode="markers"))
 
     # Create color list dependend on length of overlay.
     if len(overlay) <= 9:
@@ -62,9 +61,7 @@ def plot_overlay(fig, pointcloud, overlay: dict, **kwargs):
                 **kwargs,
             )
         else:
-            raise ValueError(
-                f"{from_dict} is not supported, use either a PointCloud or plane model"
-            )
+            raise ValueError(f"{from_dict} is not supported, use either a PointCloud or plane model")
 
     return fig
 
@@ -82,17 +79,13 @@ def _plot_overlay_pointcloud(fig, pointcloud, name: str, marker_color: str, **kw
         plotly.graph_objects.Figure: Plot with PointCloud overlayed with another
         PointCloud.
     """
-    overlay_fig = pointcloud.plot(
-        color=None, point_size=2.0, prepend_id=name + " ", opacity=0.7, **kwargs
-    )
+    overlay_fig = pointcloud.plot(color=None, point_size=2.0, prepend_id=name + " ", opacity=0.7, **kwargs)
     overlay_fig.update_traces(marker_color=marker_color)
     overlay_trace = overlay_fig.data[0]
     return fig.add_trace(overlay_trace)
 
 
-def _plot_overlay_plane(
-    fig, plane_model: np.ndarray, name: str, orig_pointcloud, colors, i: int
-):
+def _plot_overlay_plane(fig, plane_model: np.ndarray, name: str, orig_pointcloud, colors, i: int):
     """Overlay the plot with plane.
 
     Args:

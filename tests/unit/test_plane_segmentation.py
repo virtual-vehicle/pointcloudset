@@ -10,16 +10,20 @@ from pointcloudset.pointcloud_core import PointCloudCore
 def _make_flat_plane_pc(n_inliers: int = 80, n_outliers: int = 10) -> tuple[PointCloud, int]:
     """Points on z=0 plane (inliers) plus points at z=5 (outliers)."""
     rng = np.random.default_rng(42)
-    inlier_df = pd.DataFrame({
-        "x": rng.uniform(-5, 5, n_inliers),
-        "y": rng.uniform(-5, 5, n_inliers),
-        "z": np.zeros(n_inliers),
-    })
-    outlier_df = pd.DataFrame({
-        "x": rng.uniform(-5, 5, n_outliers),
-        "y": rng.uniform(-5, 5, n_outliers),
-        "z": np.full(n_outliers, 5.0),
-    })
+    inlier_df = pd.DataFrame(
+        {
+            "x": rng.uniform(-5, 5, n_inliers),
+            "y": rng.uniform(-5, 5, n_inliers),
+            "z": np.zeros(n_inliers),
+        }
+    )
+    outlier_df = pd.DataFrame(
+        {
+            "x": rng.uniform(-5, 5, n_outliers),
+            "y": rng.uniform(-5, 5, n_outliers),
+            "z": np.full(n_outliers, 5.0),
+        }
+    )
     df = pd.concat([inlier_df, outlier_df], ignore_index=True)
     return PointCloud(data=df), n_inliers
 
@@ -49,9 +53,7 @@ def test_plane_segmentation(testpointcloud):
     "return_plane_model, type_out, for_len",
     [(True, dict, """plane["PointCloud"]"""), (False, PointCloud, """plane""")],
 )
-def test_plane_segmentation_plane_model(
-    testpointcloud, return_plane_model, type_out, for_len
-):
+def test_plane_segmentation_plane_model(testpointcloud, return_plane_model, type_out, for_len):
     plane = testpointcloud.limit("intensity", 500, 510).plane_segmentation(
         distance_threshold=0.05,
         ransac_n=10,

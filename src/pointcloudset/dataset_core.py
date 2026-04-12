@@ -75,9 +75,7 @@ class DatasetCore:
         return f"Lidar Dataset with {len(self)} pointcloud(s)"
 
     def __repr__(self) -> str:
-        return (
-            f"""{self.__class__.__name__}({self.data},{self.timestamps},{self.meta})"""
-        )
+        return f"""{self.__class__.__name__}({self.data},{self.timestamps},{self.meta})"""
 
     def __iter__(self):
         self.n = 0
@@ -163,20 +161,18 @@ class DatasetCore:
         """
         if time < self.start_time or time > self.end_time:
             raise ValueError("time is outside of range")
-        return min(
-            range(len(self.timestamps)), key=lambda i: abs(self.timestamps[i] - time)
-        )
+        return min(range(len(self.timestamps)), key=lambda i: abs(self.timestamps[i] - time))
 
     def _check(self):
         assert "orig_file" in self.meta, "meta data does not contain orig_file"
         if len(self) > 0:
-            assert len(self.timestamps) == len(
-                self.data
-            ), f"Length of timestamps {len(self.timestamps)} do not match the data {len(self.data)}"
+            assert len(self.timestamps) == len(self.data), (
+                f"Length of timestamps {len(self.timestamps)} do not match the data {len(self.data)}"
+            )
 
             if not pd.Series(self.timestamps).is_monotonic_increasing:
                 raise ValueError("Timestamps are not monotonic increasing")
 
-            assert isinstance(
-                self.data[0], (DelayedLeaf, Delayed)
-            ), f"data needs to be a dask delayed object got {type(self.data[0])}"
+            assert isinstance(self.data[0], (DelayedLeaf, Delayed)), (
+                f"data needs to be a dask delayed object got {type(self.data[0])}"
+            )

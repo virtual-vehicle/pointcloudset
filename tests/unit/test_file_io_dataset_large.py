@@ -10,9 +10,7 @@ from pointcloudset import Dataset
 
 @pytest.mark.slow
 @pytest.mark.parametrize("filename", ["big_comp.bag", "big_uncomp.bag", "big_1000.bag"])
-def test_read_and_write_bag_big(
-    testdata_path_large: Path, filename: str, tmp_path: Path
-):
+def test_read_and_write_bag_big(testdata_path_large: Path, filename: str, tmp_path: Path):
     if filename == "big_1000.bag":
         orig_len = 1000
     else:
@@ -44,9 +42,7 @@ def test_read_and_write_bag_big(
 
 @pytest.mark.slow
 @pytest.mark.parametrize("filename", ["big_1000.bag"])
-def test_read_and_write_bag_big_part(
-    testdata_path_large: Path, filename: str, tmp_path: Path
-):
+def test_read_and_write_bag_big_part(testdata_path_large: Path, filename: str, tmp_path: Path):
     if testdata_path_large.exists():
         # read
         ds = Dataset.from_file(

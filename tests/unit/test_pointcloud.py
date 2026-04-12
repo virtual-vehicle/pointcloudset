@@ -116,9 +116,7 @@ def test_getitem_slice(testpointcloud: PointCloud):
     check.equal(type(extracted), pd.DataFrame)
     check.equal(len(extracted), 3)
     check.equal(type(extracted.original_id.values[0]), np.uint32)
-    check.equal(
-        (extracted.original_id.values == np.array([4624, 4688, 4692])).all(), True
-    )
+    check.equal((extracted.original_id.values == np.array([4624, 4688, 4692])).all(), True)
 
 
 def test_getitem_slice_full(testpointcloud: PointCloud):
@@ -132,9 +130,7 @@ def test_getitem_slice_step(testpointcloud: PointCloud):
     check.equal(type(extracted), pd.DataFrame)
     check.equal(len(extracted), 5)
     check.equal(
-        (
-            extracted.original_id.values == np.array([4624, 4692, 4700, 4752, 4760])
-        ).all(),
+        (extracted.original_id.values == np.array([4624, 4692, 4700, 4752, 4760])).all(),
         True,
     )
 
@@ -263,9 +259,7 @@ def test_axis_aligned_bounding_box(testpointcloud_mini: PointCloud):
 
 def test_centroit(testpointcloud_mini: PointCloud):
     ct = testpointcloud_mini.centroid
-    check.almost_equal(
-        list(ct), [259.95131121217355, 225.64930989164827, 365.44029720089736]
-    )
+    check.almost_equal(list(ct), [259.95131121217355, 225.64930989164827, 365.44029720089736])
 
 
 def test_random_down_sample(testpointcloud: PointCloud):

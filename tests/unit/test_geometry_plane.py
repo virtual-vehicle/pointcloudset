@@ -6,13 +6,9 @@ from numpy.testing import assert_array_equal
 from pointcloudset.geometry import plane
 
 
-@pytest.mark.parametrize(
-    "point, res", [([0, 0, 0], 10), ([1, 1, 1], 11), ([-1, -1, -1], 9)]
-)
+@pytest.mark.parametrize("point, res", [([0, 0, 0], 10), ([1, 1, 1], 11), ([-1, -1, -1], 9)])
 def test_distance_to_point(point, res):
-    distance = plane.distance_to_point(
-        point_a=np.array(point), plane_model=np.array([1, 0, 0, 10])
-    )
+    distance = plane.distance_to_point(point_a=np.array(point), plane_model=np.array([1, 0, 0, 10]))
     check.equal(distance, res)
 
 
@@ -28,9 +24,7 @@ def test_distance_to_point_normal_dist(normal_dist, res):
 
 def test_distance_to_point_error1():
     with pytest.raises(ValueError):
-        plane.distance_to_point(
-            point_a=np.array([1, 0]), plane_model=np.array([1, 0, 0, 0])
-        )
+        plane.distance_to_point(point_a=np.array([1, 0]), plane_model=np.array([1, 0, 0, 0]))
 
 
 def test_distance_to_point_error2():
@@ -48,17 +42,13 @@ def test_distance_to_point_error2():
 
 
 def test_intersect_line_of_sight():
-    point = plane.intersect_line_of_sight(
-        line=np.array([1, 1, 1]), plane_model=np.array([0, 0, 1, -1])
-    )
+    point = plane.intersect_line_of_sight(line=np.array([1, 1, 1]), plane_model=np.array([0, 0, 1, -1]))
     np.testing.assert_allclose(point, np.array([1.0, 1.0, 1.0]))
 
 
 def test_intersect_line_of_sight_error1():
     with pytest.raises(ValueError):
-        plane.intersect_line_of_sight(
-            line=np.array([1, 0]), plane_model=np.array([1, 0, 0, 0])
-        )
+        plane.intersect_line_of_sight(line=np.array([1, 0]), plane_model=np.array([1, 0, 0, 0]))
 
 
 def test_intersect_line_of_sight_error2():

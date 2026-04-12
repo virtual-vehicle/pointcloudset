@@ -17,11 +17,13 @@ def test_rro1(testpointcloud_mini_real):
 def _make_cluster_plus_outlier_pc(n_cluster: int = 20) -> PointCloud:
     """Dense cluster near origin plus one isolated point at (100, 100, 0)."""
     rng = np.random.default_rng(42)
-    df = pd.DataFrame({
-        "x": np.concatenate([rng.uniform(-0.1, 0.1, n_cluster), [100.0]]),
-        "y": np.concatenate([rng.uniform(-0.1, 0.1, n_cluster), [100.0]]),
-        "z": np.zeros(n_cluster + 1),
-    })
+    df = pd.DataFrame(
+        {
+            "x": np.concatenate([rng.uniform(-0.1, 0.1, n_cluster), [100.0]]),
+            "y": np.concatenate([rng.uniform(-0.1, 0.1, n_cluster), [100.0]]),
+            "z": np.zeros(n_cluster + 1),
+        }
+    )
     return PointCloud(data=df)
 
 
@@ -38,11 +40,13 @@ def test_rro_removes_isolated_point():
 
 def test_rro_all_points_removed_when_all_isolated():
     """Every point is isolated → all should be removed."""
-    df = pd.DataFrame({
-        "x": [0.0, 10.0, 20.0, 30.0],
-        "y": [0.0, 0.0, 0.0, 0.0],
-        "z": [0.0, 0.0, 0.0, 0.0],
-    })
+    df = pd.DataFrame(
+        {
+            "x": [0.0, 10.0, 20.0, 30.0],
+            "y": [0.0, 0.0, 0.0, 0.0],
+            "z": [0.0, 0.0, 0.0, 0.0],
+        }
+    )
     pc = PointCloud(data=df)
     result = pc.filter("radiusoutlier", nb_points=2, radius=1.0)
     check.equal(result._has_data(), False)
@@ -51,11 +55,13 @@ def test_rro_all_points_removed_when_all_isolated():
 def test_rro_all_points_kept_when_all_dense():
     """All tightly packed points must survive."""
     n = 10
-    df = pd.DataFrame({
-        "x": np.linspace(0.0, 0.05, n),
-        "y": np.zeros(n),
-        "z": np.zeros(n),
-    })
+    df = pd.DataFrame(
+        {
+            "x": np.linspace(0.0, 0.05, n),
+            "y": np.zeros(n),
+            "z": np.zeros(n),
+        }
+    )
     pc = PointCloud(data=df)
     result = pc.filter("radiusoutlier", nb_points=5, radius=1.0)
     check.equal(len(result), n)
@@ -65,11 +71,13 @@ def test_rro_result_is_subset_of_input():
     """The filter result must always be a subset of the input."""
     rng = np.random.default_rng(123)
     n = 50
-    df = pd.DataFrame({
-        "x": rng.uniform(-10, 10, n),
-        "y": rng.uniform(-10, 10, n),
-        "z": rng.uniform(-10, 10, n),
-    })
+    df = pd.DataFrame(
+        {
+            "x": rng.uniform(-10, 10, n),
+            "y": rng.uniform(-10, 10, n),
+            "z": rng.uniform(-10, 10, n),
+        }
+    )
     pc = PointCloud(data=df)
     result = pc.filter("radiusoutlier", nb_points=3, radius=5.0)
     check.less_equal(len(result), n)

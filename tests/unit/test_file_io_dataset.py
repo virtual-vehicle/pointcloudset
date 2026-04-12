@@ -19,9 +19,7 @@ def test_from_bag_wrong_topic(testbag1):
 
 @pytest.mark.parametrize("keep_zeros", [True, False])
 def test_from_bag(ros_files, keep_zeros):
-    ds = Dataset.from_file(
-        ros_files, topic="/os1_cloud_node/points", keep_zeros=keep_zeros
-    )
+    ds = Dataset.from_file(ros_files, topic="/os1_cloud_node/points", keep_zeros=keep_zeros)
     check.is_instance(ds, Dataset)
 
 
@@ -86,9 +84,7 @@ def test_dataset_with_empty_frame(testpointcloud_mini_real: PointCloud, tmp_path
     check.equal(len(ds), len(read_dataset))
 
 
-def test_dataset_with_empty_frame_start(
-    testpointcloud_mini_real: PointCloud, tmp_path: Path
-):
+def test_dataset_with_empty_frame_start(testpointcloud_mini_real: PointCloud, tmp_path: Path):
     fake_empty_df = pd.DataFrame.from_dict(
         {
             "x": [np.nan],
@@ -139,21 +135,15 @@ def test_dataset_with_2_empty_frames(tmp_path: Path):
     check.equal(len(ds), len(read_dataset))
 
 
-def test_testdataset_with_empty_frame_r_and_w(
-    testdataset_with_empty_frame: Dataset, tmp_path: Path
-):
+def test_testdataset_with_empty_frame_r_and_w(testdataset_with_empty_frame: Dataset, tmp_path: Path):
     testfile_name = tmp_path.joinpath("dataset0")
 
-    testdataset_with_empty_frame.to_file(
-        file_path=testfile_name, use_orig_filename=False
-    )
+    testdataset_with_empty_frame.to_file(file_path=testfile_name, use_orig_filename=False)
 
     data_0_orig = testdataset_with_empty_frame[0].data
     data_1_orig = testdataset_with_empty_frame[1].data
     check.equal(testfile_name.exists(), True)
-    check.equal(
-        len(list(testfile_name.glob("*.parquet"))), len(testdataset_with_empty_frame)
-    )
+    check.equal(len(list(testfile_name.glob("*.parquet"))), len(testdataset_with_empty_frame))
     read_dataset = Dataset.from_file(testfile_name)
     data_0_read = read_dataset[0].data
     data_1_read = read_dataset[1].data

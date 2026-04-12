@@ -23,9 +23,7 @@ def test_to_pyntcloud(testpointcloud_mini: PointCloud, testlas1: Path):
     pyntcloud_data = PyntCloud.from_file(testlas1.as_posix())
     res = testpointcloud_mini.to_instance("pyntcloud")
     check.is_instance(res, PyntCloud)
-    check.equal(
-        list(res.points.columns.values), list(testpointcloud_mini.data.columns.values)
-    )
+    check.equal(list(res.points.columns.values), list(testpointcloud_mini.data.columns.values))
 
 
 def test_to_open3d(testpointcloud_mini: PointCloud):
@@ -43,12 +41,8 @@ def test_from_open3d(testpointcloud_mini_real: PointCloud):
     check.equal(set(list(test.max())).intersection([0.0, 0.0, 0.0]), {0.0})
 
 
-def test_from_dataframe(
-    testpointcloud_mini_df: pd.DataFrame, testpointcloud_mini: PointCloud
-):
-    pointcloud = pointcloudset.PointCloud.from_instance(
-        "DataFrame", testpointcloud_mini_df
-    )
+def test_from_dataframe(testpointcloud_mini_df: pd.DataFrame, testpointcloud_mini: PointCloud):
+    pointcloud = pointcloudset.PointCloud.from_instance("DataFrame", testpointcloud_mini_df)
     check.is_instance(pointcloud, PointCloud)
     test = pointcloud.data - testpointcloud_mini.data[["x", "y", "z"]]
     check.equal(set(list(test.max())).intersection([0.0, 0.0, 0.0]), {0.0})
