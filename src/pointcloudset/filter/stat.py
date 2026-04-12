@@ -4,6 +4,8 @@ Utility function for filtering frames based on statistics.
 
 from __future__ import annotations
 
+import numpy as np
+from scipy.spatial import KDTree
 from typing import TYPE_CHECKING
 
 from pointcloudset.config import OPS
@@ -70,6 +72,9 @@ def remove_radius_outlier(pointcloud: PointCloud, nb_points: int, radius: float)
     Returns:
         PointCloud: PointCloud without outliers.
     """
-    pcd = pointcloud.to_instance("open3d")
-    _, index_to_keep = pcd.remove_radius_outlier(nb_points=nb_points, radius=radius)
-    return pointcloud.apply_filter(index_to_keep)
+    xyz = pointcloud.points.xyz
+    neighbour_lists = KDTree(xyz).query_ball_point(xyz, radius)
+    # query_ball_point includes the point itself, so > nb_points means at least
+    # nb_points neighbours excluding self — matching open3d's semantics exactly.
+    mask = np.array([len(nbrs) > nb_points for nbrs in neighbour_lists])
+    return pointcloud.apply_filter(mask)
