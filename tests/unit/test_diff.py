@@ -200,3 +200,42 @@ def test_diff_vz6000_to_pointcloud_nearest(
     check.is_true("distance to nearest point" in testvz6000_1.data.columns)
     with pytest.raises(ValueError):  # no original ID
         testvz6000_1.diff("distance to nearest point", testvz6000_2)
+
+
+# --- Synthetic behavioral tests (implementation-agnostic) ---
+
+
+def test_calculate_distance_to_nearest_exact_values():
+    """Known points with exact expected nearest-neighbour distances."""
+    # pc1 has points at (0,0,0) and (3,0,0)
+    # pc2 has points at (1,0,0) and (6,0,0)
+    # nearest for (0,0,0) → (1,0,0): distance = 1.0
+    # nearest for (3,0,0) → (1,0,0): distance = 2.0 (not (6,0,0) which is 3 away)
+    pc1 = PointCloud(data=pd.DataFrame({"x": [0.0, 3.0], "y": [0.0, 0.0], "z": [0.0, 0.0]}))
+    pc2 = PointCloud(data=pd.DataFrame({"x": [1.0, 6.0], "y": [0.0, 0.0], "z": [0.0, 0.0]}))
+    pc1.diff("nearest", target=pc2)
+    distances = pc1.data["distance to nearest point"].values
+    check.almost_equal(float(distances[0]), 1.0)
+    check.almost_equal(float(distances[1]), 2.0)
+
+
+def test_calculate_distance_to_nearest_adds_column():
+    """diff('nearest') must add exactly the expected column."""
+    pc = PointCloud(data=pd.DataFrame({"x": [0.0, 1.0], "y": [0.0, 0.0], "z": [0.0, 0.0]}))
+    pc.diff("nearest", target=pc)
+    check.is_in("distance to nearest point", pc.data.columns)
+    check.equal(len(pc.data["distance to nearest point"]), len(pc))
+
+
+def test_calculate_distance_to_nearest_all_non_negative():
+    """Nearest-neighbour distances must always be ≥ 0."""
+    rng = np.random.default_rng(0)
+    n = 20
+    pc1 = PointCloud(data=pd.DataFrame({
+        "x": rng.uniform(-5, 5, n), "y": rng.uniform(-5, 5, n), "z": rng.uniform(-5, 5, n),
+    }))
+    pc2 = PointCloud(data=pd.DataFrame({
+        "x": rng.uniform(-5, 5, n), "y": rng.uniform(-5, 5, n), "z": rng.uniform(-5, 5, n),
+    }))
+    pc1.diff("nearest", target=pc2)
+    check.is_true(np.all(pc1.data["distance to nearest point"].values >= 0))
