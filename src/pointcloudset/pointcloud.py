@@ -492,7 +492,6 @@ class PointCloud(PointCloudCore):
         return_plane_model: bool = False,
     ) -> PointCloud | dict:
         """Segments a plane in the point cloud using the RANSAC algorithm.
-        Based on :meth:`open3d:open3d.geometry.PointCloud.segment_plane`.
 
         Args:
             distance_threshold (float): Max distance a point can be from the plane
@@ -505,23 +504,33 @@ class PointCloud(PointCloudCore):
 
         Returns:
             PointCloud or dict: PointCloud with inliers or a dict of PointCloud with inliers and the
-            plane parameters.
+            plane parameters. The plane model is [a, b, c, d] for ax+by+cz+d=0 (normalised).
         """
-        pcd = self.to_instance("open3d")
-        plane_model, inliers = pcd.segment_plane(
-            distance_threshold=distance_threshold,
-            ransac_n=ransac_n,
-            num_iterations=num_iterations,
-        )
-        if len(self) > 200:
-            warnings.warn(
-                """Might not produce reproduceable resuts, if the number of points
-                is high. Try to reduce the area of interest before using
-                plane_segmentation. Caused by open3D."""
-            )
-        inlier_pointcloud = self.apply_filter(inliers)
+        xyz = self.points.xyz
+        n = len(xyz)
+        rng = np.random.default_rng(42)
+        best_inliers: list[int] = []
+        best_model: list[float] = []
+
+        for _ in range(num_iterations):
+            sample = xyz[rng.choice(n, ransac_n, replace=False)]
+            centroid = sample.mean(axis=0)
+            _, _, Vt = np.linalg.svd(sample - centroid)
+            normal = Vt[-1]
+            norm_len = np.linalg.norm(normal)
+            if norm_len < 1e-10:
+                continue
+            normal = normal / norm_len
+            d = -np.dot(normal, centroid)
+            dists = np.abs(xyz @ normal + d)
+            inliers = np.where(dists < distance_threshold)[0].tolist()
+            if len(inliers) > len(best_inliers):
+                best_inliers = inliers
+                best_model = [*normal, d]
+
+        inlier_pointcloud = self.apply_filter(best_inliers)
         if return_plane_model:
-            return {"PointCloud": inlier_pointcloud, "plane_model": plane_model}
+            return {"PointCloud": inlier_pointcloud, "plane_model": best_model}
         else:
             return inlier_pointcloud
 
