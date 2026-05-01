@@ -37,7 +37,7 @@ dependencies = [
     "pyntcloud",
     "scipy>=1.10",
     "scikit-learn>=1.2",
-    "plotly",
+    "plotly>=6.5.0",
     "dask>=2023.11.0",
     "typer",
     "rich",
