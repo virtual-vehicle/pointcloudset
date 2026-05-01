@@ -203,8 +203,7 @@ Comparison to related packages
    The downside of the format is that it is only suitable for serial access and not well suited for data analytics and post processing.
 #. `pyntcloud <https://github.com/daavoo/pyntcloud>`_ - Only for single point clouds. This package is used as the basis for the
    PointCloud object.
-#. `open3d <https://github.com/intel-isl/Open3D>`_ - Only for single point clouds. Excellent package, which is used for some
-   methods on the PointCloud.
+#. `open3d <https://github.com/intel-isl/Open3D>`_ - Only for single point clouds.
 #. `pdal <https://github.com/PDAL/PDAL>`_ - Works also with pipelines on point clouds but is mostly focused on single point cloud processing.
    Pointcloudset is purely in python and based on pandas DataFrames. In addition pointcloudset works in parallel to process large datasets.
 
