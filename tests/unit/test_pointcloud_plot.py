@@ -25,6 +25,21 @@ def test_plot_overlay(testpointcloud: PointCloud):
     )
 
 
+def test_plot_overlay_points_visible_without_color_column(testpointcloud: PointCloud):
+    smaller = testpointcloud.limit("x", -0.5, 0.0)
+    smaller2 = testpointcloud.limit("x", -0.4, 0.0)
+
+    fig = smaller.plot(color=None, overlay={"Smaller2": smaller2}, hover_data=["intensity"])
+
+    # All scatter traces should have visible marker styling.
+    for trace in fig.data:
+        if trace.type == "scatter3d":
+            check.is_not_none(trace.marker.color)
+            check.greater(trace.marker.size, 0)
+            check.equal(trace.marker.symbol, "circle")
+            check.equal(trace.marker.opacity, 1.0)
+
+
 def test_plot_overlay_plane(testpointcloud: PointCloud):
     smaller = testpointcloud.limit("x", -0.5, 0.0)
     plane = smaller.plane_segmentation(0.2, 10, 10, return_plane_model=True)

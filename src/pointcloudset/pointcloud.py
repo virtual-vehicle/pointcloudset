@@ -7,10 +7,10 @@ from typing import Literal, Union
 
 import numpy as np
 import pandas
-from sklearn.cluster import DBSCAN
 import plotly
 import plotly.express as px
 import pyntcloud
+from sklearn.cluster import DBSCAN
 
 from pointcloudset.config import PLOTLYSIZELIMIT
 from pointcloudset.diff import ALL_DIFFS
@@ -250,17 +250,25 @@ class PointCloud(PointCloudCore):
             if any(x not in self.data.columns for x in hover_data):
                 raise ValueError(f"choose a list of {list(self.data.columns)} or []")
 
-        fig = px.scatter_3d(
-            self.data,
-            x="x",
-            y="y",
-            z="z",
-            color=color,
-            hover_name=ids,
-            hover_data=hover_data,
-            title=self.timestamp_str,
+        scatter_kwargs = {
+            "x": "x",
+            "y": "y",
+            "z": "z",
+            "hover_name": ids,
+            "hover_data": hover_data,
+            "title": self.timestamp_str,
             **kwargs,
-        )
+        }
+        if color is not None:
+            scatter_kwargs["color"] = color
+
+        fig = px.scatter_3d(self.data, **scatter_kwargs)
+
+        # Explicitly set a visible fallback color when no color column is used.
+        # Newer Plotly versions can leave marker styling undefined in this case,
+        # which makes points invisible while hover still works.
+        if color is None:
+            fig.update_traces(marker_color=px.colors.qualitative.Plotly[0], selector=dict(type="scatter3d"))
 
         if overlay:
             fig = plot_overlay(
@@ -275,8 +283,13 @@ class PointCloud(PointCloudCore):
             fig.update_layout(hovermode=False)
 
         fig.update_traces(
-            marker=dict(size=point_size, line=dict(width=0)),
-            selector=dict(mode="markers"),
+            marker=dict(
+                size=point_size,
+                symbol="circle",
+                opacity=1.0,
+                line=dict(width=0.5, color="rgba(0, 0, 0, 0.35)"),
+            ),
+            selector=dict(type="scatter3d"),
         )
 
         return fig

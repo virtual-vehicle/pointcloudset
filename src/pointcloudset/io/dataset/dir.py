@@ -116,9 +116,9 @@ def _check_dir(file_path: Path):
 
 def _check_dir_contents(dir: Path):
     """Quick test if all"""
-    sub_dirs = list(dir.glob("**"))
+    sub_dirs = [path for path in dir.glob("**") if path.is_dir()]
     for path in sub_dirs:
-        if len(sub_dirs) != 1 and path != dir or len(sub_dirs) == 1:
+        if (len(sub_dirs) != 1 and path != dir) or len(sub_dirs) == 1:
             _check_dir_contents_single(path)
 
 

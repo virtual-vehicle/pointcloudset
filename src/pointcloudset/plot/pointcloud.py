@@ -32,7 +32,15 @@ def plot_overlay(fig, pointcloud, overlay: dict, **kwargs):
         plotly.graph_objects.Figure: Plot with all overlays.
     """
     fig.update_traces(opacity=0.7)
-    fig.update_traces(marker=dict(size=1.5, line=dict(width=0)), selector=dict(mode="markers"))
+    fig.update_traces(
+        marker=dict(
+            size=1.5,
+            symbol="circle",
+            opacity=1.0,
+            line=dict(width=0.5, color="rgba(0, 0, 0, 0.35)"),
+        ),
+        selector=dict(type="scatter3d"),
+    )
 
     # Create color list dependend on length of overlay.
     if len(overlay) <= 9:
