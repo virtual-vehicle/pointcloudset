@@ -3,9 +3,9 @@ name: tests
 on:
   push:
     branches:
-      - '**'  # Matches all branches
+      - "**" # Matches all branches
     tags-ignore:
-      - '**'  # Exclude tag pushes
+      - "**" # Exclude tag pushes
   pull_request:
     types:
       - opened
@@ -17,8 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11"]  # Define Python versions as strings
-        open3d-version: [0.18]
+        python-version: [ "3.11", "3.12", "3.13", "3.14" ] # Define Python versions as strings
     env:
       UV_PYTHON: ${{ matrix.python-version }}
 
@@ -36,20 +35,9 @@ jobs:
           gdb \
           git \
           make \
-          libeigen3-dev \
-          libgl1-mesa-dev \
-          libglew-dev \
-          libglfw3-dev \
-          libglu1-mesa-dev \
-          libpng-dev \
-          libusb-1.0-0 \
-          libgomp1 \
-          pybind11-dev \
           pandoc \
           software-properties-common \
-          mesa-utils && \
           sudo rm -rf /var/lib/apt/lists/*
-
 
       - name: Install uv
         uses: astral-sh/setup-uv@v5
@@ -59,4 +47,3 @@ jobs:
 
       - name: Run tests
         run: uv run pytest tests
-
