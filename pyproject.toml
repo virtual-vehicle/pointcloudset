@@ -38,14 +38,15 @@ dependencies = [
     "pyntcloud",
     "scipy>=1.10",
     "scikit-learn>=1.2",
-    "plotly>=6.5.0",
+    "plotly>=5.0.0,<6.0.0",
     "dask>=2023.11.0",
     "typer",
     "rich",
     "rosbags>=0.9.15,<0.10.0",
     "ipywidgets",
     "laspy",
-    "pyarrow"
+    "pyarrow",
+    "nbformat"
 ]
 [dependency-groups]
 dev = [
