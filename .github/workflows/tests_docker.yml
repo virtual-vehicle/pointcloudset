@@ -27,18 +27,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update && \
-          sudo apt-get upgrade -y && \
-          sudo apt-get install -y --no-install-recommends \
-          gdb \
-          git \
-          make \
-          pandoc \
-          software-properties-common \
-          sudo rm -rf /var/lib/apt/lists/*
-
       - name: Install uv
         uses: astral-sh/setup-uv@v5
 
