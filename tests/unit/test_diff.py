@@ -84,7 +84,7 @@ def test__calculate_single_point_difference_no_overlap(
     )
     test = res.values[0]
     check.is_instance(res, pd.DataFrame)
-    check.equal(np.alltrue(np.isnan(test)), True)
+    check.equal(np.all(np.isnan(test)), True)
 
 
 def test_distances_to_origin(testpointcloud_mini: PointCloud):
