@@ -458,22 +458,42 @@ class PointCloud(PointCloudCore):
             min_points (int): Minimum number of points to form a cluster.
 
         Returns:
-            pandas.DataFrame: Dataframe with list of clusters.
+            pandas.DataFrame: Dataframe with list of clusters. Noise points receive
+            label ``-1`` and can be retrieved with ``take_cluster(-1, labels)``.
+
+        Raises:
+            ValueError: If ``eps`` is not positive, ``min_points`` is less than 1,
+                or the point cloud is empty.
         """
+        if eps <= 0:
+            raise ValueError(f"eps must be positive, got {eps}")
+        if min_points < 1:
+            raise ValueError(f"min_points must be >= 1, got {min_points}")
+        if len(self) == 0:
+            raise ValueError("Cannot cluster an empty PointCloud")
         labels = DBSCAN(eps=eps, min_samples=min_points).fit(self.points.xyz).labels_
         return pandas.DataFrame(labels, columns=["cluster"])
 
     def take_cluster(self, cluster_number: int, cluster_labels: pandas.DataFrame) -> PointCloud:
         """Takes only the points belonging to the cluster_number.
 
+        Use ``cluster_number=-1`` to retrieve noise points.
+
         Args:
-            cluster_number (int): Cluster ID to keep.
+            cluster_number (int): Cluster ID to keep. Use ``-1`` for noise points.
             cluster_labels (pandas.DataFrame): Clusters generated with
                 :func:`pointcloudset.pointcloud.PointCloud.get_cluster`.
 
         Returns:
             PointCloud: PointCloud with selected cluster.
+
+        Raises:
+            ValueError: If ``cluster_labels`` length does not match this PointCloud.
         """
+        if len(cluster_labels) != len(self):
+            raise ValueError(
+                f"cluster_labels has {len(cluster_labels)} rows but PointCloud has {len(self)} points"
+            )
         bool_array = (cluster_labels["cluster"] == cluster_number).values
         return self.apply_filter(bool_array)
 

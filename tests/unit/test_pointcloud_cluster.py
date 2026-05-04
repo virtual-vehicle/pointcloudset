@@ -97,3 +97,54 @@ def test_get_cluster_same_group_same_label():
     check.not_equal(arr[0], arr[5])
     check.not_equal(arr[0], arr[10])
     check.not_equal(arr[5], arr[10])
+
+
+# --- Input validation ---
+
+
+def test_get_cluster_raises_on_zero_eps():
+    pc = _make_synthetic_clustered_pc()
+    with pytest.raises(ValueError, match="eps"):
+        pc.get_cluster(eps=0.0, min_points=3)
+
+
+def test_get_cluster_raises_on_negative_eps():
+    pc = _make_synthetic_clustered_pc()
+    with pytest.raises(ValueError, match="eps"):
+        pc.get_cluster(eps=-1.0, min_points=3)
+
+
+def test_get_cluster_raises_on_zero_min_points():
+    pc = _make_synthetic_clustered_pc()
+    with pytest.raises(ValueError, match="min_points"):
+        pc.get_cluster(eps=0.1, min_points=0)
+
+
+def test_get_cluster_raises_on_empty_pointcloud():
+    empty = PointCloud(data=pd.DataFrame({"x": [], "y": [], "z": []}))
+    with pytest.raises(ValueError, match="empty"):
+        empty.get_cluster(eps=0.1, min_points=3)
+
+
+# --- Noise cluster (label -1) ---
+
+
+def test_take_cluster_noise_points():
+    """take_cluster(-1) must return the isolated noise point."""
+    pc = _make_synthetic_clustered_pc()
+    labels = pc.get_cluster(eps=0.1, min_points=3)
+    noise = pc.take_cluster(-1, labels)
+    check.is_instance(noise, PointCloud)
+    check.equal(len(noise), 1)
+    check.almost_equal(float(noise.data["x"].iloc[0]), 100.0, 3)
+
+
+# --- Mismatched labels guard ---
+
+
+def test_take_cluster_raises_on_length_mismatch():
+    pc = _make_synthetic_clustered_pc()
+    labels = pc.get_cluster(eps=0.1, min_points=3)
+    short_labels = labels.iloc[:-1].reset_index(drop=True)
+    with pytest.raises(ValueError, match="cluster_labels"):
+        pc.take_cluster(0, short_labels)
