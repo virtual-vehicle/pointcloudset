@@ -11,6 +11,8 @@ on:
 jobs:
   doc:
     runs-on: ubuntu-latest
+    env:
+      UV_PYTHON: "3.12"
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
