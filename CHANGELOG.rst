@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
-0.12.0 - (2026-05-01)
+0.12.0 - (2026-05-05)
 -------------
 
 Changed
@@ -15,6 +15,7 @@ Changed
 - ``plane_segmentation`` now uses a pure-numpy SVD-based RANSAC implementation
 - distance-to-nearest diff now uses ``scipy.spatial.KDTree`` instead of open3d
 - ``filter("radiusoutlier", ...)`` now uses ``scipy.spatial.KDTree`` instead of open3d
+- using numpy >2.2 version for modern features and better performance. Made possible by removing open3d dependency.
 
 Removed
 ~~~~~~
