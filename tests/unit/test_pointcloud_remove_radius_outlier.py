@@ -90,3 +90,47 @@ def test_rro_preserves_pointcloud_type():
     pc = _make_cluster_plus_outlier_pc()
     result = pc.filter("radiusoutlier", nb_points=5, radius=1.0)
     check.is_instance(result, PointCloud)
+
+
+# --- Input validation ---
+
+
+def test_rro_raises_on_zero_nb_points():
+    pc = _make_cluster_plus_outlier_pc()
+    with pytest.raises(ValueError, match="nb_points"):
+        pc.filter("radiusoutlier", nb_points=0, radius=1.0)
+
+
+def test_rro_raises_on_negative_nb_points():
+    pc = _make_cluster_plus_outlier_pc()
+    with pytest.raises(ValueError, match="nb_points"):
+        pc.filter("radiusoutlier", nb_points=-1, radius=1.0)
+
+
+def test_rro_raises_on_zero_radius():
+    pc = _make_cluster_plus_outlier_pc()
+    with pytest.raises(ValueError, match="radius"):
+        pc.filter("radiusoutlier", nb_points=5, radius=0.0)
+
+
+def test_rro_raises_on_negative_radius():
+    pc = _make_cluster_plus_outlier_pc()
+    with pytest.raises(ValueError, match="radius"):
+        pc.filter("radiusoutlier", nb_points=5, radius=-1.0)
+
+
+# --- Edge cases ---
+
+
+def test_rro_empty_pointcloud_returns_empty():
+    empty = PointCloud(data=pd.DataFrame({"x": [], "y": [], "z": []}))
+    result = empty.filter("radiusoutlier", nb_points=1, radius=1.0)
+    check.is_instance(result, PointCloud)
+    check.equal(result._has_data(), False)
+
+
+def test_rro_single_point_is_removed():
+    """A single point has no neighbours, so it must always be removed."""
+    pc = PointCloud(data=pd.DataFrame({"x": [0.0], "y": [0.0], "z": [0.0]}))
+    result = pc.filter("radiusoutlier", nb_points=1, radius=1.0)
+    check.equal(result._has_data(), False)

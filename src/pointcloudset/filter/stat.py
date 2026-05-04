@@ -61,19 +61,30 @@ def value_filter(
 
 
 def remove_radius_outlier(pointcloud: PointCloud, nb_points: int, radius: float) -> PointCloud:
-    """Function to remove points that have less than nb_points in a given
-    sphere of a given radius.
+    """Remove points that have fewer than ``nb_points`` neighbours within ``radius``.
 
     Args:
         pointcloud (PointCloud): PointCloud from which to remove points.
-        nb_points (int): Number of points within the radius.
-        radius (float): Radius of the sphere.
+        nb_points (int): Minimum number of neighbours required (excluding the
+            point itself). Must be >= 1.
+        radius (float): Search radius. Must be positive.
 
     Returns:
         PointCloud: PointCloud without outliers.
+
+    Raises:
+        ValueError: If ``nb_points`` is less than 1 or ``radius`` is not positive.
     """
+    if nb_points < 1:
+        raise ValueError(f"nb_points must be >= 1, got {nb_points}")
+    if radius <= 0:
+        raise ValueError(f"radius must be positive, got {radius}")
+
     xyz = pointcloud.points.xyz
-    neighbour_lists = KDTree(xyz).query_ball_point(xyz, radius)
+    if len(xyz) == 0:
+        return pointcloud
+
+    neighbour_lists = KDTree(xyz).query_ball_point(xyz, radius, workers=-1)
     # query_ball_point includes the point itself, so > nb_points means at least
     # nb_points neighbours excluding self — matching open3d's semantics exactly.
     mask = np.array([len(nbrs) > nb_points for nbrs in neighbour_lists])
