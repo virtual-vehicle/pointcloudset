@@ -491,9 +491,7 @@ class PointCloud(PointCloudCore):
             ValueError: If ``cluster_labels`` length does not match this PointCloud.
         """
         if len(cluster_labels) != len(self):
-            raise ValueError(
-                f"cluster_labels has {len(cluster_labels)} rows but PointCloud has {len(self)} points"
-            )
+            raise ValueError(f"cluster_labels has {len(cluster_labels)} rows but PointCloud has {len(self)} points")
         bool_array = (cluster_labels["cluster"] == cluster_number).values
         return self.apply_filter(bool_array)
 
@@ -536,9 +534,7 @@ class PointCloud(PointCloudCore):
         if ransac_n < 3:
             raise ValueError(f"ransac_n must be >= 3 to define a plane, got {ransac_n}")
         if ransac_n > len(self):
-            raise ValueError(
-                f"ransac_n ({ransac_n}) exceeds number of points ({len(self)})"
-            )
+            raise ValueError(f"ransac_n ({ransac_n}) exceeds number of points ({len(self)})")
         if num_iterations < 1:
             raise ValueError(f"num_iterations must be >= 1, got {num_iterations}")
 
