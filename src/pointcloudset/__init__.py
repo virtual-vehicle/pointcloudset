@@ -1,4 +1,9 @@
+from importlib.metadata import PackageNotFoundError, version
+
 from .dataset import Dataset
 from .pointcloud import PointCloud
 
-__version__ = "0.11.1"
+try:
+    __version__ = version("pointcloudset")
+except PackageNotFoundError:
+    __version__ = "0.0.0"
