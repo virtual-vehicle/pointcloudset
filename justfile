@@ -4,7 +4,7 @@ default:
 # Bump patch version, tag, and push
 patch:
     uv version --bump patch
-    git add pyproject.toml uv.lock CHANGELOG.md
+    git add pyproject.toml uv.lock CHANGELOG.rst
     git commit -m "bump version to $(uv version --short)"
     git tag "v$(uv version --short)"
     git push
@@ -12,7 +12,7 @@ patch:
 
 minor:
     uv version --bump minor
-    git add pyproject.toml uv.lock CHANGELOG.md
+    git add pyproject.toml uv.lock CHANGELOG.rst
     git commit -m "bump version to $(uv version --short)"
     git tag "v$(uv version --short)"
     git push
