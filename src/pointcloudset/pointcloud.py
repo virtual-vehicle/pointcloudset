@@ -287,7 +287,6 @@ class PointCloud(PointCloudCore):
                 size=point_size,
                 symbol="circle",
                 opacity=1.0,
-                line=dict(width=0.5, color="rgba(0, 0, 0, 0.35)"),
             ),
             selector=dict(type="scatter3d"),
         )

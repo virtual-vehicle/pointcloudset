@@ -8,6 +8,10 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 0.12.0 - (2026-05-05)
 -------------
 
+Fixed
+~~~~~~
+- ``PointCloud.plot()`` showing empty scatter points with Plotly 6.x: removed ``marker.line`` from the ``scatter3d`` ``update_traces`` call. ``marker.line`` is a 2D scatter property that Plotly 5.x silently ignored for 3D traces but Plotly 6.x passes to the WebGL renderer, making all points invisible.
+
 Changed
 ~~~~~~
 - removed open3d dependency entirely; replaced with scipy and scikit-learn
