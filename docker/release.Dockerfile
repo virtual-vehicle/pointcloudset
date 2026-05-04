@@ -1,4 +1,4 @@
-FROM ghcr.io/astral-sh/uv:bookworm-slim
+FROM ghcr.io/astral-sh/uv:0.11.8-debian-slim
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
