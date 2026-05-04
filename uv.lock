@@ -1392,7 +1392,7 @@ requires-dist = [
     { name = "ipywidgets" },
     { name = "laspy" },
     { name = "nbformat" },
-    { name = "numpy", specifier = ">2.2.0" },
+    { name = "numpy", specifier = ">2.2.0,<3.0.0" },
     { name = "pandas", specifier = ">=2.0.0,<3.0.0" },
     { name = "plotly", specifier = ">=5.0.0,<6.0.0" },
     { name = "pyarrow" },

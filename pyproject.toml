@@ -33,7 +33,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "numpy>2.2.0",
+    "numpy>2.2.0,<3.0.0",
     "pandas>=2.0.0,<3.0.0",
     "pyntcloud",
     "scipy>=1.10",
