@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
+0.12.1 - (2026-05-04)
+-------------
+
+Fixed
+~~~~~~
+- ``pointcloudset.__version__`` is now resolved from installed package metadata instead of a hardcoded literal in ``__init__.py``, preventing out-of-sync version strings.
+- Sphinx documentation version resolution now reads package metadata first and falls back to ``pyproject.toml``, keeping published docs aligned with the package version source of truth.
+
 0.12.0 - (2026-05-05)
 -------------
 
