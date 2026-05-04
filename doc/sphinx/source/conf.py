@@ -6,7 +6,8 @@
 
 # -- Path setup --------------------------------------------------------------
 
-import codecs
+from importlib.metadata import PackageNotFoundError, version as pkg_version
+import tomllib
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -18,21 +19,17 @@ import sys
 sys.path.insert(0, os.path.abspath("../../../src/pointcloudset"))
 
 
-def read(rel_path):
-    here = os.path.abspath(os.path.dirname(__file__))
-    # intentionally *not* adding an encoding option to open, See:
-    #   https://github.com/pypa/virtualenv/issues/201#issuecomment-3145690
-    with codecs.open(os.path.join(here, rel_path), "r") as fp:
-        return fp.read()
+def get_version(_rel_path):
+    try:
+        return pkg_version("pointcloudset")
+    except PackageNotFoundError:
+        pass
 
+    pyproject_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../pyproject.toml"))
+    with open(pyproject_path, "rb") as fp:
+        pyproject = tomllib.load(fp)
 
-def get_version(rel_path):
-    for line in read(rel_path).splitlines():
-        if line.startswith("__version__"):
-            # __version__ = "0.9"
-            delim = '"' if '"' in line else "'"
-            return line.split(delim)[1]
-    raise RuntimeError("Unable to find version string.")
+    return pyproject["project"]["version"]
 
 
 # -- Project information -----------------------------------------------------
