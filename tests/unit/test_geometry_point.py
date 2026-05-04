@@ -6,9 +6,7 @@ from pointcloudset.geometry import point
 
 
 def test_distance_to_point():
-    distance = point.distance_to_point(
-        point_a=np.array([1, 0, 0]), point_b=np.array([2, 0, 0])
-    )
+    distance = point.distance_to_point(point_a=np.array([1, 0, 0]), point_b=np.array([2, 0, 0]))
     check.equal(distance, 1.0)
 
 

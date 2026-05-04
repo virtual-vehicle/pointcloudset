@@ -6,11 +6,11 @@ from pathlib import Path
 from typing import Literal, Union
 
 import numpy as np
-import open3d
 import pandas
 import plotly
 import plotly.express as px
 import pyntcloud
+from sklearn.cluster import DBSCAN
 
 from pointcloudset.config import PLOTLYSIZELIMIT
 from pointcloudset.diff import ALL_DIFFS
@@ -132,10 +132,9 @@ class PointCloud(PointCloudCore):
         library: Literal[
             "PANDAS",
             "PYNTCLOUD",
-            "OPEN3D",
             "DATAFRAME",
         ] = "PANDAS",
-        instance: (pandas.DataFrame | pyntcloud.PyntCloud | open3d.geometry.PointCloud) = pandas.DataFrame(),
+        instance: (pandas.DataFrame | pyntcloud.PyntCloud) = pandas.DataFrame(),
         **kwargs,
     ) -> PointCloud:
         """Converts a library instance to a pointcloudset PointCloud.
@@ -143,12 +142,9 @@ class PointCloud(PointCloudCore):
         Args:
             library (str): Name of the library.\n
                 If PYNTCLOUD: :func:`pointcloudset.io.pointcloud.pyntcloud.from_pyntcloud`\n
-                If OPEN3D: :func:`pointcloudset.io.pointcloud.open3d.from_open3d`\n
                 If DATAFRAME: :func:`pointcloudset.io.pointcloud.pandas.from_dataframe`\n
                 If PANDAS: :func:`pointcloudset.io.pointcloud.pandas.from_dataframe`
-            instance
-                (Union[pandas.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud]):
-                Library instance to convert.
+            instance (Union[pandas.DataFrame, pyntcloud.PyntCloud]): Library instance to convert.
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -156,12 +152,6 @@ class PointCloud(PointCloudCore):
 
         Raises:
             ValueError: If instance is not supported.
-
-        Examples:
-
-            .. code-block:: python
-
-                testpointcloud = from_instance("OPEN3D", open3d_pointcloud)
 
         """
         library = library.upper()
@@ -171,30 +161,23 @@ class PointCloud(PointCloudCore):
             return cls(**POINTCLOUD_FROM_INSTANCE[library](instance, **kwargs))
 
     def to_instance(
-        self, library: Literal["PYNTCLOUD", "OPEN3D", "DATAFRAME", "PANDAS"], **kwargs
-    ) -> pyntcloud.PyntCloud | open3d.geometry.PointCloud | pandas.DataFrame | pandas.DataFrame:
+        self, library: Literal["PYNTCLOUD", "DATAFRAME", "PANDAS"], **kwargs
+    ) -> pyntcloud.PyntCloud | pandas.DataFrame:
         """Convert PointCloud to another library instance.
 
         Args:
             library (str): Name of the library.\n
                 If PYNTCLOUD: :func:`pointcloudset.io.pointcloud.pyntcloud.to_pyntcloud`\n
-                If OPEN3D: :func:`pointcloudset.io.pointcloud.open3d.to_open3d`\n
                 If DATAFRAME: :func:`pointcloudset.io.pointcloud.pandas.to_dataframe`\n
                 If PANDAS: :func:`pointcloudset.io.pointcloud.pandas.to_dataframe`
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
-            Union[ pandas.DataFrame, pyntcloud.PyntCloud, open3d.geometry.PointCloud ]:
-            The derived instance.
+            Union[pandas.DataFrame, pyntcloud.PyntCloud]: The derived instance.
 
         Raises:
             ValueError: If library is not suppored.
 
-        Examples:
-
-            .. code-block:: python
-
-                open3d_pointcloud = testpointcloud.to_instance("OPEN3D")
         """
         library = library.upper()
         if library not in POINTCLOUD_TO_INSTANCE:
@@ -267,17 +250,25 @@ class PointCloud(PointCloudCore):
             if any(x not in self.data.columns for x in hover_data):
                 raise ValueError(f"choose a list of {list(self.data.columns)} or []")
 
-        fig = px.scatter_3d(
-            self.data,
-            x="x",
-            y="y",
-            z="z",
-            color=color,
-            hover_name=ids,
-            hover_data=hover_data,
-            title=self.timestamp_str,
+        scatter_kwargs = {
+            "x": "x",
+            "y": "y",
+            "z": "z",
+            "hover_name": ids,
+            "hover_data": hover_data,
+            "title": self.timestamp_str,
             **kwargs,
-        )
+        }
+        if color is not None:
+            scatter_kwargs["color"] = color
+
+        fig = px.scatter_3d(self.data, **scatter_kwargs)
+
+        # Explicitly set a visible fallback color when no color column is used.
+        # Newer Plotly versions can leave marker styling undefined in this case,
+        # which makes points invisible while hover still works.
+        if color is None:
+            fig.update_traces(marker_color=px.colors.qualitative.Plotly[0], selector=dict(type="scatter3d"))
 
         if overlay:
             fig = plot_overlay(
@@ -292,8 +283,12 @@ class PointCloud(PointCloudCore):
             fig.update_layout(hovermode=False)
 
         fig.update_traces(
-            marker=dict(size=point_size, line=dict(width=0)),
-            selector=dict(mode="markers"),
+            marker=dict(
+                size=point_size,
+                symbol="circle",
+                opacity=1.0,
+            ),
+            selector=dict(type="scatter3d"),
         )
 
         return fig
@@ -448,15 +443,14 @@ class PointCloud(PointCloudCore):
             # dataframe and pyntcloud based filters
             new_data = self.data.loc[filter_result].reset_index(drop=True)
         elif isinstance(filter_result, list):
-            # from open3d filters
+            # list of integer indices
             new_data = self.data.iloc[filter_result].reset_index(drop=True)
         else:
             raise TypeError("Wrong filter_result expecting array with boolean values orlist of indices")
         return PointCloud(new_data, timestamp=self.timestamp)
 
     def get_cluster(self, eps: float, min_points: int) -> pandas.DataFrame:
-        """Get the clusters based on
-        :meth:`open3d:open3d.geometry.PointCloud.cluster_dbscan`.
+        """Get the clusters using :class:`sklearn.cluster.DBSCAN`.
         Process further with :func:`pointcloudset.pointcloud.PointCloud.take_cluster`.
 
         Args:
@@ -464,24 +458,40 @@ class PointCloud(PointCloudCore):
             min_points (int): Minimum number of points to form a cluster.
 
         Returns:
-            pandas.DataFrame: Dataframe with list of clusters.
+            pandas.DataFrame: Dataframe with list of clusters. Noise points receive
+            label ``-1`` and can be retrieved with ``take_cluster(-1, labels)``.
+
+        Raises:
+            ValueError: If ``eps`` is not positive, ``min_points`` is less than 1,
+                or the point cloud is empty.
         """
-        labels = np.array(
-            self.to_instance("open3d").cluster_dbscan(eps=eps, min_points=min_points, print_progress=False)
-        )
+        if eps <= 0:
+            raise ValueError(f"eps must be positive, got {eps}")
+        if min_points < 1:
+            raise ValueError(f"min_points must be >= 1, got {min_points}")
+        if len(self) == 0:
+            raise ValueError("Cannot cluster an empty PointCloud")
+        labels = DBSCAN(eps=eps, min_samples=min_points).fit(self.points.xyz).labels_
         return pandas.DataFrame(labels, columns=["cluster"])
 
     def take_cluster(self, cluster_number: int, cluster_labels: pandas.DataFrame) -> PointCloud:
         """Takes only the points belonging to the cluster_number.
 
+        Use ``cluster_number=-1`` to retrieve noise points.
+
         Args:
-            cluster_number (int): Cluster ID to keep.
+            cluster_number (int): Cluster ID to keep. Use ``-1`` for noise points.
             cluster_labels (pandas.DataFrame): Clusters generated with
                 :func:`pointcloudset.pointcloud.PointCloud.get_cluster`.
 
         Returns:
             PointCloud: PointCloud with selected cluster.
+
+        Raises:
+            ValueError: If ``cluster_labels`` length does not match this PointCloud.
         """
+        if len(cluster_labels) != len(self):
+            raise ValueError(f"cluster_labels has {len(cluster_labels)} rows but PointCloud has {len(self)} points")
         bool_array = (cluster_labels["cluster"] == cluster_number).values
         return self.apply_filter(bool_array)
 
@@ -491,38 +501,77 @@ class PointCloud(PointCloudCore):
         ransac_n: int,
         num_iterations: int,
         return_plane_model: bool = False,
+        seed: int = 42,
     ) -> PointCloud | dict:
         """Segments a plane in the point cloud using the RANSAC algorithm.
-        Based on :meth:`open3d:open3d.geometry.PointCloud.segment_plane`.
+
+        After finding the best consensus set the plane is refit via SVD on all
+        inliers, so the returned model is more accurate than the initial sample.
 
         Args:
             distance_threshold (float): Max distance a point can be from the plane
                 model, and still be considered as an inlier.
-            ransac_n (int):  Number of initial points to be considered inliers in
-                each iteration.
-            num_iterations (int): Number of iterations.
+            ransac_n (int): Number of points sampled per iteration to fit a candidate
+                plane. Must be >= 3.
+            num_iterations (int): Number of RANSAC iterations. Must be >= 1.
             return_plane_model (bool, optional): Return also plane model parameters
                 if ``True``. Defaults to ``False``.
+            seed (int, optional): Random seed for reproducibility. Defaults to 42.
 
         Returns:
             PointCloud or dict: PointCloud with inliers or a dict of PointCloud with inliers and the
-            plane parameters.
+            plane parameters. The plane model is [a, b, c, d] for ax+by+cz+d=0 (normalised).
+
+        Raises:
+            ValueError: If the point cloud is empty, ``distance_threshold`` is not
+                positive, ``ransac_n`` is less than 3 or exceeds the number of points,
+                or ``num_iterations`` is less than 1.
         """
-        pcd = self.to_instance("open3d")
-        plane_model, inliers = pcd.segment_plane(
-            distance_threshold=distance_threshold,
-            ransac_n=ransac_n,
-            num_iterations=num_iterations,
-        )
-        if len(self) > 200:
-            warnings.warn(
-                """Might not produce reproduceable resuts, if the number of points
-                is high. Try to reduce the area of interest before using
-                plane_segmentation. Caused by open3D."""
-            )
-        inlier_pointcloud = self.apply_filter(inliers)
+        if len(self) == 0:
+            raise ValueError("Cannot segment a plane in an empty PointCloud")
+        if distance_threshold <= 0:
+            raise ValueError(f"distance_threshold must be positive, got {distance_threshold}")
+        if ransac_n < 3:
+            raise ValueError(f"ransac_n must be >= 3 to define a plane, got {ransac_n}")
+        if ransac_n > len(self):
+            raise ValueError(f"ransac_n ({ransac_n}) exceeds number of points ({len(self)})")
+        if num_iterations < 1:
+            raise ValueError(f"num_iterations must be >= 1, got {num_iterations}")
+
+        xyz = self.points.xyz
+        n = len(xyz)
+        rng = np.random.default_rng(seed)
+        best_inliers: list[int] = []
+        best_model = np.zeros(4)
+
+        for _ in range(num_iterations):
+            sample = xyz[rng.choice(n, ransac_n, replace=False)]
+            centroid = sample.mean(axis=0)
+            _, _, Vt = np.linalg.svd(sample - centroid)
+            normal = Vt[-1]
+            norm_len = np.linalg.norm(normal)
+            if norm_len < 1e-10:
+                continue
+            normal = normal / norm_len
+            d = -np.dot(normal, centroid)
+            dists = np.abs(xyz @ normal + d)
+            inliers = np.where(dists <= distance_threshold)[0].tolist()
+            if len(inliers) > len(best_inliers):
+                best_inliers = inliers
+
+        # Refit plane on all inliers for a more accurate final model.
+        if best_inliers:
+            inlier_xyz = xyz[best_inliers]
+            centroid = inlier_xyz.mean(axis=0)
+            _, _, Vt = np.linalg.svd(inlier_xyz - centroid)
+            normal = Vt[-1]
+            normal = normal / np.linalg.norm(normal)
+            d = -np.dot(normal, centroid)
+            best_model = np.array([*normal, d])
+
+        inlier_pointcloud = self.apply_filter(best_inliers)
         if return_plane_model:
-            return {"PointCloud": inlier_pointcloud, "plane_model": plane_model}
+            return {"PointCloud": inlier_pointcloud, "plane_model": best_model}
         else:
             return inlier_pointcloud
 

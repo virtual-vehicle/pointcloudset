@@ -5,6 +5,39 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
+0.12.0 - (2026-05-05)
+-------------
+
+Added
+~~~~~~
+- ``plane_segmentation`` accepts an optional ``seed`` parameter (default ``42``) so the RANSAC random state can be controlled by the caller.
+- ``plane_segmentation`` now refits the plane via SVD on all inliers after finding the best consensus set, producing a more accurate final model.
+- Input validation with clear ``ValueError`` messages for all three open3d replacements:
+
+  - ``get_cluster``: rejects ``eps <= 0``, ``min_points < 1``, and empty PointCloud.
+  - ``take_cluster``: rejects a ``cluster_labels`` whose length does not match the PointCloud, preventing silent index misalignment. Use ``cluster_number=-1`` to retrieve noise points.
+  - ``plane_segmentation``: rejects ``distance_threshold <= 0``, ``ransac_n < 3``, ``ransac_n > len(pointcloud)``, ``num_iterations < 1``, and empty PointCloud.
+  - ``filter("radiusoutlier")``: rejects ``nb_points < 1`` and ``radius <= 0``.
+
+Fixed
+~~~~~~
+- ``PointCloud.plot()`` showing empty scatter points with Plotly 6.x: removed ``marker.line`` from the ``scatter3d`` ``update_traces`` call. ``marker.line`` is a 2D scatter property that Plotly 5.x silently ignored for 3D traces but Plotly 6.x passes to the WebGL renderer, making all points invisible.
+- ``plane_segmentation`` distance comparison changed from strict ``<`` to ``<=`` so points exactly at ``distance_threshold`` are included as inliers, consistent with the documented semantics.
+
+Changed
+~~~~~~
+- removed open3d dependency entirely; replaced with scipy and scikit-learn
+- ``get_cluster`` now uses ``sklearn.cluster.DBSCAN`` instead of open3d
+- ``plane_segmentation`` now uses a pure-numpy SVD-based RANSAC implementation
+- distance-to-nearest diff now uses ``scipy.spatial.KDTree`` instead of open3d
+- ``filter("radiusoutlier", ...)`` now uses ``scipy.spatial.KDTree`` instead of open3d; neighbour queries run in parallel (``workers=-1``)
+- using numpy >2.2 version for modern features and better performance. Made possible by removing open3d dependency.
+
+Removed
+~~~~~~
+- ``PointCloud.to_instance("open3d")`` and ``PointCloud.from_instance("open3d", ...)`` public API removed
+- open3d is no longer a dependency
+
 0.11.0- (2025-05-22)
 -------------
 

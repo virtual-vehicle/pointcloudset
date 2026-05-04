@@ -116,9 +116,7 @@ def test_getitem_slice(testpointcloud: PointCloud):
     check.equal(type(extracted), pd.DataFrame)
     check.equal(len(extracted), 3)
     check.equal(type(extracted.original_id.values[0]), np.uint32)
-    check.equal(
-        (extracted.original_id.values == np.array([4624, 4688, 4692])).all(), True
-    )
+    check.equal((extracted.original_id.values == np.array([4624, 4688, 4692])).all(), True)
 
 
 def test_getitem_slice_full(testpointcloud: PointCloud):
@@ -132,9 +130,7 @@ def test_getitem_slice_step(testpointcloud: PointCloud):
     check.equal(type(extracted), pd.DataFrame)
     check.equal(len(extracted), 5)
     check.equal(
-        (
-            extracted.original_id.values == np.array([4624, 4692, 4700, 4752, 4760])
-        ).all(),
+        (extracted.original_id.values == np.array([4624, 4692, 4700, 4752, 4760])).all(),
         True,
     )
 
@@ -234,25 +230,6 @@ def test_testpointcloud_withzero_data(
     assert_frame_equal(data, reference_data_with_zero_dataframe)
 
 
-def test_testpointcloud_pointcloud(
-    testpointcloud_withzero: PointCloud,
-    reference_pointcloud_withzero_dataframe: pd.DataFrame,
-):
-    pointcloud = testpointcloud_withzero.to_instance("open3d")
-    array = np.asarray(pointcloud.points)
-    pointcloud_df = pd.DataFrame(array)
-    # pointcloud_df.to_pickle(
-    #    "/workspaces/pointcloudset/tests/testdata/testpointcloud_withzero_pointcloud.pkl"
-    # )
-    sub_points = pointcloud.select_by_index(list(range(5000, 5550)))
-    sub_array = np.asarray(sub_points.points)
-
-    check.equal(pointcloud.is_empty(), False)
-    check.equal(np.sum(sub_array), 108.0019814982079)
-    check.equal(np.sum(array), 60573.190267673606)
-    assert_frame_equal(pointcloud_df, reference_pointcloud_withzero_dataframe)
-
-
 def test_axis_aligned_bounding_box(testpointcloud_mini: PointCloud):
     bb = testpointcloud_mini.bounding_box
     check.is_instance(bb, pd.DataFrame)
@@ -263,9 +240,7 @@ def test_axis_aligned_bounding_box(testpointcloud_mini: PointCloud):
 
 def test_centroit(testpointcloud_mini: PointCloud):
     ct = testpointcloud_mini.centroid
-    check.almost_equal(
-        list(ct), [259.95131121217355, 225.64930989164827, 365.44029720089736]
-    )
+    check.almost_equal(list(ct), [259.95131121217355, 225.64930989164827, 365.44029720089736])
 
 
 def test_random_down_sample(testpointcloud: PointCloud):

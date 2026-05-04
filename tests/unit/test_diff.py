@@ -43,23 +43,17 @@ def test_pointcloud_difference_equal(testpointcloud_mini_real: PointCloud):
     check.equal(np.all(z_test == 0.0), True)
 
 
-def test_pointcloud_difference1_no_orignal_id(
-    testpointcloud_mini: PointCloud, testpointcloud_mini_real: PointCloud
-):
+def test_pointcloud_difference1_no_orignal_id(testpointcloud_mini: PointCloud, testpointcloud_mini_real: PointCloud):
     with pytest.raises(ValueError):
         testpointcloud_mini.diff("pointcloud", testpointcloud_mini_real)
 
 
-def test_pointcloud_difference1_no_orignal_id2(
-    testpointcloud_mini: PointCloud, testpointcloud_mini_real: PointCloud
-):
+def test_pointcloud_difference1_no_orignal_id2(testpointcloud_mini: PointCloud, testpointcloud_mini_real: PointCloud):
     with pytest.raises(ValueError):
         testpointcloud_mini_real.diff("pointcloud", testpointcloud_mini)
 
 
-def test_pointcloud_difference1(
-    testpointcloud_mini_real: PointCloud, testpointcloud_mini_real_plus1: PointCloud
-):
+def test_pointcloud_difference1(testpointcloud_mini_real: PointCloud, testpointcloud_mini_real_plus1: PointCloud):
     res = testpointcloud_mini_real.diff("pointcloud", testpointcloud_mini_real_plus1)
     check.equal(type(res), PointCloud)
     check.equal(len(res), len(testpointcloud_mini_real))
@@ -76,9 +70,7 @@ def test_pointcloud_difference_no_intersection(
     testpointcloud_mini_real_other_original_id: PointCloud,
 ):
     with pytest.raises(ValueError):
-        testpointcloud_mini_real.diff(
-            "pointcloud", testpointcloud_mini_real_other_original_id
-        )
+        testpointcloud_mini_real.diff("pointcloud", testpointcloud_mini_real_other_original_id)
 
 
 def test__calculate_single_point_difference_no_overlap(
@@ -92,7 +84,7 @@ def test__calculate_single_point_difference_no_overlap(
     )
     test = res.values[0]
     check.is_instance(res, pd.DataFrame)
-    check.equal(np.alltrue(np.isnan(test)), True)
+    check.equal(np.all(np.isnan(test)), True)
 
 
 def test_distances_to_origin(testpointcloud_mini: PointCloud):
@@ -126,9 +118,7 @@ def test_distances_to_origin(testpointcloud_mini: PointCloud):
         (np.array([1, 0, 0, 0]), "[1 0 0 0]", False, 1.0),
     ],
 )
-def test_calculate_distance_to_plane(
-    testpointcloud_mini: PointCloud, plane, plane_str, absolute_values, res
-):
+def test_calculate_distance_to_plane(testpointcloud_mini: PointCloud, plane, plane_str, absolute_values, res):
     testpointcloud_mini.diff("plane", target=plane, absolute_values=absolute_values)
     check.equal(
         str(list(testpointcloud_mini.data.columns.values)),
@@ -147,9 +137,7 @@ def test_calculate_distance_to_nearest_self(testpointcloud_mini: PointCloud):
     check.equal(testpointcloud_mini.data["distance to nearest point"][0], 0.0)
 
 
-def test_calculate_distance_to_nearest(
-    testpointcloud_mini: PointCloud, testpointcloud_mini_real: PointCloud
-):
+def test_calculate_distance_to_nearest(testpointcloud_mini: PointCloud, testpointcloud_mini_real: PointCloud):
     testpointcloud_mini.diff("nearest", target=testpointcloud_mini_real)
     check.almost_equal(testpointcloud_mini.data["distance to nearest point"][0], 1.0)
 
@@ -181,9 +169,7 @@ def test_dataset_vz6000_distance_to_origin(testvz6000_1: PointCloud):
         (np.array([-1, 0, 0, 0]), "[-1 0 0 0]", True, 634758.9375),
     ],
 )
-def test_calculate_distance_to_plane_vz6000(
-    testvz6000_1: PointCloud, plane, plane_str, absolute_values, res
-):
+def test_calculate_distance_to_plane_vz6000(testvz6000_1: PointCloud, plane, plane_str, absolute_values, res):
     testvz6000_1.diff("plane", target=plane, absolute_values=absolute_values)
     check.almost_equal(testvz6000_1.data[f"distance to plane: {plane_str}"][1], res)
 
@@ -193,10 +179,59 @@ def test_diff_vz6000_to_pointcloud(testvz6000_1: PointCloud, testvz6000_2: Point
         testvz6000_1.diff("pointcloud", testvz6000_2)
 
 
-def test_diff_vz6000_to_pointcloud_nearest(
-    testvz6000_1: PointCloud, testvz6000_2: PointCloud
-):
+def test_diff_vz6000_to_pointcloud_nearest(testvz6000_1: PointCloud, testvz6000_2: PointCloud):
     testvz6000_1.diff("nearest", testvz6000_2)
     check.is_true("distance to nearest point" in testvz6000_1.data.columns)
     with pytest.raises(ValueError):  # no original ID
         testvz6000_1.diff("distance to nearest point", testvz6000_2)
+
+
+# --- Synthetic behavioral tests (implementation-agnostic) ---
+
+
+def test_calculate_distance_to_nearest_exact_values():
+    """Known points with exact expected nearest-neighbour distances."""
+    # pc1 has points at (0,0,0) and (3,0,0)
+    # pc2 has points at (1,0,0) and (6,0,0)
+    # nearest for (0,0,0) → (1,0,0): distance = 1.0
+    # nearest for (3,0,0) → (1,0,0): distance = 2.0 (not (6,0,0) which is 3 away)
+    pc1 = PointCloud(data=pd.DataFrame({"x": [0.0, 3.0], "y": [0.0, 0.0], "z": [0.0, 0.0]}))
+    pc2 = PointCloud(data=pd.DataFrame({"x": [1.0, 6.0], "y": [0.0, 0.0], "z": [0.0, 0.0]}))
+    pc1.diff("nearest", target=pc2)
+    distances = pc1.data["distance to nearest point"].values
+    check.almost_equal(float(distances[0]), 1.0)
+    check.almost_equal(float(distances[1]), 2.0)
+
+
+def test_calculate_distance_to_nearest_adds_column():
+    """diff('nearest') must add exactly the expected column."""
+    pc = PointCloud(data=pd.DataFrame({"x": [0.0, 1.0], "y": [0.0, 0.0], "z": [0.0, 0.0]}))
+    pc.diff("nearest", target=pc)
+    check.is_in("distance to nearest point", pc.data.columns)
+    check.equal(len(pc.data["distance to nearest point"]), len(pc))
+
+
+def test_calculate_distance_to_nearest_all_non_negative():
+    """Nearest-neighbour distances must always be ≥ 0."""
+    rng = np.random.default_rng(0)
+    n = 20
+    pc1 = PointCloud(
+        data=pd.DataFrame(
+            {
+                "x": rng.uniform(-5, 5, n),
+                "y": rng.uniform(-5, 5, n),
+                "z": rng.uniform(-5, 5, n),
+            }
+        )
+    )
+    pc2 = PointCloud(
+        data=pd.DataFrame(
+            {
+                "x": rng.uniform(-5, 5, n),
+                "y": rng.uniform(-5, 5, n),
+                "z": rng.uniform(-5, 5, n),
+            }
+        )
+    )
+    pc1.diff("nearest", target=pc2)
+    check.is_true(np.all(pc1.data["distance to nearest point"].values >= 0))

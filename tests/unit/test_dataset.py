@@ -164,9 +164,7 @@ def test_agg_pointcloud(
     check.equal(test.min()["x min"], x_min.values[0])
 
 
-def test_agg_dict_pointcloud(
-    testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud
-):
+def test_agg_dict_pointcloud(testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud):
     test = testdataset_mini_real.agg({"x": "min"}, "pointcloud")
     x_min = testpointcloud_mini_real.data.agg({"x": "min"})
     check.is_instance(test, list)
@@ -174,18 +172,14 @@ def test_agg_dict_pointcloud(
     check.equal(test[0].values[0], x_min.values[0])
 
 
-def test_agg_list1(
-    testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud
-):
+def test_agg_list1(testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud):
     f0 = testdataset_mini_real[0].data.agg(["min", "max"])
     f1 = testdataset_mini_real[1].data.agg(["min", "max"])
     test = testdataset_mini_real.agg(["min", "max"], "pointcloud")
     check.is_instance(test, list)
 
 
-def test_agg_dataset(
-    testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud
-):
+def test_agg_dataset(testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud):
     test = testdataset_mini_real.agg("min", "dataset")
     x_min = testpointcloud_mini_real.data.agg({"x": "min"})
     check.is_instance(test, pd.Series)
@@ -208,9 +202,7 @@ def test_agg_dataset(
     check.equal(test["x min"], x_min.values[0])
 
 
-def test_agg_dataset_dict_dataset(
-    testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud
-):
+def test_agg_dataset_dict_dataset(testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud):
     test = testdataset_mini_real.agg({"x": "min"}, "dataset")
     x_min = testpointcloud_mini_real.data.agg({"x": "min"})
     check.is_instance(test, pd.Series)
@@ -223,9 +215,7 @@ def test_agg_dataset_dict_dataset(
     check.equal(test.values[0], x_min.values[0])
 
 
-def test_agg_dataset_list(
-    testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud
-):
+def test_agg_dataset_list(testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud):
     test = testdataset_mini_real.agg(["min", "max"], "dataset")
     x_min = testpointcloud_mini_real.data.agg({"x": "min"})
     check.is_instance(test, pd.DataFrame)
@@ -241,9 +231,7 @@ def test_agg_list_pointcoud(testdataset_mini_real: Dataset):
     check.is_instance(test, list)
 
 
-def test_agg_point(
-    testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud
-):
+def test_agg_point(testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud):
     test = testdataset_mini_real.agg("min", "point")
     x_min = testpointcloud_mini_real.data.agg({"x": "min"})
     check.is_instance(test, pd.DataFrame)
@@ -266,18 +254,14 @@ def test_agg_point(
     check.equal(test.min()["x min"], x_min.values[0])
 
 
-def test_agg_point_list(
-    testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud
-):
+def test_agg_point_list(testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud):
     test = testdataset_mini_real.agg(["min", "max"], "point")
     x_min = testpointcloud_mini_real.data.agg({"x": "min"})
     check.is_instance(test, pd.DataFrame)
     check.equal(test.x["min"].min(), x_min.values[0])
 
 
-def test_agg_point_dict(
-    testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud
-):
+def test_agg_point_dict(testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud):
     test = testdataset_mini_real.agg({"x": "min"}, "point")
     x_min = testpointcloud_mini_real.data.agg({"x": "min"})
     check.is_instance(test, pd.DataFrame)
@@ -304,18 +288,12 @@ def test_dataset_min_dataset(
     )
 
 
-def test_dataset_min_point(
-    testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud
-):
+def test_dataset_min_point(testdataset_mini_real: Dataset, testpointcloud_mini_real: PointCloud):
     mincalc = testdataset_mini_real.min(depth="point")
     first = mincalc.drop(["N", "original_id"], axis=1).iloc[0]
     check.equal(mincalc.iloc[0].N, 2)
     check.is_instance(mincalc, pd.DataFrame)
-    should = (
-        testpointcloud_mini_real.extract_point(6008, use_original_id=True)
-        .drop(["original_id"], axis=1)
-        .squeeze()
-    )
+    should = testpointcloud_mini_real.extract_point(6008, use_original_id=True).drop(["original_id"], axis=1).squeeze()
     should.index = [f"{i} min" for i in should.index]
     assert_series_equal(first, should, check_names=False)
 
@@ -416,17 +394,13 @@ def test_dataset_max_point(
     check.equal(calc.iloc[0].N, 2)
     check.is_instance(calc, pd.DataFrame)
     should = (
-        testpointcloud_mini_real_plus1.extract_point(6008, use_original_id=True)
-        .drop(["original_id"], axis=1)
-        .squeeze()
+        testpointcloud_mini_real_plus1.extract_point(6008, use_original_id=True).drop(["original_id"], axis=1).squeeze()
     )
     should.index = [f"{i} max" for i in should.index]
     assert_series_equal(first, should, check_names=False)
 
 
-def test_dataset_mean(
-    testdataset_mini_same: Dataset, testpointcloud_mini_real: PointCloud
-):
+def test_dataset_mean(testdataset_mini_same: Dataset, testpointcloud_mini_real: PointCloud):
     calc = testdataset_mini_same.mean()
     should = testpointcloud_mini_real.data.mean()
     check.is_instance(calc, pd.Series)
@@ -455,17 +429,13 @@ empty_data = pd.DataFrame.from_dict(
 
 
 def test_replace_empty_frames_with_nan(testdataset_with_empty_frame: Dataset):
-    test = testdataset_with_empty_frame._replace_empty_frames_with_nan(
-        empty_data=empty_data
-    )
+    test = testdataset_with_empty_frame._replace_empty_frames_with_nan(empty_data=empty_data)
     check.equal(len(test), len(testdataset_with_empty_frame))
     check.equal(len(test[1]), 1)
 
 
 def test_replace_nan_frames_with_empty(testdataset_with_empty_frame: Dataset):
-    test = testdataset_with_empty_frame._replace_empty_frames_with_nan(
-        empty_data=empty_data
-    )
+    test = testdataset_with_empty_frame._replace_empty_frames_with_nan(empty_data=empty_data)
     test2 = test._replace_nan_frames_with_empty(empty_data=empty_data)
     check.equal(len(test2), len(testdataset_with_empty_frame))
     check.is_false(test2[1]._has_data())
@@ -477,9 +447,7 @@ def test_all_have_origianl_ids(testset: Dataset, testdataset_vz6000: Dataset):
     check.is_false(testdataset_vz6000.has_original_id)
 
 
-def test_dataset_vz6000_min_dataset(
-    testdataset_vz6000: Dataset, testvz6000_1: PointCloud, testvz6000_2: PointCloud
-):
+def test_dataset_vz6000_min_dataset(testdataset_vz6000: Dataset, testvz6000_1: PointCloud, testvz6000_2: PointCloud):
     res = testdataset_vz6000.min(depth="dataset")
     min_1 = testvz6000_1.data.min()
     min_2 = testvz6000_2.data.min()
@@ -487,9 +455,7 @@ def test_dataset_vz6000_min_dataset(
     check.equal(res["intensity min"], min(min_1["intensity"], min_2["intensity"]))
 
 
-def test_dataset_vz6000_max_dataset(
-    testdataset_vz6000: Dataset, testvz6000_1: PointCloud, testvz6000_2: PointCloud
-):
+def test_dataset_vz6000_max_dataset(testdataset_vz6000: Dataset, testvz6000_1: PointCloud, testvz6000_2: PointCloud):
     res = testdataset_vz6000.max(depth="dataset")
     max_1 = testvz6000_1.data.max()
     max_2 = testvz6000_2.data.max()
@@ -497,9 +463,7 @@ def test_dataset_vz6000_max_dataset(
     check.equal(res["intensity max"], max(max_1["intensity"], max_2["intensity"]))
 
 
-def test_dataset_vz6000_max_pointcloud(
-    testdataset_vz6000: Dataset, testvz6000_1: PointCloud, testvz6000_2: PointCloud
-):
+def test_dataset_vz6000_max_pointcloud(testdataset_vz6000: Dataset, testvz6000_1: PointCloud, testvz6000_2: PointCloud):
     res = testdataset_vz6000.max(depth="pointcloud")
     check.is_instance(res, pd.DataFrame)
     max_1 = testvz6000_1.data.max().x
@@ -521,12 +485,8 @@ def test_dataset_bounding_box(
     min_1 = testpointcloud_mini_real.data.min()[["x", "y", "z"]]
     max_2 = testpointcloud_mini_real_plus1.data.max()[["x", "y", "z"]]
     check.is_instance(bb, pd.DataFrame)
-    pd.testing.assert_series_equal(
-        bb.iloc[0], min_1, check_dtype=False, check_names=False
-    )
-    pd.testing.assert_series_equal(
-        bb.iloc[1], max_2, check_dtype=False, check_names=False
-    )
+    pd.testing.assert_series_equal(bb.iloc[0], min_1, check_dtype=False, check_names=False)
+    pd.testing.assert_series_equal(bb.iloc[1], max_2, check_dtype=False, check_names=False)
 
 
 def test_dataset_agg_long(testset: Dataset):

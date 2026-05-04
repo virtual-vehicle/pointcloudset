@@ -1,12 +1,12 @@
 name: Docker
 
 on:
+  pull_request:
+    branches:
+      - "master"
   push:
     branches:
-      - "!*"
-    tags:
-      - "v*"
-
+      - "master"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -22,12 +22,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Get the tag name
-        if: github.event_name != 'workflow_dispatch'
-        run: echo "TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
-      - name: manual tag
+      - name: Set image tag
         if: github.event_name == 'workflow_dispatch'
         run: echo "TAG=${{ github.event.inputs.tag }}" >> $GITHUB_ENV
+      - name: Set image tag from commit
+        if: github.event_name != 'workflow_dispatch'
+        run: echo "TAG=sha-${GITHUB_SHA::7}" >> $GITHUB_ENV
 
       - name: Set up QEMU
         id: qemu
@@ -41,6 +41,7 @@ jobs:
         uses: docker/setup-buildx-action@v1
 
       - name: Login to DockerHub
+        if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -51,8 +52,9 @@ jobs:
         with:
           context: .
           file: docker/release.Dockerfile
-          push: true
+          push: ${{ github.ref == 'refs/heads/master' && github.event_name !=
+            'pull_request' }}
           platforms: linux/arm64,linux/amd64
-          tags:  |
-              tgoelles/pointcloudset:latest
-              tgoelles/pointcloudset:${{ env.TAG }}
+          tags: |
+            tgoelles/pointcloudset:latest
+            tgoelles/pointcloudset:${{ env.TAG }}

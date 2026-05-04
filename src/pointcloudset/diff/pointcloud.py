@@ -42,10 +42,7 @@ def calculate_distance_to_pointcloud(pointcloud, target):
 
 
 def _calculate_difference(intersection: np.ndarray, pointcloud, target):
-    diff_list = [
-        _calculate_single_point_difference(pointcloud, target, id)
-        for id in intersection
-    ]
+    diff_list = [_calculate_single_point_difference(pointcloud, target, id) for id in intersection]
     original_types = [str(types) for types in diff_list[0].dtypes.values]
     target_type_dict = dict(zip(diff_list[0].columns.values, original_types))
     diff_df = pd.concat(diff_list)
@@ -55,9 +52,7 @@ def _calculate_difference(intersection: np.ndarray, pointcloud, target):
     return pointcloud
 
 
-def _calculate_single_point_difference(
-    pointcloud, pointcloud_b, original_id: int
-) -> pd.DataFrame:
+def _calculate_single_point_difference(pointcloud, pointcloud_b, original_id: int) -> pd.DataFrame:
     """Calculate the difference of one element of a Point in the current PointCloud to
     the corresponding point in PointCloud B. Both frames must contain the same original_id.
 

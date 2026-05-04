@@ -1,5 +1,5 @@
 [build-system]
-requires = ["uv_build>=0.6,<0.7"]
+requires = ["uv_build>=0.11,<0.12"]
 build-backend = "uv_build"
 
 [project]
@@ -7,14 +7,15 @@ name = "pointcloudset"
 version = "0.11.0"
 description = "Analyze large datasets of point clouds recorded over time in an efficient way"
 readme = "README.rst"
-requires-python = ">=3.10, <3.12"
+requires-python = ">=3.11, <3.14"
 authors = [
     { name = "VIRTUAL VEHICLE Research GmbH", email = "thomas.goelles@v2c2.at" },
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "License :: OSI Approved :: MIT License",
     "Operating System :: POSIX :: Linux",
     "Intended Audience :: Developers",
@@ -32,18 +33,20 @@ classifiers = [
 ]
 
 dependencies = [
-    "numpy<2",
-    "pandas",
-    "pyntcloud",
-    "open3d>=0.16.0,<0.19.0",
-    "plotly",
+    "numpy>2.2.0,<3.0.0",
+    "pandas>=2.0.0,<3.0.0",
+    "pyntcloud>=0.3.1,<0.4.0",
+    "scipy>=1.10",
+    "scikit-learn>=1.2",
+    "plotly>=6.0.0,<7.0.0",
     "dask>=2023.11.0",
     "typer",
     "rich",
     "rosbags>=0.9.15,<0.10.0",
     "ipywidgets",
     "laspy",
-    "pyarrow>=19.0.1",
+    "pyarrow",
+    "nbformat"
 ]
 [dependency-groups]
 dev = [
@@ -54,13 +57,8 @@ dev = [
     "ruff",
     "coverage-badge",
     "bump2version",
-    "nbval",
     "ipykernel",
-    "nbconvert",
-    "nbformat",
     "matplotlib",
-    "hatch",
-    "hatchling",
 ]
 doc = [
     "sphinx",

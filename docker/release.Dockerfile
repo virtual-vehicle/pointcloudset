@@ -1,29 +1,7 @@
-FROM ghcr.io/astral-sh/uv:bookworm-slim
+FROM ghcr.io/astral-sh/uv:0.11.8-debian-slim
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
-
-
-# install Open3D dependencies
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends \
-    gdb \
-    git \
-    make \
-    libeigen3-dev \
-    libgl1-mesa-dev \
-    libglew-dev \
-    libglfw3-dev \
-    libglu1-mesa-dev \
-    libpng-dev \
-    libusb-1.0-0 \
-    libgomp1 \
-    pybind11-dev \
-    pandoc \
-    software-properties-common \
-    mesa-utils && \
-    rm -rf /var/lib/apt/lists/*
 
 
 # Copy local code to the container image.
