@@ -503,25 +503,48 @@ class PointCloud(PointCloudCore):
         ransac_n: int,
         num_iterations: int,
         return_plane_model: bool = False,
+        seed: int = 42,
     ) -> PointCloud | dict:
         """Segments a plane in the point cloud using the RANSAC algorithm.
+
+        After finding the best consensus set the plane is refit via SVD on all
+        inliers, so the returned model is more accurate than the initial sample.
 
         Args:
             distance_threshold (float): Max distance a point can be from the plane
                 model, and still be considered as an inlier.
-            ransac_n (int):  Number of initial points to be considered inliers in
-                each iteration.
-            num_iterations (int): Number of iterations.
+            ransac_n (int): Number of points sampled per iteration to fit a candidate
+                plane. Must be >= 3.
+            num_iterations (int): Number of RANSAC iterations. Must be >= 1.
             return_plane_model (bool, optional): Return also plane model parameters
                 if ``True``. Defaults to ``False``.
+            seed (int, optional): Random seed for reproducibility. Defaults to 42.
 
         Returns:
             PointCloud or dict: PointCloud with inliers or a dict of PointCloud with inliers and the
             plane parameters. The plane model is [a, b, c, d] for ax+by+cz+d=0 (normalised).
+
+        Raises:
+            ValueError: If the point cloud is empty, ``distance_threshold`` is not
+                positive, ``ransac_n`` is less than 3 or exceeds the number of points,
+                or ``num_iterations`` is less than 1.
         """
+        if len(self) == 0:
+            raise ValueError("Cannot segment a plane in an empty PointCloud")
+        if distance_threshold <= 0:
+            raise ValueError(f"distance_threshold must be positive, got {distance_threshold}")
+        if ransac_n < 3:
+            raise ValueError(f"ransac_n must be >= 3 to define a plane, got {ransac_n}")
+        if ransac_n > len(self):
+            raise ValueError(
+                f"ransac_n ({ransac_n}) exceeds number of points ({len(self)})"
+            )
+        if num_iterations < 1:
+            raise ValueError(f"num_iterations must be >= 1, got {num_iterations}")
+
         xyz = self.points.xyz
         n = len(xyz)
-        rng = np.random.default_rng(42)
+        rng = np.random.default_rng(seed)
         best_inliers: list[int] = []
         best_model = np.zeros(4)
 
@@ -536,10 +559,19 @@ class PointCloud(PointCloudCore):
             normal = normal / norm_len
             d = -np.dot(normal, centroid)
             dists = np.abs(xyz @ normal + d)
-            inliers = np.where(dists < distance_threshold)[0].tolist()
+            inliers = np.where(dists <= distance_threshold)[0].tolist()
             if len(inliers) > len(best_inliers):
                 best_inliers = inliers
-                best_model = np.array([*normal, d])
+
+        # Refit plane on all inliers for a more accurate final model.
+        if best_inliers:
+            inlier_xyz = xyz[best_inliers]
+            centroid = inlier_xyz.mean(axis=0)
+            _, _, Vt = np.linalg.svd(inlier_xyz - centroid)
+            normal = Vt[-1]
+            normal = normal / np.linalg.norm(normal)
+            d = -np.dot(normal, centroid)
+            best_model = np.array([*normal, d])
 
         inlier_pointcloud = self.apply_filter(best_inliers)
         if return_plane_model:
