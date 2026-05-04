@@ -38,7 +38,7 @@ jobs:
         run: touch doc/sphinx/build/html/.nojekyll
 
       - name: Deploy to GitHub Pages
-        if: success()
+        if: ${{ success() && github.event_name != 'pull_request' }}
         uses: crazy-max/ghaction-github-pages@v2
         with:
           target_branch: gh-pages
