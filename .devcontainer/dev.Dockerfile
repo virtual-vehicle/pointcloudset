@@ -12,22 +12,13 @@ ARG USER_GECOS=vscode
 RUN adduser --home "${USER_HOME}" --uid "${USER_ID}" --gecos "${USER_GECOS}" --disabled-password "${USER_NAME}"
 
 
-# install Open3D dependencies
+# install dependencies
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
     gdb \
     git \
     make \
-    libeigen3-dev \
-    libgl1-mesa-dev \
-    libglew-dev \
-    libglfw3-dev \
-    libglu1-mesa-dev \
-    libpng-dev \
-    libusb-1.0-0 \
-    libgomp1 \
-    pybind11-dev \
     pandoc \
     software-properties-common \
     mesa-utils && \
