@@ -67,54 +67,33 @@ def test_from_file_xyz(testxyz_diamond: Path):
     np.testing.assert_allclose(pointcloud.data.loc[0, ["x", "y", "z"]].to_numpy(), [0.5, 0.0, 0.5])
 
 
-def test_from_file_xyz_with_header(tmp_path: Path):
-    testfile_name = tmp_path.joinpath("with_header.xyz")
-    pd.DataFrame(
-        {
-            "x": [0.5, 0.0],
-            "y": [0.0, 0.5],
-            "z": [0.5, 0.5],
-            "intensity": [1.0, 2.0],
-        }
-    ).to_csv(testfile_name, index=False, sep=" ")
-
-    pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+def test_from_file_xyz_with_header(testxyz_with_header: Path):
+    pointcloud = pointcloudset.PointCloud.from_file(testxyz_with_header)
     check.equal(type(pointcloud), PointCloud)
     check.equal(list(pointcloud.data.columns), ["x", "y", "z", "intensity"])
     np.testing.assert_allclose(pointcloud.data[["x", "y", "z"]].to_numpy(), [[0.5, 0.0, 0.5], [0.0, 0.5, 0.5]])
 
 
-def test_from_file_pcd(testpcd_tree: Path):
-    pointcloud = pointcloudset.PointCloud.from_file(testpcd_tree)
+def test_from_file_csv_diamond(testcsv_diamond: Path):
+    pointcloud = pointcloudset.PointCloud.from_file(testcsv_diamond)
     check.equal(type(pointcloud), PointCloud)
     check.greater(len(pointcloud), 0)
     check.is_true({"x", "y", "z"}.issubset(set(pointcloud.data.columns)))
 
 
-def test_from_file_csv_without_header(tmp_path: Path):
-    testfile_name = tmp_path.joinpath("headerless.csv")
-    testfile_name.write_text("0.5,0.0,0.5,1.0\n0.0,0.5,0.5,2.0\n")
-
+def test_from_file_csv_without_header(testcsv_headerless: Path):
     with pytest.warns(UserWarning, match="Assuming first three columns are x, y, z"):
-        pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+        pointcloud = pointcloudset.PointCloud.from_file(testcsv_headerless)
 
     check.equal(type(pointcloud), PointCloud)
     check.equal(list(pointcloud.data.columns), ["x", "y", "z", "field_3"])
-    np.testing.assert_allclose(pointcloud.data[["x", "y", "z", "field_3"]].to_numpy(), [[0.5, 0.0, 0.5, 1.0], [0.0, 0.5, 0.5, 2.0]])
+    np.testing.assert_allclose(
+        pointcloud.data[["x", "y", "z", "field_3"]].to_numpy(), [[0.5, 0.0, 0.5, 1.0], [0.0, 0.5, 0.5, 2.0]]
+    )
 
 
-def test_from_file_csv_with_header(tmp_path: Path):
-    testfile_name = tmp_path.joinpath("with_header.csv")
-    pd.DataFrame(
-        {
-            "x": [0.5, 0.0],
-            "y": [0.0, 0.5],
-            "z": [0.5, 0.5],
-            "intensity": [1.0, 2.0],
-        }
-    ).to_csv(testfile_name, index=False)
-
-    pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+def test_from_file_csv_with_header(testcsv_with_header: Path):
+    pointcloud = pointcloudset.PointCloud.from_file(testcsv_with_header)
     check.equal(type(pointcloud), PointCloud)
     check.equal(list(pointcloud.data.columns), ["x", "y", "z", "intensity"])
     np.testing.assert_allclose(pointcloud.data[["x", "y", "z"]].to_numpy(), [[0.5, 0.0, 0.5], [0.0, 0.5, 0.5]])
