@@ -12,7 +12,14 @@ if TYPE_CHECKING:
 
 
 def read_xyz(file_path: Path | str, **kwargs) -> pd.DataFrame:
-    return read_delimited_coordinates(file_path, format_name="XYZ", default_sep=None, fallback_sep=r"\s+", **kwargs)
+    return read_delimited_coordinates(
+        file_path,
+        format_name="XYZ",
+        default_sep=None,
+        fallback_sep=r"\s+",
+        normalize_xyz=kwargs.pop("normalize_xyz", True),
+        **kwargs,
+    )
 
 
 def write_xyz(pointcloud: PointCloud, file_path: Path, header: bool = False, sep: str = " ") -> None:

@@ -65,13 +65,35 @@ def _to_pcd_numeric_array(series: pd.Series, field_name: str) -> np.ndarray:
     return values
 
 
-def read_pcd(file_path: Path | str) -> pd.DataFrame:
+def _normalize_xyz_pcd_columns(df: pd.DataFrame, normalize_xyz: bool) -> pd.DataFrame:
+    mapping: dict[str, str] = {}
+    for col in df.columns:
+        col_str = str(col)
+        lowered = col_str.lower()
+        if lowered in {"x", "y", "z"} and lowered not in mapping:
+            mapping[lowered] = col_str
+
+    if not {"x", "y", "z"}.issubset(mapping.keys()):
+        raise ValueError("PCD file must contain x, y and z columns")
+
+    if not normalize_xyz:
+        return df
+
+    rename_map = {
+        original: lowered
+        for lowered, original in mapping.items()
+        if original != lowered
+    }
+    if rename_map:
+        return df.rename(columns=rename_map)
+    return df
+
+
+def read_pcd(file_path: Path | str, normalize_xyz: bool = True) -> pd.DataFrame:
     pointcloud = PcdPointCloud.from_path(Path(file_path))
     df = pd.DataFrame.from_records(pointcloud.pc_data)
     df = _sanitize_pcd_columns(df)
-    if not {"x", "y", "z"}.issubset(df.columns):
-        raise ValueError("PCD file must contain x, y and z columns")
-    return df
+    return _normalize_xyz_pcd_columns(df, normalize_xyz=normalize_xyz)
 
 
 def write_pcd(pointcloud: PointCloud, file_path: Path) -> None:

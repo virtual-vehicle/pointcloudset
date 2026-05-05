@@ -10,7 +10,14 @@ if TYPE_CHECKING:
 
 
 def read_csv(file_path: Path | str, **kwargs):
-    return read_delimited_coordinates(file_path, format_name="CSV", default_sep=None, fallback_sep=None, **kwargs)
+    return read_delimited_coordinates(
+        file_path,
+        format_name="CSV",
+        default_sep=None,
+        fallback_sep=None,
+        normalize_xyz=kwargs.pop("normalize_xyz", True),
+        **kwargs,
+    )
 
 
 def write_csv(pointcloud: PointCloud, file_path: Path, header: bool = True, sep: str = ",") -> None:

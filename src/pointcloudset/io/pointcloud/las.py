@@ -14,14 +14,16 @@ LAS_VERSION = "1.4"
 LAS_PRECISION = 0.000001  # m
 
 
-def read_las(file_path: Path | str) -> pd.DataFrame:
+def read_las(file_path: Path | str, normalize_xyz: bool = True) -> pd.DataFrame:
     las = laspy.read(Path(file_path))
     raw = las.points.array
 
+    x_name, y_name, z_name = ("x", "y", "z") if normalize_xyz else ("X", "Y", "Z")
+
     data = {
-        "x": np.asarray(las.x),
-        "y": np.asarray(las.y),
-        "z": np.asarray(las.z),
+        x_name: np.asarray(las.x),
+        y_name: np.asarray(las.y),
+        z_name: np.asarray(las.z),
     }
     for name in raw.dtype.names:
         if name in {"X", "Y", "Z"}:

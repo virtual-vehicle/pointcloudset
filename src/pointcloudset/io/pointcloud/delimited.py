@@ -28,12 +28,51 @@ def ensure_coordinate_columns(df: pd.DataFrame, file_path: Path, format_name: st
     return df
 
 
+def _normalize_xyz_columns(
+    df: pd.DataFrame,
+    *,
+    normalize_xyz: bool,
+    file_path: Path,
+    format_name: str,
+) -> pd.DataFrame:
+    lower_to_original: dict[str, str] = {}
+    for col in df.columns:
+        col_str = str(col)
+        lowered = col_str.lower()
+        if lowered in {"x", "y", "z"} and lowered not in lower_to_original:
+            lower_to_original[lowered] = col_str
+
+    if {"x", "y", "z"}.issubset(lower_to_original.keys()):
+        if not normalize_xyz:
+            return df
+
+        rename_map = {
+            original: lowered
+            for lowered, original in lower_to_original.items()
+            if original != lowered
+        }
+        if rename_map:
+            return df.rename(columns=rename_map)
+        return df
+
+    if df.shape[1] < 3:
+        raise ValueError(f"{format_name} file '{file_path}' must provide at least three columns for x, y, z")
+
+    if not normalize_xyz:
+        raise ValueError(
+            f"{format_name} file '{file_path}' must contain x, y, z columns when normalize_xyz=False"
+        )
+
+    return ensure_coordinate_columns(df, file_path, format_name)
+
+
 def read_delimited_coordinates(
     file_path: Path | str,
     *,
     format_name: str,
     default_sep: str | None,
     fallback_sep: str | None = None,
+    normalize_xyz: bool = True,
     **kwargs,
 ) -> pd.DataFrame:
     path = Path(file_path)
@@ -41,14 +80,11 @@ def read_delimited_coordinates(
     # If users explicitly provide column names, keep those names untouched.
     if "names" in kwargs:
         df = pd.read_csv(path, **kwargs)
-        if {"x", "y", "z"}.issubset(set(df.columns)):
-            return df
-        raise ValueError(
-            f"{format_name} file '{path}' was read with explicit column names, but columns x, y, z are required."
-        )
+        return _normalize_xyz_columns(df, normalize_xyz=normalize_xyz, file_path=path, format_name=format_name)
 
     if any(key in kwargs for key in ("sep", "delimiter", "header")):
-        return ensure_coordinate_columns(pd.read_csv(path, **kwargs), path, format_name)
+        df = pd.read_csv(path, **kwargs)
+        return _normalize_xyz_columns(df, normalize_xyz=normalize_xyz, file_path=path, format_name=format_name)
 
     parse_attempts: list[dict[str, object]] = []
     if default_sep is None:
@@ -63,7 +99,10 @@ def read_delimited_coordinates(
     for parse_kwargs in parse_attempts:
         try:
             df = pd.read_csv(path, **parse_kwargs)
-            if {"x", "y", "z"}.issubset(set(df.columns)):
+            lower_cols = {str(col).lower() for col in df.columns}
+            if {"x", "y", "z"}.issubset(lower_cols):
+                return _normalize_xyz_columns(df, normalize_xyz=normalize_xyz, file_path=path, format_name=format_name)
+            if not normalize_xyz and {"x", "y", "z"}.issubset(set(df.columns)):
                 return df
         except Exception as e:
             last_exception = e
@@ -76,7 +115,7 @@ def read_delimited_coordinates(
 
     try:
         df = pd.read_csv(path, **headerless_kwargs)
-        return ensure_coordinate_columns(df, path, format_name)
+        return _normalize_xyz_columns(df, normalize_xyz=normalize_xyz, file_path=path, format_name=format_name)
     except Exception as e:
         if last_exception is not None:
             raise ValueError(

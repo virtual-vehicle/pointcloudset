@@ -6,9 +6,14 @@ import numpy as np
 import pandas as pd
 import pytest
 import pytest_check as check
+from pypcd4 import PointCloud as PcdPointCloud
 
 import pointcloudset
 from pointcloudset import PointCloud
+from pointcloudset.io.pointcloud.csv import read_csv
+from pointcloudset.io.pointcloud.las import read_las
+from pointcloudset.io.pointcloud.pcd import read_pcd
+from pointcloudset.io.pointcloud.xyz import read_xyz
 
 
 @pytest.mark.parametrize("file, error", [(Path("/sepp.depp"), "ValueError"), ("/sepp.depp", "TypeError")])
@@ -356,3 +361,80 @@ def test_las_read_write_read_tree(test_las_tree: Path, tmp_path: Path):
     check.equal(testfile_name.exists(), True)
     read_pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
     check.equal(type(read_pointcloud), PointCloud)
+
+
+def test_from_file_csv_uppercase_xyz_normalized(tmp_path: Path):
+    testfile_name = tmp_path.joinpath("uppercase_xyz.csv")
+    testfile_name.write_text("X,Y,Z,Intensity\n1,2,3,10\n4,5,6,20\n")
+
+    pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+    check.equal(list(pointcloud.data.columns), ["x", "y", "z", "Intensity"])
+
+
+def test_read_csv_uppercase_xyz_without_normalization(tmp_path: Path):
+    testfile_name = tmp_path.joinpath("uppercase_xyz.csv")
+    testfile_name.write_text("X,Y,Z,Intensity\n1,2,3,10\n")
+
+    df = read_csv(testfile_name, normalize_xyz=False)
+    check.equal(list(df.columns), ["X", "Y", "Z", "Intensity"])
+
+    with pytest.raises(ValueError):
+        pointcloudset.PointCloud.from_file(testfile_name, normalize_xyz=False)
+
+
+def test_from_file_xyz_uppercase_xyz_normalized(tmp_path: Path):
+    testfile_name = tmp_path.joinpath("uppercase_xyz.xyz")
+    testfile_name.write_text("X Y Z Intensity\n1 2 3 10\n4 5 6 20\n")
+
+    pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+    check.equal(list(pointcloud.data.columns), ["x", "y", "z", "Intensity"])
+
+
+def test_read_xyz_uppercase_xyz_without_normalization(tmp_path: Path):
+    testfile_name = tmp_path.joinpath("uppercase_xyz.xyz")
+    testfile_name.write_text("X Y Z Intensity\n1 2 3 10\n")
+
+    df = read_xyz(testfile_name, normalize_xyz=False)
+    check.equal(list(df.columns), ["X", "Y", "Z", "Intensity"])
+
+
+def test_read_las_without_normalize_xyz_has_uppercase_columns(testlas1: Path):
+    df = read_las(testlas1, normalize_xyz=False)
+    check.is_true({"X", "Y", "Z"}.issubset(df.columns))
+    check.is_false({"x", "y", "z"}.issubset(df.columns))
+
+
+def test_read_pcd_uppercase_xyz_normalized(tmp_path: Path):
+    fields = ["X", "Y", "Z", "Intensity"]
+    arrays = [
+        np.array([1.0, 4.0], dtype=np.float32),
+        np.array([2.0, 5.0], dtype=np.float32),
+        np.array([3.0, 6.0], dtype=np.float32),
+        np.array([10.0, 20.0], dtype=np.float32),
+    ]
+    types = [arr.dtype for arr in arrays]
+
+    pcd_file = tmp_path.joinpath("uppercase_xyz.pcd")
+    pcd = PcdPointCloud.from_points(arrays, fields=fields, types=types)
+    pcd.save(pcd_file)
+
+    df = read_pcd(pcd_file)
+    check.equal(list(df.columns), ["x", "y", "z", "Intensity"])
+
+
+def test_read_pcd_uppercase_xyz_without_normalization(tmp_path: Path):
+    fields = ["X", "Y", "Z", "Intensity"]
+    arrays = [
+        np.array([1.0], dtype=np.float32),
+        np.array([2.0], dtype=np.float32),
+        np.array([3.0], dtype=np.float32),
+        np.array([10.0], dtype=np.float32),
+    ]
+    types = [arr.dtype for arr in arrays]
+
+    pcd_file = tmp_path.joinpath("uppercase_xyz_raw.pcd")
+    pcd = PcdPointCloud.from_points(arrays, fields=fields, types=types)
+    pcd.save(pcd_file)
+
+    df = read_pcd(pcd_file, normalize_xyz=False)
+    check.equal(list(df.columns), ["X", "Y", "Z", "Intensity"])

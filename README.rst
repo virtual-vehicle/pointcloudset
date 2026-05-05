@@ -142,6 +142,9 @@ You can also generate a dataset from multiple pointclouds from formats like las,
 ``PointCloud.to_file(...)`` currently writes ``csv``, ``xyz``, ``las``, and ``pcd``.
 For text formats, ``csv`` defaults to writing a header and also supports ``header=False``;
 ``xyz`` defaults to headerless output and also supports ``header=True``.
+When reading files, ``PointCloud.from_file(...)`` supports ``normalize_xyz`` (default ``True``):
+coordinate headers ``X``, ``Y``, ``Z`` are normalized to lowercase ``x``, ``y``, ``z`` so internal processing is consistent.
+Set ``normalize_xyz=False`` to keep the original coordinate header casing.
 
 .. code-block:: python
 
