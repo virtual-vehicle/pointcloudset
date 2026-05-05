@@ -44,9 +44,10 @@ dependencies = [
     "rich",
     "rosbags>=0.9.15,<0.10.0",
     "ipywidgets",
-    "laspy",
+    "laspy>=2.0.0,<3.0.0",
     "pyarrow",
-    "nbformat"
+    "nbformat",
+    "pypcd4>=1.4.3",
 ]
 [dependency-groups]
 dev = [
