@@ -1415,7 +1415,7 @@ requires-dist = [
     { name = "laspy", specifier = ">=2.0.0,<3.0.0" },
     { name = "nbformat" },
     { name = "numpy", specifier = ">2.2.0,<3.0.0" },
-    { name = "pandas", specifier = ">=2.0.0,<3.0.0" },
+    { name = "pandas", specifier = ">=2.0.0,<4.0.0" },
     { name = "plotly", specifier = ">=6.0.0,<7.0.0" },
     { name = "pyarrow" },
     { name = "pypcd4", specifier = ">=1.4.3" },
