@@ -137,7 +137,11 @@ Reading ROS1 or ROS2 files:
    pointcloud = dataset[1]
    pointcloud.plot("x", hover_data=True)
 
-You can also generate a dataset from multiple pointclouds form a large variety or formats like las, pcd, csv and more.
+You can also generate a dataset from multiple pointclouds from formats like las, pcd, csv, and xyz.
+
+``PointCloud.to_file(...)`` currently writes ``csv``, ``xyz``, ``las``, and ``pcd``.
+For text formats, ``csv`` defaults to writing a header and also supports ``header=False``;
+``xyz`` defaults to headerless output and also supports ``header=True``.
 
 .. code-block:: python
 
@@ -174,8 +178,8 @@ You can also generate a dataset from multiple pointclouds form a large variety o
 CLI to convert ROS1 and ROS2 files: pointcloudset convert
 ##########################################################
 
-The package includes a powerful CLI to convert pointclouds in ROS1 & 2 files into formats like pointcloudset and a folder with csv or las.
-It is capable of handling both mcap and db3 ROS2 files.
+The package includes a CLI to convert pointclouds in ROS1 and ROS2 files into ``pointcloudset`` directories or native file formats.
+It currently writes ``csv``, ``xyz``, ``las``, and ``pcd`` files and handles both mcap and db3 ROS2 inputs.
 
 .. code-block:: console
 

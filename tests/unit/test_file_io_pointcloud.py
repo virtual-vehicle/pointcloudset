@@ -91,6 +91,35 @@ def test_from_file_pcd(testpcd_tree: Path):
     check.is_true({"x", "y", "z"}.issubset(set(pointcloud.data.columns)))
 
 
+def test_from_file_csv_without_header(tmp_path: Path):
+    testfile_name = tmp_path.joinpath("headerless.csv")
+    testfile_name.write_text("0.5,0.0,0.5,1.0\n0.0,0.5,0.5,2.0\n")
+
+    with pytest.warns(UserWarning, match="Assuming first three columns are x, y, z"):
+        pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+
+    check.equal(type(pointcloud), PointCloud)
+    check.equal(list(pointcloud.data.columns), ["x", "y", "z", "field_3"])
+    np.testing.assert_allclose(pointcloud.data[["x", "y", "z", "field_3"]].to_numpy(), [[0.5, 0.0, 0.5, 1.0], [0.0, 0.5, 0.5, 2.0]])
+
+
+def test_from_file_csv_with_header(tmp_path: Path):
+    testfile_name = tmp_path.joinpath("with_header.csv")
+    pd.DataFrame(
+        {
+            "x": [0.5, 0.0],
+            "y": [0.0, 0.5],
+            "z": [0.5, 0.5],
+            "intensity": [1.0, 2.0],
+        }
+    ).to_csv(testfile_name, index=False)
+
+    pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+    check.equal(type(pointcloud), PointCloud)
+    check.equal(list(pointcloud.data.columns), ["x", "y", "z", "intensity"])
+    np.testing.assert_allclose(pointcloud.data[["x", "y", "z"]].to_numpy(), [[0.5, 0.0, 0.5], [0.0, 0.5, 0.5]])
+
+
 def test_to_csv(testpointcloud: PointCloud, tmp_path: Path):
     testfile_name = tmp_path.joinpath("just_test.csv")
     testpointcloud.to_file(file_path=testfile_name)
@@ -140,6 +169,37 @@ def test_to_csv2(testpointcloud: PointCloud, tmp_path: Path):
         rtol=1e-10,
         atol=0,
     )
+
+
+def test_csv_read_write_read_without_header(testpointcloud_mini: PointCloud, tmp_path: Path):
+    testfile_name = tmp_path.joinpath("just_test_without_header.csv")
+    testpointcloud_mini.to_file(file_path=testfile_name, header=False)
+    check.equal(testfile_name.exists(), True)
+    check.is_false(testfile_name.read_text().splitlines()[0].startswith("x,"))
+
+    with pytest.warns(UserWarning, match="Assuming first three columns are x, y, z"):
+        read_pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+    check.equal(type(read_pointcloud), PointCloud)
+    check.equal(len(read_pointcloud), len(testpointcloud_mini))
+
+    expected = testpointcloud_mini.data.to_numpy()
+    actual = read_pointcloud.data.to_numpy()
+    np.testing.assert_allclose(expected, actual, rtol=1e-6, atol=1e-9)
+
+
+def test_csv_read_write_read_with_header(testpointcloud_mini: PointCloud, tmp_path: Path):
+    testfile_name = tmp_path.joinpath("just_test_with_header.csv")
+    testpointcloud_mini.to_file(file_path=testfile_name, header=True)
+    check.equal(testfile_name.exists(), True)
+    check.is_true(testfile_name.read_text().splitlines()[0].startswith("x,"))
+
+    read_pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+    check.equal(type(read_pointcloud), PointCloud)
+    check.equal(len(read_pointcloud), len(testpointcloud_mini))
+
+    expected = testpointcloud_mini.data.to_numpy()
+    actual = read_pointcloud.data.to_numpy()
+    np.testing.assert_allclose(expected, actual, rtol=1e-6, atol=1e-9)
 
 
 def test_to_las(testpointcloud: PointCloud, tmp_path: Path):
