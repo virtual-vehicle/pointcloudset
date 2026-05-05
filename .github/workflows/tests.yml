@@ -3,7 +3,7 @@ name: tests
 on:
   push:
     branches:
-      - "**" # Matches all branches
+      - master
     tags-ignore:
       - "**" # Exclude tag pushes
   pull_request:
