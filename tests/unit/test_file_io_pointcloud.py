@@ -58,15 +58,32 @@ def test_from_file_las_vz6000_2(testlasvz6000_2: Path):
     check.equal(type(pointcloud), PointCloud)
 
 
-@pytest.mark.xfail(reason="Current pyntcloud XYZ reader does not map headerless XYZ to x/y/z columns")
 def test_from_file_xyz(testxyz_diamond: Path):
-    pointcloud = pointcloudset.PointCloud.from_file(testxyz_diamond)
+    with pytest.warns(UserWarning, match="Assuming first three columns are x, y, z"):
+        pointcloud = pointcloudset.PointCloud.from_file(testxyz_diamond)
     check.equal(type(pointcloud), PointCloud)
     check.greater(len(pointcloud), 0)
     check.is_true({"x", "y", "z"}.issubset(set(pointcloud.data.columns)))
+    np.testing.assert_allclose(pointcloud.data.loc[0, ["x", "y", "z"]].to_numpy(), [0.5, 0.0, 0.5])
 
 
-@pytest.mark.xfail(reason="Current pyntcloud PCD binary reader is incompatible with Python 3.13")
+def test_from_file_xyz_with_header(tmp_path: Path):
+    testfile_name = tmp_path.joinpath("with_header.xyz")
+    pd.DataFrame(
+        {
+            "x": [0.5, 0.0],
+            "y": [0.0, 0.5],
+            "z": [0.5, 0.5],
+            "intensity": [1.0, 2.0],
+        }
+    ).to_csv(testfile_name, index=False, sep=" ")
+
+    pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+    check.equal(type(pointcloud), PointCloud)
+    check.equal(list(pointcloud.data.columns), ["x", "y", "z", "intensity"])
+    np.testing.assert_allclose(pointcloud.data[["x", "y", "z"]].to_numpy(), [[0.5, 0.0, 0.5], [0.0, 0.5, 0.5]])
+
+
 def test_from_file_pcd(testpcd_tree: Path):
     pointcloud = pointcloudset.PointCloud.from_file(testpcd_tree)
     check.equal(type(pointcloud), PointCloud)
@@ -199,11 +216,27 @@ def test_to_laz_not_implemented(testpointcloud: PointCloud, tmp_path: Path):
         testpointcloud.to_file(file_path=testfile_name)
 
 
-@pytest.mark.xfail(reason="Phase 2 target: implement native XYZ writer without pyntcloud")
 def test_xyz_read_write_read_target(testpointcloud_mini: PointCloud, tmp_path: Path):
     testfile_name = tmp_path.joinpath("just_test.xyz")
     testpointcloud_mini.to_file(file_path=testfile_name)
     check.equal(testfile_name.exists(), True)
+    check.is_false(testfile_name.read_text().splitlines()[0].startswith("x "))
+
+    with pytest.warns(UserWarning, match="Assuming first three columns are x, y, z"):
+        read_pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+    check.equal(type(read_pointcloud), PointCloud)
+    check.equal(len(read_pointcloud), len(testpointcloud_mini))
+
+    expected = testpointcloud_mini.data[["x", "y", "z"]].to_numpy()
+    actual = read_pointcloud.data[["x", "y", "z"]].to_numpy()
+    np.testing.assert_allclose(expected, actual, rtol=1e-6, atol=1e-9)
+
+
+def test_xyz_read_write_read_with_header(testpointcloud_mini: PointCloud, tmp_path: Path):
+    testfile_name = tmp_path.joinpath("just_test_with_header.xyz")
+    testpointcloud_mini.to_file(file_path=testfile_name, header=True)
+    check.equal(testfile_name.exists(), True)
+    check.is_true(testfile_name.read_text().splitlines()[0].startswith("x y z"))
 
     read_pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
     check.equal(type(read_pointcloud), PointCloud)
@@ -214,7 +247,6 @@ def test_xyz_read_write_read_target(testpointcloud_mini: PointCloud, tmp_path: P
     np.testing.assert_allclose(expected, actual, rtol=1e-6, atol=1e-9)
 
 
-@pytest.mark.xfail(reason="Phase 2 target: implement native PCD writer via pypcd4 without pyntcloud")
 def test_pcd_read_write_read_target(testpointcloud_mini: PointCloud, tmp_path: Path):
     testfile_name = tmp_path.joinpath("just_test.pcd")
     testpointcloud_mini.to_file(file_path=testfile_name)

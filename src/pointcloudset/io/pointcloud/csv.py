@@ -3,8 +3,17 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import pandas as pd
+
 if TYPE_CHECKING:
     from pointcloudset import PointCloud
+
+
+def read_csv(file_path: Path | str, **kwargs) -> pd.DataFrame:
+    df = pd.read_csv(file_path, **kwargs)
+    if not {"x", "y", "z"}.issubset(df.columns):
+        raise ValueError("CSV file must contain x, y and z columns")
+    return df
 
 
 def write_csv(pointcloud: PointCloud, file_path: Path) -> None:

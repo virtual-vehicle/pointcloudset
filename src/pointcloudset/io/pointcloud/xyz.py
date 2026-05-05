@@ -42,6 +42,13 @@ def read_xyz(file_path: Path | str, **kwargs) -> pd.DataFrame:
     except Exception:
         pass
 
+    try:
+        df = pd.read_csv(path, sep=r"\s+", engine="python")
+        if {"x", "y", "z"}.issubset(set(df.columns)):
+            return df
+    except Exception:
+        pass
+
     df = pd.read_csv(path, sep=r"\s+", header=None, engine="python")
     return _ensure_xyz_columns(df, path)
 

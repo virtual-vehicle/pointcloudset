@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 import laspy
 import numpy as np
+import pandas as pd
 
 if TYPE_CHECKING:
     from pointcloudset import PointCloud
@@ -11,6 +12,23 @@ if TYPE_CHECKING:
 LAS_POINT_FORMAT = 7
 LAS_VERSION = "1.4"
 LAS_PRECISION = 0.000001  # m
+
+
+def read_las(file_path: Path | str) -> pd.DataFrame:
+    las = laspy.read(Path(file_path))
+    raw = las.points.array
+
+    data = {
+        "x": np.asarray(las.x),
+        "y": np.asarray(las.y),
+        "z": np.asarray(las.z),
+    }
+    for name in raw.dtype.names:
+        if name in {"X", "Y", "Z"}:
+            continue
+        data[name] = raw[name]
+
+    return pd.DataFrame(data)
 
 
 def _choose_scale_offset(axis: np.ndarray) -> tuple[float, float]:

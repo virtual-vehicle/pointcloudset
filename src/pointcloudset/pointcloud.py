@@ -62,9 +62,7 @@ class PointCloud(PointCloudCore):
         timestamp: str | datetime.datetime = "from_file",
         **kwargs,
     ):
-        """Extract data from file and construct a PointCloud with it. Uses
-        `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_ as
-        backend.
+        """Extract data from file and construct a PointCloud with it.
 
         Args:
             file_path (pathlib.Path): Path of file to read.
@@ -90,16 +88,15 @@ class PointCloud(PointCloudCore):
         file_path_str = file_path.as_posix()
         if timestamp == "from_file":
             timestamp = datetime.datetime.utcfromtimestamp(file_path.stat().st_mtime)
-        pyntcloud_in = pyntcloud.PyntCloud.from_file(file_path_str, **kwargs)
-        return cls(data=pyntcloud_in.points, orig_file=file_path_str, timestamp=timestamp)
+        data = POINTCLOUD_FROM_FILE[ext](file_path, **kwargs)
+        return cls(data=data, orig_file=file_path_str, timestamp=timestamp)
 
     def to_file(self, file_path: Path = Path(), **kwargs) -> None:
         """Exports the pointcloud as to a file for use with
         `CloudCompare <https://www.danielgm.net/cc/ake>`_ or similar tools.
         Currently not all attributes of a pointcloud are saved so some information
         is lost when using this function.
-        Uses `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_ and `laspy <https://laspy.readthedocs.io/en/latest/>`
-        backend.
+        Uses the format-specific native IO backend.
 
         Args:
             file_path (pathlib.Path, optional): Destination. Defaults to the folder of
