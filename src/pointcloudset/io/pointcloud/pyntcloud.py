@@ -31,4 +31,4 @@ def to_pyntcloud(pointcloud: PointCloud) -> pyntcloud.PyntCloud:
     Returns:
         pyntcloud.PointCloud: Pyntcloud pointcloud.
     """
-    return pointcloud.points
+    return pyntcloud.PyntCloud(pointcloud.data, mesh=None)

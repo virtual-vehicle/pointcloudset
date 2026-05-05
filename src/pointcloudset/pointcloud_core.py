@@ -1,12 +1,25 @@
 from __future__ import annotations
 
 import traceback
-import warnings
 from datetime import datetime
 
 import numpy as np
 import pandas as pd
-import pyntcloud
+
+
+class _PointCloudView:
+    """Minimal geometry view used internally instead of pyntcloud."""
+
+    def __init__(self, data: pd.DataFrame):
+        self.points = data
+
+    @property
+    def xyz(self) -> np.ndarray:
+        return self.points[["x", "y", "z"]].to_numpy()
+
+    @property
+    def centroid(self) -> np.ndarray:
+        return self.xyz.mean(axis=0)
 
 
 class PointCloudCore:
@@ -37,12 +50,6 @@ class PointCloudCore:
         else:
             self.data = data
         """The data as a pandas DataFrame."""
-
-        with warnings.catch_warnings():
-            # ignore warnings produced by pyntcloud when the pointcloud is empty
-            warnings.simplefilter("ignore")
-            self.points = pyntcloud.PyntCloud(self.data, mesh=None)
-        """PyntCloud object with x,y,z coordinates."""
         self._check_index()
 
     @property
@@ -98,7 +105,7 @@ class PointCloudCore:
     def _update_data(self, df: pd.DataFrame):
         """Utility function. Implicitly called when self.data is assigned."""
         self.__data = df
-        self.points = pyntcloud.PyntCloud(self.__data[["x", "y", "z"]], mesh=None)
+        self.points = _PointCloudView(self.__data)
 
     def _check_index(self):
         """A private function to check if the index of self.data is sane."""
