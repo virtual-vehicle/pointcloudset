@@ -9,7 +9,6 @@ import numpy as np
 import pandas
 import plotly
 import plotly.express as px
-import pyntcloud
 from sklearn.cluster import DBSCAN
 
 from pointcloudset.config import PLOTLYSIZELIMIT
@@ -30,16 +29,11 @@ class PointCloud(PointCloudCore):
     PointCloud Class with one pointcloud of lidar measurements, laser scanning,
     photogrammetry  or simular.
 
-    One PointCloud consists mainly of
-    `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_
-    pointcloud
-    (`PyntCloud.points <https://pyntcloud.readthedocs.io/en/latest/points.html#points>`_)
-    and a pandas.DataFrame (.data) with all the associated data.
+    One PointCloud consists mainly of a pandas.DataFrame (.data) with the point
+    coordinates and all associated per-point attributes.
 
-    Note that the index of the points is not preserved when applying processing. This
-    is necessary since `PyntCloud <https://pyntcloud.readthedocs.io/en/latest/>`_
-    does not allow to pass the index. Therefore, a new PointCloud object is generated at
-    each processing stage.
+    Note that the index of the points is not preserved when applying processing.
+    Therefore, a new PointCloud object is generated at each processing stage.
 
     Developer notes:
         * All operations have to act on both, pointcloud, data and keep the timestamp.
@@ -128,20 +122,18 @@ class PointCloud(PointCloudCore):
         cls,
         library: Literal[
             "PANDAS",
-            "PYNTCLOUD",
             "DATAFRAME",
         ] = "PANDAS",
-        instance: (pandas.DataFrame | pyntcloud.PyntCloud) = pandas.DataFrame(),
+        instance: pandas.DataFrame = pandas.DataFrame(),
         **kwargs,
     ) -> PointCloud:
         """Converts a library instance to a pointcloudset PointCloud.
 
         Args:
             library (str): Name of the library.\n
-                If PYNTCLOUD: :func:`pointcloudset.io.pointcloud.pyntcloud.from_pyntcloud`\n
                 If DATAFRAME: :func:`pointcloudset.io.pointcloud.pandas.from_dataframe`\n
                 If PANDAS: :func:`pointcloudset.io.pointcloud.pandas.from_dataframe`
-            instance (Union[pandas.DataFrame, pyntcloud.PyntCloud]): Library instance to convert.
+            instance (pandas.DataFrame): Library instance to convert.
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
@@ -157,20 +149,17 @@ class PointCloud(PointCloudCore):
         else:
             return cls(**POINTCLOUD_FROM_INSTANCE[library](instance, **kwargs))
 
-    def to_instance(
-        self, library: Literal["PYNTCLOUD", "DATAFRAME", "PANDAS"], **kwargs
-    ) -> pyntcloud.PyntCloud | pandas.DataFrame:
+    def to_instance(self, library: Literal["DATAFRAME", "PANDAS"], **kwargs) -> pandas.DataFrame:
         """Convert PointCloud to another library instance.
 
         Args:
             library (str): Name of the library.\n
-                If PYNTCLOUD: :func:`pointcloudset.io.pointcloud.pyntcloud.to_pyntcloud`\n
                 If DATAFRAME: :func:`pointcloudset.io.pointcloud.pandas.to_dataframe`\n
                 If PANDAS: :func:`pointcloudset.io.pointcloud.pandas.to_dataframe`
             **kwargs: Keyword arguments to pass to func.
 
         Returns:
-            Union[pandas.DataFrame, pyntcloud.PyntCloud]: The derived instance.
+            pandas.DataFrame: The derived instance.
 
         Raises:
             ValueError: If library is not suppored.
@@ -437,7 +426,7 @@ class PointCloud(PointCloudCore):
 
         """
         if isinstance(filter_result, np.ndarray):
-            # dataframe and pyntcloud based filters
+            # dataframe-based filters
             new_data = self.data.loc[filter_result].reset_index(drop=True)
         elif isinstance(filter_result, list):
             # list of integer indices

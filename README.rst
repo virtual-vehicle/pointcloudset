@@ -86,7 +86,7 @@ Features
 .. image:: https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/tree.gif
    :width: 600
 
-* High level processing based on dask, pandas, open3D and pyntcloud
+* High level processing based on dask, pandas, scipy, scikit-learn, laspy and pypcd4
 * Docker image is available
 * Optimised - but not limited to - automotive lidar
 * A command line tool to convert ROS 1 & 2 files
@@ -201,8 +201,6 @@ Comparison to related packages
 
 #. `ROS <http://wiki.ros.org/rosbag/Code%20API>`_ -  bagfiles can contain many point clouds from different sensors.
    The downside of the format is that it is only suitable for serial access and not well suited for data analytics and post processing.
-#. `pyntcloud <https://github.com/daavoo/pyntcloud>`_ - Only for single point clouds. This package is used as the basis for the
-   PointCloud object.
 #. `open3d <https://github.com/intel-isl/Open3D>`_ - Only for single point clouds.
 #. `pdal <https://github.com/PDAL/PDAL>`_ - Works also with pipelines on point clouds but is mostly focused on single point cloud processing.
    Pointcloudset is purely in python and based on pandas DataFrames. In addition pointcloudset works in parallel to process large datasets.

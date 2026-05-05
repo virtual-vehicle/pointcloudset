@@ -16,8 +16,8 @@ app = typer.Typer()
 console = Console()
 
 
-TO_FILE_PYNTCLOUD = [k.lower() for k in POINTCLOUD_TO_FILE.keys()]
-TO_FILE_CLI = TO_FILE_PYNTCLOUD + ["pointcloudset"]
+TO_FILE_FORMATS = [k.lower() for k in POINTCLOUD_TO_FILE.keys()]
+TO_FILE_CLI = TO_FILE_FORMATS + ["pointcloudset"]
 
 
 @app.command()
@@ -30,8 +30,8 @@ def convert(
     end_frame_number: Union[int, None] = typer.Option(None, "--end", "-e"),
     keep_zeros: bool = False,
 ):
-    """The main CLI function to convert ROS1 and ROS2 files to pointcloudset or files
-    supported by pyntloud.
+    """The main CLI function to convert ROS1 and ROS2 files to pointcloudset or
+    native file formats supported by pointcloudset.
 
     Examples:
 
@@ -160,7 +160,7 @@ def _convert_bag2files(
     ros_file_path,
     folder_to_write_path,
 ):
-    """Converting a bagfile to files for each frame. Using pyntcloud
+    """Converting a bagfile to files for each frame.
 
     Args:
         topic (_type_): _description_

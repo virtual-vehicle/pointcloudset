@@ -35,7 +35,7 @@ def read_xyz(file_path: Path | str, **kwargs) -> pd.DataFrame:
         return _ensure_xyz_columns(pd.read_csv(path, **kwargs), path)
 
     try:
-        # Keep compatibility with pyntcloud's default CSV-style behavior when possible.
+        # Keep compatibility with CSV-style XYZ files when possible.
         df = pd.read_csv(path, **kwargs)
         if {"x", "y", "z"}.issubset(set(df.columns)):
             return df

@@ -6,7 +6,6 @@ import pandas as pd
 import pytest
 import pytest_check as check
 from pandas._testing import assert_frame_equal
-from pyntcloud import PyntCloud
 
 from pointcloudset import PointCloud
 
@@ -75,14 +74,14 @@ def test_points2(testpointcloud_mini):
     )
 
 
-def test_points_xyz_matches_pyntcloud(testpointcloud_mini: PointCloud):
-    expected = PyntCloud(testpointcloud_mini.data, mesh=None).xyz
+def test_points_xyz_matches_dataframe(testpointcloud_mini: PointCloud):
+    expected = testpointcloud_mini.data[["x", "y", "z"]].to_numpy()
     actual = testpointcloud_mini.points.xyz
     np.testing.assert_array_equal(actual, expected)
 
 
-def test_points_points_matches_pyntcloud(testpointcloud_mini: PointCloud):
-    expected = PyntCloud(testpointcloud_mini.data, mesh=None).points
+def test_points_points_matches_dataframe(testpointcloud_mini: PointCloud):
+    expected = testpointcloud_mini.data
     actual = testpointcloud_mini.points.points
     assert_frame_equal(actual, expected)
 
@@ -255,8 +254,8 @@ def test_centroit(testpointcloud_mini: PointCloud):
     check.almost_equal(list(ct), [259.95131121217355, 225.64930989164827, 365.44029720089736])
 
 
-def test_centroid_matches_pyntcloud(testpointcloud_mini: PointCloud):
-    expected = PyntCloud(testpointcloud_mini.data, mesh=None).centroid
+def test_centroid_matches_dataframe_mean(testpointcloud_mini: PointCloud):
+    expected = testpointcloud_mini.data[["x", "y", "z"]].to_numpy().mean(axis=0)
     actual = testpointcloud_mini.centroid
     np.testing.assert_array_equal(actual, expected)
 

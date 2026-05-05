@@ -5,16 +5,12 @@ The best way to work with large ROS1 or ROS2 files is to convert the rosbag befo
 the provided command line tool.
 
 It is also possible to convert whole or parts of ROS files to many poplar formats which
-are supported by pyntcloud:
+are supported natively by pointcloudset:
 
 
-.asc / .pts / .txt / .csv / .xyz
+.csv / .xyz
 .las
-.npy / .npz
-.obj
-.off (with color support)
 .pcd
-.ply
 
 
 Example

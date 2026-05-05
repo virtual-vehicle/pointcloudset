@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
+Unreleased
+-------------
+
+Changed
+~~~~~~~
+- Point cloud file IO is now handled natively for ``csv``, ``las``, ``xyz``, and ``pcd``.
+- ``PointCloud`` now uses an internal native geometry view instead of depending on ``pyntcloud``.
+
+Removed
+~~~~~~~
+- ``PointCloud.to_instance("pyntcloud")`` and ``PointCloud.from_instance("pyntcloud", ...)`` public API removed.
+- ``pyntcloud`` is no longer a dependency.
+
 0.12.1 - (2026-05-04)
 -------------
 

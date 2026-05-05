@@ -8,7 +8,7 @@ import pandas as pd
 
 
 class _PointCloudView:
-    """Minimal geometry view used internally instead of pyntcloud."""
+    """Minimal geometry view used internally for point coordinates."""
 
     def __init__(self, data: pd.DataFrame):
         self.points = data
