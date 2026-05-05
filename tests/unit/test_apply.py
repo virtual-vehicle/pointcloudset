@@ -1,7 +1,7 @@
 import datetime
+from datetime import UTC
 
 import pytest_check as check
-from datetime import UTC
 
 from pointcloudset import Dataset, PointCloud
 from pointcloudset.pipeline.delayed_result import DelayedResult

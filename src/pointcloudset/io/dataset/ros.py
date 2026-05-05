@@ -40,10 +40,10 @@ Parts of the code are from Willow Garage, Inc.
 from __future__ import annotations
 
 import datetime
-from datetime import UTC
 import math
 import struct
 import sys
+from datetime import UTC
 from pathlib import Path
 from typing import Generator, Literal, Union
 

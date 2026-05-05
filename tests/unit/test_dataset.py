@@ -1,7 +1,7 @@
 import datetime
+from datetime import UTC
 
 import numpy as np
-from datetime import UTC
 import pandas as pd
 import pytest
 import pytest_check as check

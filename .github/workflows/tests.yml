@@ -18,6 +18,7 @@ jobs:
     strategy:
       matrix:
         python-version: [ "3.11", "3.12", "3.13" ] # Define Python versions as strings
+        pandas-version: [ "2", "3" ]
     env:
       UV_PYTHON: ${{ matrix.python-version }}
 
@@ -32,6 +33,14 @@ jobs:
 
       - name: Install the project
         run: uv sync --locked --all-extras --dev
+
+      - name: Install pandas ${{ matrix.pandas-version }}
+        run: |
+          if [ "${{ matrix.pandas-version }}" = "2" ]; then
+            uv pip install "pandas>=2,<3"
+          else
+            uv pip install "pandas>=3,<4"
+          fi
 
       - name: Run tests
         run: uv run pytest tests
