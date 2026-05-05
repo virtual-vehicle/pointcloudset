@@ -10,6 +10,7 @@ Unreleased
 
 Changed
 ~~~~~~~
+- **BREAKING**: PointCloud timestamps are now timezone-aware (``tzinfo=UTC``) instead of naive UTC. If your code compares or serializes timestamps, you must update datetime comparisons to use timezone-aware datetimes or call ``.replace(tzinfo=None)`` for naive equivalents.
 - Point cloud file IO is now handled natively for ``csv``, ``las``, ``xyz``, and ``pcd``.
 - ``csv`` and ``xyz`` text file handling now support both headered and headerless files; ``csv`` writes headers by default and ``xyz`` writes headerless output by default.
 - ``PointCloud`` now uses an internal native geometry view instead of depending on ``pyntcloud``.
