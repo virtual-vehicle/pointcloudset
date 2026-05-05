@@ -13,6 +13,7 @@ Changed
 - Point cloud file IO is now handled natively for ``csv``, ``las``, ``xyz``, and ``pcd``.
 - ``csv`` and ``xyz`` text file handling now support both headered and headerless files; ``csv`` writes headers by default and ``xyz`` writes headerless output by default.
 - ``PointCloud`` now uses an internal native geometry view instead of depending on ``pyntcloud``.
+- Pandas support has been updated: pandas ``2.x`` and ``3.x`` are supported; pandas ``1.x`` is no longer supported.
 
 Removed
 ~~~~~~~
