@@ -1379,7 +1379,6 @@ dependencies = [
     { name = "pandas" },
     { name = "plotly" },
     { name = "pyarrow" },
-    { name = "pyntcloud" },
     { name = "pypcd4" },
     { name = "rich" },
     { name = "rosbags" },
@@ -1419,7 +1418,6 @@ requires-dist = [
     { name = "pandas", specifier = ">=2.0.0,<3.0.0" },
     { name = "plotly", specifier = ">=6.0.0,<7.0.0" },
     { name = "pyarrow" },
-    { name = "pyntcloud", specifier = ">=0.3.1,<0.4.0" },
     { name = "pypcd4", specifier = ">=1.4.3" },
     { name = "rich" },
     { name = "rosbags", specifier = ">=0.9.15,<0.10.0" },
@@ -1633,20 +1631,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/7c/2d/c3338d48ea6cc0feb8446d8e6937e1408088a72a39937982cc6111d17f84/pygments-2.19.1.tar.gz", hash = "sha256:61c16d2a8576dc0649d9f39e089b5f02bcd27fba10d8fb4dcc28173f7a45151f", size = 4968581, upload-time = "2025-01-06T17:26:30.443Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8a/0b/9fcc47d19c48b59121088dd6da2488a49d5f72dacf8262e2790a1d2c7d15/pygments-2.19.1-py3-none-any.whl", hash = "sha256:9ea1544ad55cecf4b8242fab6dd35a93bbce657034b0611ee383099054ab6d8c", size = 1225293, upload-time = "2025-01-06T17:26:25.553Z" },
-]
-
-[[package]]
-name = "pyntcloud"
-version = "0.3.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "numpy" },
-    { name = "pandas" },
-    { name = "scipy" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/a8/9d/1490a0fbfdbbd43682194533cd52fbbe14e0fbee2701f1b3e04888b200ed/pyntcloud-0.3.1.tar.gz", hash = "sha256:628b45967e1c97a947df0637267197a6b38a36cb04173f9837f05bc3180348b8", size = 1822362, upload-time = "2022-07-31T09:53:17.184Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/93/38/8e67f280c571d256fa168cac1dfeec190659cf415dfea0e0771667d22b54/pyntcloud-0.3.1-py2.py3-none-any.whl", hash = "sha256:2c064f53ae75175e8a9b8fe9f59d430b02b203a4e7ef8620af01d5e247d4df88", size = 346340, upload-time = "2022-07-31T09:53:15.138Z" },
 ]
 
 [[package]]
