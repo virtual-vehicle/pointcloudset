@@ -224,12 +224,12 @@ def testdataset_with_empty_frame(testdataset_mini_real: Dataset):
 
 @pytest.fixture()
 def testvz6000_1(testlasvz6000_1):
-    return PointCloud.from_file(testlasvz6000_1, timestamp=datetime.datetime(2022, 1, 1, 1, 1, 1))
+    return PointCloud.from_file(testlasvz6000_1, timestamp=datetime.datetime(2022, 1, 1, 1, 1, 1), normalize_xyz=True)
 
 
 @pytest.fixture()
 def testvz6000_2(testlasvz6000_2):
-    return PointCloud.from_file(testlasvz6000_2, timestamp=datetime.datetime(2022, 1, 1, 2, 2, 2))
+    return PointCloud.from_file(testlasvz6000_2, timestamp=datetime.datetime(2022, 1, 1, 2, 2, 2), normalize_xyz=True)
 
 
 @pytest.fixture()
