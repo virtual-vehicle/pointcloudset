@@ -18,7 +18,7 @@ Changed
 
 Removed
 ~~~~~~~
-- ``PointCloud.to_instance("pyntcloud")`` and ``PointCloud.from_instance("pyntcloud", ...)`` public API removed.
+- **BREAKING**: ``PointCloud.to_instance("pyntcloud")`` and ``PointCloud.from_instance("pyntcloud", ...)`` public API removed. The pyntcloud viewer format is no longer supported. Use pandas DataFrame methods directly or use a different viewer library.
 - ``pyntcloud`` is no longer a dependency.
 
 0.12.1 - (2026-05-04)
