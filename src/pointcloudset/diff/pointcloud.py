@@ -69,9 +69,17 @@ def _calculate_single_point_difference(pointcloud, pointcloud_b, original_id: in
         difference = point_a - point_b
     except IndexError:
         # there is no point with the orignal_id in frameB
-        difference = point_a
-        difference.loc[:] = np.nan
+        # Create a copy and set all non-ID columns to NaN
+        difference = point_a.copy()
+        # Convert numeric columns to float to allow NaN values in pandas 3.0+
+        for col in difference.columns:
+            if col != "original_id" and pd.api.types.is_numeric_dtype(difference[col]):
+                difference[col] = difference[col].astype("float64")
+        # Now set all non-ID columns to NaN
+        for col in difference.columns:
+            if col != "original_id":
+                difference.loc[:, col] = np.nan
     difference = difference.drop(["original_id"], axis=1)
     difference.columns = [f"{column} difference" for column in difference.columns]
-    difference["original_id"] = point_a["original_id"]
+    difference["original_id"] = point_a["original_id"].values
     return difference

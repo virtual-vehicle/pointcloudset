@@ -43,6 +43,7 @@ import datetime
 import math
 import struct
 import sys
+from datetime import UTC
 from pathlib import Path
 from typing import Generator, Literal, Union
 
@@ -129,7 +130,7 @@ def dataset_from_ros(
             frame = frame + 1
             if start_frame_number <= frame < end_frame_number:
                 # Keep timestamps timezone-independent by using UTC epoch conversion.
-                timestamp_datetime = datetime.datetime.utcfromtimestamp(timestamp * 1e-9)
+                timestamp_datetime = datetime.datetime.fromtimestamp(timestamp * 1e-9, UTC)
                 timestamps.append(timestamp_datetime)
 
                 if rosversion == 1:

@@ -86,7 +86,7 @@ Features
 .. image:: https://raw.githubusercontent.com/virtual-vehicle/pointcloudset/master/images/tree.gif
    :width: 600
 
-* High level processing based on dask, pandas, open3D and pyntcloud
+* High level processing based on dask, pandas, scipy, scikit-learn
 * Docker image is available
 * Optimised - but not limited to - automotive lidar
 * A command line tool to convert ROS 1 & 2 files
@@ -137,7 +137,14 @@ Reading ROS1 or ROS2 files:
    pointcloud = dataset[1]
    pointcloud.plot("x", hover_data=True)
 
-You can also generate a dataset from multiple pointclouds form a large variety or formats like las, pcd, csv and more.
+You can also generate a dataset from multiple pointclouds from formats like las, pcd, csv, and xyz.
+
+``PointCloud.to_file(...)`` currently writes ``csv``, ``xyz``, ``las``, and ``pcd``.
+For text formats, ``csv`` defaults to writing a header and also supports ``header=False``;
+``xyz`` defaults to headerless output and also supports ``header=True``.
+When reading files, ``PointCloud.from_file(...)`` supports ``normalize_xyz`` (default ``False``).
+If a file uses uppercase coordinate headers ``X``, ``Y``, ``Z``, reading fails unless you pass ``normalize_xyz=True``.
+This makes the conversion explicit while keeping internal processing consistent with lowercase ``x``, ``y``, ``z``.
 
 .. code-block:: python
 
@@ -150,11 +157,11 @@ You can also generate a dataset from multiple pointclouds form a large variety o
       "test_tree.las",
    )
    urllib.request.urlretrieve(
-      "https://github.com/virtual-vehicle/pointcloudset/raw/master/tests/testdata/las_files/test_tree.pcd",
+      "https://github.com/virtual-vehicle/pointcloudset/raw/master/tests/testdata/pcd_files/test_tree.pcd",
       "test_tree.pcd",
    )
 
-   las_pc = pcs.PointCloud.from_file(Path("test_tree.las"))
+   las_pc = pcs.PointCloud.from_file(Path("test_tree.las"), normalize_xyz=True)
    pcd_pc = pcs.PointCloud.from_file(Path("test_tree.pcd"))
    dataset = pcs.Dataset.from_instance("pointclouds", [las_pc, pcd_pc])
    pointcloud = dataset[1]
@@ -174,8 +181,8 @@ You can also generate a dataset from multiple pointclouds form a large variety o
 CLI to convert ROS1 and ROS2 files: pointcloudset convert
 ##########################################################
 
-The package includes a powerful CLI to convert pointclouds in ROS1 & 2 files into formats like pointcloudset and a folder with csv or las.
-It is capable of handling both mcap and db3 ROS2 files.
+The package includes a CLI to convert pointclouds in ROS1 and ROS2 files into ``pointcloudset`` directories or native file formats.
+It currently writes ``csv``, ``xyz``, ``las``, and ``pcd`` files and handles both mcap and db3 ROS2 inputs.
 
 .. code-block:: console
 
@@ -202,7 +209,7 @@ Comparison to related packages
 #. `ROS <http://wiki.ros.org/rosbag/Code%20API>`_ -  bagfiles can contain many point clouds from different sensors.
    The downside of the format is that it is only suitable for serial access and not well suited for data analytics and post processing.
 #. `pyntcloud <https://github.com/daavoo/pyntcloud>`_ - Only for single point clouds. This package is used as the basis for the
-   PointCloud object.
+   PointCloud object. Last update in 2022, and the project seems to be inactive. Pointcloudset has removed the dependency on pyntcloud.
 #. `open3d <https://github.com/intel-isl/Open3D>`_ - Only for single point clouds.
 #. `pdal <https://github.com/PDAL/PDAL>`_ - Works also with pipelines on point clouds but is mostly focused on single point cloud processing.
    Pointcloudset is purely in python and based on pandas DataFrames. In addition pointcloudset works in parallel to process large datasets.

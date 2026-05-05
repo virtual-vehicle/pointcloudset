@@ -1,18 +1,13 @@
-"""
-Functions for file input and output.
-"""
-
-from pyntcloud.io import (
-    FROM_FILE as POINTCLOUD_FROM_FILE,
-)  # needs to be here, ignore warnings
+"""Functions for file input and output."""
 
 from pointcloudset.io.dataset.dir import dataset_from_dir, dataset_to_dir
 from pointcloudset.io.dataset.pointcloud import dataset_from_pointclouds
 from pointcloudset.io.dataset.ros import dataset_from_ros
-from pointcloudset.io.pointcloud.csv import write_csv
-from pointcloudset.io.pointcloud.las import write_las
+from pointcloudset.io.pointcloud.csv import read_csv, write_csv
+from pointcloudset.io.pointcloud.las import read_las, write_las
 from pointcloudset.io.pointcloud.pandas import from_dataframe, to_dataframe
-from pointcloudset.io.pointcloud.pyntcloud import from_pyntcloud, to_pyntcloud
+from pointcloudset.io.pointcloud.pcd import read_pcd, write_pcd
+from pointcloudset.io.pointcloud.xyz import read_xyz, write_xyz
 
 DATASET_FROM_FILE = {
     "BAG": dataset_from_ros,
@@ -24,15 +19,15 @@ DATASET_TO_FILE = {"DIR": dataset_to_dir}
 
 DATASET_FROM_INSTANCE = {"POINTCLOUDS": dataset_from_pointclouds}
 
-POINTCLOUD_TO_FILE = {"CSV": write_csv, "LAS": write_las}
+POINTCLOUD_FROM_FILE = {"CSV": read_csv, "LAS": read_las, "PCD": read_pcd, "XYZ": read_xyz}
+
+POINTCLOUD_TO_FILE = {"CSV": write_csv, "LAS": write_las, "PCD": write_pcd, "XYZ": write_xyz}
 
 POINTCLOUD_FROM_INSTANCE = {
-    "PYNTCLOUD": from_pyntcloud,
     "DATAFRAME": from_dataframe,
     "PANDAS": from_dataframe,
 }
 POINTCLOUD_TO_INSTANCE = {
-    "PYNTCLOUD": to_pyntcloud,
     "DATAFRAME": to_dataframe,
     "PANDAS": to_dataframe,
 }

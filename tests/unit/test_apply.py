@@ -1,4 +1,5 @@
 import datetime
+from datetime import UTC
 
 import pytest_check as check
 
@@ -60,7 +61,7 @@ def test_apply_time(testset: Dataset):
 
     testset2 = testset[0:2]
     testset_result = testset2.apply(func=pipeline1).compute()
-    check.equal(testset_result[0], datetime.datetime(2020, 6, 22, 13, 40, 42, 657267))
+    check.equal(testset_result[0], datetime.datetime(2020, 6, 22, 13, 40, 42, 657267, tzinfo=UTC))
     check.equal(testset_result[0] < testset_result[1], True)
 
 

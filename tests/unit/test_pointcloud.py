@@ -6,7 +6,6 @@ import pandas as pd
 import pytest
 import pytest_check as check
 from pandas._testing import assert_frame_equal
-from pyntcloud import PyntCloud
 
 from pointcloudset import PointCloud
 
@@ -64,7 +63,7 @@ def test_contains_original_id_number(testpointcloud: PointCloud):
 
 def test_points(testpointcloud_mini):
     points = testpointcloud_mini.points
-    check.is_instance(points, PyntCloud)
+    check.equal(list(points.points.columns), typical_columns)
 
 
 def test_points2(testpointcloud_mini):
@@ -73,6 +72,18 @@ def test_points2(testpointcloud_mini):
         list(points.points.columns),
         typical_columns,
     )
+
+
+def test_points_xyz_matches_dataframe(testpointcloud_mini: PointCloud):
+    expected = testpointcloud_mini.data[["x", "y", "z"]].to_numpy()
+    actual = testpointcloud_mini.points.xyz
+    np.testing.assert_array_equal(actual, expected)
+
+
+def test_points_points_matches_dataframe(testpointcloud_mini: PointCloud):
+    expected = testpointcloud_mini.data
+    actual = testpointcloud_mini.points.points
+    assert_frame_equal(actual, expected)
 
 
 def test_timestamp(testpointcloud_mini):
@@ -227,6 +238,8 @@ def test_testpointcloud_withzero_data(
         typical_columns,
     )
     check.equal(data.shape, (131072, 9))
+    # Convert reference data columns to match pandas 3.0+ string dtype
+    reference_data_with_zero_dataframe.columns = reference_data_with_zero_dataframe.columns.astype(str)
     assert_frame_equal(data, reference_data_with_zero_dataframe)
 
 
@@ -241,6 +254,12 @@ def test_axis_aligned_bounding_box(testpointcloud_mini: PointCloud):
 def test_centroit(testpointcloud_mini: PointCloud):
     ct = testpointcloud_mini.centroid
     check.almost_equal(list(ct), [259.95131121217355, 225.64930989164827, 365.44029720089736])
+
+
+def test_centroid_matches_dataframe_mean(testpointcloud_mini: PointCloud):
+    expected = testpointcloud_mini.data[["x", "y", "z"]].to_numpy().mean(axis=0)
+    actual = testpointcloud_mini.centroid
+    np.testing.assert_array_equal(actual, expected)
 
 
 def test_random_down_sample(testpointcloud: PointCloud):

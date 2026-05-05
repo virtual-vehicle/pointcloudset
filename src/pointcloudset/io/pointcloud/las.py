@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 import laspy
 import numpy as np
+import pandas as pd
 
 if TYPE_CHECKING:
     from pointcloudset import PointCloud
@@ -13,11 +14,53 @@ LAS_VERSION = "1.4"
 LAS_PRECISION = 0.000001  # m
 
 
-def _choose_scale_offset(axis: np.ndarray) -> tuple[float, float]:
+def read_las(file_path: Path | str, normalize_xyz: bool = False) -> pd.DataFrame:
+    """Read a LAS/LAZ pointcloud file into a dataframe.
+
+    Args:
+        file_path: Path to the LAS/LAZ file.
+        normalize_xyz: Whether to convert LAS-native ``X/Y/Z`` coordinates to
+            lowercase ``x/y/z`` for pointcloudset internals.
+
+    Returns:
+        A dataframe containing pointcloud columns.
+
+    Raises:
+        ValueError: If ``normalize_xyz`` is not enabled.
     """
-    Return (scale, offset) guaranteeing int32 fit.
-    PRECISION_HINT – user-desired resolution (e.g. 0.001 m for mm).  If None,
-    we keep the finest resolution allowed by the int32 range, rounded to 10^n.
+    path = Path(file_path)
+    if not normalize_xyz:
+        raise ValueError(
+            f"LAS file '{path}' stores coordinates as X/Y/Z. "
+            "pointcloudset expects lowercase x/y/z internally. "
+            "Pass normalize_xyz=True to convert X/Y/Z to x/y/z."
+        )
+
+    las = laspy.read(path)
+    raw = las.points.array
+
+    data = {
+        "x": np.asarray(las.x),
+        "y": np.asarray(las.y),
+        "z": np.asarray(las.z),
+    }
+    for name in raw.dtype.names:
+        if name in {"X", "Y", "Z"}:
+            continue
+        data[name] = raw[name]
+
+    return pd.DataFrame(data)
+
+
+def _choose_scale_offset(axis: np.ndarray) -> tuple[float, float]:
+    """Compute LAS scale and offset for a coordinate axis.
+
+    Args:
+        axis: Coordinate values for one axis.
+
+    Returns:
+        A ``(scale, offset)`` tuple that keeps integer storage within int32
+        limits while respecting minimum precision.
     """
     lo, hi = float(axis.min()), float(axis.max())
     offset = lo
@@ -34,16 +77,13 @@ def _choose_scale_offset(axis: np.ndarray) -> tuple[float, float]:
 
 
 def _best_las_type(arr: np.ndarray) -> str:
-    """
-    Return the smallest LAS data-type code ('u1', 'i1', …, 'f8') that can
-    represent *arr* loss-lessly.
+    """Select the smallest compatible LAS scalar type for array values.
 
-    LAS → NumPy mapping codes:
-    u1/i1  : unsigned/signed   8-bit integer
-    u2/i2  : unsigned/signed  16-bit integer
-    u4/i4  : unsigned/signed  32-bit integer
-    u8/i8  : unsigned/signed  64-bit integer
-    f4/f8  : 32- / 64-bit float
+    Args:
+        arr: NumPy array with values for one output field.
+
+    Returns:
+        LAS type code such as ``u1``, ``i4``, ``f4``, or ``f8``.
     """
     dt = arr.dtype
 
@@ -83,8 +123,14 @@ def _best_las_type(arr: np.ndarray) -> str:
 
 
 def write_las(pointcloud: "PointCloud", file_path: Path) -> None:
-    """
-    Export a PointCloud to LAS/LAZ (point-format 7, LAS 1.4).
+    """Write a pointcloud to LAS/LAZ using point format 7 and LAS 1.4.
+
+    Args:
+        pointcloud: PointCloud instance to serialize.
+        file_path: Destination LAS/LAZ file path.
+
+    Raises:
+        ValueError: If the pointcloud is missing ``x``, ``y``, or ``z``.
     """
     df = pointcloud.data
     if not {"x", "y", "z"}.issubset(df.columns):

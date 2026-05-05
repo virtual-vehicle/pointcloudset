@@ -3,25 +3,19 @@ from pathlib import Path
 import pandas as pd
 import pytest
 import pytest_check as check
-from pyntcloud import PyntCloud
 
 import pointcloudset
 from pointcloudset import PointCloud
 
 
-def test_from_pyntcloud(testlas1: Path):
-    pyntcloud_data = PyntCloud.from_file(testlas1.as_posix())
-    pointcloud = pointcloudset.PointCloud.from_instance("pyntcloud", pyntcloud_data)
-    check.is_instance(pointcloud, pointcloudset.PointCloud)
-    check.equal(pointcloud.has_original_id, False)
-    check.equal(len(list(pointcloud.data.columns)), 13)
+def test_from_instance_unsupported_library(testpointcloud_mini_df: pd.DataFrame):
+    with pytest.raises(ValueError):
+        pointcloudset.PointCloud.from_instance("pyntcloud", testpointcloud_mini_df)
 
 
-def test_to_pyntcloud(testpointcloud_mini: PointCloud, testlas1: Path):
-    pyntcloud_data = PyntCloud.from_file(testlas1.as_posix())
-    res = testpointcloud_mini.to_instance("pyntcloud")
-    check.is_instance(res, PyntCloud)
-    check.equal(list(res.points.columns.values), list(testpointcloud_mini.data.columns.values))
+def test_to_instance_unsupported_library(testpointcloud_mini: PointCloud):
+    with pytest.raises(ValueError):
+        testpointcloud_mini.to_instance("pyntcloud")
 
 
 def test_from_dataframe(testpointcloud_mini_df: pd.DataFrame, testpointcloud_mini: PointCloud):

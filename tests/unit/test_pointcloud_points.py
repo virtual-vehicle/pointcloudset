@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import pytest
 import pytest_check as check
@@ -33,3 +34,21 @@ def test_extract_point(testpointcloud: PointCloud, id, use_original_id):
 def test_extract_point_not_available(testpointcloud: PointCloud, use_original_id):
     with pytest.raises(IndexError):
         testpointcloud.extract_point(id=10000000, use_original_id=use_original_id)
+
+
+def test_xyz_and_centroid_direct_properties(testpointcloud: PointCloud):
+    expected_xyz = testpointcloud.data[["x", "y", "z"]].to_numpy()
+    np.testing.assert_allclose(testpointcloud.xyz, expected_xyz)
+    np.testing.assert_allclose(testpointcloud.centroid, expected_xyz.mean(axis=0))
+
+
+def test_xyz_and_centroid_deprecated_points_view(testpointcloud: PointCloud):
+    expected_xyz = testpointcloud.data[["x", "y", "z"]].to_numpy()
+
+    with pytest.warns(DeprecationWarning, match="PointCloud.points.xyz is deprecated"):
+        xyz = testpointcloud.points.xyz
+    np.testing.assert_allclose(xyz, expected_xyz)
+
+    with pytest.warns(DeprecationWarning, match="PointCloud.points.centroid is deprecated"):
+        centroid = testpointcloud.points.centroid
+    np.testing.assert_allclose(centroid, expected_xyz.mean(axis=0))

@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
+Unreleased
+-------------
+
+Changed
+~~~~~~~
+- **BREAKING**: PointCloud timestamps are now timezone-aware (``tzinfo=UTC``) instead of naive UTC. If your code compares or serializes timestamps, you must update datetime comparisons to use timezone-aware datetimes or call ``.replace(tzinfo=None)`` for naive equivalents.
+- Point cloud file IO is now handled natively for ``csv``, ``las``, ``xyz``, and ``pcd``.
+- ``csv`` and ``xyz`` text file handling now support both headered and headerless files; ``csv`` writes headers by default and ``xyz`` writes headerless output by default.
+- Reading functions now support ``normalize_xyz`` (default ``False``): files with uppercase coordinate headers (``X``, ``Y``, ``Z``) now fail with a hint unless you pass ``normalize_xyz=True`` to convert them to lowercase ``x``, ``y``, ``z``.
+- ``PointCloud`` now uses an internal native geometry view instead of depending on ``pyntcloud``.
+- Access via ``PointCloud.points.xyz`` and ``PointCloud.points.centroid`` is now deprecated; use ``PointCloud.xyz`` and ``PointCloud.centroid`` directly.
+- Pandas support has been updated: pandas ``2.x`` and ``3.x`` are supported; pandas ``1.x`` is no longer supported.
+
+Removed
+~~~~~~~
+- **BREAKING**: ``PointCloud.to_instance("pyntcloud")`` and ``PointCloud.from_instance("pyntcloud", ...)`` public API removed. The pyntcloud viewer format is no longer supported. Use pandas DataFrame methods directly or use a different viewer library.
+- ``pyntcloud`` is no longer a dependency.
+
 0.12.1 - (2026-05-04)
 -------------
 

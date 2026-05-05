@@ -58,6 +58,46 @@ def testlasvz6000_2():
 
 
 @pytest.fixture()
+def testxyz_diamond():
+    return Path(__file__).parent.absolute() / "testdata/xyz/diamond.xyz"
+
+
+@pytest.fixture()
+def testxyz_with_header():
+    return Path(__file__).parent.absolute() / "testdata/xyz/with_header.xyz"
+
+
+@pytest.fixture()
+def testxyz_with_header_upper():
+    return Path(__file__).parent.absolute() / "testdata/xyz/with_header_upper.xyz"
+
+
+@pytest.fixture()
+def testcsv_diamond():
+    return Path(__file__).parent.absolute() / "testdata/csv/diamond.csv"
+
+
+@pytest.fixture()
+def testcsv_headerless():
+    return Path(__file__).parent.absolute() / "testdata/csv/headerless.csv"
+
+
+@pytest.fixture()
+def testcsv_with_header():
+    return Path(__file__).parent.absolute() / "testdata/csv/with_header.csv"
+
+
+@pytest.fixture()
+def testcsv_with_header_upper():
+    return Path(__file__).parent.absolute() / "testdata/csv/with_header_upper.csv"
+
+
+@pytest.fixture()
+def testpcd_tree():
+    return Path(__file__).parent.absolute() / "testdata/pcd_files/test_tree.pcd"
+
+
+@pytest.fixture()
 def testset(testbag1):
     return Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=False)
 
@@ -184,12 +224,12 @@ def testdataset_with_empty_frame(testdataset_mini_real: Dataset):
 
 @pytest.fixture()
 def testvz6000_1(testlasvz6000_1):
-    return PointCloud.from_file(testlasvz6000_1, timestamp=datetime.datetime(2022, 1, 1, 1, 1, 1))
+    return PointCloud.from_file(testlasvz6000_1, timestamp=datetime.datetime(2022, 1, 1, 1, 1, 1), normalize_xyz=True)
 
 
 @pytest.fixture()
 def testvz6000_2(testlasvz6000_2):
-    return PointCloud.from_file(testlasvz6000_2, timestamp=datetime.datetime(2022, 1, 1, 2, 2, 2))
+    return PointCloud.from_file(testlasvz6000_2, timestamp=datetime.datetime(2022, 1, 1, 2, 2, 2), normalize_xyz=True)
 
 
 @pytest.fixture()

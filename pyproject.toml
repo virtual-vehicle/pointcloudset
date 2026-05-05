@@ -34,8 +34,7 @@ classifiers = [
 
 dependencies = [
     "numpy>2.2.0,<3.0.0",
-    "pandas>=2.0.0,<3.0.0",
-    "pyntcloud>=0.3.1,<0.4.0",
+    "pandas>=2.0.0,<4.0.0",
     "scipy>=1.10",
     "scikit-learn>=1.2",
     "plotly>=6.0.0,<7.0.0",
@@ -44,9 +43,10 @@ dependencies = [
     "rich",
     "rosbags>=0.9.15,<0.10.0",
     "ipywidgets",
-    "laspy",
+    "laspy>=2.0.0,<3.0.0",
     "pyarrow",
-    "nbformat"
+    "nbformat",
+    "pypcd4>=1.4.3",
 ]
 [dependency-groups]
 dev = [
