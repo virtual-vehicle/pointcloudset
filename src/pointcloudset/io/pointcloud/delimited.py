@@ -17,11 +17,13 @@ def ensure_coordinate_columns(df: pd.DataFrame, file_path: Path, format_name: st
     if df.shape[1] < 3:
         raise ValueError(f"{format_name} file '{file_path}' must provide at least three columns for x, y, z")
 
-    renamed_columns = ["x", "y", "z"] + [f"field_{i}" for i in range(3, df.shape[1])]
+    renamed_columns = ["x", "y", "z"] + [f"property_{i}" for i in range(1, df.shape[1] - 2)]
     df = df.copy()
     df.columns = renamed_columns
     warnings.warn(
-        f"{format_name} file '{file_path}' has no x/y/z header. Assuming first three columns are x, y, z.",
+        f"{format_name} file '{file_path}' has no x/y/z header. "
+        "Assuming the first three columns are x, y, z and naming remaining columns "
+        "property_1, property_2, and so on.",
         UserWarning,
         stacklevel=2,
     )

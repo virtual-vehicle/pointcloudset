@@ -69,7 +69,7 @@ def test_from_file_las_without_normalization_fails(testlas1: Path):
 
 
 def test_from_file_xyz(testxyz_diamond: Path):
-    with pytest.warns(UserWarning, match="Assuming first three columns are x, y, z"):
+    with pytest.warns(UserWarning, match="Assuming the first three columns are x, y, z"):
         pointcloud = pointcloudset.PointCloud.from_file(testxyz_diamond)
     check.equal(type(pointcloud), PointCloud)
     check.greater(len(pointcloud), 0)
@@ -104,13 +104,13 @@ def test_from_file_csv_diamond(testcsv_diamond: Path):
 
 
 def test_from_file_csv_without_header(testcsv_headerless: Path):
-    with pytest.warns(UserWarning, match="Assuming first three columns are x, y, z"):
+    with pytest.warns(UserWarning, match="Assuming the first three columns are x, y, z"):
         pointcloud = pointcloudset.PointCloud.from_file(testcsv_headerless)
 
     check.equal(type(pointcloud), PointCloud)
-    check.equal(list(pointcloud.data.columns), ["x", "y", "z", "field_3"])
+    check.equal(list(pointcloud.data.columns), ["x", "y", "z", "property_1"])
     np.testing.assert_allclose(
-        pointcloud.data[["x", "y", "z", "field_3"]].to_numpy(), [[0.5, 0.0, 0.5, 1.0], [0.0, 0.5, 0.5, 2.0]]
+        pointcloud.data[["x", "y", "z", "property_1"]].to_numpy(), [[0.5, 0.0, 0.5, 1.0], [0.0, 0.5, 0.5, 2.0]]
     )
 
 
@@ -200,7 +200,7 @@ def test_csv_read_write_read_without_header(testpointcloud_mini: PointCloud, tmp
     check.equal(testfile_name.exists(), True)
     check.is_false(testfile_name.read_text().splitlines()[0].startswith("x,"))
 
-    with pytest.warns(UserWarning, match="Assuming first three columns are x, y, z"):
+    with pytest.warns(UserWarning, match="Assuming the first three columns are x, y, z"):
         read_pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
     check.equal(type(read_pointcloud), PointCloud)
     check.equal(len(read_pointcloud), len(testpointcloud_mini))
@@ -305,7 +305,7 @@ def test_xyz_read_write_read_target(testpointcloud_mini: PointCloud, tmp_path: P
     check.equal(testfile_name.exists(), True)
     check.is_false(testfile_name.read_text().splitlines()[0].startswith("x "))
 
-    with pytest.warns(UserWarning, match="Assuming first three columns are x, y, z"):
+    with pytest.warns(UserWarning, match="Assuming the first three columns are x, y, z"):
         read_pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
     check.equal(type(read_pointcloud), PointCloud)
     check.equal(len(read_pointcloud), len(testpointcloud_mini))
