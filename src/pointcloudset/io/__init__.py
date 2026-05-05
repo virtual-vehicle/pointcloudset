@@ -13,6 +13,7 @@ from pointcloudset.io.pointcloud.csv import write_csv
 from pointcloudset.io.pointcloud.las import write_las
 from pointcloudset.io.pointcloud.pandas import from_dataframe, to_dataframe
 from pointcloudset.io.pointcloud.pyntcloud import from_pyntcloud, to_pyntcloud
+from pointcloudset.io.pointcloud.xyz import read_xyz, write_xyz
 
 DATASET_FROM_FILE = {
     "BAG": dataset_from_ros,
@@ -24,7 +25,7 @@ DATASET_TO_FILE = {"DIR": dataset_to_dir}
 
 DATASET_FROM_INSTANCE = {"POINTCLOUDS": dataset_from_pointclouds}
 
-POINTCLOUD_TO_FILE = {"CSV": write_csv, "LAS": write_las}
+POINTCLOUD_TO_FILE = {"CSV": write_csv, "LAS": write_las, "XYZ": write_xyz}
 
 POINTCLOUD_FROM_INSTANCE = {
     "PYNTCLOUD": from_pyntcloud,

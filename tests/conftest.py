@@ -58,6 +58,16 @@ def testlasvz6000_2():
 
 
 @pytest.fixture()
+def testxyz_diamond():
+    return Path(__file__).parent.absolute() / "testdata/xyz/diamond.xyz"
+
+
+@pytest.fixture()
+def testpcd_tree():
+    return Path(__file__).parent.absolute() / "testdata/pcd_files/test_tree.pcd"
+
+
+@pytest.fixture()
 def testset(testbag1):
     return Dataset.from_file(testbag1, topic="/os1_cloud_node/points", keep_zeros=False)
 
