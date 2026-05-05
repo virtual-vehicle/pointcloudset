@@ -300,6 +300,44 @@ def test_pcd_read_write_read_target(testpointcloud_mini: PointCloud, tmp_path: P
     np.testing.assert_allclose(expected, actual, rtol=1e-6, atol=1e-9)
 
 
+def test_pcd_write_nullable_integer_column(tmp_path: Path):
+    data = pd.DataFrame(
+        {
+            "x": [0.0, 1.0],
+            "y": [0.0, 1.0],
+            "z": [0.0, 1.0],
+            "ring": pd.Series([10, None], dtype="Int64"),
+        }
+    )
+    pointcloud = PointCloud(data=data, timestamp=datetime.now(UTC), orig_file="/tmp/test.bag")
+    testfile_name = tmp_path.joinpath("nullable_int.pcd")
+
+    pointcloud.to_file(file_path=testfile_name)
+    read_pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+
+    check.is_true("ring" in read_pointcloud.data.columns)
+    check.is_true(np.isnan(read_pointcloud.data["ring"].iloc[1]))
+
+
+def test_pcd_write_sanitizes_incompatible_field_names(tmp_path: Path):
+    data = pd.DataFrame(
+        {
+            "x": [0.0, 1.0],
+            "y": [0.0, 1.0],
+            "z": [0.0, 1.0],
+            "intensity (%)": [1, 2],
+        }
+    )
+    pointcloud = PointCloud(data=data, timestamp=datetime.now(UTC), orig_file="/tmp/test.bag")
+    testfile_name = tmp_path.joinpath("sanitized_names.pcd")
+
+    with pytest.warns(UserWarning, match="PCD field names were sanitized"):
+        pointcloud.to_file(file_path=testfile_name)
+
+    read_pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+    check.is_true(any(col.startswith("intensity") for col in read_pointcloud.data.columns))
+
+
 def test_las_read_write_read1(testlas1: Path, tmp_path: Path):
     pointcloud = pointcloudset.PointCloud.from_file(testlas1, timestamp="from_file")
     testfile_name = tmp_path.joinpath("just_test.las")
