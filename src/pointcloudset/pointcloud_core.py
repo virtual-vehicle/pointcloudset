@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import traceback
+import warnings
 from datetime import datetime
 
 import numpy as np
@@ -12,15 +13,31 @@ class _PointCloudView:
     This was necessary to keep the similar API after removing pyntcloud dependency"""
 
     def __init__(self, data: pd.DataFrame):
-        self.points = data
+        self._data = data
+
+    @staticmethod
+    def _warn_deprecated(attribute: str) -> None:
+        warnings.warn(
+            f"PointCloud.points.{attribute} is deprecated and will be removed in a future release. "
+            f"Use PointCloud.{attribute} directly.",
+            DeprecationWarning,
+            stacklevel=3,
+        )
+
+    @property
+    def points(self) -> pd.DataFrame:
+        self._warn_deprecated("points")
+        return self._data
 
     @property
     def xyz(self) -> np.ndarray:
-        return self.points[["x", "y", "z"]].to_numpy()
+        self._warn_deprecated("xyz")
+        return self._data[["x", "y", "z"]].to_numpy()
 
     @property
     def centroid(self) -> np.ndarray:
-        return self.xyz.mean(axis=0)
+        self._warn_deprecated("centroid")
+        return self._data[["x", "y", "z"]].to_numpy().mean(axis=0)
 
 
 class PointCloudCore:
@@ -67,6 +84,14 @@ class PointCloudCore:
         """All the data, x,y,z and auxiliary data such as intensity, range and more."""
         return self.__data
 
+    @property
+    def xyz(self) -> np.ndarray:
+        return self.data[["x", "y", "z"]].to_numpy()
+
+    @property
+    def centroid(self) -> np.ndarray:
+        return self.xyz.mean(axis=0)
+
     @data.setter
     def data(self, df: pd.DataFrame):
         if not isinstance(df, pd.DataFrame):
@@ -80,11 +105,6 @@ class PointCloudCore:
     def bounding_box(self) -> pd.DataFrame:
         """The axis aligned boundary box as a :class:`pandas.DataFrame`."""
         return self.data[["x", "y", "z"]].agg(["min", "max"])
-
-    @property
-    def centroid(self) -> np.array:
-        """Geometric center for the point cloud."""
-        return self.points.centroid
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.data}, {self.timestamp}, {self.orig_file})"

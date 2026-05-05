@@ -15,6 +15,7 @@ Changed
 - ``csv`` and ``xyz`` text file handling now support both headered and headerless files; ``csv`` writes headers by default and ``xyz`` writes headerless output by default.
 - Reading functions now support ``normalize_xyz`` (default ``False``): files with uppercase coordinate headers (``X``, ``Y``, ``Z``) now fail with a hint unless you pass ``normalize_xyz=True`` to convert them to lowercase ``x``, ``y``, ``z``.
 - ``PointCloud`` now uses an internal native geometry view instead of depending on ``pyntcloud``.
+- Access via ``PointCloud.points.xyz`` and ``PointCloud.points.centroid`` is now deprecated; use ``PointCloud.xyz`` and ``PointCloud.centroid`` directly.
 - Pandas support has been updated: pandas ``2.x`` and ``3.x`` are supported; pandas ``1.x`` is no longer supported.
 
 Removed
