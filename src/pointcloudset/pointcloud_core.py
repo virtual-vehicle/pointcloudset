@@ -9,7 +9,7 @@ import pandas as pd
 
 class _PointCloudView:
     """Minimal geometry view used internally for point coordinates.
-    This was necessary to keep the similar API after removing pytntcloud dependency"""
+    This was necessary to keep the similar API after removing pyntcloud dependency"""
 
     def __init__(self, data: pd.DataFrame):
         self.points = data

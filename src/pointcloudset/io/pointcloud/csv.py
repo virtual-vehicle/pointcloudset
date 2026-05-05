@@ -10,6 +10,20 @@ if TYPE_CHECKING:
 
 
 def read_csv(file_path: Path | str, **kwargs):
+    """Read a CSV pointcloud file into a dataframe.
+
+    Args:
+        file_path: Path to the CSV file.
+        **kwargs: Additional keyword arguments forwarded to the shared
+            delimited reader. Supports ``normalize_xyz`` to opt in to
+            converting ``X/Y/Z`` headers to ``x/y/z``.
+
+    Returns:
+        A dataframe containing pointcloud columns.
+
+    Raises:
+        ValueError: If parsing fails or required coordinate columns are missing.
+    """
     return read_delimited_coordinates(
         file_path,
         format_name="CSV",
@@ -21,11 +35,12 @@ def read_csv(file_path: Path | str, **kwargs):
 
 
 def write_csv(pointcloud: PointCloud, file_path: Path, header: bool = True, sep: str = ",") -> None:
-    """Exports the pointcloud as a csv for use with cloud compare or similar tools.
-    Currently not all attributes of a pointcloud are saved so some information is lost when
-    using this function.
+    """Write a pointcloud to a CSV file.
 
     Args:
-        file_path (Path): Destination.
+        pointcloud: PointCloud instance to serialize.
+        file_path: Destination file path.
+        header: Whether to write a header row. Default is True for CSV files. Same as pandas.
+        sep: Field delimiter.
     """
     write_delimited_coordinates(pointcloud, file_path, header=header, sep=sep)

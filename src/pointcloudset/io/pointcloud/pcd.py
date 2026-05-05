@@ -13,12 +13,31 @@ if TYPE_CHECKING:
 
 
 def _sanitize_pcd_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Drop internal padding placeholder columns from parsed PCD data.
+
+    Args:
+        df: Dataframe created from ``pypcd4`` point records.
+
+    Returns:
+        Dataframe without placeholder padding columns.
+    """
     # pypcd4 preserves padding bytes as generated placeholder field names; they are not useful user data.
     keep_columns = [col for col in df.columns if not str(col).startswith("#$%&~~")]
     return df.loc[:, keep_columns]
 
 
 def _sanitize_pcd_field_names(field_names: list[str]) -> list[str]:
+    """Convert dataframe column names to tool-compatible PCD field names.
+
+    Args:
+        field_names: Original dataframe column names.
+
+    Returns:
+        Sanitized field names matching ``[A-Za-z_][A-Za-z0-9_]*``.
+
+    Raises:
+        ValueError: If sanitization causes duplicate output names.
+    """
     sanitized: list[str] = []
     changed = False
     for name in field_names:
@@ -48,6 +67,18 @@ def _sanitize_pcd_field_names(field_names: list[str]) -> list[str]:
 
 
 def _to_pcd_numeric_array(series: pd.Series, field_name: str) -> np.ndarray:
+    """Convert a dataframe column to a numeric ndarray for PCD writing.
+
+    Args:
+        series: Column values to convert.
+        field_name: Column name used in error messages.
+
+    Returns:
+        Numeric NumPy array suitable for PCD serialization.
+
+    Raises:
+        TypeError: If the column cannot be represented as numeric data.
+    """
     try:
         numeric = pd.to_numeric(series, errors="raise")
     except Exception as exc:
@@ -66,6 +97,20 @@ def _to_pcd_numeric_array(series: pd.Series, field_name: str) -> np.ndarray:
 
 
 def _normalize_xyz_pcd_columns(df: pd.DataFrame, normalize_xyz: bool, file_path: Path) -> pd.DataFrame:
+    """Validate and optionally normalize PCD coordinate column casing.
+
+    Args:
+        df: Parsed PCD dataframe.
+        normalize_xyz: Whether to convert ``X/Y/Z`` to ``x/y/z``.
+        file_path: Source file path used in error messages.
+
+    Returns:
+        Dataframe with lowercase coordinate columns.
+
+    Raises:
+        ValueError: If coordinate columns are missing or uppercase coordinates
+            are provided while normalization is disabled.
+    """
     if {"x", "y", "z"}.issubset(df.columns):
         return df
 
@@ -93,6 +138,19 @@ def _normalize_xyz_pcd_columns(df: pd.DataFrame, normalize_xyz: bool, file_path:
 
 
 def read_pcd(file_path: Path | str, normalize_xyz: bool = False) -> pd.DataFrame:
+    """Read a PCD pointcloud file into a dataframe.
+
+    Args:
+        file_path: Path to the PCD file.
+        normalize_xyz: Whether to convert ``X/Y/Z`` headers to ``x/y/z``.
+
+    Returns:
+        A dataframe containing pointcloud columns.
+
+    Raises:
+        ValueError: If required coordinate columns are missing or normalization
+            is required but not enabled.
+    """
     path = Path(file_path)
     pointcloud = PcdPointCloud.from_path(path)
     df = pd.DataFrame.from_records(pointcloud.pc_data)
@@ -101,6 +159,16 @@ def read_pcd(file_path: Path | str, normalize_xyz: bool = False) -> pd.DataFrame
 
 
 def write_pcd(pointcloud: PointCloud, file_path: Path) -> None:
+    """Write a pointcloud to a PCD file.
+
+    Args:
+        pointcloud: PointCloud instance to serialize.
+        file_path: Destination file path.
+
+    Raises:
+        ValueError: If the pointcloud is missing ``x``, ``y``, or ``z`` columns.
+        TypeError: If one or more columns cannot be converted to numeric arrays.
+    """
     df = pointcloud.data
     if not {"x", "y", "z"}.issubset(df.columns):
         raise ValueError("PointCloud must have x, y and z columns")
