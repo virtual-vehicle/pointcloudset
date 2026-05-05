@@ -38,7 +38,16 @@ def read_delimited_coordinates(
 ) -> pd.DataFrame:
     path = Path(file_path)
 
-    if any(key in kwargs for key in ("sep", "delimiter", "header", "names")):
+    # If users explicitly provide column names, keep those names untouched.
+    if "names" in kwargs:
+        df = pd.read_csv(path, **kwargs)
+        if {"x", "y", "z"}.issubset(set(df.columns)):
+            return df
+        raise ValueError(
+            f"{format_name} file '{path}' was read with explicit column names, but columns x, y, z are required."
+        )
+
+    if any(key in kwargs for key in ("sep", "delimiter", "header")):
         return ensure_coordinate_columns(pd.read_csv(path, **kwargs), path, format_name)
 
     parse_attempts: list[dict[str, object]] = []
@@ -50,13 +59,14 @@ def read_delimited_coordinates(
     if fallback_sep is not None and fallback_sep != default_sep:
         parse_attempts.append({"sep": fallback_sep, "engine": "python"})
 
+    last_exception: Exception | None = None
     for parse_kwargs in parse_attempts:
         try:
             df = pd.read_csv(path, **parse_kwargs)
             if {"x", "y", "z"}.issubset(set(df.columns)):
                 return df
-        except Exception:
-            pass
+        except Exception as e:
+            last_exception = e
 
     headerless_kwargs: dict[str, object] = {"header": None}
     if fallback_sep is not None:
@@ -64,8 +74,16 @@ def read_delimited_coordinates(
     elif default_sep is not None:
         headerless_kwargs["sep"] = default_sep
 
-    df = pd.read_csv(path, **headerless_kwargs)
-    return ensure_coordinate_columns(df, path, format_name)
+    try:
+        df = pd.read_csv(path, **headerless_kwargs)
+        return ensure_coordinate_columns(df, path, format_name)
+    except Exception as e:
+        if last_exception is not None:
+            raise ValueError(
+                f"Failed to parse {format_name} file '{path}'. "
+                f"Last parse attempt failed with: {type(last_exception).__name__}: {last_exception}"
+            ) from e
+        raise
 
 
 def write_delimited_coordinates(
