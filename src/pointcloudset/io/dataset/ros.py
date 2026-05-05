@@ -40,6 +40,7 @@ Parts of the code are from Willow Garage, Inc.
 from __future__ import annotations
 
 import datetime
+from datetime import UTC
 import math
 import struct
 import sys
@@ -129,7 +130,7 @@ def dataset_from_ros(
             frame = frame + 1
             if start_frame_number <= frame < end_frame_number:
                 # Keep timestamps timezone-independent by using UTC epoch conversion.
-                timestamp_datetime = datetime.datetime.utcfromtimestamp(timestamp * 1e-9)
+                timestamp_datetime = datetime.datetime.fromtimestamp(timestamp * 1e-9, UTC)
                 timestamps.append(timestamp_datetime)
 
                 if rosversion == 1:

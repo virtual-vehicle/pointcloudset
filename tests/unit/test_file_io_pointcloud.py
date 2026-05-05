@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 from pathlib import Path
 
 import laspy
@@ -22,21 +22,21 @@ def test_from_file_las(testlas1: Path):
     check.equal(type(pointcloud), PointCloud)
     testdata = testlas1.as_posix()
     check.equal(pointcloud.orig_file, testdata)
-    check.less_equal(pointcloud.timestamp, datetime.now())
+    check.less_equal(pointcloud.timestamp, datetime.now(UTC))
     check.equal(len(list(pointcloud.data.columns)), 13)
 
 
 def test_from_file_las_timestamp_file(testlas1: Path):
     pointcloud = pointcloudset.PointCloud.from_file(testlas1, timestamp="from_file")
     check.equal(type(pointcloud), PointCloud)
-    file_timestamp = datetime.utcfromtimestamp(testlas1.stat().st_mtime)
+    file_timestamp = datetime.fromtimestamp(testlas1.stat().st_mtime, UTC)
     check.equal(pointcloud.timestamp, file_timestamp)
 
 
 def test_from_file_las_timestamp_default(testlas1: Path):
     pointcloud = pointcloudset.PointCloud.from_file(testlas1)
     check.equal(type(pointcloud), PointCloud)
-    file_timestamp = datetime.utcfromtimestamp(testlas1.stat().st_mtime)
+    file_timestamp = datetime.fromtimestamp(testlas1.stat().st_mtime, UTC)
     check.equal(pointcloud.timestamp, file_timestamp)
 
 

@@ -1,6 +1,7 @@
 import datetime
 
 import numpy as np
+from datetime import UTC
 import pandas as pd
 import pytest
 import pytest_check as check
@@ -55,8 +56,8 @@ def test_get_pointcloud_number_from_time(test_sets):
 def test_getitem_timerange(testset: Dataset):
     check.equal(len(testset), 2)
     dataset = testset.get_pointclouds_between_timestamps(
-        datetime.datetime(2020, 6, 22, 13, 40, 42, 657267),
-        datetime.datetime(2020, 6, 22, 13, 40, 42, 755912),
+        datetime.datetime(2020, 6, 22, 13, 40, 42, 657267, tzinfo=UTC),
+        datetime.datetime(2020, 6, 22, 13, 40, 42, 755912, tzinfo=UTC),
     )
     check.equal(len(dataset), 2)
     check.equal(type(dataset[0:2]), Dataset)
@@ -89,13 +90,13 @@ def test_repr(testset: Dataset):
 def test_start_time(testset: Dataset):
     st = testset.start_time
     check.is_instance(st, datetime.datetime)
-    check.equal(st, datetime.datetime(2020, 6, 22, 13, 40, 42, 657267))
+    check.equal(st, datetime.datetime(2020, 6, 22, 13, 40, 42, 657267, tzinfo=UTC))
 
 
 def test_end_time(testset: Dataset):
     et = testset.end_time
     check.is_instance(et, datetime.datetime)
-    check.equal(et, datetime.datetime(2020, 6, 22, 13, 40, 42, 755912))
+    check.equal(et, datetime.datetime(2020, 6, 22, 13, 40, 42, 755912, tzinfo=UTC))
 
 
 @pytest.mark.parametrize("test_sets", ["testset", "testdataset_vz6000"], indirect=True)

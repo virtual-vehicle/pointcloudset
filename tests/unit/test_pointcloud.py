@@ -238,6 +238,8 @@ def test_testpointcloud_withzero_data(
         typical_columns,
     )
     check.equal(data.shape, (131072, 9))
+    # Convert reference data columns to match pandas 3.0+ string dtype
+    reference_data_with_zero_dataframe.columns = reference_data_with_zero_dataframe.columns.astype(str)
     assert_frame_equal(data, reference_data_with_zero_dataframe)
 
 

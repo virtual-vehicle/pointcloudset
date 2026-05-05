@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime
+from datetime import UTC
 import warnings
 from pathlib import Path
 from typing import Literal, Union
@@ -81,7 +82,7 @@ class PointCloud(PointCloudCore):
             raise ValueError("Unsupported file format; supported formats are: {}".format(list(POINTCLOUD_FROM_FILE)))
         file_path_str = file_path.as_posix()
         if timestamp == "from_file":
-            timestamp = datetime.datetime.utcfromtimestamp(file_path.stat().st_mtime)
+            timestamp = datetime.datetime.fromtimestamp(file_path.stat().st_mtime, UTC)
         data = POINTCLOUD_FROM_FILE[ext](file_path, **kwargs)
         return cls(data=data, orig_file=file_path_str, timestamp=timestamp)
 

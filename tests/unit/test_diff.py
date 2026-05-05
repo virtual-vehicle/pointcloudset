@@ -82,7 +82,9 @@ def test__calculate_single_point_difference_no_overlap(
         testpointcloud_mini_real_other_original_id,
         original_id=6008,
     )
-    test = res.values[0]
+    # Check that all difference columns (excluding original_id) are NaN
+    difference_cols = [col for col in res.columns if col != "original_id"]
+    test = res[difference_cols].values[0]
     check.is_instance(res, pd.DataFrame)
     check.equal(np.all(np.isnan(test)), True)
 
