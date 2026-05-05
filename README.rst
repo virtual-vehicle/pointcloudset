@@ -150,7 +150,7 @@ You can also generate a dataset from multiple pointclouds form a large variety o
       "test_tree.las",
    )
    urllib.request.urlretrieve(
-      "https://github.com/virtual-vehicle/pointcloudset/raw/master/tests/testdata/las_files/test_tree.pcd",
+      "https://github.com/virtual-vehicle/pointcloudset/raw/master/tests/testdata/pcd_files/test_tree.pcd",
       "test_tree.pcd",
    )
 
