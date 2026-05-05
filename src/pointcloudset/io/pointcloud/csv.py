@@ -15,7 +15,7 @@ def read_csv(file_path: Path | str, **kwargs):
         format_name="CSV",
         default_sep=None,
         fallback_sep=None,
-        normalize_xyz=kwargs.pop("normalize_xyz", True),
+        normalize_xyz=kwargs.pop("normalize_xyz", False),
         **kwargs,
     )
 

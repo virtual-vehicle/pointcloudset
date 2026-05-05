@@ -14,16 +14,22 @@ LAS_VERSION = "1.4"
 LAS_PRECISION = 0.000001  # m
 
 
-def read_las(file_path: Path | str, normalize_xyz: bool = True) -> pd.DataFrame:
-    las = laspy.read(Path(file_path))
+def read_las(file_path: Path | str, normalize_xyz: bool = False) -> pd.DataFrame:
+    path = Path(file_path)
+    if not normalize_xyz:
+        raise ValueError(
+            f"LAS file '{path}' stores coordinates as X/Y/Z. "
+            "pointcloudset expects lowercase x/y/z internally. "
+            "Pass normalize_xyz=True to convert X/Y/Z to x/y/z."
+        )
+
+    las = laspy.read(path)
     raw = las.points.array
 
-    x_name, y_name, z_name = ("x", "y", "z") if normalize_xyz else ("X", "Y", "Z")
-
     data = {
-        x_name: np.asarray(las.x),
-        y_name: np.asarray(las.y),
-        z_name: np.asarray(las.z),
+        "x": np.asarray(las.x),
+        "y": np.asarray(las.y),
+        "z": np.asarray(las.z),
     }
     for name in raw.dtype.names:
         if name in {"X", "Y", "Z"}:

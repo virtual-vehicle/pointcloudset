@@ -13,7 +13,7 @@ Changed
 - **BREAKING**: PointCloud timestamps are now timezone-aware (``tzinfo=UTC``) instead of naive UTC. If your code compares or serializes timestamps, you must update datetime comparisons to use timezone-aware datetimes or call ``.replace(tzinfo=None)`` for naive equivalents.
 - Point cloud file IO is now handled natively for ``csv``, ``las``, ``xyz``, and ``pcd``.
 - ``csv`` and ``xyz`` text file handling now support both headered and headerless files; ``csv`` writes headers by default and ``xyz`` writes headerless output by default.
-- Reading functions now support ``normalize_xyz`` (default ``True``): uppercase coordinate headers (``X``, ``Y``, ``Z``) are normalized to lowercase ``x``, ``y``, ``z`` for internal consistency. Set ``normalize_xyz=False`` to keep original coordinate header casing.
+- Reading functions now support ``normalize_xyz`` (default ``False``): files with uppercase coordinate headers (``X``, ``Y``, ``Z``) now fail with a hint unless you pass ``normalize_xyz=True`` to convert them to lowercase ``x``, ``y``, ``z``.
 - ``PointCloud`` now uses an internal native geometry view instead of depending on ``pyntcloud``.
 - Pandas support has been updated: pandas ``2.x`` and ``3.x`` are supported; pandas ``1.x`` is no longer supported.
 

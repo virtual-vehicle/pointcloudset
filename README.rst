@@ -142,9 +142,9 @@ You can also generate a dataset from multiple pointclouds from formats like las,
 ``PointCloud.to_file(...)`` currently writes ``csv``, ``xyz``, ``las``, and ``pcd``.
 For text formats, ``csv`` defaults to writing a header and also supports ``header=False``;
 ``xyz`` defaults to headerless output and also supports ``header=True``.
-When reading files, ``PointCloud.from_file(...)`` supports ``normalize_xyz`` (default ``True``):
-coordinate headers ``X``, ``Y``, ``Z`` are normalized to lowercase ``x``, ``y``, ``z`` so internal processing is consistent.
-Set ``normalize_xyz=False`` to keep the original coordinate header casing.
+When reading files, ``PointCloud.from_file(...)`` supports ``normalize_xyz`` (default ``False``).
+If a file uses uppercase coordinate headers ``X``, ``Y``, ``Z``, reading fails unless you pass ``normalize_xyz=True``.
+This makes the conversion explicit while keeping internal processing consistent with lowercase ``x``, ``y``, ``z``.
 
 .. code-block:: python
 
@@ -161,7 +161,7 @@ Set ``normalize_xyz=False`` to keep the original coordinate header casing.
       "test_tree.pcd",
    )
 
-   las_pc = pcs.PointCloud.from_file(Path("test_tree.las"))
+   las_pc = pcs.PointCloud.from_file(Path("test_tree.las"), normalize_xyz=True)
    pcd_pc = pcs.PointCloud.from_file(Path("test_tree.pcd"))
    dataset = pcs.Dataset.from_instance("pointclouds", [las_pc, pcd_pc])
    pointcloud = dataset[1]

@@ -17,7 +17,7 @@ def read_xyz(file_path: Path | str, **kwargs) -> pd.DataFrame:
         format_name="XYZ",
         default_sep=None,
         fallback_sep=r"\s+",
-        normalize_xyz=kwargs.pop("normalize_xyz", True),
+        normalize_xyz=kwargs.pop("normalize_xyz", False),
         **kwargs,
     )
 

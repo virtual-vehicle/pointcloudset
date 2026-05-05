@@ -28,13 +28,25 @@ def ensure_coordinate_columns(df: pd.DataFrame, file_path: Path, format_name: st
     return df
 
 
+def _raise_uppercase_xyz_error(file_path: Path, format_name: str) -> None:
+    raise ValueError(
+        f"{format_name} file '{file_path}' contains coordinate columns X/Y/Z. "
+        "pointcloudset expects lowercase x/y/z internally. "
+        "Pass normalize_xyz=True to convert X/Y/Z to x/y/z."
+    )
+
+
 def _normalize_xyz_columns(
     df: pd.DataFrame,
     *,
     normalize_xyz: bool,
     file_path: Path,
     format_name: str,
+    allow_infer_coordinate_columns: bool = True,
 ) -> pd.DataFrame:
+    if {"x", "y", "z"}.issubset(set(df.columns)):
+        return df
+
     lower_to_original: dict[str, str] = {}
     for col in df.columns:
         col_str = str(col)
@@ -44,13 +56,9 @@ def _normalize_xyz_columns(
 
     if {"x", "y", "z"}.issubset(lower_to_original.keys()):
         if not normalize_xyz:
-            return df
+            _raise_uppercase_xyz_error(file_path, format_name)
 
-        rename_map = {
-            original: lowered
-            for lowered, original in lower_to_original.items()
-            if original != lowered
-        }
+        rename_map = {original: lowered for lowered, original in lower_to_original.items() if original != lowered}
         if rename_map:
             return df.rename(columns=rename_map)
         return df
@@ -58,9 +66,9 @@ def _normalize_xyz_columns(
     if df.shape[1] < 3:
         raise ValueError(f"{format_name} file '{file_path}' must provide at least three columns for x, y, z")
 
-    if not normalize_xyz:
+    if not allow_infer_coordinate_columns:
         raise ValueError(
-            f"{format_name} file '{file_path}' must contain x, y, z columns when normalize_xyz=False"
+            f"{format_name} file '{file_path}' was read with explicit column names, but columns x, y, z are required."
         )
 
     return ensure_coordinate_columns(df, file_path, format_name)
@@ -72,7 +80,7 @@ def read_delimited_coordinates(
     format_name: str,
     default_sep: str | None,
     fallback_sep: str | None = None,
-    normalize_xyz: bool = True,
+    normalize_xyz: bool = False,
     **kwargs,
 ) -> pd.DataFrame:
     path = Path(file_path)
@@ -80,7 +88,13 @@ def read_delimited_coordinates(
     # If users explicitly provide column names, keep those names untouched.
     if "names" in kwargs:
         df = pd.read_csv(path, **kwargs)
-        return _normalize_xyz_columns(df, normalize_xyz=normalize_xyz, file_path=path, format_name=format_name)
+        return _normalize_xyz_columns(
+            df,
+            normalize_xyz=normalize_xyz,
+            file_path=path,
+            format_name=format_name,
+            allow_infer_coordinate_columns=False,
+        )
 
     if any(key in kwargs for key in ("sep", "delimiter", "header")):
         df = pd.read_csv(path, **kwargs)
@@ -99,13 +113,13 @@ def read_delimited_coordinates(
     for parse_kwargs in parse_attempts:
         try:
             df = pd.read_csv(path, **parse_kwargs)
-            lower_cols = {str(col).lower() for col in df.columns}
-            if {"x", "y", "z"}.issubset(lower_cols):
-                return _normalize_xyz_columns(df, normalize_xyz=normalize_xyz, file_path=path, format_name=format_name)
-            if not normalize_xyz and {"x", "y", "z"}.issubset(set(df.columns)):
-                return df
         except Exception as e:
             last_exception = e
+            continue
+
+        lower_cols = {str(col).lower() for col in df.columns}
+        if {"x", "y", "z"}.issubset(lower_cols):
+            return _normalize_xyz_columns(df, normalize_xyz=normalize_xyz, file_path=path, format_name=format_name)
 
     headerless_kwargs: dict[str, object] = {"header": None}
     if fallback_sep is not None:

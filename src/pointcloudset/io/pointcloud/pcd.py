@@ -65,7 +65,10 @@ def _to_pcd_numeric_array(series: pd.Series, field_name: str) -> np.ndarray:
     return values
 
 
-def _normalize_xyz_pcd_columns(df: pd.DataFrame, normalize_xyz: bool) -> pd.DataFrame:
+def _normalize_xyz_pcd_columns(df: pd.DataFrame, normalize_xyz: bool, file_path: Path) -> pd.DataFrame:
+    if {"x", "y", "z"}.issubset(df.columns):
+        return df
+
     mapping: dict[str, str] = {}
     for col in df.columns:
         col_str = str(col)
@@ -77,23 +80,24 @@ def _normalize_xyz_pcd_columns(df: pd.DataFrame, normalize_xyz: bool) -> pd.Data
         raise ValueError("PCD file must contain x, y and z columns")
 
     if not normalize_xyz:
-        return df
+        raise ValueError(
+            f"PCD file '{file_path}' contains coordinate columns X/Y/Z. "
+            "pointcloudset expects lowercase x/y/z internally. "
+            "Pass normalize_xyz=True to convert X/Y/Z to x/y/z."
+        )
 
-    rename_map = {
-        original: lowered
-        for lowered, original in mapping.items()
-        if original != lowered
-    }
+    rename_map = {original: lowered for lowered, original in mapping.items() if original != lowered}
     if rename_map:
         return df.rename(columns=rename_map)
     return df
 
 
-def read_pcd(file_path: Path | str, normalize_xyz: bool = True) -> pd.DataFrame:
-    pointcloud = PcdPointCloud.from_path(Path(file_path))
+def read_pcd(file_path: Path | str, normalize_xyz: bool = False) -> pd.DataFrame:
+    path = Path(file_path)
+    pointcloud = PcdPointCloud.from_path(path)
     df = pd.DataFrame.from_records(pointcloud.pc_data)
     df = _sanitize_pcd_columns(df)
-    return _normalize_xyz_pcd_columns(df, normalize_xyz=normalize_xyz)
+    return _normalize_xyz_pcd_columns(df, normalize_xyz=normalize_xyz, file_path=path)
 
 
 def write_pcd(pointcloud: PointCloud, file_path: Path) -> None:

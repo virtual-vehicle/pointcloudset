@@ -23,7 +23,7 @@ def test_from_file_error(file, error):
 
 
 def test_from_file_las(testlas1: Path):
-    pointcloud = pointcloudset.PointCloud.from_file(testlas1)
+    pointcloud = pointcloudset.PointCloud.from_file(testlas1, normalize_xyz=True)
     check.equal(type(pointcloud), PointCloud)
     testdata = testlas1.as_posix()
     check.equal(pointcloud.orig_file, testdata)
@@ -32,14 +32,14 @@ def test_from_file_las(testlas1: Path):
 
 
 def test_from_file_las_timestamp_file(testlas1: Path):
-    pointcloud = pointcloudset.PointCloud.from_file(testlas1, timestamp="from_file")
+    pointcloud = pointcloudset.PointCloud.from_file(testlas1, timestamp="from_file", normalize_xyz=True)
     check.equal(type(pointcloud), PointCloud)
     file_timestamp = datetime.fromtimestamp(testlas1.stat().st_mtime, UTC)
     check.equal(pointcloud.timestamp, file_timestamp)
 
 
 def test_from_file_las_timestamp_default(testlas1: Path):
-    pointcloud = pointcloudset.PointCloud.from_file(testlas1)
+    pointcloud = pointcloudset.PointCloud.from_file(testlas1, normalize_xyz=True)
     check.equal(type(pointcloud), PointCloud)
     file_timestamp = datetime.fromtimestamp(testlas1.stat().st_mtime, UTC)
     check.equal(pointcloud.timestamp, file_timestamp)
@@ -47,20 +47,25 @@ def test_from_file_las_timestamp_default(testlas1: Path):
 
 def test_from_file_las_timestamp_insert(testlas1: Path):
     timestamp = datetime(2022, 1, 1, 1, 1)
-    pointcloud = pointcloudset.PointCloud.from_file(testlas1, timestamp=timestamp)
+    pointcloud = pointcloudset.PointCloud.from_file(testlas1, timestamp=timestamp, normalize_xyz=True)
     check.equal(type(pointcloud), PointCloud)
     check.equal(pointcloud.timestamp, timestamp)
 
 
 def test_from_file_las_vz6000_1(testlasvz6000_1: Path):
-    pointcloud = pointcloudset.PointCloud.from_file(testlasvz6000_1)
+    pointcloud = pointcloudset.PointCloud.from_file(testlasvz6000_1, normalize_xyz=True)
     check.equal(type(pointcloud), PointCloud)
     check.is_false(pointcloud.has_original_id)
 
 
 def test_from_file_las_vz6000_2(testlasvz6000_2: Path):
-    pointcloud = pointcloudset.PointCloud.from_file(testlasvz6000_2)
+    pointcloud = pointcloudset.PointCloud.from_file(testlasvz6000_2, normalize_xyz=True)
     check.equal(type(pointcloud), PointCloud)
+
+
+def test_from_file_las_without_normalization_fails(testlas1: Path):
+    with pytest.raises(ValueError, match="Pass normalize_xyz=True to convert X/Y/Z to x/y/z"):
+        pointcloudset.PointCloud.from_file(testlas1)
 
 
 def test_from_file_xyz(testxyz_diamond: Path):
@@ -77,6 +82,18 @@ def test_from_file_xyz_with_header(testxyz_with_header: Path):
     check.equal(type(pointcloud), PointCloud)
     check.equal(list(pointcloud.data.columns), ["x", "y", "z", "intensity"])
     np.testing.assert_allclose(pointcloud.data[["x", "y", "z"]].to_numpy(), [[0.5, 0.0, 0.5], [0.0, 0.5, 0.5]])
+
+
+def test_from_file_xyz_with_header_upper_normalized(testxyz_with_header_upper: Path):
+    pointcloud = pointcloudset.PointCloud.from_file(testxyz_with_header_upper, normalize_xyz=True)
+    check.equal(type(pointcloud), PointCloud)
+    check.equal(list(pointcloud.data.columns), ["x", "y", "z", "Intensity"])
+    np.testing.assert_allclose(pointcloud.data[["x", "y", "z"]].to_numpy(), [[0.5, 0.0, 0.5], [0.0, 0.5, 0.5]])
+
+
+def test_from_file_xyz_with_header_upper_without_normalization_fails(testxyz_with_header_upper: Path):
+    with pytest.raises(ValueError, match="Pass normalize_xyz=True to convert X/Y/Z to x/y/z"):
+        pointcloudset.PointCloud.from_file(testxyz_with_header_upper, normalize_xyz=False)
 
 
 def test_from_file_csv_diamond(testcsv_diamond: Path):
@@ -102,6 +119,28 @@ def test_from_file_csv_with_header(testcsv_with_header: Path):
     check.equal(type(pointcloud), PointCloud)
     check.equal(list(pointcloud.data.columns), ["x", "y", "z", "intensity"])
     np.testing.assert_allclose(pointcloud.data[["x", "y", "z"]].to_numpy(), [[0.5, 0.0, 0.5], [0.0, 0.5, 0.5]])
+
+
+def test_from_file_csv_with_header_upper_normalized(testcsv_with_header_upper: Path):
+    pointcloud = pointcloudset.PointCloud.from_file(testcsv_with_header_upper, normalize_xyz=True)
+    check.equal(type(pointcloud), PointCloud)
+    check.equal(list(pointcloud.data.columns), ["x", "y", "z", "intensity"])
+    np.testing.assert_allclose(pointcloud.data[["x", "y", "z"]].to_numpy(), [[0.5, 0.0, 0.5], [0.0, 0.5, 0.5]])
+
+
+def test_from_file_csv_with_header_upper_without_normalization_fails(testcsv_with_header_upper: Path):
+    with pytest.raises(ValueError, match="Pass normalize_xyz=True to convert X/Y/Z to x/y/z"):
+        pointcloudset.PointCloud.from_file(testcsv_with_header_upper, normalize_xyz=False)
+
+
+def test_read_csv_with_header_upper_without_normalization(testcsv_with_header_upper: Path):
+    with pytest.raises(ValueError, match="Pass normalize_xyz=True to convert X/Y/Z to x/y/z"):
+        read_csv(testcsv_with_header_upper, normalize_xyz=False)
+
+
+def test_read_xyz_with_header_upper_without_normalization(testxyz_with_header_upper: Path):
+    with pytest.raises(ValueError, match="Pass normalize_xyz=True to convert X/Y/Z to x/y/z"):
+        read_xyz(testxyz_with_header_upper, normalize_xyz=False)
 
 
 def test_to_csv(testpointcloud: PointCloud, tmp_path: Path):
@@ -190,7 +229,7 @@ def test_to_las(testpointcloud: PointCloud, tmp_path: Path):
     testfile_name = tmp_path.joinpath("just_test.las")
     testpointcloud.to_file(file_path=testfile_name)
     check.equal(testfile_name.exists(), True)
-    read_pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+    read_pointcloud = pointcloudset.PointCloud.from_file(testfile_name, normalize_xyz=True)
     expected_columns = {
         "x",
         "y",
@@ -344,22 +383,22 @@ def test_pcd_write_sanitizes_incompatible_field_names(tmp_path: Path):
 
 
 def test_las_read_write_read1(testlas1: Path, tmp_path: Path):
-    pointcloud = pointcloudset.PointCloud.from_file(testlas1, timestamp="from_file")
+    pointcloud = pointcloudset.PointCloud.from_file(testlas1, timestamp="from_file", normalize_xyz=True)
     testfile_name = tmp_path.joinpath("just_test.las")
     check.equal(type(pointcloud), PointCloud)
     pointcloud.to_file(file_path=testfile_name)
     check.equal(testfile_name.exists(), True)
-    read_pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+    read_pointcloud = pointcloudset.PointCloud.from_file(testfile_name, normalize_xyz=True)
     check.equal(type(read_pointcloud), PointCloud)
 
 
 def test_las_read_write_read_tree(test_las_tree: Path, tmp_path: Path):
-    pointcloud = pointcloudset.PointCloud.from_file(test_las_tree, timestamp="from_file")
+    pointcloud = pointcloudset.PointCloud.from_file(test_las_tree, timestamp="from_file", normalize_xyz=True)
     testfile_name = tmp_path.joinpath("just_test.las")
     check.equal(type(pointcloud), PointCloud)
     pointcloud.to_file(file_path=testfile_name)
     check.equal(testfile_name.exists(), True)
-    read_pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+    read_pointcloud = pointcloudset.PointCloud.from_file(testfile_name, normalize_xyz=True)
     check.equal(type(read_pointcloud), PointCloud)
 
 
@@ -367,7 +406,7 @@ def test_from_file_csv_uppercase_xyz_normalized(tmp_path: Path):
     testfile_name = tmp_path.joinpath("uppercase_xyz.csv")
     testfile_name.write_text("X,Y,Z,Intensity\n1,2,3,10\n4,5,6,20\n")
 
-    pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+    pointcloud = pointcloudset.PointCloud.from_file(testfile_name, normalize_xyz=True)
     check.equal(list(pointcloud.data.columns), ["x", "y", "z", "Intensity"])
 
 
@@ -375,10 +414,10 @@ def test_read_csv_uppercase_xyz_without_normalization(tmp_path: Path):
     testfile_name = tmp_path.joinpath("uppercase_xyz.csv")
     testfile_name.write_text("X,Y,Z,Intensity\n1,2,3,10\n")
 
-    df = read_csv(testfile_name, normalize_xyz=False)
-    check.equal(list(df.columns), ["X", "Y", "Z", "Intensity"])
+    with pytest.raises(ValueError, match="Pass normalize_xyz=True to convert X/Y/Z to x/y/z"):
+        read_csv(testfile_name, normalize_xyz=False)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Pass normalize_xyz=True to convert X/Y/Z to x/y/z"):
         pointcloudset.PointCloud.from_file(testfile_name, normalize_xyz=False)
 
 
@@ -386,7 +425,7 @@ def test_from_file_xyz_uppercase_xyz_normalized(tmp_path: Path):
     testfile_name = tmp_path.joinpath("uppercase_xyz.xyz")
     testfile_name.write_text("X Y Z Intensity\n1 2 3 10\n4 5 6 20\n")
 
-    pointcloud = pointcloudset.PointCloud.from_file(testfile_name)
+    pointcloud = pointcloudset.PointCloud.from_file(testfile_name, normalize_xyz=True)
     check.equal(list(pointcloud.data.columns), ["x", "y", "z", "Intensity"])
 
 
@@ -394,14 +433,13 @@ def test_read_xyz_uppercase_xyz_without_normalization(tmp_path: Path):
     testfile_name = tmp_path.joinpath("uppercase_xyz.xyz")
     testfile_name.write_text("X Y Z Intensity\n1 2 3 10\n")
 
-    df = read_xyz(testfile_name, normalize_xyz=False)
-    check.equal(list(df.columns), ["X", "Y", "Z", "Intensity"])
+    with pytest.raises(ValueError, match="Pass normalize_xyz=True to convert X/Y/Z to x/y/z"):
+        read_xyz(testfile_name, normalize_xyz=False)
 
 
 def test_read_las_without_normalize_xyz_has_uppercase_columns(testlas1: Path):
-    df = read_las(testlas1, normalize_xyz=False)
-    check.is_true({"X", "Y", "Z"}.issubset(df.columns))
-    check.is_false({"x", "y", "z"}.issubset(df.columns))
+    with pytest.raises(ValueError, match="Pass normalize_xyz=True to convert X/Y/Z to x/y/z"):
+        read_las(testlas1, normalize_xyz=False)
 
 
 def test_read_pcd_uppercase_xyz_normalized(tmp_path: Path):
@@ -418,7 +456,7 @@ def test_read_pcd_uppercase_xyz_normalized(tmp_path: Path):
     pcd = PcdPointCloud.from_points(arrays, fields=fields, types=types)
     pcd.save(pcd_file)
 
-    df = read_pcd(pcd_file)
+    df = read_pcd(pcd_file, normalize_xyz=True)
     check.equal(list(df.columns), ["x", "y", "z", "Intensity"])
 
 
@@ -436,5 +474,5 @@ def test_read_pcd_uppercase_xyz_without_normalization(tmp_path: Path):
     pcd = PcdPointCloud.from_points(arrays, fields=fields, types=types)
     pcd.save(pcd_file)
 
-    df = read_pcd(pcd_file, normalize_xyz=False)
-    check.equal(list(df.columns), ["X", "Y", "Z", "Intensity"])
+    with pytest.raises(ValueError, match="Pass normalize_xyz=True to convert X/Y/Z to x/y/z"):
+        read_pcd(pcd_file, normalize_xyz=False)
