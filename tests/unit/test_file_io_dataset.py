@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 from pathlib import Path
+from types import SimpleNamespace
 
 import numpy as np
 import pandas as pd
@@ -10,6 +11,7 @@ from pandas._testing import assert_frame_equal
 
 from pointcloudset import Dataset, PointCloud
 from pointcloudset.io.dataset import dir
+from pointcloudset.io.dataset import ros as ros_io
 
 
 def test_from_bag_wrong_topic(testbag1):
@@ -176,3 +178,63 @@ def test_dataset_vz6000(testdataset_vz6000: Dataset):
     check.is_instance(testdataset_vz6000, Dataset)
     check.is_instance(testdataset_vz6000[0], PointCloud)
     check.is_false(testdataset_vz6000[0].has_original_id)
+
+
+def test_dataset_from_ros_invalid_extension_raises(testbag1: Path):
+    with pytest.raises(ValueError, match="unexpected file extension"):
+        ros_io.dataset_from_ros(testbag1, topic="/os1_cloud_node/points", ext="INVALID")
+
+
+def test_dataframe_from_message_keep_zeros_false_filters_and_adds_original_id(monkeypatch: pytest.MonkeyPatch):
+    fields = [
+        SimpleNamespace(name="x", datatype=7),
+        SimpleNamespace(name="y", datatype=7),
+        SimpleNamespace(name="z", datatype=7),
+        SimpleNamespace(name="intensity", datatype=7),
+    ]
+    message = SimpleNamespace(fields=fields)
+
+    monkeypatch.setattr(
+        ros_io,
+        "_read_points",
+        lambda _message: iter(
+            [
+                (0.0, 0.0, 0.0, 1.0),
+                (1.0, 2.0, 3.0, 4.0),
+            ]
+        ),
+    )
+
+    df = ros_io._dataframe_from_message(message, keep_zeros=False)
+
+    check.equal(list(df.columns), ["x", "y", "z", "intensity", "original_id"])
+    check.equal(len(df), 1)
+    check.equal(df.loc[0, "x"], 1.0)
+    check.equal(df.loc[0, "original_id"], 1)
+    check.equal(str(df["original_id"].dtype), "uint32")
+
+
+def test_dataframe_from_message_keep_zeros_true_keeps_rows_without_original_id(monkeypatch: pytest.MonkeyPatch):
+    fields = [
+        SimpleNamespace(name="x", datatype=7),
+        SimpleNamespace(name="y", datatype=7),
+        SimpleNamespace(name="z", datatype=7),
+    ]
+    message = SimpleNamespace(fields=fields)
+
+    monkeypatch.setattr(
+        ros_io,
+        "_read_points",
+        lambda _message: iter(
+            [
+                (0.0, 0.0, 0.0),
+                (1.0, 2.0, 3.0),
+            ]
+        ),
+    )
+
+    df = ros_io._dataframe_from_message(message, keep_zeros=True)
+
+    check.equal(list(df.columns), ["x", "y", "z"])
+    check.equal(len(df), 2)
+    check.is_false("original_id" in df.columns)
