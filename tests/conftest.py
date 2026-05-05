@@ -63,6 +63,26 @@ def testxyz_diamond():
 
 
 @pytest.fixture()
+def testxyz_with_header():
+    return Path(__file__).parent.absolute() / "testdata/xyz/with_header.xyz"
+
+
+@pytest.fixture()
+def testcsv_diamond():
+    return Path(__file__).parent.absolute() / "testdata/csv/diamond.csv"
+
+
+@pytest.fixture()
+def testcsv_headerless():
+    return Path(__file__).parent.absolute() / "testdata/csv/headerless.csv"
+
+
+@pytest.fixture()
+def testcsv_with_header():
+    return Path(__file__).parent.absolute() / "testdata/csv/with_header.csv"
+
+
+@pytest.fixture()
 def testpcd_tree():
     return Path(__file__).parent.absolute() / "testdata/pcd_files/test_tree.pcd"
 
