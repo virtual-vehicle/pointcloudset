@@ -34,20 +34,22 @@ ruff:
 
 # Auto-fix lint issues
 [group('qa')]
-ruff-fix:
+ruff_fix:
     uv run --group dev ruff check src tests --fix
 
 
 
 # Sort imports and forma[group('qa')]
-sort-imports:
+[group('qa')]
+ruff_format:
     uv run --group dev ruff check --select I --fix .
     uv run --group dev ruff format .
 
 # Remove local artifacts
 [group('qa')]
 clean:
-    py3clean .
+    find . -type f -name "*.pyc" -delete
+    find . -type d -name "__pycache__" -exec rm -rf {} +
     rm -rf doc/sphinx/build doc/sphinx/source/python-api
 
 # Bump patch release
