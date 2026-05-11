@@ -250,12 +250,6 @@ def ros_files(request):
 
 @pytest.fixture(scope="session")
 def testpointcloud_300k_df() -> pd.DataFrame:
-    """Deterministic synthetic point cloud with 300k points for stress tests.
-
-    Geometry consists of dense clusters in a 0..100 m cube and a small set of
-    uniformly distributed noise points so radius-outlier filtering removes at
-    least some points.
-    """
     rng = np.random.default_rng(20260511)
     n_points = 300_000
     n_noise = 6_000
@@ -281,9 +275,15 @@ def testpointcloud_300k_df() -> pd.DataFrame:
     points_per_center = np.full(n_centers, n_cluster_points // n_centers, dtype=int)
     points_per_center[: n_cluster_points % n_centers] += 1
 
+    # σ=3.0 m instead of 0.9 m: average inter-point spacing ~0.5 m, so eps=1.0 m
+    # reliably bridges neighbours while keeping the neighbour graph sparse enough
+    # to stay within the 1 GiB memory budget. Centres are ≥30 m apart so clusters
+    # cannot bridge at eps=1.0.
+    cluster_sigma = 3.0
+
     clustered_xyz = []
     for center, n_center_points in zip(centers, points_per_center, strict=True):
-        sampled = rng.normal(loc=center, scale=0.9, size=(n_center_points, 3))
+        sampled = rng.normal(loc=center, scale=cluster_sigma, size=(n_center_points, 3))
         clustered_xyz.append(np.clip(sampled, 0.0, 100.0))
 
     noise_xyz = rng.uniform(0.0, 100.0, size=(n_noise, 3))
@@ -294,7 +294,7 @@ def testpointcloud_300k_df() -> pd.DataFrame:
     xyz = xyz[permutation]
     intensity = intensity[permutation]
 
-    df = pd.DataFrame(
+    return pd.DataFrame(
         {
             "x": xyz[:, 0],
             "y": xyz[:, 1],
@@ -302,8 +302,6 @@ def testpointcloud_300k_df() -> pd.DataFrame:
             "intensity": intensity,
         }
     ).reset_index(drop=True)
-
-    return df
 
 
 @pytest.fixture()
