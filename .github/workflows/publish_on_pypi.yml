@@ -26,4 +26,3 @@ jobs:
         run: uv run just publish-pypi
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-
