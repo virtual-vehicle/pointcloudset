@@ -466,10 +466,11 @@ class PointCloud(PointCloudCore):
                 or the point cloud is empty.
 
         Notes:
-            Peak memory scales with the number of core-to-core edges, not the
-            full neighbour graph. For point clouds where every point has many
-            thousands of neighbours within ``eps`` (very dense clusters relative
-            to ``eps``), consider voxel-downsampling before clustering.
+            This implementation is usually more memory efficient than building
+            full per-point neighbour lists, but Stage 2 still calls
+            ``KDTree.query_pairs(...)`` globally. In very dense clouds relative
+            to ``eps``, that call can materialize a large edge array.
+            Consider voxel-downsampling before clustering in that case.
         """
         if eps <= 0:
             raise ValueError(f"eps must be positive, got {eps}")
@@ -495,9 +496,9 @@ class PointCloud(PointCloudCore):
             return pandas.DataFrame(np.full(n, -1, dtype=np.intp), columns=["cluster"])
 
         # Stage 2: build the core-point adjacency graph.
-        # query_pairs returns upper-triangle pairs as a single ndarray; filtering to
-        # core-core edges typically removes most pairs in realistic clouds, since
-        # noise and isolated outliers contribute many spurious edges.
+        # query_pairs returns upper-triangle pairs as a single ndarray.
+        # This is usually acceptable, but can still be large in dense clouds.
+        # Filtering to core-core edges happens after materialization.
         pairs = tree.query_pairs(eps, output_type="ndarray")
         if len(pairs) > 0:
             both_core = is_core[pairs[:, 0]] & is_core[pairs[:, 1]]
