@@ -81,9 +81,9 @@ def remove_radius_outlier(pointcloud: PointCloud, nb_points: int, radius: float)
     if radius <= 0:
         raise ValueError(f"radius must be positive, got {radius}")
 
-    xyz = pointcloud.points.xyz
-    if len(xyz) == 0:
+    if len(pointcloud) == 0:
         return pointcloud
+    xyz = np.asarray(pointcloud.xyz)
     counts = KDTree(xyz).query_ball_point(xyz, radius, workers=-1, return_length=True)
     mask = counts > nb_points
     return pointcloud.apply_filter(mask)
