@@ -17,6 +17,7 @@ Changed
 ~~~~~~~
 - ``PointCloud.get_cluster()`` now uses a KDTree + incremental union-find DBSCAN implementation. Core connectivity is built without materializing a global edge list, keeping memory bounded by per-point neighbourhood queries while preserving cluster labels and ``take_cluster(-1, labels)`` noise handling. The union-find inner loops are JIT-compiled with Numba when the optional ``numba`` extra is installed (``pip install pointcloudset[numba]``); a pure-Python fallback is used automatically when Numba is not available.
 - ``numba`` is now an optional dependency. Install with ``pip install pointcloudset[numba]`` to enable JIT-accelerated clustering.
+- ``PointCloud.get_cluster()`` no longer exposes ``memory_budget_mb`` as a public argument. The memory budget is now controlled internally via ``pointcloudset.config.GET_CLUSTER_MEMORY_BUDGET_MB``.
 
 
 0.13.0 - (2026-05-05)

@@ -16,6 +16,7 @@ from pointcloudset.cluster.numba import roots_for_positions, union_pairs
 from pointcloudset.config import (
     GET_CLUSTER_BORDER_QUERY_CHUNK_SIZE,
     GET_CLUSTER_CORE_QUERY_CHUNK_SIZE,
+    GET_CLUSTER_MEMORY_BUDGET_MB,
     PLOTLYSIZELIMIT,
 )
 from pointcloudset.diff import ALL_DIFFS
@@ -461,7 +462,6 @@ class PointCloud(PointCloudCore):
         self,
         eps: float,
         min_points: int,
-        memory_budget_mb: float = 1536.0,
     ) -> pandas.DataFrame:
         """Cluster the PointCloud using DBSCAN.
 
@@ -479,9 +479,6 @@ class PointCloud(PointCloudCore):
             eps (float): Density parameter for neighbour search. Must be positive.
             min_points (int): Minimum number of points (including self) to form
                 a core point. Must be >= 1.
-            memory_budget_mb (float): Approximate memory budget for temporary
-                neighbour materialization in MB. Effective chunk sizes are
-                automatically capped to stay within this budget. Must be > 0.
 
         Returns:
             pandas.DataFrame: One row per point with column ``cluster``. Noise
@@ -502,8 +499,6 @@ class PointCloud(PointCloudCore):
             raise ValueError(f"eps must be positive, got {eps}")
         if min_points < 1:
             raise ValueError(f"min_points must be >= 1, got {min_points}")
-        if memory_budget_mb <= 0:
-            raise ValueError(f"memory_budget_mb must be > 0, got {memory_budget_mb}")
         if len(self) == 0:
             raise ValueError("Cannot cluster an empty PointCloud")
 
@@ -519,7 +514,7 @@ class PointCloud(PointCloudCore):
             end = min(start + chunk, n)
             counts[start:end] = tree.query_ball_point(xyz[start:end], eps, workers=-1, return_length=True)
         is_core = counts >= min_points
-        budget_bytes = int(memory_budget_mb * 1024 * 1024)
+        budget_bytes = int(GET_CLUSTER_MEMORY_BUDGET_MB * 1024 * 1024)
 
         if not is_core.any():
             return pandas.DataFrame(np.full(n, -1, dtype=np.intp), columns=["cluster"])
