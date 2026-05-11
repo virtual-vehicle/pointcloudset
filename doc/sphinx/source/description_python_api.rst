@@ -35,13 +35,14 @@ the package than you should have a look at the other modules.
 
 .. note::
 
-   ``pointcloudset.cluster`` provides the DBSCAN-based clustering used by
-   ``PointCloud.get_cluster()``.  The union-find inner loops are JIT-compiled
-   with `Numba <https://numba.readthedocs.io/>`_ when the optional extra is
-   installed::
+    ``pointcloudset.cluster`` provides the DBSCAN-based clustering used by
+    ``PointCloud.get_cluster()`` via ``pointcloudset.cluster.get_cluster_labels()``.
+    The union-find inner loops are JIT-compiled
+    with `Numba <https://numba.readthedocs.io/>`_ when the optional extra is
+    installed::
 
       pip install pointcloudset[numba]
 
-   Without Numba a pure-Python fallback is used automatically.
+    Without Numba a pure-Python fallback is used automatically.
 
 For a more detailed documentation see the section below.
