@@ -12,6 +12,7 @@ import plotly
 import plotly.express as px
 from scipy.spatial import KDTree
 
+from pointcloudset.cluster.numba import roots_for_positions, union_pairs
 from pointcloudset.config import PLOTLYSIZELIMIT
 from pointcloudset.diff import ALL_DIFFS
 from pointcloudset.filter import ALL_FILTERS
@@ -23,6 +24,25 @@ from pointcloudset.io import (
 )
 from pointcloudset.plot.pointcloud import plot_overlay
 from pointcloudset.pointcloud_core import PointCloudCore
+
+def _budgeted_chunk_size(requested: int, max_neighbors: int, budget_bytes: int) -> int:
+    if requested < 1:
+        return 1
+    if max_neighbors < 1:
+        return requested
+
+    # Conservative estimate for list-of-lists neighbour materialization.
+    est_bytes_per_neighbor = 64
+    est_list_overhead = 128
+    safety_fraction = 0.60
+    per_point_bytes = est_list_overhead + max_neighbors * est_bytes_per_neighbor
+    usable_budget = max(1, int(budget_bytes * safety_fraction))
+    max_points = max(1, usable_budget // max(1, per_point_bytes))
+    return max(1, min(requested, max_points))
+
+
+GET_CLUSTER_CORE_QUERY_CHUNK_SIZE = 1024
+GET_CLUSTER_BORDER_QUERY_CHUNK_SIZE = 4096
 
 
 class PointCloud(PointCloudCore):
@@ -440,8 +460,7 @@ class PointCloud(PointCloudCore):
         self,
         eps: float,
         min_points: int,
-        core_query_chunk_size: int = 8192,
-        border_query_chunk_size: int = 32768,
+        memory_budget_mb: float = 1536.0,
     ) -> pandas.DataFrame:
         """Cluster the PointCloud using DBSCAN.
 
@@ -459,10 +478,9 @@ class PointCloud(PointCloudCore):
             eps (float): Density parameter for neighbour search. Must be positive.
             min_points (int): Minimum number of points (including self) to form
                 a core point. Must be >= 1.
-            core_query_chunk_size (int): Number of core points queried per KDTree
-                batch while building core connectivity. Must be >= 1.
-            border_query_chunk_size (int): Number of non-core points queried per
-                KDTree batch while attaching border points. Must be >= 1.
+            memory_budget_mb (float): Approximate memory budget for temporary
+                neighbour materialization in MB. Effective chunk sizes are
+                automatically capped to stay within this budget. Must be > 0.
 
         Returns:
             pandas.DataFrame: One row per point with column ``cluster``. Noise
@@ -483,10 +501,8 @@ class PointCloud(PointCloudCore):
             raise ValueError(f"eps must be positive, got {eps}")
         if min_points < 1:
             raise ValueError(f"min_points must be >= 1, got {min_points}")
-        if core_query_chunk_size < 1:
-            raise ValueError(f"core_query_chunk_size must be >= 1, got {core_query_chunk_size}")
-        if border_query_chunk_size < 1:
-            raise ValueError(f"border_query_chunk_size must be >= 1, got {border_query_chunk_size}")
+        if memory_budget_mb <= 0:
+            raise ValueError(f"memory_budget_mb must be > 0, got {memory_budget_mb}")
         if len(self) == 0:
             raise ValueError("Cannot cluster an empty PointCloud")
 
@@ -502,6 +518,7 @@ class PointCloud(PointCloudCore):
             end = min(start + chunk, n)
             counts[start:end] = tree.query_ball_point(xyz[start:end], eps, workers=-1, return_length=True)
         is_core = counts >= min_points
+        budget_bytes = int(memory_budget_mb * 1024 * 1024)
 
         if not is_core.any():
             return pandas.DataFrame(np.full(n, -1, dtype=np.intp), columns=["cluster"])
@@ -517,32 +534,17 @@ class PointCloud(PointCloudCore):
         parent = np.arange(n_core, dtype=np.intp)
         rank = np.zeros(n_core, dtype=np.uint8)
 
-        def find_root(i: int) -> int:
-            while parent[i] != i:
-                parent[i] = parent[parent[i]]
-                i = int(parent[i])
-            return i
-
-        def union(a: int, b: int) -> None:
-            root_a = find_root(a)
-            root_b = find_root(b)
-            if root_a == root_b:
-                return
-            if rank[root_a] < rank[root_b]:
-                parent[root_a] = root_b
-            elif rank[root_a] > rank[root_b]:
-                parent[root_b] = root_a
-            else:
-                parent[root_b] = root_a
-                rank[root_a] += 1
-
         # Query in chunks for throughput while keeping memory bounded.
         # Each chunk only materializes neighbour lists for that chunk.
-        edge_chunk = min(n_core, core_query_chunk_size)
+        core_max_neighbors = int(counts[core_idx].max()) if n_core > 0 else 0
+        edge_chunk_limit = _budgeted_chunk_size(GET_CLUSTER_CORE_QUERY_CHUNK_SIZE, core_max_neighbors, budget_bytes)
+        edge_chunk = min(n_core, edge_chunk_limit)
         for start in range(0, n_core, edge_chunk):
             end = min(start + edge_chunk, n_core)
             batch_idx = core_idx[start:end]
             nbr_lists = tree.query_ball_point(xyz[batch_idx], eps, workers=-1)
+            left_pairs: list[int] = []
+            right_pairs: list[int] = []
             for local_i, nbrs in enumerate(nbr_lists):
                 i_global = int(batch_idx[local_i])
                 i_core = int(core_pos[i_global])
@@ -551,25 +553,32 @@ class PointCloud(PointCloudCore):
                         continue
                     j_core = int(core_pos[j_global])
                     if j_core >= 0:
-                        union(i_core, j_core)
+                        left_pairs.append(i_core)
+                        right_pairs.append(j_core)
+
+            if left_pairs:
+                left_arr = np.asarray(left_pairs, dtype=np.intp)
+                right_arr = np.asarray(right_pairs, dtype=np.intp)
+                union_pairs(parent, rank, left_arr, right_arr)
 
         # Stage 3: assign contiguous labels to connected core components.
         labels = np.full(n, -1, dtype=np.intp)
-        root_to_label: dict[int, int] = {}
-        next_label = 0
-        for i_point in core_idx:
-            i_core = int(core_pos[int(i_point)])
-            root = find_root(i_core)
-            if root not in root_to_label:
-                root_to_label[root] = next_label
-                next_label += 1
-            labels[int(i_point)] = root_to_label[root]
+        core_positions = np.arange(n_core, dtype=np.intp)
+        roots = roots_for_positions(parent, core_positions)
+        _, inverse = np.unique(roots, return_inverse=True)
+        labels[core_idx] = inverse.astype(np.intp, copy=False)
 
         # Stage 4: attach border points (non-core, but within eps of a core point).
         # Standard DBSCAN ambiguity: a border point reachable from multiple clusters
         # is assigned to the first encountered — matching open3d's behaviour.
         non_core_idx = np.flatnonzero(~is_core).astype(np.intp, copy=False)
-        border_chunk = min(len(non_core_idx), border_query_chunk_size) if len(non_core_idx) > 0 else 1
+        non_core_max_neighbors = int(counts[non_core_idx].max()) if len(non_core_idx) > 0 else 0
+        border_chunk_limit = _budgeted_chunk_size(
+            GET_CLUSTER_BORDER_QUERY_CHUNK_SIZE,
+            non_core_max_neighbors,
+            budget_bytes,
+        )
+        border_chunk = min(len(non_core_idx), border_chunk_limit) if len(non_core_idx) > 0 else 1
         for start in range(0, len(non_core_idx), border_chunk):
             end = min(start + border_chunk, len(non_core_idx))
             batch_idx = non_core_idx[start:end]
