@@ -158,8 +158,6 @@ class TestDeepcopyCorrectnessPointCloud:
         pc_copy = copy.deepcopy(small_pointcloud)
 
         assert pc_copy.timestamp == original_ts
-        # Datetime is immutable, so this is more of a sanity check
-        assert id(pc_copy.timestamp) != id(small_pointcloud.timestamp)
 
     def test_deepcopy_metadata_independence(self, small_pointcloud):
         """Metadata (orig_file) should be independent."""

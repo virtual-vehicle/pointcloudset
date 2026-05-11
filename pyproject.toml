@@ -60,7 +60,6 @@ dev = [
     "ipykernel",
     "matplotlib",
     "psutil>=5.9",
-    "objgraph>=3.5",
 ]
 doc = [
     "sphinx",
