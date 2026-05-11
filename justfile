@@ -7,46 +7,46 @@ default:
 # Build HTML docs
 [group('doc')]
 doc:
-    uv run sphinx-apidoc --no-toc --module-first -f -e -o ./doc/sphinx/source/python-api ./src/pointcloudset ./src/pointcloudset/config.py ./src/pointcloudset/io/dataset/commandline.py
-    uv run --directory doc/sphinx sphinx-build -b html source build/html
+    uv run --group doc sphinx-apidoc --no-toc --module-first -f -e -o ./doc/sphinx/source/python-api ./src/pointcloudset ./src/pointcloudset/config.py ./src/pointcloudset/io/dataset/commandline.py
+    uv run --group doc --directory doc/sphinx sphinx-build -b html source build/html
 
 # Check docstring coverage
 [group('doc')]
 doccoverage:
-    uv run docstr-coverage src/pointcloudset --skipmagic
+    uv run --group dev docstr-coverage src/pointcloudset --skip-magic --fail-under 68
 
 # Run test suite
 [group('qa')]
 test:
-    uv run pytest --cov=pointcloudset tests
-    uv run --with nbval pytest --cov-append --nbval-current-env --nbval-lax doc/sphinx/source/tutorial_notebooks/usage.ipynb
-    uv run --with nbval pytest --cov-append --nbval-current-env --nbval-lax doc/sphinx/source/tutorial_notebooks/reading_las_pcd.ipynb
-    uv run --with nbval pytest --cov-append --nbval-current-env --nbval-lax tests/notebooks/test_plot_plane.ipynb
-    uv run --with nbval pytest --cov-append --nbval-current-env --nbval-lax tests/notebooks/test_readme.ipynb
-    uv run --with nbval pytest --cov-append --nbval-current-env --nbval-lax tests/notebooks/test_animate.ipynb
-    uv run python -m coverage report -i
-    uv run python -m coverage html -i
+    uv run --group dev pytest --cov=pointcloudset tests
+    uv run --group dev pytest --cov-append --nbval-current-env --nbval-lax doc/sphinx/source/tutorial_notebooks/usage.ipynb
+    uv run --group dev pytest --cov-append --nbval-current-env --nbval-lax doc/sphinx/source/tutorial_notebooks/reading_las_pcd.ipynb
+    uv run --group dev pytest --cov-append --nbval-current-env --nbval-lax tests/notebooks/test_plot_plane.ipynb
+    uv run --group dev pytest --cov-append --nbval-current-env --nbval-lax tests/notebooks/test_readme.ipynb
+    uv run --group dev pytest --cov-append --nbval-current-env --nbval-lax tests/notebooks/test_animate.ipynb
+    uv run --group dev python -m coverage report -i
+    uv run --group dev python -m coverage html -i
 
 # Lint with ruff
 [group('qa')]
 ruff:
-    uv run ruff check src tests
+    uv run --group dev ruff check src tests
 
 # Auto-fix lint issues
 [group('qa')]
 ruff-fix:
-    uv run ruff check src tests --fix
+    uv run --group dev ruff check src tests --fix
 
 # Run mypy
 [group('qa')]
 mypy:
-    uv run mypy -p pointcloudset --ignore-missing-imports
+    uv run --group dev mypy -p pointcloudset --ignore-missing-imports
 
 # Sort imports and format
 [group('qa')]
 sort-imports:
-    uv run ruff check --select I --fix .
-    uv run ruff format .
+    uv run --group dev ruff check --select I --fix .
+    uv run --group dev ruff format .
 
 # Remove local artifacts
 [group('qa')]

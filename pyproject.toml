@@ -58,6 +58,7 @@ numba = [
 dev = [
     "pytest",
     "pytest-cov",
+    "nbval",
     "docstr-coverage",
     "pytest-check",
     "ruff",
@@ -67,9 +68,8 @@ dev = [
     "matplotlib",
 ]
 doc = [
-    "sphinx",
-    "sphinxcontrib-napoleon",
-    "sphinx_rtd_theme==0.5.2",
+    "sphinx>=8,<9",
+    "sphinx_rtd_theme>=3",
     "nbsphinx",
     "sphinx-click",
     "pandoc",
