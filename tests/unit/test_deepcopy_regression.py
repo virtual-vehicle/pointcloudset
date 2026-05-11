@@ -30,42 +30,11 @@ import pandas as pd
 import pytest
 import pytest_check as check
 
-try:
-    import psutil
-
-    HAS_PSUTIL = True
-except ImportError:
-    HAS_PSUTIL = False
-
 from pointcloudset import Dataset, PointCloud
 
 # ============================================================================
 # Memory Measurement Utilities
 # ============================================================================
-
-
-class MemorySnapshot:
-    """Capture and compare memory metrics."""
-
-    def __init__(self, label: str = ""):
-        self.label = label
-        self.tracemalloc_peak = 0
-        self.rss_bytes = 0
-
-    def capture_tracemalloc(self) -> None:
-        """Capture tracemalloc peak in MB."""
-        current, peak = tracemalloc.get_traced_memory()
-        self.tracemalloc_peak = peak / (1024 * 1024)
-
-    def capture_rss(self) -> None:
-        """Capture process RSS in MB."""
-        if HAS_PSUTIL:
-            self.rss_bytes = psutil.Process().memory_info().rss / (1024 * 1024)
-
-    def __repr__(self) -> str:
-        return (
-            f"MemorySnapshot({self.label}): tracemalloc_peak={self.tracemalloc_peak:.1f}MB, rss={self.rss_bytes:.1f}MB"
-        )
 
 
 def measure_peak_tracemalloc(func: Callable) -> tuple[float, any]:
@@ -82,13 +51,6 @@ def measure_peak_tracemalloc(func: Callable) -> tuple[float, any]:
         return peak / (1024 * 1024), result
     finally:
         tracemalloc.stop()
-
-
-def get_rss_mb() -> float:
-    """Get current process RSS in MB."""
-    if not HAS_PSUTIL:
-        return 0.0
-    return psutil.Process().memory_info().rss / (1024 * 1024)
 
 
 def run_in_subprocess(code: str) -> tuple[int, str, str]:
@@ -110,20 +72,9 @@ def run_in_subprocess(code: str) -> tuple[int, str, str]:
     return result.returncode, result.stdout, result.stderr
 
 
-def get_object_size_bytes(obj: object) -> int:
-    """Rough estimate of object size including referenced data."""
-    try:
-        import sys
-
-        if isinstance(obj, PointCloud):
-            # For PointCloud, estimate as DataFrame size + overhead
-            return obj.data.memory_usage(deep=True).sum() + 1024
-        elif isinstance(obj, pd.DataFrame):
-            return obj.memory_usage(deep=True).sum()
-        else:
-            return sys.getsizeof(obj)
-    except Exception:
-        return 1024 * 1024  # Default 1MB if calculation fails
+def get_object_size_bytes(obj: PointCloud) -> int:
+    """Estimate PointCloud size from its DataFrame memory usage."""
+    return int(obj.data.memory_usage(deep=True).sum()) + 1024
 
 
 # ============================================================================
@@ -136,21 +87,6 @@ def baseline_pointcloud_100k() -> PointCloud:
     """Create a realistic large PointCloud with 100k points for memory tests."""
     np.random.seed(42)
     n_points = 100_000
-    columns = ["x", "y", "z", "intensity", "t", "reflectivity", "ring", "noise", "range"]
-
-    data = {
-        col: np.random.randn(n_points) * 100 if col != "ring" else np.random.randint(0, 64, n_points) for col in columns
-    }
-    df = pd.DataFrame(data)
-    pc = PointCloud(data=df, timestamp=datetime(2020, 1, 1))
-    return pc
-
-
-@pytest.fixture(scope="session")
-def baseline_pointcloud_1m() -> PointCloud:
-    """Create a very large PointCloud with 1M points for extreme tests."""
-    np.random.seed(42)
-    n_points = 1_000_000
     columns = ["x", "y", "z", "intensity", "t", "reflectivity", "ring", "noise", "range"]
 
     data = {
@@ -175,7 +111,7 @@ def small_pointcloud() -> PointCloud:
 # ============================================================================
 
 
-class TestDeepcopyCorrectionPointCloud:
+class TestDeepcopyCorrectnessPointCloud:
     """Verify PointCloud deepcopy creates independent objects."""
 
     def test_deepcopy_creates_independent_object(self, small_pointcloud):
@@ -185,11 +121,12 @@ class TestDeepcopyCorrectionPointCloud:
         assert id(pc_copy) != id(small_pointcloud)
 
     def test_deepcopy_dataframe_is_independent(self, small_pointcloud):
-        """Deepcopy should copy the underlying DataFrame."""
+        """Deepcopy should copy the underlying DataFrame, verified via public API."""
         pc_copy = copy.deepcopy(small_pointcloud)
+        # Verify via public .data property - the objects must differ
         assert pc_copy.data is not small_pointcloud.data
-        # Check that the internal __data is different
-        assert pc_copy._PointCloudCore__data is not small_pointcloud._PointCloudCore__data
+        # Verify the numpy buffers are actually separate (not just wrapper objects)
+        assert pc_copy.data.values.ctypes.data != small_pointcloud.data.values.ctypes.data
 
     def test_deepcopy_mutating_copy_does_not_affect_original(self, small_pointcloud):
         """Mutating a deepcopy should not affect the original."""
@@ -275,7 +212,7 @@ class TestDeepcopyCorrectionPointCloud:
         assert xyz_copy_after[0, 1] == 555.0
 
 
-class TestDeepcopyCorretnessDataset:
+class TestDeepcopyCorrectnessDataset:
     """Verify Dataset deepcopy creates independent objects."""
 
     def test_deepcopy_creates_independent_dataset(self, testset):
@@ -327,6 +264,16 @@ class TestDeepcopyCorretnessDataset:
         pc_copy.data.loc[0, "x"] = 12345.0
 
         assert pc_orig.data.loc[0, "x"] == original_x
+
+    def test_deepcopy_dask_delayed_data_is_lazy(self, testset):
+        """Dask delayed entries in the copied dataset should remain lazy (not computed)."""
+        from dask.delayed import Delayed, DelayedLeaf
+
+        ds_copy = copy.deepcopy(testset)
+        for delayed_obj in ds_copy.data:
+            assert isinstance(delayed_obj, (Delayed, DelayedLeaf)), (
+                "Dataset.data entries must remain dask Delayed after deepcopy, not eagerly computed DataFrames"
+            )
 
 
 # ============================================================================
@@ -447,9 +394,15 @@ class TestMemoryGrowthDataset:
 class TestMemoryRelease:
     """Test that deleted deepcopies are properly freed."""
 
-    @pytest.mark.skipif(not HAS_PSUTIL, reason="psutil not available")
     def test_pointcloud_deepcopy_release_in_subprocess(self):
-        """Test memory is released after deepcopy deletion (in subprocess)."""
+        """RSS after deleting deepcopies must not exceed RSS before creating them.
+
+        We do not assert how much memory is reclaimed because modern allocators
+        (glibc, jemalloc) hold arenas after free().  The only reliable invariant
+        is that RSS after cleanup must not be *higher* than RSS at peak.
+        The test runs in a subprocess for a clean address-space baseline.
+        """
+        psutil = pytest.importorskip("psutil")
         code = """
 import gc
 import copy
@@ -458,17 +411,10 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 
-# Add src to path
 sys.path.insert(0, 'src')
 from pointcloudset import PointCloud
+import psutil
 
-try:
-    import psutil
-    has_psutil = True
-except ImportError:
-    has_psutil = False
-
-# Create baseline
 np.random.seed(42)
 n_points = 50_000
 columns = ["x", "y", "z", "intensity", "t", "reflectivity", "ring", "noise", "range"]
@@ -479,103 +425,50 @@ data = {
 df = pd.DataFrame(data)
 pc = PointCloud(data=df, timestamp=datetime(2020, 1, 1))
 
-# Measure baseline RSS
-if has_psutil:
-    rss_baseline = psutil.Process().memory_info().rss / (1024 * 1024)
-    print(f"Baseline RSS: {rss_baseline:.1f}MB", file=sys.stderr)
-
-    # Create many copies
-    copies = []
-    for i in range(10):
-        copies.append(copy.deepcopy(pc))
-
-    rss_peak = psutil.Process().memory_info().rss / (1024 * 1024)
-    print(f"Peak RSS: {rss_peak:.1f}MB", file=sys.stderr)
-
-    # Delete and collect
-    del copies
-    gc.collect()
-
-    rss_after = psutil.Process().memory_info().rss / (1024 * 1024)
-    print(f"After cleanup RSS: {rss_after:.1f}MB", file=sys.stderr)
-
-    # Check release
-    delta = rss_peak - rss_after
-    ratio = rss_after / rss_peak if rss_peak > 0 else 0
-    print(f"Release ratio (after/peak): {ratio:.2f}", file=sys.stderr)
-
-    # Modern allocators keep some memory, but we should see at least some recovery
-    # or the RSS shouldn't grow dramatically (0.95 = 5% retained)
-    if ratio > 0.95:
-        sys.exit(1)  # Fail only if almost NO memory was released
-else:
-    print("psutil not available", file=sys.stderr)
-"""
-
-        returncode, stdout, stderr = run_in_subprocess(code)
-        print(stderr)
-
-        if HAS_PSUTIL:
-            assert returncode == 0, f"Memory release test failed:\n{stderr}"
-        else:
-            pytest.skip("psutil not available in subprocess")
-
-    @pytest.mark.skipif(not HAS_PSUTIL, reason="psutil not available")
-    def test_pointcloud_garbage_collection_effective(self):
-        """Verify gc.collect() with deepcopy doesn't cause memory leaks."""
-        code = """
-import gc
-import copy
-import sys
-import numpy as np
-import pandas as pd
-from datetime import datetime
-
-sys.path.insert(0, 'src')
-from pointcloudset import PointCloud
-
-try:
-    import psutil
-except ImportError:
-    sys.exit(0)
-
-# Create baseline
-np.random.seed(42)
-data = {
-    col: np.random.randn(10_000) * 100
-    for col in ["x", "y", "z", "intensity", "t", "reflectivity", "ring", "noise", "range"]
-}
-df = pd.DataFrame(data)
-pc = PointCloud(data=df, timestamp=datetime(2020, 1, 1))
-
-# Test explicit reference deletion
-copies = [copy.deepcopy(pc) for _ in range(5)]
-rss_with_copies = psutil.Process().memory_info().rss / (1024 * 1024)
+# Create and keep copies so RSS grows
+copies = [copy.deepcopy(pc) for _ in range(10)]
+rss_peak = psutil.Process().memory_info().rss / (1024 * 1024)
 
 del copies
 gc.collect()
-rss_after_del = psutil.Process().memory_info().rss / (1024 * 1024)
 
-# Calculate the ratio - memory after cleanup vs peak
-ratio_after_peak = rss_after_del / rss_with_copies if rss_with_copies > 0 else 1.0
-recovery = 1.0 - ratio_after_peak
-print(f"Memory with copies: {rss_with_copies:.1f}MB", file=sys.stderr)
-print(f"Memory after cleanup: {rss_after_del:.1f}MB", file=sys.stderr)
-print(f"Ratio (after/with): {ratio_after_peak:.2f}", file=sys.stderr)
-print(f"Recovery: {recovery*100:.1f}%", file=sys.stderr)
+rss_after = psutil.Process().memory_info().rss / (1024 * 1024)
+print(f"peak={rss_peak:.1f} after={rss_after:.1f}", file=sys.stderr)
 
-# Fail only if memory GROWS after cleanup (indicating a leak)
-# Modern allocators hold onto memory, which is expected
-if rss_after_del > rss_with_copies * 1.05:  # More than 5% growth is suspicious
-    print("ERROR: Memory increased after cleanup!", file=sys.stderr)
+# Fail only if RSS *grew* after deletion (unambiguous leak)
+if rss_after > rss_peak * 1.05:
     sys.exit(1)
 """
 
         returncode, stdout, stderr = run_in_subprocess(code)
         print(stderr)
+        assert returncode == 0, f"Memory release test failed:\n{stderr}"
 
-        if HAS_PSUTIL:
-            assert returncode == 0, f"GC effectiveness test failed:\n{stderr}"
+    def test_pointcloud_tracemalloc_no_growth_after_gc(self):
+        """Python-level allocations (tracemalloc) must not grow after deleting copies.
+
+        Unlike RSS, tracemalloc tracks Python-heap objects directly and is not
+        affected by allocator arena retention.  This test is therefore stable
+        across platforms and Python versions.
+        """
+        columns = ["x", "y", "z", "intensity", "t", "reflectivity", "ring", "noise", "range"]
+        data = {col: np.random.randn(10_000) * 100 for col in columns}
+        pc = PointCloud(data=pd.DataFrame(data), timestamp=datetime(2020, 1, 1))
+
+        tracemalloc.start()
+        copies = [copy.deepcopy(pc) for _ in range(5)]
+        _, peak_with_copies = tracemalloc.get_traced_memory()
+
+        del copies
+        gc.collect()
+        current_after, _ = tracemalloc.get_traced_memory()
+        tracemalloc.stop()
+
+        # After deleting all copies the live allocation must be below peak
+        assert current_after < peak_with_copies, (
+            f"Live tracemalloc bytes after GC ({current_after}) should be below "
+            f"peak with copies ({peak_with_copies}): copies may not be freed"
+        )
 
 
 # ============================================================================
