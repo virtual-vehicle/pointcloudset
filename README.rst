@@ -111,6 +111,17 @@ Install python package with pip:
 
    pip install pointcloudset
 
+Optional extras
+~~~~~~~~~~~~~~~~
+
+For faster clustering on large point clouds, install the optional ``numba`` extra to enable JIT-accelerated union-find in ``PointCloud.get_cluster()``:
+
+.. code-block:: console
+
+   pip install pointcloudset[numba]
+
+Without this extra, a pure-Python fallback is used automatically with no change in behaviour.
+
 Installation with Docker
 ################################################
 

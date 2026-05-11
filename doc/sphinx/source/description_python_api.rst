@@ -26,10 +26,22 @@ As a common user these Classes are enough to tackle most proplems. If you want t
 the package than you should have a look at the other modules.
 
  Datasets and PointCloud use the functions of the following modules:
+    * :mod:`pointcloudset.cluster`
     * :mod:`pointcloudset.diff`
     * :mod:`pointcloudset.filter`
     * :mod:`pointcloudset.geometry`
     * :mod:`pointcloudset.io`
     * :mod:`pointcloudset.plot`
+
+.. note::
+
+   ``pointcloudset.cluster`` provides the DBSCAN-based clustering used by
+   ``PointCloud.get_cluster()``.  The union-find inner loops are JIT-compiled
+   with `Numba <https://numba.readthedocs.io/>`_ when the optional extra is
+   installed::
+
+      pip install pointcloudset[numba]
+
+   Without Numba a pure-Python fallback is used automatically.
 
 For a more detailed documentation see the section below.
