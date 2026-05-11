@@ -23,7 +23,9 @@ def animate_dataset(dataset, **kwargs) -> go.Figure:
         return pointcloud.plot(**kwargs)
 
     start_frame = 0
-    frames = dataset.apply(plot_frame, warn=False).compute()
+    # Build frames sequentially. Plotly figure/template internals are not always
+    # stable under parallel execution and can fail intermittently in CI.
+    frames = [plot_frame(dataset[i]) for i in range(len(dataset))]
 
     fig = go.Figure()
 
