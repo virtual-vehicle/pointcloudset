@@ -171,9 +171,7 @@ def test_cluster_300k_finds_10_clusters_within_1gib(testpointcloud_300k: PointCl
     max_cluster_points_as_noise = int(n_cluster_points * 0.05)
     peak_before = _peak_rss_bytes()
 
-    labels = testpointcloud_300k.get_cluster(
-        eps=1.2, min_points=20, core_query_chunk_size=4096, border_query_chunk_size=16384
-    )
+    labels = testpointcloud_300k.get_cluster(eps=1.2, min_points=20)
 
     peak_after = _peak_rss_bytes()
     peak_delta = peak_after - peak_before
@@ -186,4 +184,4 @@ def test_cluster_300k_finds_10_clusters_within_1gib(testpointcloud_300k: PointCl
     check.equal(len(unique_clusters), n_centers)
     check.greater_equal(n_clustered, n_cluster_points - max_cluster_points_as_noise)
     check.less_equal(n_noise, n_noise_points + max_cluster_points_as_noise)
-    assert peak_delta <= 3024**3, f"get_cluster peak RSS delta exceeded 3 GiB: {peak_delta / 1024**2:.1f} MiB"
+    assert peak_delta <= 1024**3, f"get_cluster peak RSS delta exceeded 1 GiB: {peak_delta / 1024**2:.1f} MiB"
