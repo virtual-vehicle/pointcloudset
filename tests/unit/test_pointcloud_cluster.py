@@ -161,28 +161,7 @@ def test_take_cluster_raises_on_length_mismatch():
         pc.take_cluster(0, short_labels)
 
 
-# --- 300k synthetic fixture ---
-
-
-@pytest.mark.slow
 def test_cluster_300k_finds_10_clusters_within_1gib(testpointcloud_300k: PointCloud):
-    """DBSCAN on the 300k fixture must find exactly 10 clusters within a 1 GiB peak-RSS increase.
-
-    Fixture geometry:
-        294k points in 10 Gaussian clusters (σ=3.0 m, centres ≥28.7 m apart in a 100³ m cube)
-        6k uniform noise points
-
-    Parameter rationale:
-        eps=1.2 m   — well above the cluster-core inter-point spacing (~0.5 m at 2σ density)
-                      so cores chain reliably; keeps the neighbour graph at ~26M edges
-                      (~390 MB for the query_pairs ndarray) safely under 1 GiB after CSR.
-        min_points=20 — high enough to suppress small Gaussian-tail fragments (8-13 sparse
-                      points beyond ~3σ that form spurious clusters at min_points=10);
-                      low enough to keep ~94% of cluster points as core or border-attached.
-
-    Empirical result from a parameter sweep on this fixture: 10 clusters, 282 748 of 300 000
-    points clustered (94.2%), 17 252 noise (6k original + ~11k Gaussian tails).
-    """
     n_cluster_points = 294_000
     n_noise_points = 6_000
     n_centers = 10
