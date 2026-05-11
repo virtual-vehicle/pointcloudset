@@ -1,3 +1,5 @@
+import resource
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -134,3 +136,42 @@ def test_rro_single_point_is_removed():
     pc = PointCloud(data=pd.DataFrame({"x": [0.0], "y": [0.0], "z": [0.0]}))
     result = pc.filter("radiusoutlier", nb_points=1, radius=1.0)
     check.equal(result._has_data(), False)
+
+
+def _peak_rss_bytes() -> int:
+    """Return process peak RSS in bytes on Linux/macOS."""
+    max_rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    # Linux reports KiB, macOS reports bytes.
+    if max_rss < 10_000_000:
+        return int(max_rss * 1024)
+    return int(max_rss)
+
+
+def test_rro_300k_fixture_within_1gib_peak_delta(testpointcloud_300k: PointCloud):
+    """Radius outlier must run on 300k synthetic points within a 1 GiB peak-RSS increase.
+
+    The fixture contains 294k clustered points (σ=0.9 m, 10 centres) and 6k uniform
+    noise points in a 100³ m cube. At nb_points=8, radius=1.5 m virtually all cluster
+    points have enough neighbours to survive, while most noise points do not.
+    """
+    n_cluster = 294_000
+    n_noise = 6_000
+    n_before = len(testpointcloud_300k)
+    peak_before = _peak_rss_bytes()
+
+    result = testpointcloud_300k.filter("radiusoutlier", nb_points=8, radius=1.5)
+
+    peak_after = _peak_rss_bytes()
+    peak_delta = peak_after - peak_before
+
+    check.equal(n_before, n_cluster + n_noise)
+    # Most cluster points must survive: tight clusters have plenty of neighbours at r=1.5
+    check.greater(len(result), int(n_cluster * 0.95))
+    # Most noise must be removed: uniform points in 100³ m have ~0 neighbours at r=1.5.
+    # Up to 10% of noise points may survive by landing near a cluster edge — that is
+    # correct filter behaviour, not a bug.
+    max_surviving_noise = n_noise // 10
+    check.less(len(result), n_cluster + max_surviving_noise)
+    assert peak_delta <= 1024**3, (
+        f"radiusoutlier peak RSS increase exceeded 1 GiB: delta={peak_delta / (1024**2):.1f} MiB"
+    )

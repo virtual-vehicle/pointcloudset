@@ -17,8 +17,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ "3.11", "3.12", "3.13" ] # Define Python versions as strings
-        pandas-version: [ "2", "3" ]
+        python-version: ["3.11", "3.12", "3.13"] # Define Python versions as strings
+        pandas-version: ["2", "3"]
+        numba-enabled: ["false", "true"]
     env:
       UV_PYTHON: ${{ matrix.python-version }}
 
@@ -32,7 +33,11 @@ jobs:
         uses: astral-sh/setup-uv@v5
 
       - name: Install the project
-        run: uv sync --locked --all-extras --dev
+        run: uv sync --locked --dev
+
+      - name: Install optional numba
+        if: matrix.numba-enabled == 'true'
+        run: uv pip install "numba>=0.65.1,<1.0.0"
 
       - name: Install pandas ${{ matrix.pandas-version }}
         run: |

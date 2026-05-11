@@ -10,9 +10,11 @@ import numpy as np
 import pandas
 import plotly
 import plotly.express as px
-from sklearn.cluster import DBSCAN
 
-from pointcloudset.config import PLOTLYSIZELIMIT
+from pointcloudset.cluster import get_cluster_labels
+from pointcloudset.config import (
+    PLOTLYSIZELIMIT,
+)
 from pointcloudset.diff import ALL_DIFFS
 from pointcloudset.filter import ALL_FILTERS
 from pointcloudset.io import (
@@ -436,17 +438,25 @@ class PointCloud(PointCloudCore):
             raise TypeError("Wrong filter_result expecting array with boolean values orlist of indices")
         return PointCloud(new_data, timestamp=self.timestamp)
 
-    def get_cluster(self, eps: float, min_points: int) -> pandas.DataFrame:
-        """Get the clusters using :class:`sklearn.cluster.DBSCAN`.
-        Process further with :func:`pointcloudset.pointcloud.PointCloud.take_cluster`.
+    def get_cluster(
+        self,
+        eps: float,
+        min_points: int,
+    ) -> pandas.DataFrame:
+        """Cluster the PointCloud using DBSCAN.
+
+        This method validates inputs and delegates the clustering implementation
+        to :func:`pointcloudset.cluster.get_cluster_labels`.
 
         Args:
-            eps (float): Density parameter that is used to find neighboring points.
-            min_points (int): Minimum number of points to form a cluster.
+            eps (float): Density parameter for neighbour search. Must be positive.
+            min_points (int): Minimum number of points (including self) to form
+                a core point. Must be >= 1.
 
         Returns:
-            pandas.DataFrame: Dataframe with list of clusters. Noise points receive
-            label ``-1`` and can be retrieved with ``take_cluster(-1, labels)``.
+            pandas.DataFrame: One row per point with column ``cluster``. Noise
+            points receive label ``-1`` and can be retrieved with
+            ``take_cluster(-1, labels)``.
 
         Raises:
             ValueError: If ``eps`` is not positive, ``min_points`` is less than 1,
@@ -458,8 +468,8 @@ class PointCloud(PointCloudCore):
             raise ValueError(f"min_points must be >= 1, got {min_points}")
         if len(self) == 0:
             raise ValueError("Cannot cluster an empty PointCloud")
-        labels = DBSCAN(eps=eps, min_samples=min_points).fit(self.points.xyz).labels_
-        return pandas.DataFrame(labels, columns=["cluster"])
+        xyz = np.asarray(self.xyz, dtype=np.float64)
+        return get_cluster_labels(xyz=xyz, eps=eps, min_points=min_points)
 
     def take_cluster(self, cluster_number: int, cluster_labels: pandas.DataFrame) -> PointCloud:
         """Takes only the points belonging to the cluster_number.

@@ -1,9 +1,20 @@
+import resource
+
 import numpy as np
 import pandas as pd
 import pytest
 import pytest_check as check
 
 from pointcloudset import PointCloud
+
+
+def _peak_rss_bytes() -> int:
+    """Return process peak RSS in bytes on Linux/macOS."""
+    max_rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    # Linux reports KiB, macOS reports bytes.
+    if max_rss < 10_000_000:
+        return int(max_rss * 1024)
+    return int(max_rss)
 
 
 def _make_synthetic_clustered_pc() -> PointCloud:
@@ -148,3 +159,29 @@ def test_take_cluster_raises_on_length_mismatch():
     short_labels = labels.iloc[:-1].reset_index(drop=True)
     with pytest.raises(ValueError, match="cluster_labels"):
         pc.take_cluster(0, short_labels)
+
+
+@pytest.mark.slow
+def test_cluster_300k_finds_10_clusters_within_1gib(testpointcloud_300k: PointCloud):
+    n_cluster_points = 294_000
+    n_noise_points = 6_000
+    n_centers = 10
+    # Up to 5% of cluster points may fall in the Gaussian tails beyond ~3σ and be
+    # too sparse to form cores; they become noise rather than border-attached.
+    max_cluster_points_as_noise = int(n_cluster_points * 0.05)
+    peak_before = _peak_rss_bytes()
+
+    labels = testpointcloud_300k.get_cluster(eps=1.2, min_points=20)
+
+    peak_after = _peak_rss_bytes()
+    peak_delta = peak_after - peak_before
+
+    unique_clusters = set(labels["cluster"].values) - {-1}
+    n_noise = int((labels["cluster"] == -1).sum())
+    n_clustered = len(labels) - n_noise
+
+    check.equal(len(labels), len(testpointcloud_300k))
+    check.equal(len(unique_clusters), n_centers)
+    check.greater_equal(n_clustered, n_cluster_points - max_cluster_points_as_noise)
+    check.less_equal(n_noise, n_noise_points + max_cluster_points_as_noise)
+    assert peak_delta <= 1024**3, f"get_cluster peak RSS delta exceeded 1 GiB: {peak_delta / 1024**2:.1f} MiB"
