@@ -99,7 +99,7 @@ isort = { known-first-party = ["pointcloudset", "tests"] }
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
-"pointcloudset/io/dataset/commandline.py" = ["F401"]
+"src/pointcloudset/io/dataset/commandline.py" = ["F401"]
 
 [tool.coverage.run]
 omit = ["*test*"]
