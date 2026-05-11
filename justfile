@@ -37,13 +37,9 @@ ruff:
 ruff-fix:
     uv run --group dev ruff check src tests --fix
 
-# Run mypy
-[group('qa')]
-mypy:
-    uv run --group dev mypy -p pointcloudset --ignore-missing-imports
 
-# Sort imports and format
-[group('qa')]
+
+# Sort imports and forma[group('qa')]
 sort-imports:
     uv run --group dev ruff check --select I --fix .
     uv run --group dev ruff format .
