@@ -15,7 +15,7 @@ Fixed
 
 Changed
 ~~~~~~~
-- ``PointCloud.get_cluster()`` now uses a KDTree + sparse-graph DBSCAN implementation. This keeps cluster labels and ``take_cluster(-1, labels)`` noise handling intact and is usually more memory-efficient than full neighbour-list approaches, though very dense clouds can still allocate large edge arrays during pair generation.
+- ``PointCloud.get_cluster()`` now uses a KDTree + incremental union-find DBSCAN implementation. Core connectivity is built without materializing a global edge list, keeping memory bounded by per-point neighbourhood queries while preserving cluster labels and ``take_cluster(-1, labels)`` noise handling.
 
 
 0.13.0 - (2026-05-05)

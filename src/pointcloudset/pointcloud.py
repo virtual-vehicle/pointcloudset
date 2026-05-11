@@ -10,8 +10,6 @@ import numpy as np
 import pandas
 import plotly
 import plotly.express as px
-from scipy.sparse import csr_matrix
-from scipy.sparse.csgraph import connected_components
 from scipy.spatial import KDTree
 
 from pointcloudset.config import PLOTLYSIZELIMIT
@@ -438,13 +436,19 @@ class PointCloud(PointCloudCore):
             raise TypeError("Wrong filter_result expecting array with boolean values orlist of indices")
         return PointCloud(new_data, timestamp=self.timestamp)
 
-    def get_cluster(self, eps: float, min_points: int) -> pandas.DataFrame:
+    def get_cluster(
+        self,
+        eps: float,
+        min_points: int,
+        core_query_chunk_size: int = 8192,
+        border_query_chunk_size: int = 32768,
+    ) -> pandas.DataFrame:
         """Cluster the PointCloud using DBSCAN.
 
         Implements the canonical DBSCAN algorithm:
         1. Identify core points (≥ ``min_points`` neighbours within ``eps``).
-        2. Build a sparse graph of edges between core points only.
-        3. Compute connected components of the core-point graph.
+        2. Build core-point connectivity incrementally with union-find.
+        3. Label connected core components.
         4. Attach border points (non-core points within ``eps`` of a core point)
         to the cluster of any neighbouring core point. Remaining points are
         noise (label ``-1``).
@@ -455,6 +459,10 @@ class PointCloud(PointCloudCore):
             eps (float): Density parameter for neighbour search. Must be positive.
             min_points (int): Minimum number of points (including self) to form
                 a core point. Must be >= 1.
+            core_query_chunk_size (int): Number of core points queried per KDTree
+                batch while building core connectivity. Must be >= 1.
+            border_query_chunk_size (int): Number of non-core points queried per
+                KDTree batch while attaching border points. Must be >= 1.
 
         Returns:
             pandas.DataFrame: One row per point with column ``cluster``. Noise
@@ -466,16 +474,19 @@ class PointCloud(PointCloudCore):
                 or the point cloud is empty.
 
         Notes:
-            This implementation is usually more memory efficient than building
-            full per-point neighbour lists, but Stage 2 still calls
-            ``KDTree.query_pairs(...)`` globally. In very dense clouds relative
-            to ``eps``, that call can materialize a large edge array.
-            Consider voxel-downsampling before clustering in that case.
+            Connectivity is built incrementally and does not materialize a
+            global edge list. This keeps peak memory bounded by per-point
+            neighbourhood query size and avoids dense-cloud blowups from global
+            pair materialization.
         """
         if eps <= 0:
             raise ValueError(f"eps must be positive, got {eps}")
         if min_points < 1:
             raise ValueError(f"min_points must be >= 1, got {min_points}")
+        if core_query_chunk_size < 1:
+            raise ValueError(f"core_query_chunk_size must be >= 1, got {core_query_chunk_size}")
+        if border_query_chunk_size < 1:
+            raise ValueError(f"border_query_chunk_size must be >= 1, got {border_query_chunk_size}")
         if len(self) == 0:
             raise ValueError("Cannot cluster an empty PointCloud")
 
@@ -495,53 +506,82 @@ class PointCloud(PointCloudCore):
         if not is_core.any():
             return pandas.DataFrame(np.full(n, -1, dtype=np.intp), columns=["cluster"])
 
-        # Stage 2: build the core-point adjacency graph.
-        # query_pairs returns upper-triangle pairs as a single ndarray.
-        # This is usually acceptable, but can still be large in dense clouds.
-        # Filtering to core-core edges happens after materialization.
-        pairs = tree.query_pairs(eps, output_type="ndarray")
-        if len(pairs) > 0:
-            both_core = is_core[pairs[:, 0]] & is_core[pairs[:, 1]]
-            pairs = pairs[both_core].astype(np.int32, copy=False)
+        # Stage 2: build core connectivity incrementally with union-find.
+        # Keep DSU arrays only for core points to reduce memory and improve cache locality.
+        core_idx = np.flatnonzero(is_core).astype(np.intp, copy=False)
+        n_core = len(core_idx)
 
-        if len(pairs) > 0:
-            # bool data + int32 indices keeps the CSR matrix as compact as possible.
-            graph = csr_matrix(
-                (np.ones(len(pairs), dtype=np.bool_), (pairs[:, 0], pairs[:, 1])),
-                shape=(n, n),
-            )
-        else:
-            graph = csr_matrix((n, n), dtype=np.bool_)
-        del pairs
+        core_pos = np.full(n, -1, dtype=np.intp)
+        core_pos[core_idx] = np.arange(n_core, dtype=np.intp)
 
-        # Stage 3: connected components on the (undirected) core-point graph.
-        _, raw_labels = connected_components(graph, directed=False)
+        parent = np.arange(n_core, dtype=np.intp)
+        rank = np.zeros(n_core, dtype=np.uint8)
 
-        # Stage 4: noise by default, core points get their component label.
-        labels = np.where(is_core, raw_labels, -1).astype(np.intp)
+        def find_root(i: int) -> int:
+            while parent[i] != i:
+                parent[i] = parent[parent[i]]
+                i = int(parent[i])
+            return i
 
-        # Stage 5: attach border points (non-core, but within eps of a core point).
+        def union(a: int, b: int) -> None:
+            root_a = find_root(a)
+            root_b = find_root(b)
+            if root_a == root_b:
+                return
+            if rank[root_a] < rank[root_b]:
+                parent[root_a] = root_b
+            elif rank[root_a] > rank[root_b]:
+                parent[root_b] = root_a
+            else:
+                parent[root_b] = root_a
+                rank[root_a] += 1
+
+        # Query in chunks for throughput while keeping memory bounded.
+        # Each chunk only materializes neighbour lists for that chunk.
+        edge_chunk = min(n_core, core_query_chunk_size)
+        for start in range(0, n_core, edge_chunk):
+            end = min(start + edge_chunk, n_core)
+            batch_idx = core_idx[start:end]
+            nbr_lists = tree.query_ball_point(xyz[batch_idx], eps, workers=-1)
+            for local_i, nbrs in enumerate(nbr_lists):
+                i_global = int(batch_idx[local_i])
+                i_core = int(core_pos[i_global])
+                for j_global in nbrs:
+                    if j_global <= i_global:
+                        continue
+                    j_core = int(core_pos[j_global])
+                    if j_core >= 0:
+                        union(i_core, j_core)
+
+        # Stage 3: assign contiguous labels to connected core components.
+        labels = np.full(n, -1, dtype=np.intp)
+        root_to_label: dict[int, int] = {}
+        next_label = 0
+        for i_point in core_idx:
+            i_core = int(core_pos[int(i_point)])
+            root = find_root(i_core)
+            if root not in root_to_label:
+                root_to_label[root] = next_label
+                next_label += 1
+            labels[int(i_point)] = root_to_label[root]
+
+        # Stage 4: attach border points (non-core, but within eps of a core point).
         # Standard DBSCAN ambiguity: a border point reachable from multiple clusters
         # is assigned to the first encountered — matching open3d's behaviour.
-        non_core_idx = np.where(~is_core)[0]
-        if len(non_core_idx) > 0:
-            for start in range(0, len(non_core_idx), chunk):
-                end = min(start + chunk, len(non_core_idx))
-                batch = non_core_idx[start:end]
-                nbr_lists = tree.query_ball_point(xyz[batch], eps, workers=-1)
-                for local_i, nbrs in enumerate(nbr_lists):
-                    nbrs_arr = np.asarray(nbrs, dtype=np.int32)
-                    core_nbrs = nbrs_arr[is_core[nbrs_arr]]
-                    if len(core_nbrs) > 0:
-                        labels[batch[local_i]] = raw_labels[core_nbrs[0]]
+        non_core_idx = np.flatnonzero(~is_core).astype(np.intp, copy=False)
+        border_chunk = min(len(non_core_idx), border_query_chunk_size) if len(non_core_idx) > 0 else 1
+        for start in range(0, len(non_core_idx), border_chunk):
+            end = min(start + border_chunk, len(non_core_idx))
+            batch_idx = non_core_idx[start:end]
+            nbr_lists = tree.query_ball_point(xyz[batch_idx], eps, workers=-1)
+            for local_i, nbrs in enumerate(nbr_lists):
+                i_global = int(batch_idx[local_i])
+                for j_global in nbrs:
+                    if is_core[j_global]:
+                        labels[i_global] = labels[int(j_global)]
+                        break
 
-        # Stage 6: remap to contiguous 0..k-1, preserving -1 for noise.
-        valid = labels >= 0
-        used = np.unique(labels[valid])
-        if len(used) > 0:
-            remap = np.full(used.max() + 1, -1, dtype=np.intp)
-            remap[used] = np.arange(len(used))
-            labels[valid] = remap[labels[valid]]
+        del core_pos
 
         return pandas.DataFrame(labels, columns=["cluster"])
 
