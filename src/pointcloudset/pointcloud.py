@@ -13,7 +13,11 @@ import plotly.express as px
 from scipy.spatial import KDTree
 
 from pointcloudset.cluster.numba import roots_for_positions, union_pairs
-from pointcloudset.config import PLOTLYSIZELIMIT
+from pointcloudset.config import (
+    GET_CLUSTER_BORDER_QUERY_CHUNK_SIZE,
+    GET_CLUSTER_CORE_QUERY_CHUNK_SIZE,
+    PLOTLYSIZELIMIT,
+)
 from pointcloudset.diff import ALL_DIFFS
 from pointcloudset.filter import ALL_FILTERS
 from pointcloudset.io import (
@@ -24,6 +28,7 @@ from pointcloudset.io import (
 )
 from pointcloudset.plot.pointcloud import plot_overlay
 from pointcloudset.pointcloud_core import PointCloudCore
+
 
 def _budgeted_chunk_size(requested: int, max_neighbors: int, budget_bytes: int) -> int:
     if requested < 1:
@@ -39,10 +44,6 @@ def _budgeted_chunk_size(requested: int, max_neighbors: int, budget_bytes: int) 
     usable_budget = max(1, int(budget_bytes * safety_fraction))
     max_points = max(1, usable_budget // max(1, per_point_bytes))
     return max(1, min(requested, max_points))
-
-
-GET_CLUSTER_CORE_QUERY_CHUNK_SIZE = 1024
-GET_CLUSTER_BORDER_QUERY_CHUNK_SIZE = 4096
 
 
 class PointCloud(PointCloudCore):

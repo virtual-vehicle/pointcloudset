@@ -47,8 +47,13 @@ dependencies = [
     "pyarrow",
     "nbformat",
     "pypcd4>=1.4.3",
+]
+
+[project.optional-dependencies]
+numba = [
     "numba>=0.65.1,<1.0.0",
 ]
+
 [dependency-groups]
 dev = [
     "pytest",
