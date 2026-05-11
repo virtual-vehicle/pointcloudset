@@ -6,6 +6,18 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
 
+Unreleased
+-------------
+
+Fixed
+~~~~~~~
+- ``filter("radiusoutlier", ...)`` now uses KDTree neighbour counts directly instead of materializing per-point neighbour lists, preserving the expected outlier semantics while avoiding large temporary allocations on dense point clouds.
+
+Changed
+~~~~~~~
+- ``PointCloud.get_cluster()`` now uses a memory-bounded DBSCAN implementation built on ``scipy.spatial.KDTree`` and sparse connected components. This keeps cluster labels and ``take_cluster(-1, labels)`` noise handling intact while scaling more predictably on large point clouds.
+
+
 0.13.0 - (2026-05-05)
 -------------
 
