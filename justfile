@@ -73,3 +73,8 @@ minor:
     git tag "v$(uv version --short)"
     git push
     git push --tags
+
+# Build release image locally
+[group('release')]
+docker-local:
+    docker build --rm -f docker/release.Dockerfile -t "tgoelles/pointcloudset:v$(uv version --short)" .
