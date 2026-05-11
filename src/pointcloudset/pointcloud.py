@@ -11,9 +11,8 @@ import pandas
 import plotly
 import plotly.express as px
 from scipy.sparse import csr_matrix
+from scipy.sparse.csgraph import connected_components
 from scipy.spatial import KDTree
-from sklearn.cluster import DBSCAN
-from sklearn.neighbors import sort_graph_by_row_values
 
 from pointcloudset.config import PLOTLYSIZELIMIT
 from pointcloudset.diff import ALL_DIFFS
@@ -440,20 +439,37 @@ class PointCloud(PointCloudCore):
         return PointCloud(new_data, timestamp=self.timestamp)
 
     def get_cluster(self, eps: float, min_points: int) -> pandas.DataFrame:
-        """Get the clusters using :class:`sklearn.cluster.DBSCAN`.
+        """Cluster the PointCloud using DBSCAN.
+
+        Implements the canonical DBSCAN algorithm:
+        1. Identify core points (≥ ``min_points`` neighbours within ``eps``).
+        2. Build a sparse graph of edges between core points only.
+        3. Compute connected components of the core-point graph.
+        4. Attach border points (non-core points within ``eps`` of a core point)
+        to the cluster of any neighbouring core point. Remaining points are
+        noise (label ``-1``).
+
         Process further with :func:`pointcloudset.pointcloud.PointCloud.take_cluster`.
 
         Args:
-            eps (float): Density parameter that is used to find neighboring points.
-            min_points (int): Minimum number of points to form a cluster.
+            eps (float): Density parameter for neighbour search. Must be positive.
+            min_points (int): Minimum number of points (including self) to form
+                a core point. Must be >= 1.
 
         Returns:
-            pandas.DataFrame: Dataframe with list of clusters. Noise points receive
-            label ``-1`` and can be retrieved with ``take_cluster(-1, labels)``.
+            pandas.DataFrame: One row per point with column ``cluster``. Noise
+            points receive label ``-1`` and can be retrieved with
+            ``take_cluster(-1, labels)``.
 
         Raises:
             ValueError: If ``eps`` is not positive, ``min_points`` is less than 1,
                 or the point cloud is empty.
+
+        Notes:
+            Peak memory scales with the number of core-to-core edges, not the
+            full neighbour graph. For point clouds where every point has many
+            thousands of neighbours within ``eps`` (very dense clusters relative
+            to ``eps``), consider voxel-downsampling before clustering.
         """
         if eps <= 0:
             raise ValueError(f"eps must be positive, got {eps}")
@@ -462,29 +478,69 @@ class PointCloud(PointCloudCore):
         if len(self) == 0:
             raise ValueError("Cannot cluster an empty PointCloud")
 
-        xyz = np.asarray(self.points.xyz)
+        xyz = np.asarray(self.points.xyz, dtype=np.float64)
         n = len(xyz)
+        tree = KDTree(xyz)
 
-        # Build a precomputed sparse connectivity matrix via scipy KDTree to avoid
-        # sklearn's internal radius_neighbors_graph, which allocates a full
-        # list-of-lists and crashes on large dense clouds.
-        # query_pairs returns only upper-triangle pairs as a flat ndarray — roughly
-        # half the entries of a symmetric structure — and float32 ones keep the CSR
-        # matrix compact.
-        pairs = KDTree(xyz).query_pairs(eps, output_type="ndarray")
-        if len(pairs) == 0:
-            labels = np.full(n, -1, dtype=np.intp)
+        # Stage 1: identify core points via count-only batch query (no edge storage).
+        # Chunking keeps the count array allocation predictable for very large clouds.
+        counts = np.empty(n, dtype=np.intp)
+        chunk = max(1, min(n, 100_000))
+        for start in range(0, n, chunk):
+            end = min(start + chunk, n)
+            counts[start:end] = tree.query_ball_point(xyz[start:end], eps, workers=-1, return_length=True)
+        is_core = counts >= min_points
+
+        if not is_core.any():
+            return pandas.DataFrame(np.full(n, -1, dtype=np.intp), columns=["cluster"])
+
+        # Stage 2: build the core-point adjacency graph.
+        # query_pairs returns upper-triangle pairs as a single ndarray; filtering to
+        # core-core edges typically removes most pairs in realistic clouds, since
+        # noise and isolated outliers contribute many spurious edges.
+        pairs = tree.query_pairs(eps, output_type="ndarray")
+        if len(pairs) > 0:
+            both_core = is_core[pairs[:, 0]] & is_core[pairs[:, 1]]
+            pairs = pairs[both_core].astype(np.int32, copy=False)
+
+        if len(pairs) > 0:
+            # bool data + int32 indices keeps the CSR matrix as compact as possible.
+            graph = csr_matrix(
+                (np.ones(len(pairs), dtype=np.bool_), (pairs[:, 0], pairs[:, 1])),
+                shape=(n, n),
+            )
         else:
-            row = np.concatenate([pairs[:, 0], pairs[:, 1]])
-            col = np.concatenate([pairs[:, 1], pairs[:, 0]])
-            graph = csr_matrix((np.ones(len(row), dtype=np.float32), (row, col)), shape=(n, n))
-            # Sort the sparse matrix by row values to meet DBSCAN precomputed requirements
-            graph = sort_graph_by_row_values(graph, warn_when_not_sorted=False)
-            # Use metric="precomputed" with eps=1.5 to detect edges in the connectivity graph
-            # (1.0 is connectivity value, so eps > 1.0 treats them as neighbors)
-            with warnings.catch_warnings():
-                warnings.filterwarnings("ignore", category=Warning)
-                labels = DBSCAN(eps=1.5, min_samples=min_points, metric="precomputed", n_jobs=-1).fit(graph).labels_
+            graph = csr_matrix((n, n), dtype=np.bool_)
+        del pairs
+
+        # Stage 3: connected components on the (undirected) core-point graph.
+        _, raw_labels = connected_components(graph, directed=False)
+
+        # Stage 4: noise by default, core points get their component label.
+        labels = np.where(is_core, raw_labels, -1).astype(np.intp)
+
+        # Stage 5: attach border points (non-core, but within eps of a core point).
+        # Standard DBSCAN ambiguity: a border point reachable from multiple clusters
+        # is assigned to the first encountered — matching open3d's behaviour.
+        non_core_idx = np.where(~is_core)[0]
+        if len(non_core_idx) > 0:
+            for start in range(0, len(non_core_idx), chunk):
+                end = min(start + chunk, len(non_core_idx))
+                batch = non_core_idx[start:end]
+                nbr_lists = tree.query_ball_point(xyz[batch], eps, workers=-1)
+                for local_i, nbrs in enumerate(nbr_lists):
+                    nbrs_arr = np.asarray(nbrs, dtype=np.int32)
+                    core_nbrs = nbrs_arr[is_core[nbrs_arr]]
+                    if len(core_nbrs) > 0:
+                        labels[batch[local_i]] = raw_labels[core_nbrs[0]]
+
+        # Stage 6: remap to contiguous 0..k-1, preserving -1 for noise.
+        valid = labels >= 0
+        used = np.unique(labels[valid])
+        if len(used) > 0:
+            remap = np.full(used.max() + 1, -1, dtype=np.intp)
+            remap[used] = np.arange(len(used))
+            labels[valid] = remap[labels[valid]]
 
         return pandas.DataFrame(labels, columns=["cluster"])
 

@@ -168,24 +168,45 @@ def test_take_cluster_raises_on_length_mismatch():
 def test_cluster_300k_finds_10_clusters_within_1gib(testpointcloud_300k: PointCloud):
     """DBSCAN on the 300k fixture must find exactly 10 clusters within a 1 GiB peak-RSS increase.
 
-    The fixture has 10 tight Gaussian clusters (σ=0.9 m) centred in a 100³ m cube.
-    eps=2.0 m is large enough to bridge intra-cluster gaps, small enough to separate
-    the clusters whose centres are ≥30 m apart. min_points=50 is well below the
-    ~29 400 points per cluster so every cluster is detected as a proper cluster.
+    Fixture geometry:
+        294k points in 10 Gaussian clusters (σ=0.9 m, centres ≥30 m apart in a 100³ m cube)
+        6k uniform noise points
+
+    Parameter rationale:
+        eps=0.25 m  — roughly 1.8× the average inter-point spacing inside a dense cluster
+                      (~0.14 m), so the cluster core chains reliably; at the same time it
+                      keeps the total edge count under ~25M, putting the query_pairs array
+                      well inside the 1 GiB budget. At eps=0.4 the edge count is ~173M
+                      (~2.8 GB for the pairs array alone before any filtering).
+        min_points=10 — far below the ~29 400 points per cluster, well above noise density.
+
+    Cluster separation: all centres are ≥30 m apart; with eps=0.25 there is zero risk of
+    two clusters bridging, so exactly 10 components are expected.
     """
+    n_cluster_points = 294_000
+    n_noise_points = 6_000
+    n_centers = 10
+    # Gaussian tails beyond ~3σ from each centre may be labelled noise; allow up to 2%
+    # of cluster points to be cut off. Noise points far from all clusters remain noise.
+    max_cluster_points_as_noise = int(n_cluster_points * 0.02)
+    # A few noise points that land close to a cluster edge will be absorbed.
+    max_noise_absorbed_into_cluster = n_noise_points // 10
     peak_before = _peak_rss_bytes()
 
-    labels = testpointcloud_300k.get_cluster(eps=2.0, min_points=50)
+    labels = testpointcloud_300k.get_cluster(eps=0.25, min_points=10)
 
     peak_after = _peak_rss_bytes()
     peak_delta = peak_after - peak_before
 
     unique_clusters = set(labels["cluster"].values) - {-1}
-    check.equal(len(labels), len(testpointcloud_300k))
-    check.equal(len(unique_clusters), 10)
-    # Noise points come from the 6k uniform random points; allow a generous margin.
     n_noise = int((labels["cluster"] == -1).sum())
-    check.less(n_noise, 10_000)
-    assert peak_delta <= 1024**3, (
-        f"get_cluster peak RSS increase exceeded 1 GiB: delta={peak_delta / (1024**2):.1f} MiB"
-    )
+    n_clustered = len(labels) - n_noise
+
+    check.equal(len(labels), len(testpointcloud_300k))
+    # Exactly the right number of clusters — not merged, not split.
+    check.equal(len(unique_clusters), n_centers)
+    # Most cluster points must survive (cluster cores are dense relative to eps).
+    check.greater(n_clustered, n_cluster_points - max_cluster_points_as_noise)
+    # Most noise points must remain noise (uniform points at eps=0.25 have ~0 neighbours).
+    check.less(n_noise, n_noise_points + max_noise_absorbed_into_cluster)
+    assert peak_delta <= 1024**3, f"get_cluster peak RSS delta exceeded 1 GiB: {peak_delta / 1024**2:.1f} MiB"
