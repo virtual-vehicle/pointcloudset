@@ -27,6 +27,11 @@ test:
     uv run --group dev python -m coverage report -i
     uv run --group dev python -m coverage html -i
 
+# Run core unit/integration tests only
+[group('qa')]
+test-core:
+    uv run --group dev pytest tests
+
 # Lint with ruff
 [group('qa')]
 ruff:
@@ -37,9 +42,7 @@ ruff:
 ruff_fix:
     uv run --group dev ruff check src tests --fix
 
-
-
-# Sort imports and forma[group('qa')]
+# Sort imports and format code
 [group('qa')]
 ruff_format:
     uv run --group dev ruff check --select I --fix .
@@ -76,3 +79,13 @@ minor:
 [group('release')]
 docker-local:
     docker build --rm -f docker/release.Dockerfile -t "tgoelles/pointcloudset:v$(uv version --short)" .
+
+# Build Python distribution
+[group('release')]
+build-dist:
+    uv build
+
+# Publish distribution to PyPI
+[group('release')]
+publish-pypi:
+    uv publish --token "${PYPI_TOKEN:?PYPI_TOKEN is required}"
