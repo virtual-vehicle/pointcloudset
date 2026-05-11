@@ -1,7 +1,6 @@
 from datetime import UTC, datetime
 from pathlib import Path
 
-import laspy
 import numpy as np
 import pandas as pd
 import pytest

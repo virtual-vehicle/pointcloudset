@@ -1,7 +1,6 @@
 import numpy as np
 import pytest
 import pytest_check as check
-from numpy.testing import assert_array_equal
 
 from pointcloudset.geometry import plane
 
