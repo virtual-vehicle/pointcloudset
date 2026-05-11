@@ -19,11 +19,11 @@ doccoverage:
 [group('qa')]
 test:
     uv run pytest --cov=pointcloudset tests
-    uv run pytest --cov-append --current-env --nbval-lax doc/sphinx/source/tutorial_notebooks/usage.ipynb
-    uv run pytest --cov-append --current-env --nbval-lax doc/sphinx/source/tutorial_notebooks/reading_las_pcd.ipynb
-    uv run pytest --cov-append --current-env --nbval-lax tests/notebooks/test_plot_plane.ipynb
-    uv run pytest --cov-append --current-env --nbval-lax tests/notebooks/test_readme.ipynb
-    uv run pytest --cov-append --current-env --nbval-lax tests/notebooks/test_animate.ipynb
+    uv run --with nbval pytest --cov-append --nbval-current-env --nbval-lax doc/sphinx/source/tutorial_notebooks/usage.ipynb
+    uv run --with nbval pytest --cov-append --nbval-current-env --nbval-lax doc/sphinx/source/tutorial_notebooks/reading_las_pcd.ipynb
+    uv run --with nbval pytest --cov-append --nbval-current-env --nbval-lax tests/notebooks/test_plot_plane.ipynb
+    uv run --with nbval pytest --cov-append --nbval-current-env --nbval-lax tests/notebooks/test_readme.ipynb
+    uv run --with nbval pytest --cov-append --nbval-current-env --nbval-lax tests/notebooks/test_animate.ipynb
     uv run python -m coverage report -i
     uv run python -m coverage html -i
 
