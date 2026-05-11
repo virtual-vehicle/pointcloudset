@@ -468,7 +468,7 @@ class PointCloud(PointCloudCore):
             raise ValueError(f"min_points must be >= 1, got {min_points}")
         if len(self) == 0:
             raise ValueError("Cannot cluster an empty PointCloud")
-        xyz = np.asarray(self.points.xyz, dtype=np.float64)
+        xyz = np.asarray(self.xyz, dtype=np.float64)
         return get_cluster_labels(xyz=xyz, eps=eps, min_points=min_points)
 
     def take_cluster(self, cluster_number: int, cluster_labels: pandas.DataFrame) -> PointCloud:
