@@ -9,16 +9,20 @@ and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0
 Unreleased
 -------------
 
+Added
+~~~~~~
+- ``numba`` is now an optional dependency. Install with ``pip install pointcloudset[numba]`` to enable JIT-accelerated clustering.
+
 Fixed
 ~~~~~~~
+- Fixed a major bug on larger pointclouds when radiusoutlier used too much memory and the process was killed.
+- Fixed a similar bug with get_cluster where the process was killed on larger pointclouds due to too much memory usage.
 - ``filter("radiusoutlier", ...)`` now uses KDTree neighbour counts directly instead of materializing per-point neighbour lists, preserving the expected outlier semantics while avoiding large temporary allocations on dense point clouds.
 
 Changed
 ~~~~~~~
 - Internal refactor: moved the main ``PointCloud.get_cluster()`` implementation and chunk-budget helper from ``pointcloudset.pointcloud`` to ``pointcloudset.cluster`` to keep the PointCloud class focused. No user-facing behaviour changes.
 - ``PointCloud.get_cluster()`` now uses a KDTree + incremental union-find DBSCAN implementation. Core connectivity is built without materializing a global edge list, keeping memory bounded by per-point neighbourhood queries while preserving cluster labels and ``take_cluster(-1, labels)`` noise handling. The union-find inner loops are JIT-compiled with Numba when the optional ``numba`` extra is installed (``pip install pointcloudset[numba]``); a pure-Python fallback is used automatically when Numba is not available.
-- ``numba`` is now an optional dependency. Install with ``pip install pointcloudset[numba]`` to enable JIT-accelerated clustering.
-- ``PointCloud.get_cluster()`` no longer exposes ``memory_budget_mb`` as a public argument. The memory budget is now controlled internally via ``pointcloudset.config.GET_CLUSTER_MEMORY_BUDGET_MB``.
 
 
 0.13.0 - (2026-05-05)
