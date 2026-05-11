@@ -52,13 +52,14 @@ dependencies = [
 dev = [
     "pytest",
     "pytest-cov",
-    "docstr-coverage",
     "pytest-check",
+    "docstr-coverage",
     "ruff",
     "coverage-badge",
     "bump2version",
     "ipykernel",
     "matplotlib",
+    "psutil>=5.9",
 ]
 doc = [
     "sphinx",
@@ -80,6 +81,11 @@ pointcloudset = "pointcloudset.io.dataset.commandline:app"
 
 [tool.pytest.ini_options]
 addopts = "-p no:warnings --verbose --color=yes"
+markers = [
+    "memory_regression: memory growth and allocation tests (slow, optional)",
+    "memory_release: memory cleanup and leak detection tests (slow, optional)",
+    "serialization: serialization (pickle/deepcopy) comparison tests",
+]
 
 [tool.ruff]
 # General Ruff settings
