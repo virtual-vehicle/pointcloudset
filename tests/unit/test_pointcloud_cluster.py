@@ -1,9 +1,20 @@
+import resource
+
 import numpy as np
 import pandas as pd
 import pytest
 import pytest_check as check
 
 from pointcloudset import PointCloud
+
+
+def _peak_rss_bytes() -> int:
+    """Return process peak RSS in bytes on Linux/macOS."""
+    max_rss = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    # Linux reports KiB, macOS reports bytes.
+    if max_rss < 10_000_000:
+        return int(max_rss * 1024)
+    return int(max_rss)
 
 
 def _make_synthetic_clustered_pc() -> PointCloud:
@@ -148,3 +159,33 @@ def test_take_cluster_raises_on_length_mismatch():
     short_labels = labels.iloc[:-1].reset_index(drop=True)
     with pytest.raises(ValueError, match="cluster_labels"):
         pc.take_cluster(0, short_labels)
+
+
+# --- 300k synthetic fixture ---
+
+
+@pytest.mark.slow
+def test_cluster_300k_finds_10_clusters_within_1gib(testpointcloud_300k: PointCloud):
+    """DBSCAN on the 300k fixture must find exactly 10 clusters within a 1 GiB peak-RSS increase.
+
+    The fixture has 10 tight Gaussian clusters (σ=0.9 m) centred in a 100³ m cube.
+    eps=2.0 m is large enough to bridge intra-cluster gaps, small enough to separate
+    the clusters whose centres are ≥30 m apart. min_points=50 is well below the
+    ~29 400 points per cluster so every cluster is detected as a proper cluster.
+    """
+    peak_before = _peak_rss_bytes()
+
+    labels = testpointcloud_300k.get_cluster(eps=2.0, min_points=50)
+
+    peak_after = _peak_rss_bytes()
+    peak_delta = peak_after - peak_before
+
+    unique_clusters = set(labels["cluster"].values) - {-1}
+    check.equal(len(labels), len(testpointcloud_300k))
+    check.equal(len(unique_clusters), 10)
+    # Noise points come from the 6k uniform random points; allow a generous margin.
+    n_noise = int((labels["cluster"] == -1).sum())
+    check.less(n_noise, 10_000)
+    assert peak_delta <= 1024**3, (
+        f"get_cluster peak RSS increase exceeded 1 GiB: delta={peak_delta / (1024**2):.1f} MiB"
+    )

@@ -10,7 +10,10 @@ import numpy as np
 import pandas
 import plotly
 import plotly.express as px
+from scipy.sparse import csr_matrix
+from scipy.spatial import KDTree
 from sklearn.cluster import DBSCAN
+from sklearn.neighbors import sort_graph_by_row_values
 
 from pointcloudset.config import PLOTLYSIZELIMIT
 from pointcloudset.diff import ALL_DIFFS
@@ -458,7 +461,31 @@ class PointCloud(PointCloudCore):
             raise ValueError(f"min_points must be >= 1, got {min_points}")
         if len(self) == 0:
             raise ValueError("Cannot cluster an empty PointCloud")
-        labels = DBSCAN(eps=eps, min_samples=min_points).fit(self.points.xyz).labels_
+
+        xyz = np.asarray(self.points.xyz)
+        n = len(xyz)
+
+        # Build a precomputed sparse connectivity matrix via scipy KDTree to avoid
+        # sklearn's internal radius_neighbors_graph, which allocates a full
+        # list-of-lists and crashes on large dense clouds.
+        # query_pairs returns only upper-triangle pairs as a flat ndarray — roughly
+        # half the entries of a symmetric structure — and float32 ones keep the CSR
+        # matrix compact.
+        pairs = KDTree(xyz).query_pairs(eps, output_type="ndarray")
+        if len(pairs) == 0:
+            labels = np.full(n, -1, dtype=np.intp)
+        else:
+            row = np.concatenate([pairs[:, 0], pairs[:, 1]])
+            col = np.concatenate([pairs[:, 1], pairs[:, 0]])
+            graph = csr_matrix((np.ones(len(row), dtype=np.float32), (row, col)), shape=(n, n))
+            # Sort the sparse matrix by row values to meet DBSCAN precomputed requirements
+            graph = sort_graph_by_row_values(graph, warn_when_not_sorted=False)
+            # Use metric="precomputed" with eps=1.5 to detect edges in the connectivity graph
+            # (1.0 is connectivity value, so eps > 1.0 treats them as neighbors)
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore", category=Warning)
+                labels = DBSCAN(eps=1.5, min_samples=min_points, metric="precomputed", n_jobs=-1).fit(graph).labels_
+
         return pandas.DataFrame(labels, columns=["cluster"])
 
     def take_cluster(self, cluster_number: int, cluster_labels: pandas.DataFrame) -> PointCloud:
