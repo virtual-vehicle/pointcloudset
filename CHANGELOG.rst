@@ -17,6 +17,7 @@ Fixed
 ~~~~~~~
 - Fixed a major bug on larger pointclouds when radiusoutlier used too much memory and the process was killed.
 - Fixed a similar bug with get_cluster where the process was killed on larger pointclouds due to too much memory usage.
+- Improved speed of clustering with numba by about 10x on larger pointclouds.
 - ``filter("radiusoutlier", ...)`` now uses KDTree neighbour counts directly instead of materializing per-point neighbour lists, preserving the expected outlier semantics while avoiding large temporary allocations on dense point clouds.
 
 Changed
