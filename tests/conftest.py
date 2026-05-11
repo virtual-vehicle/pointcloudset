@@ -246,3 +246,71 @@ def test_sets(request):
 @pytest.fixture(params=[ROS1FILE, ROS2FILE, ROS2MCAPFILE])
 def ros_files(request):
     return request.param
+
+
+@pytest.fixture(scope="session")
+def testpointcloud_300k_df() -> pd.DataFrame:
+    """Deterministic synthetic point cloud with 300k points for stress tests.
+
+    Geometry consists of dense clusters in a 0..100 m cube and a small set of
+    uniformly distributed noise points so radius-outlier filtering removes at
+    least some points.
+    """
+    rng = np.random.default_rng(20260511)
+    n_points = 300_000
+    n_noise = 6_000
+    n_cluster_points = n_points - n_noise
+
+    centers = np.array(
+        [
+            [15.0, 15.0, 15.0],
+            [15.0, 85.0, 30.0],
+            [30.0, 30.0, 85.0],
+            [35.0, 70.0, 70.0],
+            [50.0, 50.0, 50.0],
+            [65.0, 20.0, 80.0],
+            [70.0, 75.0, 25.0],
+            [82.0, 48.0, 48.0],
+            [85.0, 15.0, 60.0],
+            [88.0, 88.0, 88.0],
+        ],
+        dtype=np.float64,
+    )
+
+    n_centers = centers.shape[0]
+    points_per_center = np.full(n_centers, n_cluster_points // n_centers, dtype=int)
+    points_per_center[: n_cluster_points % n_centers] += 1
+
+    clustered_xyz = []
+    for center, n_center_points in zip(centers, points_per_center, strict=True):
+        sampled = rng.normal(loc=center, scale=0.9, size=(n_center_points, 3))
+        clustered_xyz.append(np.clip(sampled, 0.0, 100.0))
+
+    noise_xyz = rng.uniform(0.0, 100.0, size=(n_noise, 3))
+    xyz = np.vstack([*clustered_xyz, noise_xyz])
+    intensity = rng.uniform(0.0, 1.0, size=n_points)
+
+    permutation = rng.permutation(n_points)
+    xyz = xyz[permutation]
+    intensity = intensity[permutation]
+
+    df = pd.DataFrame(
+        {
+            "x": xyz[:, 0],
+            "y": xyz[:, 1],
+            "z": xyz[:, 2],
+            "intensity": intensity,
+        }
+    ).reset_index(drop=True)
+
+    return df
+
+
+@pytest.fixture()
+def testpointcloud_300k(testpointcloud_300k_df: pd.DataFrame) -> PointCloud:
+    """Fresh 300k-point PointCloud instance per test to avoid shared mutation."""
+    return PointCloud(
+        data=testpointcloud_300k_df.copy(deep=True),
+        timestamp=datetime.datetime(2020, 1, 1),
+        orig_file="/synthetic/testpointcloud_300k",
+    )
