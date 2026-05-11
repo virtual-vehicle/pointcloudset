@@ -234,12 +234,12 @@ class TestDeepcopyCorrectnessDataset:
     def test_deepcopy_metadata_mutation_does_not_affect_original(self, testset):
         """Mutating metadata in copy should not affect original."""
         ds_copy = copy.deepcopy(testset)
-        original_orig_file = testset.meta["orig_file"]
 
-        ds_copy.meta["orig_file"] = "modified"
+        # Use a dedicated probe key to avoid assuming any specific metadata shape
+        ds_copy.meta["_probe"] = "modified"
 
-        assert testset.meta["orig_file"] == original_orig_file
-        assert ds_copy.meta["orig_file"] == "modified"
+        assert "_probe" not in testset.meta
+        assert ds_copy.meta["_probe"] == "modified"
 
     def test_deepcopy_preserves_dataset_length(self, testset):
         """Deepcopy should preserve dataset length."""
