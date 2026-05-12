@@ -1,0 +1,283 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pointcloudset CLI &mdash; pointcloudset 0.14.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=9e420a66"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="How to Contribute" href="how_to_contribute.html" />
+    <link rel="prev" title="Use Kitti Dataset" href="tutorial_notebooks/Working_with_kitti_dataset.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pointcloudset
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorial</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html">Usage of Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html#Working-with-the-whole-Dataset">Working with the whole Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html#Working-with-a-PointCloud">Working with a PointCloud</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html#Plane-Segmentation,-Clustering-and-Overlaying-Several-Plots">Plane Segmentation, Clustering and Overlaying Several Plots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/usage.html#Applying-Functions-to-the-whole-Dataset">Applying Functions to the whole Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/reading_las_pcd.html">Working with LAS and PCD Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/reading_las_pcd.html#Combining-them-to-a-pointcloudset-dataset">Combining them to a pointcloudset dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/reading_las_pcd.html#Exporting-of-Single-Pointcloud">Exporting of Single Pointcloud</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial_notebooks/Working_with_kitti_dataset.html">Use Kitti Dataset</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Convert ROS 1 and ROS 2 files</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">pointcloudset CLI</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contribute</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="how_to_contribute.html">How to Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started_contribution.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guidelines.html">Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="support.html">Support</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="description_python_api.html">How to read the API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python-api/pointcloudset.html">pointcloudset package</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Changelog</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pointcloudset</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">pointcloudset CLI</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/commandline_interface.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul><div class="rst-breadcrumbs-buttons" role="navigation" aria-label="Sequential page navigation">
+        <a href="tutorial_notebooks/Working_with_kitti_dataset.html" class="btn btn-neutral float-left" title="Use Kitti Dataset" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="how_to_contribute.html" class="btn btn-neutral float-right" title="How to Contribute" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  </div>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="pointcloudset-cli">
+<h1>pointcloudset CLI<a class="headerlink" href="#pointcloudset-cli" title="Link to this heading"></a></h1>
+<p>The best way to work with large ROS1 or ROS2 files is to convert the rosbag beforehand with
+the provided command line tool.</p>
+<p>It is also possible to convert whole or parts of ROS files to the native file formats
+supported by pointcloudset:</p>
+<p>.csv / .xyz
+.las
+.pcd</p>
+<p>For text formats, the Python API supports both headered and headerless files.
+<code class="docutils literal notranslate"><span class="pre">csv</span></code> writes a header by default and <code class="docutils literal notranslate"><span class="pre">xyz</span></code> writes no header by default.
+The CLI uses those defaults.</p>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading"></a></h2>
+<p>An example to convert topic /os1_cloud_node/point within the test.bag rosbag to
+the converted directory.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pointcloudset convert -t /os1_cloud_node/points -d converted test.bag</span>
+</pre></div>
+</div>
+<p>List all PointCloud2 topics in a ROS file.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pointcloudset topics test.bag</span>
+</pre></div>
+</div>
+<section id="pointcloudset">
+<h3>pointcloudset<a class="headerlink" href="#pointcloudset" title="Link to this heading"></a></h3>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pointcloudset<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-pointcloudset-install-completion">
+<span class="sig-name descname"><span class="pre">--install-completion</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-pointcloudset-install-completion" title="Link to this definition"></a></dt>
+<dd><p>Install completion for the current shell.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-pointcloudset-show-completion">
+<span class="sig-name descname"><span class="pre">--show-completion</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-pointcloudset-show-completion" title="Link to this definition"></a></dt>
+<dd><p>Show completion for the current shell, to copy it or customize the installation.</p>
+</dd></dl>
+
+<section id="pointcloudset-convert">
+<h4>convert<a class="headerlink" href="#pointcloudset-convert" title="Link to this heading"></a></h4>
+<p>The main CLI function to convert ROS1 and ROS2 files to pointcloudset or
+native file formats supported by pointcloudset.</p>
+<p>Examples:</p>
+<p>convert all ROS1 bag files in a directory
+$ pointcloudset convert . -d converted</p>
+<p>convert all frames of bagfile xyz.bag into csv files
+$ pointcloudset convert xyz.bag -o csv -d converted_csv xyz.bag</p>
+<p>convert a ROS2 directoy to a pointcloudset file
+$ pointcloudset convert something_ros2 -d converted</p>
+<p>convert the first 10 frames of a bag file int0las files
+$ pointcloudset convert xyz.bag -o las -d converted_las –start 1 –end 10</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pointcloudset<span class="w"> </span>convert<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>ROS_FILE
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-pointcloudset-convert-t">
+<span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--topic</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;topic&gt;</span></span><a class="headerlink" href="#cmdoption-pointcloudset-convert-t" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'/os1_cloud_node/points'</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-pointcloudset-convert-d">
+<span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output-dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;folder_to_write&gt;</span></span><a class="headerlink" href="#cmdoption-pointcloudset-convert-d" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'.'</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-pointcloudset-convert-o">
+<span class="sig-name descname"><span class="pre">-o</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--output-format</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;output_format&gt;</span></span><a class="headerlink" href="#cmdoption-pointcloudset-convert-o" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'POINTCLOUDSET'</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-pointcloudset-convert-s">
+<span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--start</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;start_frame_number&gt;</span></span><a class="headerlink" href="#cmdoption-pointcloudset-convert-s" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-pointcloudset-convert-e">
+<span class="sig-name descname"><span class="pre">-e</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--end</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;end_frame_number&gt;</span></span><a class="headerlink" href="#cmdoption-pointcloudset-convert-e" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-pointcloudset-convert-keep-zeros">
+<span class="sig-name descname"><span class="pre">--keep-zeros</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-keep-zeros</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-pointcloudset-convert-keep-zeros" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-pointcloudset-convert-arg-ROS_FILE">
+<span class="sig-name descname"><span class="pre">ROS_FILE</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-pointcloudset-convert-arg-ROS_FILE" title="Link to this definition"></a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="pointcloudset-topics">
+<h4>topics<a class="headerlink" href="#pointcloudset-topics" title="Link to this heading"></a></h4>
+<p>List all ROS PointCloud2 topics which can be converted.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>ros_file (str): ROS1 or ROS2 file or directory</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<p>show all PointCloud2 topis in a  ROS1 bag file
+$ pointcloudset topics test.bag</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pointcloudset<span class="w"> </span>topics<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>ROS_FILE
+</pre></div>
+</div>
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-pointcloudset-topics-arg-ROS_FILE">
+<span class="sig-name descname"><span class="pre">ROS_FILE</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-pointcloudset-topics-arg-ROS_FILE" title="Link to this definition"></a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorial_notebooks/Working_with_kitti_dataset.html" class="btn btn-neutral float-left" title="Use Kitti Dataset" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="how_to_contribute.html" class="btn btn-neutral float-right" title="How to Contribute" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright VIRTUAL VEHICLE Research GmbH.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+pointcloudset.io.pointcloud.delimited module
+============================================
+
+.. automodule:: pointcloudset.io.pointcloud.delimited
+   :members:
+   :show-inheritance:
+   :undoc-members:

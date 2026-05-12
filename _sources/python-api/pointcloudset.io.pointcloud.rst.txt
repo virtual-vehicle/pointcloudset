@@ -1,0 +1,20 @@
+pointcloudset.io.pointcloud package
+===================================
+
+.. automodule:: pointcloudset.io.pointcloud
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   pointcloudset.io.pointcloud.csv
+   pointcloudset.io.pointcloud.delimited
+   pointcloudset.io.pointcloud.las
+   pointcloudset.io.pointcloud.pandas
+   pointcloudset.io.pointcloud.pcd
+   pointcloudset.io.pointcloud.xyz

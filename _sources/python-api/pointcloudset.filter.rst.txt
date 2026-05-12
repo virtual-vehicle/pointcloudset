@@ -1,0 +1,15 @@
+pointcloudset.filter package
+============================
+
+.. automodule:: pointcloudset.filter
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   pointcloudset.filter.stat

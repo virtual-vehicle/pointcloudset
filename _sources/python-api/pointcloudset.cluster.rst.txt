@@ -1,0 +1,15 @@
+pointcloudset.cluster package
+=============================
+
+.. automodule:: pointcloudset.cluster
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   pointcloudset.cluster.numba

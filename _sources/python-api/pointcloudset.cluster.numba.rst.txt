@@ -1,0 +1,7 @@
+pointcloudset.cluster.numba module
+==================================
+
+.. automodule:: pointcloudset.cluster.numba
+   :members:
+   :show-inheritance:
+   :undoc-members:

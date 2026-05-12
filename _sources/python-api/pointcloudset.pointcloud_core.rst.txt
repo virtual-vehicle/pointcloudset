@@ -1,0 +1,7 @@
+pointcloudset.pointcloud\_core module
+=====================================
+
+.. automodule:: pointcloudset.pointcloud_core
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -1,0 +1,7 @@
+pointcloudset.io.pointcloud.pcd module
+======================================
+
+.. automodule:: pointcloudset.io.pointcloud.pcd
+   :members:
+   :show-inheritance:
+   :undoc-members:

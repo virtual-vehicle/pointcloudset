@@ -1,0 +1,7 @@
+pointcloudset.io.pointcloud.xyz module
+======================================
+
+.. automodule:: pointcloudset.io.pointcloud.xyz
+   :members:
+   :show-inheritance:
+   :undoc-members:
