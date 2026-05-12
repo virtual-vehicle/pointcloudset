@@ -6,8 +6,11 @@ The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
 
+
+
+
 0.14.0 - (2026-05-11)
--------------
+---------------------
 
 Added
 ~~~~~~
@@ -24,10 +27,11 @@ Changed
 ~~~~~~~
 - Internal refactor: moved the main ``PointCloud.get_cluster()`` implementation and chunk-budget helper from ``pointcloudset.pointcloud`` to ``pointcloudset.cluster`` to keep the PointCloud class focused. No user-facing behaviour changes.
 - ``PointCloud.get_cluster()`` now uses a KDTree + incremental union-find DBSCAN implementation. Core connectivity is built without materializing a global edge list, keeping memory bounded by per-point neighbourhood queries while preserving cluster labels and ``take_cluster(-1, labels)`` noise handling. The union-find inner loops are JIT-compiled with Numba when the optional ``numba`` extra is installed (``pip install pointcloudset[numba]``); a pure-Python fallback is used automatically when Numba is not available.
+- Replaced ``Makefile`` with a ``justfile`` (``just`` task runner) for all development, test, and documentation commands. CI workflows updated accordingly.
 
 
 0.13.0 - (2026-05-05)
--------------
+---------------------
 
 Changed
 ~~~~~~~
@@ -45,7 +49,7 @@ Removed
 - ``pyntcloud`` is no longer a dependency.
 
 0.12.1 - (2026-05-04)
--------------
+---------------------
 
 Fixed
 ~~~~~~
@@ -53,7 +57,7 @@ Fixed
 - Sphinx documentation version resolution now reads package metadata first and falls back to ``pyproject.toml``, keeping published docs aligned with the package version source of truth.
 
 0.12.0 - (2026-05-05)
--------------
+---------------------
 
 Added
 ~~~~~~
@@ -72,7 +76,7 @@ Fixed
 - ``plane_segmentation`` distance comparison changed from strict ``<`` to ``<=`` so points exactly at ``distance_threshold`` are included as inliers, consistent with the documented semantics.
 
 Changed
-~~~~~~
+~~~~~~~
 - removed open3d dependency entirely; replaced with scipy and scikit-learn
 - ``get_cluster`` now uses ``sklearn.cluster.DBSCAN`` instead of open3d
 - ``plane_segmentation`` now uses a pure-numpy SVD-based RANSAC implementation
@@ -81,19 +85,19 @@ Changed
 - using numpy >2.2 version for modern features and better performance. Made possible by removing open3d dependency.
 
 Removed
-~~~~~~
+~~~~~~~
 - ``PointCloud.to_instance("open3d")`` and ``PointCloud.from_instance("open3d", ...)`` public API removed
 - open3d is no longer a dependency
 
 0.11.0- (2025-05-22)
--------------
+--------------------
 
 Added
 ~~~~~~
 - support for exporting of las files
 
 Changed
-~~~~~~
+~~~~~~~
 - CLI exporting direct via pointcloudset and not via pyntcloud. Therefore currently only las and csv are supported
 
 Fixed
@@ -101,16 +105,16 @@ Fixed
 - wrong help for pointcloudset convert CLI: the bag file or mcap dir needs to come right after the command
 
 0.10.1- (2025-04-28)
--------------
+--------------------
 Changed
-~~~~~~
+~~~~~~~
 - using uv for package management
 - using uv base image for docker images
 - using pyarrow for parquet files
 
 
 0.10.0 - (2024-12-03)
--------------
+---------------------
 
 Added
 ~~~~~~
@@ -118,7 +122,7 @@ Added
 - testing for the latest 2 python versions which are supported by the latestt open3d
 
 Changed
-~~~~~~
+~~~~~~~
 - using pyproject.toml instead of setup.py and for all tool settings
 - no more conda dependency use pure pip and the pre-install the open3d requirments
 - use of official python:3.11-slim docker image
@@ -130,16 +134,16 @@ Changed
 
 
 Removed
-~~~~~~
+~~~~~~~
 - conda dependency. It is not needed anymore and works just with pip
 - docker base image, not needed any more. Just use the python one and install the open3d dependencies
 
 Changed
-~~~~~~
+~~~~~~~
 - using ruff instead of flake8 and pylint
 
 0.9.0 - (2023-03-30)
--------------
+--------------------
 
 Added
 ~~~~~~
@@ -147,7 +151,7 @@ Added
 - added a way to investigate the topic names of PointCloud2 messages inside ROS files with the CLI "$ pointcloudset topics test.bag"
 
 Changed
-~~~~~~
+~~~~~~~
 - changed the name of the CLI from pointcloudset-convert to pointcloudset like "$ pointcloudset convert -t /os1_cloud_node/points test.bag"
 - pointcloudset convert now defaults to generating a directory named after the bagfile with added _pointcloudset to the directory name
 
@@ -158,7 +162,7 @@ Fixed
 - documentation of CLI where the examples where wrong
 
 0.8.1 - (2023-03-23)
--------------
+--------------------
 
 Added
 ~~~~~~
@@ -167,12 +171,12 @@ Added
 - tested with python 3.10.2 and new versions of pandas and numpy
 
 Changed
-~~~~~~
+~~~~~~~
 - updated open3d, dask version for the docker image
 
 
 0.8.0 - (2022-11-13)
--------------
+--------------------
 
 Added
 ~~~~~~
@@ -181,7 +185,7 @@ Added
 
 
 0.7.0 - (2022-09-27)
--------------
+--------------------
 
 Added
 ~~~~~~
@@ -189,19 +193,19 @@ Added
 - added tests for large ROS bagfiles
 
 Changed
-~~~~~~
+~~~~~~~
 - using rosbags as ROS library. This avoids the conflicts of the test explorer and dependency on some poorly maintained libraries.
 - renamed CLI rosbagconvert to pointcloudset-convert since its specific for pointcloudset and not rosbag. Complete rewrite of CLI.
 
 0.6.3 - (2022-06-08)
--------------
+--------------------
 
 Fixed
 ~~~~~~
 - added pycryptodomex dependency since the ROS packages do not install it but need it
 
 0.6.2 - (2022-06-03)
--------------
+--------------------
 
 Fixed
 ~~~~~~
@@ -209,7 +213,7 @@ Fixed
 
 
 0.6.1 - (2022-06-03)
--------------
+--------------------
 
 Added
 ~~~~~~
@@ -218,7 +222,7 @@ Added
 - limit_less and limit_greater methods to PointCloud
 
 Changed
-~~~~~~
+~~~~~~~
 - time format to include milliseconds
 
 Fixed
@@ -227,13 +231,13 @@ Fixed
 
 
 0.6.0 - (2022-06-03)
--------------
+--------------------
 
 Wrong version due to CI
 
 
 0.5.1 - (2022-05-30)
--------------
+--------------------
 
 Fixed
 ~~~~~~
@@ -245,7 +249,7 @@ Added
 
 
 0.5.0 - (2022-05-30)
--------------
+--------------------
 
 Added
 ~~~~~~
@@ -255,7 +259,7 @@ Added
 - diff with "nearest" to calculate distance to nearest point from another pointcloud
 
 Changed
-~~~~~~
+~~~~~~~
 - time format to 24h PR #45
 
 
@@ -269,17 +273,17 @@ Removed
 
 
 0.4.3 - (2022-05-10)
--------------
+--------------------
 
 Fixed
 ~~~~~~
 - missing packaged in base image
 
 0.4.2 - (2022-05-10)
--------------
+--------------------
 
 Changed
-~~~~~~
+~~~~~~~
 - better entry point for docker images
 - using pintcloudset docker images for github actions testing
 - streamlined docker images with new base image
@@ -289,7 +293,7 @@ Fixed
 - bug with dask 2022.5.0 where meta.json was also read not just the parquet files
 
 0.4.1 - (2022-02-22)
--------------
+--------------------
 
 Fixed
 ~~~~~~
@@ -297,7 +301,7 @@ Fixed
 
 
 0.4.0 - (2022-02-22)
--------------
+--------------------
 
 Added
 ~~~~~~
@@ -307,7 +311,7 @@ Added
 
 
 Changed
-~~~~~~
+~~~~~~~
 - bag2daset has more functionallity and a new name: rosbagconvert
 - using rich instead of tqdm
 - using rich as a nice UI for the rosbagconvert
@@ -315,14 +319,14 @@ Changed
 
 
 0.3.4 - (2022-02-18)
--------------
+--------------------
 
 Fixed
 ~~~~~~
 - now the docker containers runs also on arm64
 
 Changed
-~~~~~~
+~~~~~~~
 - used open3d version 0.14 as default, which comes with arm wheels
 - use dask version 2022.02 as minimum, as there was a bug with 2021.10 and reading files
 - using Python 3.9 as minimum
@@ -330,7 +334,7 @@ Changed
 
 
 0.3.3 - (2021-09-27)
--------------
+--------------------
 
 Fixed
 ~~~~~~
@@ -338,7 +342,7 @@ Fixed
 - writing of dataset with an empty point cloud at the start
 
 0.3.2 - (2021-08-18)
--------------
+--------------------
 
 Fixed
 ~~~~~~
@@ -346,17 +350,17 @@ Fixed
 - automatic start of pointcloudset conda environment now working
 
 Changed
-~~~~~~
+~~~~~~~
 - use fixed version number of pointcloudset_base image
 
 0.3.1 - (2021-08-17)
--------------
+--------------------
 
 wrong release due to testing of github actions and bump2version
 
 
 0.3.0 (2021-08-17)
--------------
+------------------
 
 Added
 ~~~~~~
@@ -369,7 +373,7 @@ Fixed
 
 
 Changed
-~~~~~~
+~~~~~~~
 - set conda environment name to "pointcloudset" not "base"
 - better CD of docker images
 - sticking to semantic versioning
