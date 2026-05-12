@@ -19,9 +19,13 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v5
 
+      - name: Install just
+        uses: taiki-e/install-action@just
+
       - name: Build package
-        run: uv build
+        run: uv run just build-dist
 
       - name: Publish package
-        run: uv publish --token ${{ secrets.PYPI_TOKEN }}
-
+        run: uv run just publish-pypi
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}

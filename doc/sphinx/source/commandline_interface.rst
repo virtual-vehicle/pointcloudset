@@ -37,5 +37,3 @@ List all PointCloud2 topics in a ROS file.
 .. click:: pointcloudset.io.dataset.commandline:typer_click_object
    :prog: pointcloudset
    :nested: full
-
-   pointcloudset convert -d converted -o csv .

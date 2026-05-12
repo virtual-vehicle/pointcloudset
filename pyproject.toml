@@ -58,6 +58,7 @@ numba = [
 dev = [
     "pytest",
     "pytest-cov",
+    "nbval",
     "docstr-coverage",
     "pytest-check",
     "ruff",
@@ -67,9 +68,8 @@ dev = [
     "matplotlib",
 ]
 doc = [
-    "sphinx",
-    "sphinxcontrib-napoleon",
-    "sphinx_rtd_theme==0.5.2",
+    "sphinx>=8,<9",
+    "sphinx_rtd_theme>=3",
     "nbsphinx",
     "sphinx-click",
     "pandoc",
@@ -99,7 +99,7 @@ isort = { known-first-party = ["pointcloudset", "tests"] }
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
-"pointcloudset/io/dataset/commandline.py" = ["F401"]
+"src/pointcloudset/io/dataset/commandline.py" = ["F401"]
 
 [tool.coverage.run]
 omit = ["*test*"]

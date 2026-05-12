@@ -2,9 +2,9 @@ name: doc to github pages
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
   workflow_dispatch:
 
@@ -22,6 +22,9 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v5
 
+      - name: Install just
+        uses: taiki-e/install-action@just
+
       - name: Install pandoc
         run: |
           sudo apt-get update
@@ -32,7 +35,7 @@ jobs:
 
       - name: Build documentation
         run: |
-          uv run make doc
+          uv run just doc
 
       - name: Add .nojekyll
         run: touch doc/sphinx/build/html/.nojekyll
